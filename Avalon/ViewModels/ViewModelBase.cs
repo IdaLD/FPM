@@ -10,7 +10,7 @@ public class ViewModelBase : ObservableObject
     {
         public static List<File> storedFiles = new List<File>();
         public static List<string> projects = new List<string>();
-        public static string focusedList = new string("");
+        public static string focusedList = new string("New Project");
 
     }
 }

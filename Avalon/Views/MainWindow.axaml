@@ -7,9 +7,13 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Avalon.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-		
+        TransparencyLevelHint="AcrylicBlur"
+        WindowStartupLocation="CenterScreen"
+        Background="Transparent"
+        ExtendClientAreaToDecorationsHint="True"
         Title="Avalon">
 
         
+
 	<views:MainView />
 </Window>

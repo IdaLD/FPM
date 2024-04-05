@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
+using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Microsoft.CodeAnalysis.CSharp;
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Avalon.ViewModels;
@@ -26,9 +28,9 @@ public class MainViewModel : ViewModelBase
 
     public ObservableCollection<File> Drawings { get; } = new();
     public ObservableCollection<File> Documents { get; } = new();
-    public ObservableCollection<IList> Projects { get; } = new();
+    public ObservableCollection<string> Projects { get; } = new();
 
-    public async void LoadFile(Avalonia.Visual window) 
+    public async Task LoadFile(Avalonia.Visual window)
     {
         Debug.WriteLine("Loading file");
         var topLevel = TopLevel.GetTopLevel(window);
@@ -40,20 +42,22 @@ public class MainViewModel : ViewModelBase
 
         if (files.Count > 0)
         {
-            await using var stream      = await files[0].OpenReadAsync();
-            using var streamReader      = new StreamReader(stream);
-            string fileContent          = await streamReader.ReadToEndAsync();
+            await using var stream = await files[0].OpenReadAsync();
+            using var streamReader = new StreamReader(stream);
+            string fileContent = await streamReader.ReadToEndAsync();
 
-            List<File> getFiles         = JsonConvert.DeserializeObject<List<File>>(fileContent);
-            List<string> getProjects    = getFiles.Select(x => x.Project).Distinct().ToList();
+            List<File> getFiles = JsonConvert.DeserializeObject<List<File>>(fileContent);
+            List<string> getProjects = getFiles.Select(x => x.Project).Distinct().ToList();
 
-            ViewModelBase.Globals.storedFiles         = getFiles;
-            ViewModelBase.Globals.projects            = getProjects;
+            Globals.storedFiles = getFiles;
+            Globals.projects = getProjects;
 
-            UpdateLists();
-            
+            UpdateProjectList();
         }
+
     }
+
+
 
     public void RemoveFiles(IList files)
     {
@@ -61,10 +65,37 @@ public class MainViewModel : ViewModelBase
         {
             Globals.storedFiles.Remove(file);
         }
-        UpdateLists();
+        UpdateLists(0);
     }
 
-    public void AddDrawings(IList drawings, IList documents, string SelectedType)
+    public void new_project(string newName)
+    {
+        Globals.projects.Add(newName);
+        UpdateProjectList();
+
+    }
+
+    public void remove_project(int projectIndex)
+    {
+        Globals.storedFiles.RemoveAll(x => x.Project == Globals.projects[projectIndex]);
+        Globals.projects = Globals.storedFiles.Select(x => x.Project).Distinct().ToList();
+        UpdateProjectList(); 
+    }
+
+    public void rename_project(int projectindex, string newName)
+    {
+        for (int i = 0; i < Globals.storedFiles.Count; i++)
+        {
+            if (Globals.storedFiles[i].Project == Globals.projects[projectindex])
+            {
+                Globals.storedFiles[i].Project = newName;
+            }
+        }
+        Globals.projects = Globals.storedFiles.Select(x => x.Project).Distinct().ToList();
+        UpdateProjectList();
+    }
+
+    public void AddDrawings(IList drawings, IList documents, string SelectedType, int projectIndex)
     {
         if (SelectedType == "Drawing")
         {
@@ -81,40 +112,52 @@ public class MainViewModel : ViewModelBase
             }
         }
 
-        UpdateLists();
+        UpdateLists(projectIndex);
 
     }
 
-    private void SetCurrentType()
-    {
-        Debug.WriteLine("Selection changed");
-
-    }
-
-    private void UpdateLists()
+    public void UpdateLists(int selectedProject)
     {
         Drawings.Clear();
         Documents.Clear();
-        string currentProject = "VLUE10";
-        IEnumerable<File> filteredDraw = get_filtered_res(currentProject, "Drawing");
-        IEnumerable<File> filteredDoc = get_filtered_res(currentProject, "Document");
 
-        foreach (File file in filteredDraw)
+        if (Globals.projects.Count() > 0)
         {
-            Drawings.Add(file);
-        }
+            string currentProject = Globals.projects[selectedProject];
+            IEnumerable<File> filteredDraw = get_filtered_res(currentProject, "Drawing");
+            IEnumerable<File> filteredDoc = get_filtered_res(currentProject, "Document");
 
-        foreach (File file in filteredDoc)
+            foreach (File file in filteredDraw)
+            {
+                Drawings.Add(file);
+            }
+
+            foreach (File file in filteredDoc)
+            {
+                Documents.Add(file);
+            }
+        }
+    }
+
+    public void UpdateProjectList()
+    {
+        Projects.Clear();
+        if (Globals.projects.Count() > 0)
         {
-            Documents.Add(file);
+            foreach (string project in Globals.projects)
+            {
+                Projects.Add(project);
+            }
         }
-
-
+        else
+        {
+            Projects.Add("New Project");
+        }
     }
 
     private IEnumerable<File> get_filtered_res(string currentProject, string type)
     {
-        IEnumerable<File> first = ViewModelBase.Globals.storedFiles.Where(x => x.Project == currentProject);
+        IEnumerable<File> first = Globals.storedFiles.Where(x => x.Project == currentProject);
         IEnumerable<File> second = first.Where(x => x.Type == type);
 
         return second.OrderBy(x => x.Name);
