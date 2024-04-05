@@ -6,38 +6,52 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using System.Linq;
 using System.IO;
+using Avalon.ViewModels;
+using System.Diagnostics;
+using Avalonia.Controls.Primitives;
+using System.Collections;
 
 namespace Avalon.Views;
 
 public partial class MainView : UserControl
 {
-    public MainView()
+    public MainView() 
     {
         InitializeComponent();
+
+        Removefiles.AddHandler(Button.ClickEvent, OnButtonClick);
+
+        DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDrawingGridSelected);
+        DocumentGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDocumentGridSelected);
+
+        ProjectSelection.AddHandler(ComboBox.SelectionChangedEvent, OnProjectSelectionChange);
+
     }
 
-    public async void LoadFileButton_Clicked(object sender, RoutedEventArgs args)
+    public string SelectedType = null;
+
+    private void OnButtonClick(object sender, EventArgs e)
     {
-        var topLevel = TopLevel.GetTopLevel(this);
+        IList drawings = DrawingGrid.SelectedItems;
+        IList documents = DocumentGrid.SelectedItems;
 
-        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-        {
-            Title = "Load Save File",
-            AllowMultiple = false
-        });
+        var ctx = (MainViewModel)this.DataContext;
+        ctx.AddDrawings(drawings, documents, SelectedType);
+    }
 
-        if (files.Count > 0)
-        {
+    private void OnDrawingGridSelected(object sender, EventArgs e)
+    {
+        SelectedType = "Drawing";
+    }
 
-            await using var stream = await files[0].OpenReadAsync();
-            using var streamReader = new StreamReader(stream);
+    private void OnDocumentGridSelected(object sender, EventArgs e)
+    {
+        SelectedType = "Document";
+    }
 
-            string fileContent = await streamReader.ReadToEndAsync();
+    private void OnProjectSelectionChange(object sender, EventArgs e)
+    {
 
-
-            List<Files> getFiles = JsonConvert.DeserializeObject<List<Files>>(fileContent);
-            List<string> getProjects = getFiles.Select(x => x.Project).Distinct().ToList();
-        }
     }
 }
 
