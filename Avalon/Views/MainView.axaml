@@ -14,13 +14,26 @@
     <vm:MainViewModel />
 	 
   </Design.DataContext>
-	<Grid ColumnDefinitions="1*,1*,1*" RowDefinitions="40,40,40,5*,5*"  Margin="5">
-		<StackPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3"/>
+	<Grid ColumnDefinitions="1*,1*,1*" RowDefinitions="40,40,40,8*,5*"  Margin="5">
+		<StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="5">
+			<Button Name="White" Height="30" Width="30" Background="White"/>
+			<Button Name="Yellow" Height="30" Width="30" Background="Yellow"/>
+			<Button Name="Green" Height="30" Width="30" Background="LimeGreen"/>
+			<Button Name="Blue" Height="30" Width="30" Background="Blue"/>
+			<Button Name="Red" Height="30" Width="30" Background="Red"/>
+			<Button Name="Magenta" Height="30" Width="30" Background="Magenta"/>
+			
+		</StackPanel>
+		<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical">
+			<Label Name="StatusLabel" Height="30" Width="110" />
+		</StackPanel>
+		
         <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="5">
 		    <Button Name="AddProject" Content="New" Height="30" Width="110" HorizontalContentAlignment="Center"/>
 		    <Button Name="RemoveProject" Content="Remove" Height="" Width="110" HorizontalContentAlignment="Center"/>
 			<Button Name="RenameProject" Content="Rename" Height="30" Width="110" HorizontalContentAlignment="Center"/>
 			<TextBox Name="ProjectName" Height="30" Width="110"/> 
+			
         </StackPanel>
 		<StackPanel Grid.Column="0" Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="5">
 			<Button Name="AddDrawing" Content="+Drawing" Height="30" Width="110" HorizontalContentAlignment="Center"/>
@@ -34,11 +47,17 @@
 		</StackPanel>
 		<StackPanel Grid.Column="3" Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
 			<Button Name="SaveFile" Content="Saveeeee"  Height="30" Width="110" HorizontalContentAlignment="Center"/>
-			<ComboBox Name ="ProjectSelection" ItemsSource="{Binding Projects}" Width="110" MaxDropDownHeight="100"/>
+			<ComboBox Name ="ProjectSelection" ItemsSource="{Binding Projects}" SelectedIndex="1" Width="110" MaxDropDownHeight="100"/>
 		</StackPanel>
 		
 		<DataGrid Name="DrawingGrid" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3" Margin="5" ItemsSource="{Binding Drawings}" RowHeight="22" SelectionMode="Extended" 
-			AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray">
+			AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow">
+			<DataGrid.Styles>
+				<Style Selector="DataGridColumnHeader">
+					<Setter Property="FontWeight" Value="90"/>
+					<Setter Property="Background" Value="Gray"/>
+				</Style>
+			</DataGrid.Styles>
 			<DataGrid.Columns>
 				<DataGridTextColumn Binding="{Binding Name, Mode=OneWay}"        Header="Name"           Width="Auto"/>
 				<DataGridTextColumn Binding="{Binding UserTag, Mode=OneWay}"     Header="User Tag"       Width="Auto"/>

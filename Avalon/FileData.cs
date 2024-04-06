@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Avalon
 {
-    public class File
+    public class FileData
     {
         public string Name { get; set; } = string.Empty;
         public string UserTag { get; set; } = string.Empty;

@@ -10,10 +10,28 @@
         TransparencyLevelHint="AcrylicBlur"
         WindowStartupLocation="CenterScreen"
         Background="Transparent"
+		
         ExtendClientAreaToDecorationsHint="True"
         Title="Avalon">
 
-        
+	<Window.Styles>
+		<Style Selector="DataGridRow.Yellow">
+			<Setter Property="Background" Value="Yellow"/>
+			<Setter Property="Foreground" Value="Black"/>
+		</Style>
+		<Style Selector="DataGridRow.Green">
+			<Setter Property="Background" Value="Green"/>
+		</Style>
+		<Style Selector="DataGridRow.Blue">
+			<Setter Property="Background" Value="Blue"/>
+		</Style>
+		<Style Selector="DataGridRow.Red">
+			<Setter Property="Background" Value="Red"/>
+		</Style>
+		<Style Selector="DataGridRow.Magenta">
+			<Setter Property="Background" Value="Magenta"/>
+		</Style>
+	</Window.Styles>
 
 	<views:MainView />
 </Window>
