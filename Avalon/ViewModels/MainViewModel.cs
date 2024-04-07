@@ -198,15 +198,16 @@ public class MainViewModel : ViewModelBase
         }
         if (SelectedType == "Document")
         {
-            foreach (FileData document in documents)
+            foreach (FileData document in documents) { filesToReplace.Add(document); }
+            foreach (FileData file in filesToReplace)
             {
-                int index = Globals.storedFiles.IndexOf(document);
-                Globals.storedFiles[index].Color = color;
-                document.Color = color;
+                int index = Documents.IndexOf(file);
+                file.Color = color;
+                Documents[index] = file;
             }
         }
-        
     }
+
     public void RemoveFiles(IList files)
     {
         foreach (FileData file in files)

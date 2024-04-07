@@ -15,6 +15,11 @@ using Avalonia.Collections;
 using System.Data;
 using System.Reflection;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Avalonia.Controls;
+using Avalonia.Themes.Fluent;
+using Avalonia.Styling;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace Avalon.Views;
 
@@ -24,7 +29,8 @@ public partial class MainView : UserControl
     {
         InitializeComponent();
 
-        
+        MainGrid.Margin = new Thickness(5, 5, 16, 5);
+
 
         ProjectSelection.AddHandler(ComboBox.LoadedEvent, on_combo_startup);
         DrawingGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
@@ -49,6 +55,8 @@ public partial class MainView : UserControl
 
         ProjectSelection.AddHandler(ComboBox.SelectionChangedEvent, on_ProjectSelectionChange);
 
+        ToggleView.AddHandler(Button.ClickEvent, SetTables);
+
         White.AddHandler(Button.ClickEvent, EditColor);
         Yellow.AddHandler(Button.ClickEvent, EditColor);
         Green.AddHandler(Button.ClickEvent, EditColor);
@@ -56,18 +64,22 @@ public partial class MainView : UserControl
         Red.AddHandler(Button.ClickEvent, EditColor);
         Magenta.AddHandler(Button.ClickEvent, EditColor);
 
-
+        ColorMode.AddHandler(Button.ClickEvent, ToggleColormode);
 
 
     }
 
     public string SelectedType = null;
+    public bool ViewMode = false;
+    public bool DarkMode = true;
     public string StatusMessage = "Ready";
+
     private void on_combo_startup(object sender,EventArgs e)
     {
         ProjectSelection.SelectedIndex = ProjectSelection.ItemCount - 1;
         StatusLabel.Content = "Ready";
     }
+
     private void DataGrid_OnLoadingRow(object? sender, DataGridRowEventArgs e)
     {
         var dataObject = e.Row.DataContext as FileData;
@@ -80,6 +92,40 @@ public partial class MainView : UserControl
         if (dataObject != null && dataObject.Color == "Red") { e.Row.Classes.Add("Red"); }
         if (dataObject != null && dataObject.Color == "Magenta") { e.Row.Classes.Add("Magenta"); }
 
+
+    }
+    
+    public void SetTables(object sender, EventArgs e)
+    {
+
+        MainGrid.RowDefinitions.Clear();
+        GridLength row1 = new GridLength(40);
+        GridLength row2 = new GridLength(40);
+        GridLength row3 = new GridLength(40);
+        GridLength row4 = new GridLength(8, GridUnitType.Star);
+        GridLength row5 = new GridLength(5* Convert.ToInt32(ViewMode), GridUnitType.Star);
+        MainGrid.RowDefinitions.Add(new RowDefinition(row1));
+        MainGrid.RowDefinitions.Add(new RowDefinition(row2));
+        MainGrid.RowDefinitions.Add(new RowDefinition(row3));
+        MainGrid.RowDefinitions.Add(new RowDefinition(row4));
+        MainGrid.RowDefinitions.Add(new RowDefinition(row5));
+        
+        ViewMode = !ViewMode;
+
+    }
+
+    private void ToggleColormode(object sender, EventArgs e)
+    {
+        var window = Window.GetTopLevel(this);
+        if (DarkMode == false)
+        {
+            window.RequestedThemeVariant = ThemeVariant.Light;
+        }
+        if (DarkMode == true)
+        {
+            window.RequestedThemeVariant = ThemeVariant.Dark;
+        }
+        DarkMode = !DarkMode;
     }
 
     public void EditColor(object sender, EventArgs e)
@@ -93,6 +139,7 @@ public partial class MainView : UserControl
         var ctx = (MainViewModel)this.DataContext;
         ctx.AddColor(color, drawings, documents, SelectedType);
         DrawingGrid.SelectedItem = null;
+        DocumentGrid.SelectedItem = null;
     }
 
     private void on_add_project(object sender, EventArgs e)
