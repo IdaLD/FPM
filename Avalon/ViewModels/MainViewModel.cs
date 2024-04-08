@@ -226,9 +226,12 @@ public class MainViewModel : ViewModelBase
 
     public void remove_project(int projectIndex)
     {
-        Globals.storedFiles.RemoveAll(x => x.Project == Globals.projects[projectIndex]);
-        Globals.projects.RemoveAt(projectIndex);
-        UpdateProjectList(); 
+        if (Globals.projects.Count > 0)
+        {
+            Globals.storedFiles.RemoveAll(x => x.Project == Globals.projects[projectIndex]);
+            Globals.projects.RemoveAt(projectIndex);
+            UpdateProjectList();
+        }
     }
 
     public void rename_project(int projectindex, string newName)

@@ -144,11 +144,15 @@ public partial class MainView : UserControl
 
     private void on_add_project(object sender, EventArgs e)
     {
-        string newName = ProjectName.Text.ToString();
-        var ctx = (MainViewModel)this.DataContext;
-        ctx.new_project(newName);
-        ProjectName.Clear();
-        ProjectSelection.SelectedIndex = ProjectSelection.ItemCount - 1;
+        var Name = ProjectName.Text;
+        if (Name != null)
+        {
+            string newName = Name.ToString();
+            var ctx = (MainViewModel)this.DataContext;
+            ctx.new_project(newName);
+            ProjectName.Clear();
+            ProjectSelection.SelectedIndex = ProjectSelection.ItemCount - 1;
+        }
     }
 
     private void on_remove_project(object sender, EventArgs e)
