@@ -5,7 +5,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
-using Microsoft.CodeAnalysis.CSharp;
 using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,6 +25,7 @@ using System.ComponentModel;
 using System.Collections.Frozen;
 using System.Runtime.CompilerServices;
 using Microsoft.VisualBasic;
+using Newtonsoft.Json.Converters;
 
 namespace Avalon.ViewModels;
 
@@ -44,7 +44,9 @@ public class MainViewModel : ViewModelBase
     public ObservableCollection<string> Projects { get; } = new();
     public ObservableCollection<string> Status { get; } = new();
 
-    
+    public string user_tag { get; set; }
+
+
 
     public async Task LoadFile(Avalonia.Visual window)
     {
@@ -181,30 +183,79 @@ public class MainViewModel : ViewModelBase
         }
         catch (Exception)
         { }
-
     }
+
+    public void OpenPath(IList drawings, IList documents, string SelectedType)
+    {
+        IList items = null;
+        if (SelectedType == "Drawing") { items = drawings; }
+        if (SelectedType == "Document") { items = documents; }
+
+        foreach (FileData item in items)
+        {
+            Debug.WriteLine(item.Path);
+            Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(item.Path));
+        }
+    }
+
     public void AddColor(string color, IList drawings, IList documents, string SelectedType)
     {
         List<FileData> filesToReplace = [];
-        if (SelectedType == "Drawing")
+
+        IList items = null;
+        ObservableCollection<FileData> collection = null;
+        if (SelectedType == "Drawing") { items = drawings; collection = Drawings; };
+        if (SelectedType == "Document") { items = documents; collection = Documents; };
+        
+        foreach (FileData item in items) { filesToReplace.Add(item); }
+        foreach (FileData file in filesToReplace) 
         {
-            foreach (FileData drawing in drawings) {filesToReplace.Add(drawing); }
-            foreach (FileData file in filesToReplace)
-            {
-                int index = Drawings.IndexOf(file);
-                file.Color = color;
-                Drawings[index] = file;
-            }
+            int index = collection.IndexOf(file);
+            file.Color = color;
+            collection[index] = null;
+            collection[index] = file;
         }
-        if (SelectedType == "Document")
+    }
+
+    public void ClearAll(IList drawings, IList documents, string SelectedType)
+    {
+        List<FileData> filesToReplace = [];
+
+        IList items = null;
+        ObservableCollection<FileData> collection = null;
+        if (SelectedType == "Drawing") { items = drawings; collection = Drawings; };
+        if (SelectedType == "Document") { items = documents; collection = Documents; };
+
+        foreach (FileData item in items) { filesToReplace.Add(item); }
+        foreach (FileData file in filesToReplace)
         {
-            foreach (FileData document in documents) { filesToReplace.Add(document); }
-            foreach (FileData file in filesToReplace)
-            {
-                int index = Documents.IndexOf(file);
-                file.Color = color;
-                Documents[index] = file;
-            }
+            int index = collection.IndexOf(file);
+            file.Color = "";
+            file.UserTag = "";
+            collection[index] = null;
+            collection[index] = file;
+        }
+    }
+
+    public void AddTag(bool tagmode, IList drawings, IList documents, string SelectedType)
+    {
+
+        if (SelectedType == "Drawing") { SetTag(tagmode, drawings, Drawings); };
+        if (SelectedType == "Document") { SetTag(tagmode, documents, Documents); };
+
+    }
+    public void SetTag(bool tagmode, IList Items, ObservableCollection<FileData> Collection)
+    {
+        string Tag = "";
+        if (tagmode == true) { Tag = user_tag; };
+        List<FileData> filesToReplace = [];
+        foreach (FileData item in Items) { filesToReplace.Add(item); }
+        foreach (FileData file in filesToReplace)
+        {
+            int index = Collection.IndexOf(file);
+            file.UserTag = Tag;
+            Collection[index] = null;
+            Collection[index] = file;
         }
     }
 
