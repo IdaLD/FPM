@@ -12,6 +12,12 @@
 			<MenuItem Name="OpenFileMenu" Header="Open File" Click="OnMenuOpen"/>
 			<MenuItem Name="OpenPathMenu" Header="Open Path" Click="on_open_path"/>
 			<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="on_remove_files"/>
+			<MenuItem Name="GridLines" Header="Gridlines">
+				<MenuItem Name="None" Header="None" Tag ="None" Click="ToggleGridmode"/>
+				<MenuItem Name="Vertical" Header="Vertical" Tag ="Vertical" Click="ToggleGridmode"/>
+				<MenuItem Name="Horizontal" Header="Horizontal" Tag ="Horizontal" Click="ToggleGridmode"/>
+				<MenuItem Name="All" Header="All" Tag ="All" Click="ToggleGridmode"/>
+			</MenuItem>
 			<MenuItem Name="ColorMainMenu" Header="Color Tag">
 				<MenuItem Name="WhiteMenu" Header="None" Tag ="White" Click="EditColor"/>
 				<MenuItem Name="YellowMenu" Background="Yellow" Tag ="Yellow" Click="EditColor"/>
@@ -56,6 +62,7 @@
 						<Button Name="ToggleView" Content="Toggle View" Height="30" Width="110" HorizontalContentAlignment="Center"/>
 						<Button Name="ColorMode" Content="Colormode" Height="30" Width="110" HorizontalContentAlignment="Center"/>
 						<Button Name="SelectedProject" Content="" Height="30" Width="110" Background="Green" Foreground="White" FontWeight="Bold" HorizontalContentAlignment="Center" Click="on_popup"/>
+						<Button Name="Columns" Content="Columns" Height="30" Width="110" HorizontalContentAlignment="Center"/>
 						
 						<Popup Name="PopupList" Height="200" Width="110" PlacementTarget="SelectedProject">
 							<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="200" Width="110">
@@ -70,11 +77,27 @@
 								</ListBox.ContextMenu>
 							</ListBox>
 						</Popup>
+
+						<Popup Name="PopupColumnList" Height="200" Width="110" PlacementTarget="Columns">
+							<ListBox Name="ColumnList" Height="200" Width="110">
+								<ListBoxItem Height="30"><CheckBox Content="Name"		Tag="0"		Name="Column0"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="User Tag"	Tag="1"		Name="Column1"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Color"		Tag="2"		Name="Column2"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Descr1"		Tag="3"		Name="Column3"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Descr2"		Tag="4"		Name="Column4"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Descr3"		Tag="5"		Name="Column5"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Descr4"		Tag="6"		Name="Column6"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Type"		Tag="7"		Name="Column7"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Path"		Tag="8"		Name="Column8"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+							</ListBox>
+						</Popup>
+						
+						
 					</StackPanel>
 
 
 				<DataGrid Name="DrawingGrid" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Margin="5" ItemsSource="{Binding Drawings}" RowHeight="22" SelectionMode="Extended"
-					AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow">
+					AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 					<DataGrid.Styles>
 						<Style Selector="DataGridColumnHeader">
 							<Setter Property="FontSize" Value="16"/>
@@ -88,15 +111,18 @@
 					<DataGrid.Columns>
 						<DataGridTextColumn Binding="{Binding Name, Mode=OneWay}"        Header="Name"           Width="Auto"/>
 						<DataGridTextColumn Binding="{Binding UserTag, Mode=OneWay}"     Header="User Tag"       Width="Auto"/>
+						<DataGridTextColumn Binding="{Binding Color, Mode=OneWay}"       Header="Color"			 Width="Auto"/>
 						<DataGridTextColumn Binding="{Binding Descr1, Mode=OneWay}"      Header="Description 1"  Width="Auto"/>
 						<DataGridTextColumn Binding="{Binding Descr2, Mode=OneWay}"      Header="Description 2"  Width="Auto"/>
 						<DataGridTextColumn Binding="{Binding Descr3, Mode=OneWay}"      Header="Description 3"  Width="Auto"/>
 						<DataGridTextColumn Binding="{Binding Descr4, Mode=OneWay}"      Header="Description 4"  Width="Auto"/>
+						<DataGridTextColumn Binding="{Binding Type, Mode=OneWay}"		 Header="Type"			 Width="Auto"/>
+						<DataGridTextColumn Binding="{Binding Path, Mode=OneWay}"        Header="Path"			 Width="Auto"/>
 					</DataGrid.Columns>
 				</DataGrid>
 
 				<DataGrid Name="DocumentGrid" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3" Margin="5" ItemsSource="{Binding Documents}" RowHeight="22" SelectionMode="Extended" 
-					AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow">
+					AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 					<DataGrid.Styles>
 						<Style Selector="DataGridColumnHeader">
 							<Setter Property="FontSize" Value="16"/>
@@ -108,11 +134,13 @@
 					<DataGrid.Columns>
 						<DataGridTextColumn Binding="{Binding Name, Mode=OneWay}"        Header="Name"           Width="Auto"/>
 						<DataGridTextColumn Binding="{Binding UserTag, Mode=OneWay}"     Header="User Tag"       Width="Auto"/>
+						<DataGridTextColumn Binding="{Binding Color, Mode=OneWay}"		 Header="Color"			 Width="Auto"/>
 						<DataGridTextColumn Binding="{Binding Descr1, Mode=OneWay}"      Header="Description 1"  Width="Auto"/>
 						<DataGridTextColumn Binding="{Binding Descr2, Mode=OneWay}"      Header="Description 2"  Width="Auto"/>
 						<DataGridTextColumn Binding="{Binding Descr3, Mode=OneWay}"      Header="Description 3"  Width="Auto"/>
 						<DataGridTextColumn Binding="{Binding Descr4, Mode=OneWay}"      Header="Description 4"  Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Path, Mode=OneWay}"        Header="Path"           Width="*"/>
+						<DataGridTextColumn Binding="{Binding Type, Mode=OneWay}"		 Header="Type"			 Width="Auto"/>
+						<DataGridTextColumn Binding="{Binding Path, Mode=OneWay}"        Header="Path"           Width="Auto"/>
 					</DataGrid.Columns>
 				</DataGrid>
 			</Grid>

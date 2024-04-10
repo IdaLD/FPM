@@ -22,6 +22,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Newtonsoft.Json.Bson;
 using System.Formats.Asn1;
+using Avalonia.Data;
 
 namespace Avalon.Views;
 
@@ -53,10 +54,14 @@ public partial class MainView : UserControl
         ColorMode.AddHandler(Button.ClickEvent, ToggleColormode);
         ProjectList.AddHandler(ListBox.TappedEvent, on_project_selected);
 
-        //DrawingGrid.AddHandler(DataGrid.PointerMovedEvent, test);
-        DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, start);
-        DrawingGrid.AddHandler(DataGrid.PointerReleasedEvent, end);
-        // DrawingGrid.SelectionMode 
+        Columns.AddHandler(ListBox.TappedEvent, on_drawingListPopup);
+
+
+        Columns.AddHandler(Button.ClickEvent, VisibleColumns);
+
+
+        init_columns();
+        StatusLabel.Content = "Ready";
 
     }
 
@@ -65,7 +70,48 @@ public partial class MainView : UserControl
     public bool DarkMode = false;
     public string StatusMessage = "Ready";
     public bool PopupStatus = true;
+    public bool PopupColumnList_status = true;
     public string TagInput = "";
+
+    private void init_columns()
+    {
+        int nval = DrawingGrid.Columns.Count();
+
+        for (int i = 0; i < nval; i++)
+        {
+            DrawingGrid.Columns[i].IsVisible = false;
+            DocumentGrid.Columns[i].IsVisible = false;
+        }
+
+        Column0.IsChecked = true;
+        Column1.IsChecked = true;
+        Column2.IsChecked = true;
+        Column3.IsChecked = true;
+        Column4.IsChecked = true;
+
+
+    }
+
+    private void ColumnCheck(object sender, RoutedEventArgs e)
+    {
+        var item = sender as CheckBox;
+        int column = Int32.Parse(item.Tag.ToString());
+
+        DrawingGrid.Columns[column].IsVisible = true;
+        DocumentGrid.Columns[column].IsVisible = true;
+
+    }
+
+    private void ColumnUncheck(object sender, RoutedEventArgs e)
+    {
+        var item = sender as CheckBox;
+        int column = Int32.Parse(item.Tag.ToString());
+
+        DrawingGrid.Columns[column].IsVisible = false;
+        DocumentGrid.Columns[column].IsVisible = false;
+
+    }
+
 
     private void start(object sender, EventArgs e)
     {
@@ -104,7 +150,6 @@ public partial class MainView : UserControl
         if (dataObject != null && dataObject.Color == "Red") { e.Row.Classes.Add("Red"); }
         if (dataObject != null && dataObject.Color == "Magenta") { e.Row.Classes.Add("Magenta"); }
 
-
     }
     
     public void SetTables(object sender, EventArgs e)
@@ -124,6 +169,18 @@ public partial class MainView : UserControl
 
     }
 
+
+    private void VisibleColumns(object sender, RoutedEventArgs e)
+    {
+        //Debug.WriteLine("Running");
+        //this.DrawingGrid.Columns[2].IsVisible = false;
+
+        //DataGridTextColumn textColumn = new DataGridTextColumn();
+        //textColumn.Header = "Color";
+        //textColumn.Binding = new Binding("Color");
+        //DrawingGrid.Columns.Add(textColumn);
+    }
+
     private void ToggleColormode(object sender, EventArgs e)
     {
         var window = Window.GetTopLevel(this);
@@ -138,10 +195,33 @@ public partial class MainView : UserControl
         DarkMode = !DarkMode;
     }
 
+    public void ToggleGridmode(object sender, RoutedEventArgs e)
+    {
+        var menuItem = sender as MenuItem;
+        string gridselect = menuItem.Tag.ToString();
+        DataGrid selectedGrid = null;
+
+        if (SelectedType == "Drawing") { selectedGrid = DrawingGrid; }
+        if (SelectedType == "Document") { selectedGrid = DocumentGrid; }
+
+        if (gridselect == "None"){ selectedGrid.GridLinesVisibility = DataGridGridLinesVisibility.None;}
+        if (gridselect == "Vertical") { selectedGrid.GridLinesVisibility = DataGridGridLinesVisibility.Vertical; }
+        if (gridselect == "Horizontal") { selectedGrid.GridLinesVisibility = DataGridGridLinesVisibility.Horizontal; }
+        if (gridselect == "All") { selectedGrid.GridLinesVisibility = DataGridGridLinesVisibility.All; }
+
+    }
+
+
     public void on_popup(object sender, RoutedEventArgs e)
     {
         PopupList.IsOpen = PopupStatus;
         PopupStatus = !PopupStatus;
+    }
+
+    public void on_drawingListPopup(object sender, RoutedEventArgs e)
+    {
+        PopupColumnList.IsOpen = PopupColumnList_status;
+        PopupColumnList_status = !PopupColumnList_status;
     }
 
     public void on_project_selected(object sender, RoutedEventArgs e)

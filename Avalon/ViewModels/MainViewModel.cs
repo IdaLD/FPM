@@ -42,10 +42,10 @@ public class MainViewModel : ViewModelBase
     public ObservableCollection<FileData> Drawings { get; } = new();
     public ObservableCollection<FileData> Documents { get; } = new();
     public ObservableCollection<string> Projects { get; } = new();
+    public ObservableCollection<string> Properties { get; } = new();
     public ObservableCollection<string> Status { get; } = new();
 
     public string user_tag { get; set; }
-
 
 
     public async Task LoadFile(Avalonia.Visual window)
@@ -70,6 +70,13 @@ public class MainViewModel : ViewModelBase
             Globals.storedFiles = getFiles;
             Globals.projects = getProjects;
 
+            var properties = typeof(FileData).GetProperties().ToList();
+            foreach (var property in properties)
+            {
+                string val = property.Name;
+                Debug.WriteLine(val);
+                Properties.Add(val);
+            }
             UpdateProjectList();
         }
     }
@@ -80,7 +87,7 @@ public class MainViewModel : ViewModelBase
 
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Save File"
+            Title = "Save File",
         });
 
         if (file is not null)
@@ -104,22 +111,20 @@ public class MainViewModel : ViewModelBase
 
         foreach (var file in files)
         {
-            string path = file.Path.AbsolutePath.ToString();
-
+            string path = file.Path.LocalPath;
             string[] md = GetMetadata(path);
 
             Globals.storedFiles.Add(new FileData
             {
                 Project = Globals.projects[selectedProject],
                 Type = type,
-                Path = path,                                
+                Path = path,
                 Name = System.IO.Path.GetFileNameWithoutExtension(path),
                 Descr1 = md[0],
                 Descr2 = md[1],
                 Descr3 = md[2],
                 Descr4 = md[3],
             });
-
         }
         UpdateLists(selectedProject);
     }
@@ -129,7 +134,7 @@ public class MainViewModel : ViewModelBase
         string[] tags = ["Beskrivning1 = ", "Beskrivning2 = ", "Beskrivning3 = ", "Beskrivning4 = "];
         int ntags = tags.Count();
         string[] description = new string[ntags];
-
+        Debug.WriteLine(path);
         try
         {
             string[] lines = File.ReadAllLines(path + ".md", Encoding.GetEncoding("ISO-8859-1"));
