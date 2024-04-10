@@ -26,6 +26,7 @@ using System.Collections.Frozen;
 using System.Runtime.CompilerServices;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json.Converters;
+using static System.Net.WebRequestMethods;
 
 namespace Avalon.ViewModels;
 
@@ -112,52 +113,118 @@ public class MainViewModel : ViewModelBase
         foreach (var file in files)
         {
             string path = file.Path.LocalPath;
-            string[] md = GetMetadata(path);
 
             Globals.storedFiles.Add(new FileData
             {
+                Name = System.IO.Path.GetFileNameWithoutExtension(path),
                 Project = Globals.projects[selectedProject],
                 Type = type,
-                Path = path,
-                Name = System.IO.Path.GetFileNameWithoutExtension(path),
-                Descr1 = md[0],
-                Descr2 = md[1],
-                Descr3 = md[2],
-                Descr4 = md[3],
+                Path = path
             });
         }
         UpdateLists(selectedProject);
     }
+    public void addMetadata(int selectedProject)
+    {
+        IEnumerable<FileData> filteredDraw = get_filtered_res(Globals.projects[selectedProject], "Drawing");
+        IEnumerable<FileData> filteredDoc = get_filtered_res(Globals.projects[selectedProject], "Document");
+
+        foreach (FileData file in filteredDraw)
+        {
+            string path = file.Path;
+            string[] md = GetMetadata(path);
+            int index = Drawings.IndexOf(file);
+
+            file.Handling = md[0];
+            file.Status = md[1];
+            file.Date = md[2];
+            file.DrawType = md[3];
+            file.Descr1 = md[4];
+            file.Descr2 = md[5];
+            file.Descr3 = md[6];
+            file.Descr4 = md[7];
+            file.Rev = md[8];
+            file.Path = path;
+
+            Drawings[index] = null;
+            Drawings[index] = file;
+        }
+
+        foreach (FileData file in filteredDoc)
+        {
+            string path = file.Path;
+            string[] md = GetMetadata(path);
+            int index = Documents.IndexOf(file);
+
+            file.Handling = md[0];
+            file.Status = md[1];
+            file.Date = md[2];
+            file.DrawType = md[3];
+            file.Descr1 = md[4];
+            file.Descr2 = md[5];
+            file.Descr3 = md[6];
+            file.Descr4 = md[7];
+            file.Rev = md[8];
+            file.Path = path;
+
+            Documents[index] = null;
+            Documents[index] = file;
+        }
+    }
 
     private string[] GetMetadata(string path)
     {
-        string[] tags = ["Beskrivning1 = ", "Beskrivning2 = ", "Beskrivning3 = ", "Beskrivning4 = "];
+        string[] tags = ["Handlingstyp = ", "Granskningsstatus = ", "Datum = ", "Ritningstyp = ", "Beskrivning1 = ", "Beskrivning2 = ", "Beskrivning3 = ", "Beskrivning4 = ", "Revidering = "];
         int ntags = tags.Count();
         string[] description = new string[ntags];
         Debug.WriteLine(path);
         try
         {
-            string[] lines = File.ReadAllLines(path + ".md", Encoding.GetEncoding("ISO-8859-1"));
+            string[] lines = System.IO.File.ReadAllLines(path + ".md", Encoding.GetEncoding("ISO-8859-1"));
 
+            int iter = 1;
             foreach (string line in lines)
             {
-                for (int i = 0; i < ntags; i++)
+                if (line == "[Metadata]")
                 {
-                    if (line.StartsWith(tags[i]))
+                    break;
+                }
+                iter++;
+            }
+
+
+            int start = iter;
+
+            for (int i = start; i < 50+start; i++)
+            {
+                string line = lines[i];
+                
+                if (!line.StartsWith("TRVNR"))
+                {
+                    for(int j = 0;  j < ntags; j++)
                     {
-                        description[i] = line.Replace(tags[i], "");
-                    }
-                    if (line.StartsWith(tags[i].ToUpper()))
-                    {
-                        description[i] = line.Replace(tags[i].ToUpper(), "");
+                        string tag = tags[j];
+                        if (line.StartsWith(tag))
+                        {
+                            description[j] = line.Replace(tag, "");
+                        }
+                        if (line.StartsWith(tag.ToUpper()))
+                        {
+                            description[j] = line.Replace(tag.ToUpper(), "");
+                        }
                     }
                 }
+                else
+                {
+                    break;
+                }
+
             }
             return description;
         }
         catch (Exception)
         {
-            return ["", "", "", ""];
+            return ["", "", "", "", "", "","" ,"", ""];
         }
     }
 

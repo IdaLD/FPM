@@ -54,6 +54,7 @@
 						<TextBox Name="ProjectName" Height="30" Width="110"/>
 						<Button Name="AddDrawing" Content="Add Drawing" Height="30" Width="120" HorizontalContentAlignment="Center"/>
 						<Button Name="AddDocument" Content="Add Document" Height="30" Width="120" HorizontalContentAlignment="Center"/>
+						<Button Name="FetchMetadata" Content="Fetch MD" Height="30" Width="120" HorizontalContentAlignment="Center"/>
 					</StackPanel>
 		
 					<StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
@@ -61,7 +62,7 @@
 						<Button Name="SaveFile" Content="Save"  Height="30" Width="110" HorizontalContentAlignment="Center"/>
 						<Button Name="ToggleView" Content="Toggle View" Height="30" Width="110" HorizontalContentAlignment="Center"/>
 						<Button Name="ColorMode" Content="Colormode" Height="30" Width="110" HorizontalContentAlignment="Center"/>
-						<Button Name="SelectedProject" Content="" Height="30" Width="110" Background="Green" Foreground="White" FontWeight="Bold" HorizontalContentAlignment="Center" Click="on_popup"/>
+						<Button Name="SelectedProject" Content="" Height="30" Width="110" Background="#ff0073cf" Foreground="White" FontWeight="Bold" HorizontalContentAlignment="Center" Click="on_popup"/>
 						<Button Name="Columns" Content="Columns" Height="30" Width="110" HorizontalContentAlignment="Center"/>
 						
 						<Popup Name="PopupList" Height="200" Width="110" PlacementTarget="SelectedProject">
@@ -78,17 +79,22 @@
 							</ListBox>
 						</Popup>
 
-						<Popup Name="PopupColumnList" Height="200" Width="110" PlacementTarget="Columns">
-							<ListBox Name="ColumnList" Height="200" Width="110">
-								<ListBoxItem Height="30"><CheckBox Content="Name"		Tag="0"		Name="Column0"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="User Tag"	Tag="1"		Name="Column1"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Color"		Tag="2"		Name="Column2"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Descr1"		Tag="3"		Name="Column3"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Descr2"		Tag="4"		Name="Column4"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Descr3"		Tag="5"		Name="Column5"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Descr4"		Tag="6"		Name="Column6"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Type"		Tag="7"		Name="Column7"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Path"		Tag="8"		Name="Column8"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+						<Popup Name="PopupColumnList" Height="300" Width="110" PlacementTarget="Columns">
+							<ListBox Name="ColumnList" Height="300" Width="110">
+								<ListBoxItem Height="25"><CheckBox Content="Name"		Tag="0"		Name="Column0"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="25"><CheckBox Content="User Tag"	Tag="1"		Name="Column1"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="25"><CheckBox Content="Color"		Tag="2"		Name="Column2"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="25"><CheckBox Content="Handling"	Tag="3"		Name="Column3"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="25"><CheckBox Content="Status"		Tag="4"		Name="Column4"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="25"><CheckBox Content="Date"		Tag="5"		Name="Column5"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="25"><CheckBox Content="DrawType"	Tag="6"		Name="Column6"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="25"><CheckBox Content="Descr1"		Tag="7"		Name="Column7"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="25"><CheckBox Content="Descr2"		Tag="8"		Name="Column8"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="25"><CheckBox Content="Descr3"		Tag="9"		Name="Column9"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="25"><CheckBox Content="Descr4"		Tag="10"	Name="Column10"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="25"><CheckBox Content="Rev"		Tag="11"	Name="Column11"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="25"><CheckBox Content="Type"		Tag="12"	Name="Column12"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="25"><CheckBox Content="Path"		Tag="13"	Name="Column13"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
 							</ListBox>
 						</Popup>
 						
@@ -109,15 +115,23 @@
 					</DataGrid.ContextMenu>
 
 					<DataGrid.Columns>
-						<DataGridTextColumn Binding="{Binding Name, Mode=OneWay}"        Header="Name"           Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding UserTag, Mode=OneWay}"     Header="User Tag"       Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Color, Mode=OneWay}"       Header="Color"			 Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Descr1, Mode=OneWay}"      Header="Description 1"  Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Descr2, Mode=OneWay}"      Header="Description 2"  Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Descr3, Mode=OneWay}"      Header="Description 3"  Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Descr4, Mode=OneWay}"      Header="Description 4"  Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Type, Mode=OneWay}"		 Header="Type"			 Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Path, Mode=OneWay}"        Header="Path"			 Width="Auto"/>
+						<DataGridTextColumn Binding="{Binding Name, Mode=OneWay}"        Header="Name"           Width="Auto" FontFamily="UbuntuMono"/>
+						<DataGridTextColumn Binding="{Binding UserTag, Mode=OneWay}"     Header="User Tag"       Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Color, Mode=OneWay}"       Header="Color"			 Width="Auto" FontFamily="Ubuntu"/>
+
+						<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"    Header="Handling"	   	 Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"      Header="Status"		 Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Date, Mode=OneWay}"        Header="Date"			 Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding DrawType, Mode=OneWay}"    Header="DrawType"		 Width="Auto" FontFamily="Ubuntu"/>
+						
+						<DataGridTextColumn Binding="{Binding Descr1, Mode=OneWay}"      Header="Description 1"  Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Descr2, Mode=OneWay}"      Header="Description 2"  Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Descr3, Mode=OneWay}"      Header="Description 3"  Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Descr4, Mode=OneWay}"      Header="Description 4"  Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Rev, Mode=OneWay}"		 Header="Rev"			 Width="Auto" FontFamily="Ubuntu"/>
+
+						<DataGridTextColumn Binding="{Binding Type, Mode=OneWay}"		 Header="Type"			 Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Path, Mode=OneWay}"        Header="Path"			 Width="Auto" FontFamily="Ubuntu"/>
 					</DataGrid.Columns>
 				</DataGrid>
 
@@ -132,15 +146,22 @@
 						<StaticResource ResourceKey="Menu"/>
 					</DataGrid.ContextMenu>
 					<DataGrid.Columns>
-						<DataGridTextColumn Binding="{Binding Name, Mode=OneWay}"        Header="Name"           Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding UserTag, Mode=OneWay}"     Header="User Tag"       Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Color, Mode=OneWay}"		 Header="Color"			 Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Descr1, Mode=OneWay}"      Header="Description 1"  Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Descr2, Mode=OneWay}"      Header="Description 2"  Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Descr3, Mode=OneWay}"      Header="Description 3"  Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Descr4, Mode=OneWay}"      Header="Description 4"  Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Type, Mode=OneWay}"		 Header="Type"			 Width="Auto"/>
-						<DataGridTextColumn Binding="{Binding Path, Mode=OneWay}"        Header="Path"           Width="Auto"/>
+						<DataGridTextColumn Binding="{Binding Name, Mode=OneWay}"        Header="Name"           Width="Auto" FontFamily="UbuntuMono"/>
+						<DataGridTextColumn Binding="{Binding UserTag, Mode=OneWay}"     Header="User Tag"       Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Color, Mode=OneWay}"		 Header="Color"			 Width="Auto" FontFamily="Ubuntu"/>
+
+						<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"	 Header="Handling"		 Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"		 Header="Status"		 Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Date, Mode=OneWay}"		 Header="Date"			 Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding DrawType, Mode=OneWay}"	 Header="DrawType"		 Width="Auto" FontFamily="Ubuntu"/>
+						
+						<DataGridTextColumn Binding="{Binding Descr1, Mode=OneWay}"      Header="Description 1"  Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Descr2, Mode=OneWay}"      Header="Description 2"  Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Descr3, Mode=OneWay}"      Header="Description 3"  Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Descr4, Mode=OneWay}"      Header="Description 4"  Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Rev, Mode=OneWay}"		 Header="Rev"			 Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Type, Mode=OneWay}"		 Header="Type"			 Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Path, Mode=OneWay}"        Header="Path"           Width="Auto" FontFamily="Ubuntu"/>
 					</DataGrid.Columns>
 				</DataGrid>
 			</Grid>

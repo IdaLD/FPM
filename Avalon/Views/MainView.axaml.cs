@@ -42,6 +42,7 @@ public partial class MainView : UserControl
         AddProject.AddHandler(Button.ClickEvent, on_add_project);
         AddDrawing.AddHandler(Button.ClickEvent, on_add_drawing);
         AddDocument.AddHandler(Button.ClickEvent, on_add_document);
+        FetchMetadata.AddHandler(Button.ClickEvent, on_fetch_metadata);
 
         LoadFile.AddHandler(Button.ClickEvent, on_load_file);
         SaveFile.AddHandler(Button.ClickEvent, on_save_file);
@@ -62,6 +63,8 @@ public partial class MainView : UserControl
 
         init_columns();
         StatusLabel.Content = "Ready";
+
+        //dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=True -p:TrimMode=link --output ./MyTargetFolder Avalon.sln
 
     }
 
@@ -331,6 +334,17 @@ public partial class MainView : UserControl
         int currentProject = ProjectList.SelectedIndex;
         var ctx = (MainViewModel)this.DataContext;
         ctx.AddFile("Drawing", currentProject, this);
+    }
+
+    private void on_fetch_metadata(object sender,EventArgs e)
+    {
+
+        StatusLabel.Content = "Fetching";
+        int currentProject = ProjectList.SelectedIndex;
+        var ctx = (MainViewModel)this.DataContext;
+        ctx.addMetadata(currentProject);
+        StatusLabel.Content = "Ready";
+
     }
 
     private void on_open_path(object sender, RoutedEventArgs e)
