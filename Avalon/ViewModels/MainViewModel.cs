@@ -27,6 +27,8 @@ using System.Runtime.CompilerServices;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json.Converters;
 using static System.Net.WebRequestMethods;
+using Avalonia.Threading;
+using System.Threading;
 
 namespace Avalon.ViewModels;
 
@@ -47,7 +49,7 @@ public class MainViewModel : ViewModelBase
     public ObservableCollection<string> Status { get; } = new();
 
     public string user_tag { get; set; }
-
+    public List<string[]> metastore = new List<string[]>();
 
     public async Task LoadFile(Avalonia.Visual window)
     {
@@ -124,15 +126,21 @@ public class MainViewModel : ViewModelBase
         }
         UpdateLists(selectedProject);
     }
-    public void addMetadata(int selectedProject)
+
+
+    public void SetMetadata(int selectedProject)
     {
         IEnumerable<FileData> filteredDraw = get_filtered_res(Globals.projects[selectedProject], "Drawing");
         IEnumerable<FileData> filteredDoc = get_filtered_res(Globals.projects[selectedProject], "Document");
 
+        int iter = 0;
         foreach (FileData file in filteredDraw)
         {
             string path = file.Path;
-            string[] md = GetMetadata(path);
+            Debug.WriteLine(iter);
+            string[] md = metastore[iter];
+            //string[] md = GetMetadata(path);
+
             int index = Drawings.IndexOf(file);
 
             file.Handling = md[0];
@@ -148,88 +156,99 @@ public class MainViewModel : ViewModelBase
 
             Drawings[index] = null;
             Drawings[index] = file;
+
+            iter++;
         }
 
+
+        
+    }
+
+    public void GetMetadata(int selectedProject)
+    {
+
+        IEnumerable<FileData> filteredDraw = get_filtered_res(Globals.projects[selectedProject], "Drawing");
+        IEnumerable<FileData> filteredDoc = get_filtered_res(Globals.projects[selectedProject], "Document");
+
+        List<string> mdDrawingPath = new List<string>();
+        List<string> mdDocumentPath = new List<string>();
+       
+
+        foreach (FileData file in filteredDraw)
+        {
+            mdDrawingPath.Add(file.Path.ToString());
+        }
         foreach (FileData file in filteredDoc)
         {
-            string path = file.Path;
-            string[] md = GetMetadata(path);
-            int index = Documents.IndexOf(file);
-
-            file.Handling = md[0];
-            file.Status = md[1];
-            file.Date = md[2];
-            file.DrawType = md[3];
-            file.Descr1 = md[4];
-            file.Descr2 = md[5];
-            file.Descr3 = md[6];
-            file.Descr4 = md[7];
-            file.Rev = md[8];
-            file.Path = path;
-
-            Documents[index] = null;
-            Documents[index] = file;
+            mdDocumentPath.Add(file.Path.ToString());
         }
-    }
 
-    private string[] GetMetadata(string path)
-    {
         string[] tags = ["Handlingstyp = ", "Granskningsstatus = ", "Datum = ", "Ritningstyp = ", "Beskrivning1 = ", "Beskrivning2 = ", "Beskrivning3 = ", "Beskrivning4 = ", "Revidering = "];
         int ntags = tags.Count();
-        string[] description = new string[ntags];
-        Debug.WriteLine(path);
-        try
+
+        List<string[]> metadata = new List<string[]>();
+
+        foreach (string path in mdDrawingPath)
         {
-            string[] lines = System.IO.File.ReadAllLines(path + ".md", Encoding.GetEncoding("ISO-8859-1"));
-
-            int iter = 1;
-            foreach (string line in lines)
+            string[] description = new string[ntags];
+            try
             {
-                if (line == "[Metadata]")
+                string[] lines = System.IO.File.ReadAllLines(path + ".md", Encoding.GetEncoding("ISO-8859-1"));
+
+                int iter = 1;
+                foreach (string line in lines)
                 {
-                    break;
-                }
-                iter++;
-            }
-
-
-            int start = iter;
-
-            for (int i = start; i < 50+start; i++)
-            {
-                string line = lines[i];
-                
-                if (!line.StartsWith("TRVNR"))
-                {
-                    for(int j = 0;  j < ntags; j++)
+                    if (line == "[Metadata]")
                     {
-                        string tag = tags[j];
-                        if (line.StartsWith(tag))
+                        break;
+                    }
+                    iter++;
+                }
+
+
+                int start = iter;
+
+                for (int i = start; i < 50 + start; i++)
+                {
+                    string line = lines[i];
+
+                    if (!line.StartsWith("TRVNR"))
+                    {
+                        for (int j = 0; j < ntags; j++)
                         {
-                            description[j] = line.Replace(tag, "");
-                        }
-                        if (line.StartsWith(tag.ToUpper()))
-                        {
-                            description[j] = line.Replace(tag.ToUpper(), "");
+                            string tag = tags[j];
+                            if (line.StartsWith(tag))
+                            {
+                                description[j] = line.Replace(tag, "");
+                            }
+                            if (line.StartsWith(tag.ToUpper()))
+                            {
+                                description[j] = line.Replace(tag.ToUpper(), "");
+                            }
                         }
                     }
-                }
-                else
-                {
-                    break;
-                }
+                    else
+                    {
+                        break;
+                    }
 
+                }
+                metastore.Add(description);
             }
-            return description;
+            catch (Exception)
+            {
+                metastore.Add(["", "", "", "", "", "", "", "", ""]);
+            }
+            
         }
-        catch (Exception)
-        {
-            return ["", "", "", "", "", "","" ,"", ""];
-        }
+      
     }
 
-    public void OpenFile(IList drawings, IList documents, string SelectedType)
+
+    public void OpenFile(IList drawings, IList documents, string SelectedType, string openType)
     {
+        string ending = "";
+        if (openType == "MD") { ending = ".md"; }
         try
         {
             if (SelectedType == "Drawing")
@@ -237,7 +256,7 @@ public class MainViewModel : ViewModelBase
                 foreach (FileData drawing in drawings)
                 {
                     ProcessStartInfo psi = new ProcessStartInfo();
-                    psi.FileName = drawing.Path;
+                    psi.FileName = drawing.Path + ending;
                     psi.UseShellExecute = true;
                     Process.Start(psi);
                 }
@@ -247,7 +266,7 @@ public class MainViewModel : ViewModelBase
                 foreach (FileData document in documents)
                 {
                     ProcessStartInfo psi = new ProcessStartInfo();
-                    psi.FileName = document.Path;
+                    psi.FileName = document.Path + ending;
                     psi.UseShellExecute = true;
                     Process.Start(psi);
                 }
@@ -283,8 +302,8 @@ public class MainViewModel : ViewModelBase
         foreach (FileData file in filesToReplace) 
         {
             int index = collection.IndexOf(file);
-            file.Color = color;
             collection[index] = null;
+            file.Color = color;
             collection[index] = file;
         }
     }
@@ -302,9 +321,9 @@ public class MainViewModel : ViewModelBase
         foreach (FileData file in filesToReplace)
         {
             int index = collection.IndexOf(file);
+            collection[index] = null;
             file.Color = "";
             file.UserTag = "";
-            collection[index] = null;
             collection[index] = file;
         }
     }
@@ -325,8 +344,8 @@ public class MainViewModel : ViewModelBase
         foreach (FileData file in filesToReplace)
         {
             int index = Collection.IndexOf(file);
-            file.UserTag = Tag;
             Collection[index] = null;
+            file.UserTag = Tag;
             Collection[index] = file;
         }
     }

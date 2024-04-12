@@ -23,6 +23,10 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Newtonsoft.Json.Bson;
 using System.Formats.Asn1;
 using Avalonia.Data;
+using System.Threading;
+using Avalonia.Controls.Shapes;
+using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace Avalon.Views;
 
@@ -53,15 +57,21 @@ public partial class MainView : UserControl
 
         ToggleView.AddHandler(Button.ClickEvent, SetTables);
         ColorMode.AddHandler(Button.ClickEvent, ToggleColormode);
+
         ProjectList.AddHandler(ListBox.TappedEvent, on_project_selected);
 
+        //SelectedProject.AddHandler(Button.PointerEnteredEvent, on_popup);
+        //ProjectList.AddHandler(ListBox.PointerExitedEvent, on_popup);
+
+        ColumnList.AddHandler(ListBox.PointerExitedEvent, on_drawingListPopup);
+        //Columns.AddHandler(ListBox.PointerEnteredEvent, on_drawingListPopup);
         Columns.AddHandler(ListBox.TappedEvent, on_drawingListPopup);
 
 
-        Columns.AddHandler(Button.ClickEvent, VisibleColumns);
-
+        
 
         init_columns();
+        
         StatusLabel.Content = "Ready";
 
         //dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=True -p:TrimMode=link --output ./MyTargetFolder Avalon.sln
@@ -76,6 +86,8 @@ public partial class MainView : UserControl
     public bool PopupColumnList_status = true;
     public string TagInput = "";
 
+    
+
     private void init_columns()
     {
         int nval = DrawingGrid.Columns.Count();
@@ -88,10 +100,12 @@ public partial class MainView : UserControl
 
         Column0.IsChecked = true;
         Column1.IsChecked = true;
-        Column2.IsChecked = true;
-        Column3.IsChecked = true;
-        Column4.IsChecked = true;
 
+        Column5.IsChecked = true;
+        Column6.IsChecked = true;
+        Column7.IsChecked = true;
+        Column8.IsChecked = true;
+        Column9.IsChecked = true;
 
     }
 
@@ -113,17 +127,6 @@ public partial class MainView : UserControl
         DrawingGrid.Columns[column].IsVisible = false;
         DocumentGrid.Columns[column].IsVisible = false;
 
-    }
-
-
-    private void start(object sender, EventArgs e)
-    {
-        Debug.WriteLine("start");
-    }
-
-    private void end(object sender, EventArgs e)
-    {
-        Debug.WriteLine("end");
     }
 
     void on_project_refresh(object sender, EventArgs e)
@@ -170,18 +173,6 @@ public partial class MainView : UserControl
         
         ViewMode = !ViewMode;
 
-    }
-
-
-    private void VisibleColumns(object sender, RoutedEventArgs e)
-    {
-        //Debug.WriteLine("Running");
-        //this.DrawingGrid.Columns[2].IsVisible = false;
-
-        //DataGridTextColumn textColumn = new DataGridTextColumn();
-        //textColumn.Header = "Color";
-        //textColumn.Binding = new Binding("Color");
-        //DrawingGrid.Columns.Add(textColumn);
     }
 
     private void ToggleColormode(object sender, EventArgs e)
@@ -336,16 +327,37 @@ public partial class MainView : UserControl
         ctx.AddFile("Drawing", currentProject, this);
     }
 
-    private void on_fetch_metadata(object sender,EventArgs e)
-    {
 
-        StatusLabel.Content = "Fetching";
+    private void on_fetch_metadata(object sender, EventArgs e)
+    {
+        StatusLabel.Content = "Fetching metadata...";
+        var ctx = (MainViewModel)this.DataContext;
+
+        BackgroundWorker bw = new BackgroundWorker();
+        bw.DoWork += Bw_DoWork;
+        bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
+
+        bw.RunWorkerAsync(ctx);
+    }
+
+    private void Bw_DoWork(object sender, DoWorkEventArgs e)
+    {
+        int currentProject = ProjectList.SelectedIndex;
+        var ctx = e.Argument as MainViewModel;
+        ctx.GetMetadata(currentProject);
+    }
+
+    private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
         int currentProject = ProjectList.SelectedIndex;
         var ctx = (MainViewModel)this.DataContext;
-        ctx.addMetadata(currentProject);
+        ctx.SetMetadata(currentProject);
         StatusLabel.Content = "Ready";
-
     }
+
+
+
+
 
     private void on_open_path(object sender, RoutedEventArgs e)
     {
@@ -372,12 +384,27 @@ public partial class MainView : UserControl
             IList documents = DocumentGrid.SelectedItems;
 
             var ctx = (MainViewModel)this.DataContext;
-            ctx.OpenFile(drawings, documents, SelectedType);
+            ctx.OpenFile(drawings, documents, SelectedType,"PDF");
 
             StatusLabel.Content = "Ready";
         }
-        
     }
+
+    private void on_open_metafile(object sender, RoutedEventArgs e)
+    {
+        if (StatusLabel.Content == "Ready")
+        {
+            StatusLabel.Content = "Opening metafile";
+            IList drawings = DrawingGrid.SelectedItems;
+            IList documents = DocumentGrid.SelectedItems;
+
+            var ctx = (MainViewModel)this.DataContext;
+            ctx.OpenFile(drawings, documents, SelectedType,"MD");
+
+            StatusLabel.Content = "Ready";
+        }
+    }
+
     private async void on_load_file(object sender, RoutedEventArgs e)
     {
         StatusLabel.Content = "Loading file";
