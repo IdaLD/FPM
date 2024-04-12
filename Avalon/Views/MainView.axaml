@@ -13,6 +13,7 @@
 			<MenuItem Name="OpenPathMenu" Header="Open Path" Click="on_open_path"/>
 			<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile"/>
 			<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="on_remove_files"/>
+			<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch metadata" Click="on_fetch_single_meta"/>
 			<MenuItem Name="GridLines" Header="Gridlines">
 				<MenuItem Name="None" Header="None" Tag ="None" Click="ToggleGridmode"/>
 				<MenuItem Name="Vertical" Header="Vertical" Tag ="Vertical" Click="ToggleGridmode"/>
@@ -43,11 +44,13 @@
   </Design.DataContext>
 			<Grid Name ="MainGrid" ColumnDefinitions="1*,1*,1*" RowDefinitions="40,40,8*,5*" Margin="10">	
 					<StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="5">
+						<ProgressBar Name="ProgressBar" Width="200" Value="{Binding Status}"/>
+						<Label Name="ProgressStatus" Height="30" Width="200" HorizontalContentAlignment="Left"/>
 						<ToggleSwitch Name="Lockedstatus" Width="110" HorizontalContentAlignment="Center"/>
 					</StackPanel>
 
 				<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical">
-					<Label Name="StatusLabel" Height="30" Width="200" />
+					<Label Name="StatusLabel" Height="30" Width="200" HorizontalContentAlignment="Center"/>
 				</StackPanel>
 		
 					<StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="5">

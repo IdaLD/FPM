@@ -46,7 +46,7 @@ public partial class MainView : UserControl
         AddProject.AddHandler(Button.ClickEvent, on_add_project);
         AddDrawing.AddHandler(Button.ClickEvent, on_add_drawing);
         AddDocument.AddHandler(Button.ClickEvent, on_add_document);
-        FetchMetadata.AddHandler(Button.ClickEvent, on_fetch_metadata);
+        FetchMetadata.AddHandler(Button.ClickEvent, on_fetch_full_meta);
 
         LoadFile.AddHandler(Button.ClickEvent, on_load_file);
         SaveFile.AddHandler(Button.ClickEvent, on_save_file);
@@ -86,7 +86,9 @@ public partial class MainView : UserControl
     public bool PopupColumnList_status = true;
     public string TagInput = "";
 
-    
+    private BackgroundWorker bw = new BackgroundWorker();
+
+
 
     private void init_columns()
     {
@@ -327,32 +329,75 @@ public partial class MainView : UserControl
         ctx.AddFile("Drawing", currentProject, this);
     }
 
-
-    private void on_fetch_metadata(object sender, EventArgs e)
+    private void on_fetch_single_meta(object sender, RoutedEventArgs e)
     {
-        StatusLabel.Content = "Fetching metadata...";
+        ProgressStatus.Content = "Fetching Metadata";
+        IList drawings = DrawingGrid.SelectedItems;
+        IList documents = DocumentGrid.SelectedItems;
+
+        var ctx = (MainViewModel)this.DataContext;
+        ctx.SelectFiles(true, drawings, documents, SelectedType);
+        on_fetch_metadata();
+
+        Debug.WriteLine(ctx.GetNrSelectedFiles());
+    }
+    private void on_fetch_full_meta(object sender, RoutedEventArgs e)
+    {
+        ProgressStatus.Content = "Fetching Metadata";
+
+        var ctx = (MainViewModel)this.DataContext;
+        ctx.SelectFiles(false, null, null, null);
+        
+        on_fetch_metadata();
+    }
+
+
+    private void on_fetch_metadata()
+    {
+        //StatusLabel.Content = "Fetching metadata...";
+
         var ctx = (MainViewModel)this.DataContext;
 
-        BackgroundWorker bw = new BackgroundWorker();
+
+        //BackgroundWorker bw = new BackgroundWorker();
         bw.DoWork += Bw_DoWork;
+        //bw.ReportProgress += Bw_progress;
+        bw.WorkerReportsProgress = true;
+        bw.ProgressChanged += Bw_progress;
         bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
 
         bw.RunWorkerAsync(ctx);
+        
     }
 
     private void Bw_DoWork(object sender, DoWorkEventArgs e)
     {
-        int currentProject = ProjectList.SelectedIndex;
         var ctx = e.Argument as MainViewModel;
-        ctx.GetMetadata(currentProject);
+        int nPaths = ctx.GetNrSelectedFiles();
+
+        for (int k = 0; k < nPaths; k++)
+        {
+            Debug.WriteLine("iter: " + k);
+            ctx.GetMetadata(k);
+
+            int percentage = (k + 1) * 100 / nPaths;
+            bw.ReportProgress(percentage);
+        }
+    }
+
+    private void Bw_progress(object sender, ProgressChangedEventArgs e)
+    {
+        ProgressBar.Value = e.ProgressPercentage;
+        //Debug.WriteLine(e.ProgressPercentage.ToString());
+        
     }
 
     private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
-        int currentProject = ProjectList.SelectedIndex;
         var ctx = (MainViewModel)this.DataContext;
-        ctx.SetMetadata(currentProject);
-        StatusLabel.Content = "Ready";
+        ctx.SetMetadata();
+        ProgressStatus.Content = "Fetching Complete";
+        
     }
 
 

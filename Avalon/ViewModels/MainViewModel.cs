@@ -29,6 +29,8 @@ using Newtonsoft.Json.Converters;
 using static System.Net.WebRequestMethods;
 using Avalonia.Threading;
 using System.Threading;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Diagnostics.Metrics;
 
 namespace Avalon.ViewModels;
 
@@ -47,10 +49,14 @@ public class MainViewModel : ViewModelBase
     public ObservableCollection<string> Projects { get; } = new();
     public ObservableCollection<string> Properties { get; } = new();
     public ObservableCollection<string> Status { get; } = new();
+    public ObservableCounter<int> Progress { get; set; } 
+
+
 
     public string user_tag { get; set; }
-    public List<string[]> metastore = new List<string[]>();
 
+    public List<string[]> metastore = new List<string[]>();
+    public List<(string, string)> PathStore = new List<(string, string)>();
     public async Task LoadFile(Avalonia.Visual window)
     {
         Debug.WriteLine("Loading file");
@@ -81,6 +87,7 @@ public class MainViewModel : ViewModelBase
                 Properties.Add(val);
             }
             UpdateProjectList();
+
         }
     }
 
@@ -127,121 +134,138 @@ public class MainViewModel : ViewModelBase
         UpdateLists(selectedProject);
     }
 
-
-    public void SetMetadata(int selectedProject)
+    public void SelectFiles(bool singleMode, IList drawings, IList documents, string SelectedType)
     {
-        IEnumerable<FileData> filteredDraw = get_filtered_res(Globals.projects[selectedProject], "Drawing");
-        IEnumerable<FileData> filteredDoc = get_filtered_res(Globals.projects[selectedProject], "Document");
+        metastore.Clear();
+        PathStore.Clear();
 
-        int iter = 0;
-        foreach (FileData file in filteredDraw)
+        IList selectedDrawings = null;
+        IList selectedDocuments = null;
+
+        if (singleMode == true)
         {
-            string path = file.Path;
-            Debug.WriteLine(iter);
-            string[] md = metastore[iter];
-            //string[] md = GetMetadata(path);
-
-            int index = Drawings.IndexOf(file);
-
-            file.Handling = md[0];
-            file.Status = md[1];
-            file.Date = md[2];
-            file.DrawType = md[3];
-            file.Descr1 = md[4];
-            file.Descr2 = md[5];
-            file.Descr3 = md[6];
-            file.Descr4 = md[7];
-            file.Rev = md[8];
-            file.Path = path;
-
-            Drawings[index] = null;
-            Drawings[index] = file;
-
-            iter++;
+            if (SelectedType == "Drawing")
+            {
+                selectedDrawings = drawings;
+            }
+            if (SelectedType == "Document")
+            {
+                selectedDocuments = documents;
+            }
+        }
+        if (singleMode == false)
+        {
+            selectedDrawings = Drawings;
+            selectedDocuments = Documents;
         }
 
+        if (selectedDrawings != null)
+        {
+            foreach (FileData file in selectedDrawings) { PathStore.Add(("Drawing", file.Path)); }
+        }
+        if (selectedDocuments != null)
+        {
+            foreach (FileData file in selectedDocuments) { PathStore.Add(("Document", file.Path)); }
+        }
 
+        Debug.WriteLine("Stored paths: " + PathStore.Count());
         
     }
 
-    public void GetMetadata(int selectedProject)
+    public int GetNrSelectedFiles()
     {
+        return PathStore.Count();
+    }
 
-        IEnumerable<FileData> filteredDraw = get_filtered_res(Globals.projects[selectedProject], "Drawing");
-        IEnumerable<FileData> filteredDoc = get_filtered_res(Globals.projects[selectedProject], "Document");
+    public void SetMetadata()
+    {
+        IList items = null;
+        FileData file = null;
 
-        List<string> mdDrawingPath = new List<string>();
-        List<string> mdDocumentPath = new List<string>();
-       
-
-        foreach (FileData file in filteredDraw)
+        int nSelected = PathStore.Count();
+        for (int i = 0; i < nSelected; i++)
         {
-            mdDrawingPath.Add(file.Path.ToString());
-        }
-        foreach (FileData file in filteredDoc)
-        {
-            mdDocumentPath.Add(file.Path.ToString());
-        }
+            if (PathStore[i].Item1 == "Drawing")
+            {
+                items = Drawings;
+                file = Drawings.First(x => x.Path == PathStore[i].Item2);
+            }
+            if (PathStore[i].Item1 == "Document")
+            {
+                items = Documents;
+                file = Documents.First(x => x.Path == PathStore[i].Item2);
+            }
 
+            string path         = file.Path;
+            string[] md         = metastore[i];
+
+            int index           = items.IndexOf(file);
+
+            file.Handling       = md[0];
+            file.Status         = md[1];
+            file.Date           = md[2];
+            file.DrawType       = md[3];
+            file.Descr1         = md[4];
+            file.Descr2         = md[5];
+            file.Descr3         = md[6];
+            file.Descr4         = md[7];
+            file.Rev            = md[8];
+            file.Path           = path;
+
+            items[index] = null;
+            items[index] = file;
+        }
+    }
+
+    public void GetMetadata(int k)
+    {
         string[] tags = ["Handlingstyp = ", "Granskningsstatus = ", "Datum = ", "Ritningstyp = ", "Beskrivning1 = ", "Beskrivning2 = ", "Beskrivning3 = ", "Beskrivning4 = ", "Revidering = "];
         int ntags = tags.Count();
 
+        Debug.WriteLine("Getting");
+
         List<string[]> metadata = new List<string[]>();
 
-        foreach (string path in mdDrawingPath)
+        string path = PathStore[k].Item2;
+        string[] description = new string[ntags];
+        try
         {
-            string[] description = new string[ntags];
-            try
+            string[] lines = System.IO.File.ReadAllLines(path + ".md", Encoding.GetEncoding("ISO-8859-1"));
+
+            int iter = 1;
+            int start = 100;
+            int end = 0;
+            foreach (string line in lines)
             {
-                string[] lines = System.IO.File.ReadAllLines(path + ".md", Encoding.GetEncoding("ISO-8859-1"));
+                if (line == "[Metadata]"){start = iter;}
+                if (line.Trim().Length == 0 || iter > start ){end = iter; }
+                iter++;
+            }
 
-                int iter = 1;
-                foreach (string line in lines)
+            for (int i = start + 1; i < end; i++)
+            {
+                string line = lines[i];
+                for (int j = 0; j < ntags; j++)
                 {
-                    if (line == "[Metadata]")
+                    string tag = tags[j];
+                    if (line.StartsWith(tag))
                     {
-                        break;
+                        description[j] = line.Replace(tag, "");
                     }
-                    iter++;
-                }
-
-
-                int start = iter;
-
-                for (int i = start; i < 50 + start; i++)
-                {
-                    string line = lines[i];
-
-                    if (!line.StartsWith("TRVNR"))
+                    if (line.StartsWith(tag.ToUpper()))
                     {
-                        for (int j = 0; j < ntags; j++)
-                        {
-                            string tag = tags[j];
-                            if (line.StartsWith(tag))
-                            {
-                                description[j] = line.Replace(tag, "");
-                            }
-                            if (line.StartsWith(tag.ToUpper()))
-                            {
-                                description[j] = line.Replace(tag.ToUpper(), "");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        break;
+                        description[j] = line.Replace(tag.ToUpper(), "");
                     }
 
                 }
-                metastore.Add(description);
             }
-            catch (Exception)
-            {
-                metastore.Add(["", "", "", "", "", "", "", "", ""]);
-            }
-            
+            metastore.Add(description);
         }
-      
+        catch (Exception)
+        {
+            metastore.Add(["", "", "", "", "", "", "", "", ""]);
+        }
+        
     }
 
 
