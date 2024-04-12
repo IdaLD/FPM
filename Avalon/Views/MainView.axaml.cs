@@ -71,7 +71,9 @@ public partial class MainView : UserControl
         
 
         init_columns();
-        
+        init_bw();
+
+
         StatusLabel.Content = "Ready";
 
         //dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=True -p:TrimMode=link --output ./MyTargetFolder Avalon.sln
@@ -109,6 +111,13 @@ public partial class MainView : UserControl
         Column8.IsChecked = true;
         Column9.IsChecked = true;
 
+    }
+    private void init_bw()
+    {
+        bw.DoWork += Bw_DoWork;
+        bw.WorkerReportsProgress = true;
+        bw.ProgressChanged += Bw_progress;
+        bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
     }
 
     private void ColumnCheck(object sender, RoutedEventArgs e)
@@ -310,7 +319,6 @@ public partial class MainView : UserControl
         ctx.rename_project(currentProject, newName);
         if (currentProject == ProjectList.ItemCount - 1)
         {
-            Debug.WriteLine("Last");
             SelectedProject.Content = newName;
         }
     }
@@ -338,8 +346,6 @@ public partial class MainView : UserControl
         var ctx = (MainViewModel)this.DataContext;
         ctx.SelectFiles(true, drawings, documents, SelectedType);
         on_fetch_metadata();
-
-        Debug.WriteLine(ctx.GetNrSelectedFiles());
     }
     private void on_fetch_full_meta(object sender, RoutedEventArgs e)
     {
@@ -358,14 +364,6 @@ public partial class MainView : UserControl
 
         var ctx = (MainViewModel)this.DataContext;
 
-
-        //BackgroundWorker bw = new BackgroundWorker();
-        bw.DoWork += Bw_DoWork;
-        //bw.ReportProgress += Bw_progress;
-        bw.WorkerReportsProgress = true;
-        bw.ProgressChanged += Bw_progress;
-        bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
-
         bw.RunWorkerAsync(ctx);
         
     }
@@ -377,7 +375,6 @@ public partial class MainView : UserControl
 
         for (int k = 0; k < nPaths; k++)
         {
-            Debug.WriteLine("iter: " + k);
             ctx.GetMetadata(k);
 
             int percentage = (k + 1) * 100 / nPaths;
@@ -388,8 +385,6 @@ public partial class MainView : UserControl
     private void Bw_progress(object sender, ProgressChangedEventArgs e)
     {
         ProgressBar.Value = e.ProgressPercentage;
-        //Debug.WriteLine(e.ProgressPercentage.ToString());
-        
     }
 
     private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

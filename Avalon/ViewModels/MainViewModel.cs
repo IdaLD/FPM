@@ -59,7 +59,6 @@ public class MainViewModel : ViewModelBase
     public List<(string, string)> PathStore = new List<(string, string)>();
     public async Task LoadFile(Avalonia.Visual window)
     {
-        Debug.WriteLine("Loading file");
         var topLevel = TopLevel.GetTopLevel(window);
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
@@ -83,7 +82,6 @@ public class MainViewModel : ViewModelBase
             foreach (var property in properties)
             {
                 string val = property.Name;
-                Debug.WriteLine(val);
                 Properties.Add(val);
             }
             UpdateProjectList();
@@ -167,9 +165,6 @@ public class MainViewModel : ViewModelBase
         {
             foreach (FileData file in selectedDocuments) { PathStore.Add(("Document", file.Path)); }
         }
-
-        Debug.WriteLine("Stored paths: " + PathStore.Count());
-        
     }
 
     public int GetNrSelectedFiles()
@@ -221,8 +216,6 @@ public class MainViewModel : ViewModelBase
     {
         string[] tags = ["Handlingstyp = ", "Granskningsstatus = ", "Datum = ", "Ritningstyp = ", "Beskrivning1 = ", "Beskrivning2 = ", "Beskrivning3 = ", "Beskrivning4 = ", "Revidering = "];
         int ntags = tags.Count();
-
-        Debug.WriteLine("Getting");
 
         List<string[]> metadata = new List<string[]>();
 
@@ -308,7 +301,6 @@ public class MainViewModel : ViewModelBase
 
         foreach (FileData item in items)
         {
-            Debug.WriteLine(item.Path);
             Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(item.Path));
         }
     }
