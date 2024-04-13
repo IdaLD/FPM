@@ -47,12 +47,15 @@
 	
 			<Grid Name ="MainGrid" ColumnDefinitions="*" RowDefinitions="40,40,8*,5*" Margin="10" >
 
-				<DockPanel Width="130" HorizontalAlignment="Left">
+				<DockPanel Width="180" HorizontalAlignment="Left">
 					<Menu DockPanel.Dock="Top">
 						<MenuItem Header="File">
 							<MenuItem Header="Load" Click="on_load_file"/>
-							<Separator/>
 							<MenuItem Header="Save" Click="on_save_file"/>
+						</MenuItem>
+						<MenuItem Header="Add">
+							<MenuItem Header="Drawing" Click="on_add_drawing"/>
+							<MenuItem Header="Document" Click="on_add_document"/>
 						</MenuItem>
 						<MenuItem Header="Settings">
 							<MenuItem Header="Color mode" Click="on_toggle_colormode"/>
@@ -63,13 +66,13 @@
 				</DockPanel>
 
 					<StackPanel Grid.Row="0" Orientation="Vertical" Spacing="10" Margin="5">
-						<Label Name="StatusLabel" Height="30" Width="200" HorizontalContentAlignment="Center"/>
+						<Label Name="StatusLabel" Height="30" Width="200" HorizontalContentAlignment="Center" IsHitTestVisible="False"/>
 					</StackPanel>
 				
-					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="150,5,5,5">
+					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="180,5,5,5">
 						<ToggleSwitch Name="Lockedstatus" Width="80" HorizontalContentAlignment="Center"/>
 						<ProgressBar Name="ProgressBar" Width="200" Value="{Binding Status}"/>
-						<Label Name="ProgressStatus" Height="30" Width="200" HorizontalContentAlignment="Left"/>
+						<Label Name="ProgressStatus" Height="30" Width="200" HorizontalContentAlignment="Left" IsHitTestVisible="False"/>
 					</StackPanel>
 
 
@@ -77,8 +80,6 @@
 					<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="5">
 						<Button Name="AddProject" Content="New Project" Height="30" Width="110" HorizontalContentAlignment="Center"/>
 						<TextBox Name="ProjectName" Height="30" Width="110"/>
-						<Button Name="AddDrawing" Content="Add Drawing" Height="30" Width="120" HorizontalContentAlignment="Center"/>
-						<Button Name="AddDocument" Content="Add Document" Height="30" Width="120" HorizontalContentAlignment="Center"/>
 						<Button Name="FetchMetadata" Content="Fetch MD" Height="30" Width="120" HorizontalContentAlignment="Center"/>
 					</StackPanel>
 		

@@ -46,8 +46,6 @@ public partial class MainView : UserControl
         DocumentGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
 
         AddProject.AddHandler(Button.ClickEvent, on_add_project);
-        AddDrawing.AddHandler(Button.ClickEvent, on_add_drawing);
-        AddDocument.AddHandler(Button.ClickEvent, on_add_document);
         FetchMetadata.AddHandler(Button.ClickEvent, on_fetch_full_meta);
 
         DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDrawingGridSelected);
@@ -348,14 +346,14 @@ public partial class MainView : UserControl
         }
     }
 
-    private void on_add_document(object sender, EventArgs e)
+    private void on_add_document(object sender, RoutedEventArgs e)
     {
         int currentProject = ProjectList.SelectedIndex;
         var ctx = (MainViewModel)this.DataContext;
         ctx.AddFile("Document", currentProject, this);
     }
 
-    private void on_add_drawing(object sender, EventArgs e)
+    private void on_add_drawing(object sender, RoutedEventArgs e)
     {
         int currentProject = ProjectList.SelectedIndex;
         var ctx = (MainViewModel)this.DataContext;
@@ -385,12 +383,8 @@ public partial class MainView : UserControl
 
     private void on_fetch_metadata()
     {
-        //StatusLabel.Content = "Fetching metadata...";
-
         var ctx = (MainViewModel)this.DataContext;
-
         bw.RunWorkerAsync(ctx);
-        
     }
 
     private void Bw_DoWork(object sender, DoWorkEventArgs e)
@@ -417,11 +411,8 @@ public partial class MainView : UserControl
         var ctx = (MainViewModel)this.DataContext;
         ctx.SetMetadata();
         ProgressStatus.Content = "";
-        
+        ProgressBar.Value = 0;
     }
-
-
-
 
 
     private void on_open_path(object sender, RoutedEventArgs e)

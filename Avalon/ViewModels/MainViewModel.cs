@@ -109,28 +109,32 @@ public class MainViewModel : ViewModelBase
 
     public async Task AddFile(string type, int selectedProject, Avalonia.Visual window)
     {
-        var topLevel = TopLevel.GetTopLevel(window);
-        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        if (Globals.projects.Count > 0)
         {
-            Title = "Add File",
-            FileTypeFilter = new[] {FilePickerFileTypes.Pdf},
-            AllowMultiple = true
-        });
-
-        foreach (var file in files)
-        {
-            string path = file.Path.LocalPath;
-
-            Globals.storedFiles.Add(new FileData
+            var topLevel = TopLevel.GetTopLevel(window);
+            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Name = System.IO.Path.GetFileNameWithoutExtension(path),
-                Project = Globals.projects[selectedProject],
-                Type = type,
-                Path = path
+                Title = "Add File",
+                FileTypeFilter = new[] { FilePickerFileTypes.Pdf },
+                AllowMultiple = true
             });
+
+            foreach (var file in files)
+            {
+                string path = file.Path.LocalPath;
+
+                Globals.storedFiles.Add(new FileData
+                {
+                    Name = System.IO.Path.GetFileNameWithoutExtension(path),
+                    Project = Globals.projects[selectedProject],
+                    Type = type,
+                    Path = path
+                });
+            }
+            UpdateLists(selectedProject);
         }
-        UpdateLists(selectedProject);
     }
+
 
     public void SelectFiles(bool singleMode, IList drawings, IList documents, string SelectedType)
     {
@@ -384,7 +388,7 @@ public class MainViewModel : ViewModelBase
 
     public void remove_project(int projectIndex)
     {
-        if (Globals.projects.Count > 0)
+        if (Globals.projects.Count > 1)
         {
             Globals.storedFiles.RemoveAll(x => x.Project == Globals.projects[projectIndex]);
             Globals.projects.RemoveAt(projectIndex);
@@ -454,17 +458,12 @@ public class MainViewModel : ViewModelBase
     public void UpdateProjectList()
     {
         Projects.Clear();
-        if (Globals.projects.Count() > 0)
+
+        foreach (string project in Globals.projects)
         {
-            foreach (string project in Globals.projects)
-            {
-                Projects.Add(project);
-            }
+            Projects.Add(project);
         }
-        else
-        {
-            Projects.Add("New Project");
-        }
+        
     }
 
     private IEnumerable<FileData> get_filtered_res(string currentProject, string type)
