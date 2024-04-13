@@ -235,7 +235,7 @@ public class MainViewModel : ViewModelBase
                 iter++;
             }
 
-            for (int i = start + 1; i < end; i++)
+            for (int i = start; i < end; i++)
             {
                 string line = lines[i];
                 for (int j = 0; j < ntags; j++)

@@ -14,7 +14,7 @@ using Avalonia.Media;
 using Avalonia.Collections;
 using System.Data;
 using System.Reflection;
-
+using System.Windows;
 using Avalonia.Controls;
 using Avalonia.Themes.Fluent;
 using Avalonia.Styling;
@@ -27,6 +27,8 @@ using System.Threading;
 using Avalonia.Controls.Shapes;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using Avalonia.Input;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Avalon.Views;
 
@@ -48,15 +50,8 @@ public partial class MainView : UserControl
         AddDocument.AddHandler(Button.ClickEvent, on_add_document);
         FetchMetadata.AddHandler(Button.ClickEvent, on_fetch_full_meta);
 
-        LoadFile.AddHandler(Button.ClickEvent, on_load_file);
-        SaveFile.AddHandler(Button.ClickEvent, on_save_file);
-        
-
         DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDrawingGridSelected);
         DocumentGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDocumentGridSelected);
-
-        ToggleView.AddHandler(Button.ClickEvent, SetTables);
-        ColorMode.AddHandler(Button.ClickEvent, ToggleColormode);
 
         ProjectList.AddHandler(ListBox.TappedEvent, on_project_selected);
 
@@ -67,11 +62,13 @@ public partial class MainView : UserControl
         //Columns.AddHandler(ListBox.PointerEnteredEvent, on_drawingListPopup);
         Columns.AddHandler(ListBox.TappedEvent, on_drawingListPopup);
 
+        Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
 
-        
 
         init_columns();
         init_bw();
+
+        init_window();
 
 
         StatusLabel.Content = "Ready";
@@ -88,8 +85,38 @@ public partial class MainView : UserControl
     public bool PopupColumnList_status = true;
     public string TagInput = "";
 
+    
+
     private BackgroundWorker bw = new BackgroundWorker();
 
+
+    private void init_window()
+    {
+        Lockedstatus.IsChecked = true;
+    }
+
+    private void on_lock(object sender, EventArgs e)
+    {
+        Debug.WriteLine(Lockedstatus.IsChecked);
+        if (Lockedstatus.IsChecked == true)
+        {
+            AddProject.IsEnabled = false;
+            RemoveProjectMenu.IsEnabled = false;
+
+            ContextMenu Menu = this.Resources["Menu"] as ContextMenu;
+            MenuItem removeMenu = Menu.Items[3] as MenuItem;
+            removeMenu.IsEnabled = false;
+        }
+        if (Lockedstatus.IsChecked == false)
+        {
+            AddProject.IsEnabled = true;
+            RemoveProjectMenu.IsEnabled = true;
+
+            ContextMenu Menu = this.Resources["Menu"] as ContextMenu;
+            MenuItem removeMenu = Menu.Items[3] as MenuItem;
+            removeMenu.IsEnabled = true;
+        }
+    }
 
 
     private void init_columns()
@@ -169,9 +196,8 @@ public partial class MainView : UserControl
 
     }
     
-    public void SetTables(object sender, EventArgs e)
+    public void on_toggle_view(object sender, RoutedEventArgs e)
     {
-
         MainGrid.RowDefinitions.Clear();
         GridLength row1 = new GridLength(40);
         GridLength row2 = new GridLength(40);
@@ -183,10 +209,9 @@ public partial class MainView : UserControl
         MainGrid.RowDefinitions.Add(new RowDefinition(row4));
         
         ViewMode = !ViewMode;
-
     }
 
-    private void ToggleColormode(object sender, EventArgs e)
+    private void on_toggle_colormode(object sender, RoutedEventArgs e)
     {
         var window = Window.GetTopLevel(this);
         if (DarkMode == false)
@@ -391,7 +416,7 @@ public partial class MainView : UserControl
     {
         var ctx = (MainViewModel)this.DataContext;
         ctx.SetMetadata();
-        ProgressStatus.Content = "Fetching Complete";
+        ProgressStatus.Content = "";
         
     }
 

@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Avalon.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
              x:Class="Avalon.Views.MainView"
 			 
              x:DataType="vm:MainViewModel">
@@ -42,18 +42,39 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:MainViewModel />
   </Design.DataContext>
-			<Grid Name ="MainGrid" ColumnDefinitions="1*,1*,1*" RowDefinitions="40,40,8*,5*" Margin="10">	
-					<StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="5">
+
+
+	
+			<Grid Name ="MainGrid" ColumnDefinitions="*" RowDefinitions="40,40,8*,5*" Margin="10" >
+
+				<DockPanel Width="130" HorizontalAlignment="Left">
+					<Menu DockPanel.Dock="Top">
+						<MenuItem Header="File">
+							<MenuItem Header="Load" Click="on_load_file"/>
+							<Separator/>
+							<MenuItem Header="Save" Click="on_save_file"/>
+						</MenuItem>
+						<MenuItem Header="Settings">
+							<MenuItem Header="Color mode" Click="on_toggle_colormode"/>
+							<MenuItem Header="Toggle view" Click="on_toggle_view"/>
+						</MenuItem>
+					</Menu>
+					<TextBlock/>
+				</DockPanel>
+
+					<StackPanel Grid.Row="0" Orientation="Vertical" Spacing="10" Margin="5">
+						<Label Name="StatusLabel" Height="30" Width="200" HorizontalContentAlignment="Center"/>
+					</StackPanel>
+				
+					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="150,5,5,5">
+						<ToggleSwitch Name="Lockedstatus" Width="80" HorizontalContentAlignment="Center"/>
 						<ProgressBar Name="ProgressBar" Width="200" Value="{Binding Status}"/>
 						<Label Name="ProgressStatus" Height="30" Width="200" HorizontalContentAlignment="Left"/>
-						<ToggleSwitch Name="Lockedstatus" Width="110" HorizontalContentAlignment="Center"/>
 					</StackPanel>
 
-				<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical">
-					<Label Name="StatusLabel" Height="30" Width="200" HorizontalContentAlignment="Center"/>
-				</StackPanel>
+
 		
-					<StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="5">
+					<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="5">
 						<Button Name="AddProject" Content="New Project" Height="30" Width="110" HorizontalContentAlignment="Center"/>
 						<TextBox Name="ProjectName" Height="30" Width="110"/>
 						<Button Name="AddDrawing" Content="Add Drawing" Height="30" Width="120" HorizontalContentAlignment="Center"/>
@@ -61,11 +82,7 @@
 						<Button Name="FetchMetadata" Content="Fetch MD" Height="30" Width="120" HorizontalContentAlignment="Center"/>
 					</StackPanel>
 		
-					<StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
-						<Button Name="LoadFile" Content="Load" Height="30" Width="110" HorizontalContentAlignment="Center"/>
-						<Button Name="SaveFile" Content="Save"  Height="30" Width="110" HorizontalContentAlignment="Center"/>
-						<Button Name="ToggleView" Content="Toggle View" Height="30" Width="110" HorizontalContentAlignment="Center"/>
-						<Button Name="ColorMode" Content="Colormode" Height="30" Width="110" HorizontalContentAlignment="Center"/>
+					<StackPanel Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
 						<Button Name="SelectedProject" Content="" Height="30" Width="110" Background="#ff0073cf" Foreground="White" FontWeight="Bold" HorizontalContentAlignment="Center" Click="on_popup"/>
 						<Button Name="Columns" Content="Columns" Height="30" Width="110" HorizontalContentAlignment="Center"/>
 						
@@ -104,9 +121,9 @@
 						
 						
 					</StackPanel>
-
-				<DataGrid Name="DrawingGrid" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Margin="5" Padding="10" ItemsSource="{Binding Drawings}" RowHeight="22" SelectionMode="Extended"
-					AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
+				
+				<DataGrid Name="DrawingGrid" Grid.Row="2" Margin="5" Padding="10" ItemsSource="{Binding Drawings}" RowHeight="22" SelectionMode="Extended"
+						  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 					<DataGrid.Styles>
 						<Style Selector="DataGridColumnHeader">
 							<Setter Property="FontSize" Value="16"/>
@@ -138,7 +155,7 @@
 					</DataGrid.Columns>
 				</DataGrid>
 
-				<DataGrid Name="DocumentGrid" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3" Margin="5" ItemsSource="{Binding Documents}" RowHeight="22" SelectionMode="Extended" 
+				<DataGrid Name="DocumentGrid" Grid.Row="3" Margin="5" ItemsSource="{Binding Documents}" RowHeight="22" SelectionMode="Extended" 
 					AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 					<DataGrid.Styles>
 						<Style Selector="DataGridColumnHeader">
