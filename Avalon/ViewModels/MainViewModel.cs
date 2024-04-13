@@ -57,13 +57,21 @@ public class MainViewModel : ViewModelBase
 
     public List<string[]> metastore = new List<string[]>();
     public List<(string, string)> PathStore = new List<(string, string)>();
+
     public async Task LoadFile(Avalonia.Visual window)
     {
         var topLevel = TopLevel.GetTopLevel(window);
+
+        var jsonformat = new FilePickerFileType("Json format") { Patterns = new[] { "*.json" } };
+        List<FilePickerFileType> formatlist = new List<FilePickerFileType>();
+        formatlist.Add(jsonformat);
+        IReadOnlyList<FilePickerFileType> fileformat = formatlist;
+
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Load Save File",
-            AllowMultiple = false
+            Title = "Load File",
+            AllowMultiple = false,
+            FileTypeFilter = fileformat
         });
 
         if (files.Count > 0)
@@ -93,9 +101,16 @@ public class MainViewModel : ViewModelBase
     {
         var topLevel = TopLevel.GetTopLevel(window);
 
+        var jsonformat = new FilePickerFileType("Json format"){Patterns = new[] { "*.json" }};
+        List<FilePickerFileType> formatlist = new List<FilePickerFileType>();
+        formatlist.Add(jsonformat);
+        IReadOnlyList<FilePickerFileType> fileformat = formatlist;
+
+
         var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             Title = "Save File",
+            FileTypeChoices = fileformat
         });
 
         if (file is not null)
