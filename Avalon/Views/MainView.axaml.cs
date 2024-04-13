@@ -185,12 +185,12 @@ public partial class MainView : UserControl
         var dataObject = e.Row.DataContext as FileData;
         e.Row.Classes.Clear();
 
-        if (dataObject != null && dataObject.Color == "White") { e.Row.Classes.Clear(); }
-        if (dataObject != null && dataObject.Color == "Yellow"){e.Row.Classes.Add("Yellow");}
-        if (dataObject != null && dataObject.Color == "Green"){e.Row.Classes.Add("Green");}
-        if (dataObject != null && dataObject.Color == "Blue") { e.Row.Classes.Add("Blue"); }
-        if (dataObject != null && dataObject.Color == "Red") { e.Row.Classes.Add("Red"); }
-        if (dataObject != null && dataObject.Color == "Magenta") { e.Row.Classes.Add("Magenta"); }
+        if (dataObject != null && dataObject.Färg == "White") { e.Row.Classes.Clear(); }
+        if (dataObject != null && dataObject.Färg == "Yellow"){e.Row.Classes.Add("Yellow");}
+        if (dataObject != null && dataObject.Färg == "Green"){e.Row.Classes.Add("Green");}
+        if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("Blue"); }
+        if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("Red"); }
+        if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("Magenta"); }
 
     }
     

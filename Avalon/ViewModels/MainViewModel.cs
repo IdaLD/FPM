@@ -81,7 +81,7 @@ public class MainViewModel : ViewModelBase
             string fileContent = await streamReader.ReadToEndAsync();
 
             List<FileData> getFiles = JsonConvert.DeserializeObject<List<FileData>>(fileContent);
-            List<string> getProjects = getFiles.Select(x => x.Project).Distinct().ToList();
+            List<string> getProjects = getFiles.Select(x => x.Uppdrag).Distinct().ToList();
 
             Globals.storedFiles = getFiles;
             Globals.projects = getProjects;
@@ -140,10 +140,10 @@ public class MainViewModel : ViewModelBase
 
                 Globals.storedFiles.Add(new FileData
                 {
-                    Name = System.IO.Path.GetFileNameWithoutExtension(path),
-                    Project = Globals.projects[selectedProject],
-                    Type = type,
-                    Path = path
+                    Namn = System.IO.Path.GetFileNameWithoutExtension(path),
+                    Uppdrag = Globals.projects[selectedProject],
+                    Filtyp = type,
+                    Sökväg = path
                 });
             }
             UpdateLists(selectedProject);
@@ -178,11 +178,11 @@ public class MainViewModel : ViewModelBase
 
         if (selectedDrawings != null)
         {
-            foreach (FileData file in selectedDrawings) { PathStore.Add(("Drawing", file.Path)); }
+            foreach (FileData file in selectedDrawings) { PathStore.Add(("Drawing", file.Sökväg)); }
         }
         if (selectedDocuments != null)
         {
-            foreach (FileData file in selectedDocuments) { PathStore.Add(("Document", file.Path)); }
+            foreach (FileData file in selectedDocuments) { PathStore.Add(("Document", file.Sökväg)); }
         }
     }
 
@@ -202,29 +202,29 @@ public class MainViewModel : ViewModelBase
             if (PathStore[i].Item1 == "Drawing")
             {
                 items = Drawings;
-                file = Drawings.First(x => x.Path == PathStore[i].Item2);
+                file = Drawings.First(x => x.Sökväg == PathStore[i].Item2);
             }
             if (PathStore[i].Item1 == "Document")
             {
                 items = Documents;
-                file = Documents.First(x => x.Path == PathStore[i].Item2);
+                file = Documents.First(x => x.Sökväg == PathStore[i].Item2);
             }
 
-            string path         = file.Path;
+            string path         = file.Sökväg;
             string[] md         = metastore[i];
 
             int index           = items.IndexOf(file);
 
             file.Handling       = md[0];
             file.Status         = md[1];
-            file.Date           = md[2];
-            file.DrawType       = md[3];
-            file.Descr1         = md[4];
-            file.Descr2         = md[5];
-            file.Descr3         = md[6];
-            file.Descr4         = md[7];
-            file.Rev            = md[8];
-            file.Path           = path;
+            file.Datum          = md[2];
+            file.Ritningstyp    = md[3];
+            file.Beskrivning1   = md[4];
+            file.Beskrivning2   = md[5];
+            file.Beskrivning3   = md[6];
+            file.Beskrivning4   = md[7];
+            file.Revidering     = md[8];
+            file.Sökväg         = path;
 
             items[index] = null;
             items[index] = file;
@@ -292,7 +292,7 @@ public class MainViewModel : ViewModelBase
                 foreach (FileData drawing in drawings)
                 {
                     ProcessStartInfo psi = new ProcessStartInfo();
-                    psi.FileName = drawing.Path + ending;
+                    psi.FileName = drawing.Sökväg + ending;
                     psi.UseShellExecute = true;
                     Process.Start(psi);
                 }
@@ -302,7 +302,7 @@ public class MainViewModel : ViewModelBase
                 foreach (FileData document in documents)
                 {
                     ProcessStartInfo psi = new ProcessStartInfo();
-                    psi.FileName = document.Path + ending;
+                    psi.FileName = document.Sökväg + ending;
                     psi.UseShellExecute = true;
                     Process.Start(psi);
                 }
@@ -320,7 +320,7 @@ public class MainViewModel : ViewModelBase
 
         foreach (FileData item in items)
         {
-            Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(item.Path));
+            Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(item.Sökväg));
         }
     }
 
@@ -338,7 +338,7 @@ public class MainViewModel : ViewModelBase
         {
             int index = collection.IndexOf(file);
             collection[index] = null;
-            file.Color = color;
+            file.Färg = color;
             collection[index] = file;
         }
     }
@@ -357,8 +357,8 @@ public class MainViewModel : ViewModelBase
         {
             int index = collection.IndexOf(file);
             collection[index] = null;
-            file.Color = "";
-            file.UserTag = "";
+            file.Färg = "";
+            file.Tagg = "";
             collection[index] = file;
         }
     }
@@ -380,7 +380,7 @@ public class MainViewModel : ViewModelBase
         {
             int index = Collection.IndexOf(file);
             Collection[index] = null;
-            file.UserTag = Tag;
+            file.Tagg = Tag;
             Collection[index] = file;
         }
     }
@@ -405,7 +405,7 @@ public class MainViewModel : ViewModelBase
     {
         if (Globals.projects.Count > 1)
         {
-            Globals.storedFiles.RemoveAll(x => x.Project == Globals.projects[projectIndex]);
+            Globals.storedFiles.RemoveAll(x => x.Uppdrag == Globals.projects[projectIndex]);
             Globals.projects.RemoveAt(projectIndex);
             UpdateProjectList();
         }
@@ -415,9 +415,9 @@ public class MainViewModel : ViewModelBase
     {
         for (int i = 0; i < Globals.storedFiles.Count; i++)
         {
-            if (Globals.storedFiles[i].Project == Globals.projects[projectindex])
+            if (Globals.storedFiles[i].Uppdrag == Globals.projects[projectindex])
             {
-                Globals.storedFiles[i].Project = newName;
+                Globals.storedFiles[i].Uppdrag = newName;
             }
         }
         Globals.projects[projectindex] = newName;
@@ -483,10 +483,10 @@ public class MainViewModel : ViewModelBase
 
     private IEnumerable<FileData> get_filtered_res(string currentProject, string type)
     {
-        IEnumerable<FileData> first = Globals.storedFiles.Where(x => x.Project == currentProject);
-        IEnumerable<FileData> second = first.Where(x => x.Type == type);
+        IEnumerable<FileData> first = Globals.storedFiles.Where(x => x.Uppdrag == currentProject);
+        IEnumerable<FileData> second = first.Where(x => x.Filtyp == type);
 
-        return second.OrderBy(x => x.Name);
+        return second.OrderBy(x => x.Namn);
     }
 }
 
