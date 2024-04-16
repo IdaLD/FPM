@@ -1,9 +1,4 @@
-﻿using Avalon.Views;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Interactivity;
-using Avalonia.Platform;
+﻿using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Newtonsoft.Json;
 using System.Collections;
@@ -13,23 +8,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Text;
 using System;
-using Avalonia.Controls.Shapes;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Avalonia.Media;
-using Avalonia.Data.Converters;
-using System.Globalization;
-using System.ComponentModel;
-using System.Collections.Frozen;
-using System.Runtime.CompilerServices;
-using Microsoft.VisualBasic;
-using Newtonsoft.Json.Converters;
-using static System.Net.WebRequestMethods;
-using Avalonia.Threading;
-using System.Threading;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Diagnostics.Metrics;
 
 namespace Avalon.ViewModels;
@@ -95,6 +75,29 @@ public class MainViewModel : ViewModelBase
             UpdateProjectList();
 
         }
+    }
+
+    public void read_savefile(string path)
+    {
+
+        using (StreamReader r = new StreamReader(path))
+        {
+            string json = r.ReadToEnd();
+            List<FileData> getFiles = JsonConvert.DeserializeObject<List<FileData>>(json);
+            List<string> getProjects = getFiles.Select(x => x.Uppdrag).Distinct().ToList();
+
+            Globals.storedFiles = getFiles;
+            Globals.projects = getProjects;
+        }
+
+        var properties = typeof(FileData).GetProperties().ToList();
+        foreach (var property in properties)
+        {
+            string val = property.Name;
+            Properties.Add(val);
+        }
+        UpdateProjectList();
+
     }
 
     public async Task SaveFile(Avalonia.Visual window)

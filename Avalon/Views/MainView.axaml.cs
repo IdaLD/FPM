@@ -1,34 +1,13 @@
 ﻿using Avalonia.Controls;
-using System.Collections.Generic;
 using System;
-using Newtonsoft.Json;
 using Avalonia.Interactivity;
-using Avalonia.Platform.Storage;
 using System.Linq;
-using System.IO;
 using Avalon.ViewModels;
 using System.Diagnostics;
-using Avalonia.Controls.Primitives;
 using System.Collections;
-using Avalonia.Media;
-using Avalonia.Collections;
-using System.Data;
-using System.Reflection;
-using System.Windows;
-using Avalonia.Controls;
-using Avalonia.Themes.Fluent;
 using Avalonia.Styling;
 using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-using Newtonsoft.Json.Bson;
-using System.Formats.Asn1;
-using Avalonia.Data;
-using System.Threading;
-using Avalonia.Controls.Shapes;
-using System.Threading.Tasks;
 using System.ComponentModel;
-using Avalonia.Input;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Avalon.Views;
 
@@ -38,9 +17,7 @@ public partial class MainView : UserControl
     {
         InitializeComponent();
        
-        //MainGrid.Margin = new Thickness(5, 5, 16, 5);
         MainGrid.Margin = new Thickness(5);
-
 
         DrawingGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
         DocumentGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
@@ -62,12 +39,11 @@ public partial class MainView : UserControl
 
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
 
-
+        DrawingGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
         init_columns();
         init_bw();
 
         init_window();
-
 
         StatusLabel.Content = "Ready";
 
@@ -87,6 +63,22 @@ public partial class MainView : UserControl
 
     private BackgroundWorker bw = new BackgroundWorker();
 
+    private void init_startup(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            string path = "C:\\FIlePathManager\\Projects.json";
+            var ctx = (MainViewModel)this.DataContext;
+            ctx.read_savefile(path);
+
+            ProjectList.SelectedIndex = ProjectList.ItemCount - 1;
+            ProjectList.SelectedItem.ToString();
+            SelectedProject.Content = ProjectList.SelectedItem.ToString();
+
+            ctx.UpdateLists(ProjectList.SelectedIndex);
+        }
+        catch { }
+    }
 
     private void init_window()
     {
