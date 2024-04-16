@@ -49,6 +49,8 @@ public partial class MainView : UserControl
 
         //dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=True -p:TrimMode=link --output ./MyTargetFolder Avalon.sln
 
+        //dotnet publish -c Release -r win-x64 --output ./MyTargetFolder Avalon.sln
+
     }
 
     public string SelectedType = null;

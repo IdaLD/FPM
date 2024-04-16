@@ -14,6 +14,8 @@
           "Avalonia.Fonts.Inter": "11.0.10",
           "Avalonia.Themes.Fluent": "11.0.10",
           "CommunityToolkit.Mvvm": "8.2.2",
+          "Material.Avalonia": "3.5.0",
+          "Material.Avalonia.DataGrid": "3.5.0",
           "Newtonsoft.Json": "13.0.3"
         },
         "runtime": {
@@ -121,6 +123,42 @@
           }
         }
       },
+      "Material.Avalonia/3.5.0": {
+        "dependencies": {
+          "Avalonia": "11.0.10"
+        },
+        "runtime": {
+          "lib/net8.0/Material.Avalonia.dll": {
+            "assemblyVersion": "3.5.0.0",
+            "fileVersion": "3.5.0.0"
+          },
+          "lib/net8.0/Material.Colors.dll": {
+            "assemblyVersion": "3.5.0.0",
+            "fileVersion": "3.5.0.0"
+          },
+          "lib/net8.0/Material.Ripple.dll": {
+            "assemblyVersion": "3.5.0.0",
+            "fileVersion": "3.5.0.0"
+          },
+          "lib/net8.0/Material.Styles.dll": {
+            "assemblyVersion": "3.5.0.0",
+            "fileVersion": "3.5.0.0"
+          }
+        }
+      },
+      "Material.Avalonia.DataGrid/3.5.0": {
+        "dependencies": {
+          "Avalonia": "11.0.10",
+          "Avalonia.Controls.DataGrid": "11.0.10",
+          "Material.Avalonia": "3.5.0"
+        },
+        "runtime": {
+          "lib/net8.0/Material.Avalonia.DataGrid.dll": {
+            "assemblyVersion": "3.5.0.0",
+            "fileVersion": "3.5.0.0"
+          }
+        }
+      },
       "MicroCom.Runtime/0.11.0": {
         "runtime": {
           "lib/net5.0/MicroCom.Runtime.dll": {
@@ -194,6 +232,20 @@
       "sha512": "sha512-r0g0k9tGYdrnz8R7T3x5UiokDffeevzK/2P/9SBL6fqLgN8B157MIi/bVUWI1KAz6ZorZrK9AdABCWUeXZZsvA==",
       "path": "communitytoolkit.mvvm/8.2.2",
       "hashPath": "communitytoolkit.mvvm.8.2.2.nupkg.sha512"
+    },
+    "Material.Avalonia/3.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-CZEUp4KeYyLMOp4trZEEk8hg2m5YUteabHVsyvVOqZTa/nFI3PfC/sQghskGAAPSjKShqWgIuaRweKiTrO9ILQ==",
+      "path": "material.avalonia/3.5.0",
+      "hashPath": "material.avalonia.3.5.0.nupkg.sha512"
+    },
+    "Material.Avalonia.DataGrid/3.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Qzw+Ptnv3f3zIqtNnd7llTNWxCHnZWhD9V6dHEW4+nXcblt578rF2SsGMh9p8ft4oU88kbYfy5jxpiG6RHDeuQ==",
+      "path": "material.avalonia.datagrid/3.5.0",
+      "hashPath": "material.avalonia.datagrid.3.5.0.nupkg.sha512"
     },
     "MicroCom.Runtime/0.11.0": {
       "type": "package",

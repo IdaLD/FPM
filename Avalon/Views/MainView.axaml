@@ -30,7 +30,7 @@
 			</MenuItem>
 			<MenuItem Name="TagMenu" Header="User Tag">
 				<TextBox Name="TagMenuInput" Width="160" Text="{Binding user_tag}"/>
-				<MenuItem Name="TagMenuAdd" Header="Add Tag" Tag="Add" Click="on_add_tag"/>
+				<MenuItem Name="TagMenuAdd" Header="Add Tag" Tag="Add" Click="on_add_tag" FlowDirection="LeftToRight"/>
 				<MenuItem Name="TagMenuClear" Header="Clear Tag" Tag="Clear" Click="on_add_tag"/>
 			</MenuItem>
 			<MenuItem Name="ClearAllMenu" Header="Clear" Click="on_clear_files"/>
@@ -93,7 +93,7 @@
 									<ContextMenu Name="tesadsda">
 										<MenuItem Name="RemoveProjectMenu" Header="Remove Project" Click="on_remove_project"/>
 										<MenuItem Name="RenameMenu" Header="Rename Project">
-											<TextBox Name="NewProjectName" Width="160"/>
+											<TextBox Name="NewProjectName" Width="160" FlowDirection="LeftToRight"/>
 											<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project"/>
 										</MenuItem>
 									</ContextMenu>

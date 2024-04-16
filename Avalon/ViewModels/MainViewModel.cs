@@ -471,17 +471,19 @@ public class MainViewModel : ViewModelBase
                 Documents.Add(file);
             }
         }
+
     }
 
     public void UpdateProjectList()
     {
         Projects.Clear();
 
+        Globals.projects.Sort();
+
         foreach (string project in Globals.projects)
         {
             Projects.Add(project);
         }
-        
     }
 
     private IEnumerable<FileData> get_filtered_res(string currentProject, string type)
