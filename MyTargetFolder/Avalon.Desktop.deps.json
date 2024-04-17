@@ -75,6 +75,18 @@
         }
       },
       "Avalonia.BuildServices/0.0.29": {},
+      "Avalonia.Controls.ColorPicker/11.0.7": {
+        "dependencies": {
+          "Avalonia": "11.0.10",
+          "Avalonia.Remote.Protocol": "11.0.10"
+        },
+        "runtime": {
+          "lib/net6.0/Avalonia.Controls.ColorPicker.dll": {
+            "assemblyVersion": "11.0.7.0",
+            "fileVersion": "11.0.7.0"
+          }
+        }
+      },
       "Avalonia.Controls.DataGrid/11.0.10": {
         "dependencies": {
           "Avalonia": "11.0.10",
@@ -284,6 +296,41 @@
           }
         }
       },
+      "Semi.Avalonia/11.0.7.2": {
+        "dependencies": {
+          "Avalonia": "11.0.10"
+        },
+        "runtime": {
+          "lib/net6.0/Semi.Avalonia.dll": {
+            "assemblyVersion": "11.0.7.2",
+            "fileVersion": "11.0.7.2"
+          }
+        }
+      },
+      "Semi.Avalonia.ColorPicker/11.0.7.2": {
+        "dependencies": {
+          "Avalonia": "11.0.10",
+          "Avalonia.Controls.ColorPicker": "11.0.7"
+        },
+        "runtime": {
+          "lib/net6.0/Semi.Avalonia.ColorPicker.dll": {
+            "assemblyVersion": "11.0.7.2",
+            "fileVersion": "11.0.7.2"
+          }
+        }
+      },
+      "Semi.Avalonia.DataGrid/11.0.7.2": {
+        "dependencies": {
+          "Avalonia": "11.0.10",
+          "Avalonia.Controls.DataGrid": "11.0.10"
+        },
+        "runtime": {
+          "lib/net6.0/Semi.Avalonia.DataGrid.dll": {
+            "assemblyVersion": "11.0.7.2",
+            "fileVersion": "11.0.7.2"
+          }
+        }
+      },
       "SkiaSharp/2.88.7": {
         "dependencies": {
           "SkiaSharp.NativeAssets.Win32": "2.88.7",
@@ -340,7 +387,10 @@
           "CommunityToolkit.Mvvm": "8.2.2",
           "Material.Avalonia": "3.5.0",
           "Material.Avalonia.DataGrid": "3.5.0",
-          "Newtonsoft.Json": "13.0.3"
+          "Newtonsoft.Json": "13.0.3",
+          "Semi.Avalonia": "11.0.7.2",
+          "Semi.Avalonia.ColorPicker": "11.0.7.2",
+          "Semi.Avalonia.DataGrid": "11.0.7.2"
         },
         "runtime": {
           "Avalon.dll": {}
@@ -374,6 +424,13 @@
       "sha512": "sha512-U4eJLQdoDNHXtEba7MZUCwrBErBTxFp6sUewXBOdAhU0Kwzwaa/EKFcYm8kpcysjzKtfB4S0S9n0uxKZFz/ikw==",
       "path": "avalonia.buildservices/0.0.29",
       "hashPath": "avalonia.buildservices.0.0.29.nupkg.sha512"
+    },
+    "Avalonia.Controls.ColorPicker/11.0.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-KeISitlmFxjE+LxfD/DIVvgQlPDRQOzpvGeXX8/7vkcjgoHPzWK09+F+8JLw1Kl897mPv2mYRIN8rcTAtCFy+w==",
+      "path": "avalonia.controls.colorpicker/11.0.7",
+      "hashPath": "avalonia.controls.colorpicker.11.0.7.nupkg.sha512"
     },
     "Avalonia.Controls.DataGrid/11.0.10": {
       "type": "package",
@@ -514,6 +571,27 @@
       "sha512": "sha512-HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ==",
       "path": "newtonsoft.json/13.0.3",
       "hashPath": "newtonsoft.json.13.0.3.nupkg.sha512"
+    },
+    "Semi.Avalonia/11.0.7.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-s1B8eF0XcZekdRwrLSAkzPJGU+iG9qX1FkBaMGt0ofubB17uiPtpALEUxerlwgXUlfxixaGHlHgjW3ZFsXQoLw==",
+      "path": "semi.avalonia/11.0.7.2",
+      "hashPath": "semi.avalonia.11.0.7.2.nupkg.sha512"
+    },
+    "Semi.Avalonia.ColorPicker/11.0.7.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-qBdxwbKyc8Vkqbuq2diHyOq54jUh5WpFdufZsg2EkUT0MQSP+F6xzH95WEiujv4zU3ST400GxnPBpWj7hhGhRA==",
+      "path": "semi.avalonia.colorpicker/11.0.7.2",
+      "hashPath": "semi.avalonia.colorpicker.11.0.7.2.nupkg.sha512"
+    },
+    "Semi.Avalonia.DataGrid/11.0.7.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ID0IAMQsBn3PH/Ez0Pn70JpBhc9cVI6mtToGVJH3v87bxAPdY4wEj+t4gXnYmSLv/n6FGb2KkCqhy9AJJ8DjSw==",
+      "path": "semi.avalonia.datagrid/11.0.7.2",
+      "hashPath": "semi.avalonia.datagrid.11.0.7.2.nupkg.sha512"
     },
     "SkiaSharp/2.88.7": {
       "type": "package",

@@ -22,11 +22,11 @@
 			</MenuItem>
 			<MenuItem Name="ColorMainMenu" Header="Color Tag">
 				<MenuItem Name="WhiteMenu" Header="None" Tag ="White" Click="EditColor"/>
-				<MenuItem Name="YellowMenu" Background="Yellow" Tag ="Yellow" Click="EditColor"/>
-				<MenuItem Name="GreenMenu" Background="Green" Tag ="Green" Click="EditColor"/>
-				<MenuItem Name="BlueMenu" Background="Blue" Tag ="Blue" Click="EditColor"/>
-				<MenuItem Name="RedMenu" Background="Red" Tag ="Red" Click="EditColor"/>
-				<MenuItem Name="MagentaMenu" Background="Magenta" Tag ="Magenta" Click="EditColor"/>
+				<MenuItem Name="YellowMenu" Header="Yellow" Tag ="Yellow" Click="EditColor"/>
+				<MenuItem Name="GreenMenu" Header="Green" Tag ="Green" Click="EditColor"/>
+				<MenuItem Name="BlueMenu" Header="Blue" Tag ="Blue" Click="EditColor"/>
+				<MenuItem Name="RedMenu" Header="Red" Tag ="Red" Click="EditColor"/>
+				<MenuItem Name="MagentaMenu" Header="Magenta" Tag ="Magenta" Click="EditColor"/>
 			</MenuItem>
 			<MenuItem Name="TagMenu" Header="User Tag">
 				<TextBox Name="TagMenuInput" Width="160" Text="{Binding user_tag}"/>
@@ -47,7 +47,7 @@
 	
 			<Grid Name ="MainGrid" ColumnDefinitions="*" RowDefinitions="40,40,8*,5*" Margin="10" >
 
-				<DockPanel Width="180" HorizontalAlignment="Left">
+				<DockPanel Width="200" HorizontalAlignment="Left">
 					<Menu DockPanel.Dock="Top">
 						<MenuItem Header="File">
 							<MenuItem Header="Load" Click="on_load_file"/>
@@ -67,28 +67,30 @@
 
 					<StackPanel Grid.Row="0" Orientation="Vertical" Spacing="10" Margin="5">
 						<Label Name="StatusLabel" Height="30" Width="200" HorizontalContentAlignment="Center" IsHitTestVisible="False"/>
+						<Label Name="ProgressStatus" Height="30" Width="200" HorizontalContentAlignment="Center" VerticalAlignment="Top" IsHitTestVisible="False"/>
 					</StackPanel>
 				
-					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="180,5,5,5">
-						<ToggleSwitch Name="Lockedstatus" Width="80" HorizontalContentAlignment="Center"/>
+					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="210,5,5,5">
+						<ToggleSwitch Name="Lockedstatus" Width="50" HorizontalContentAlignment="Center"/>
 						<ProgressBar Name="ProgressBar" Width="200" Value="{Binding Status}"/>
-						<Label Name="ProgressStatus" Height="30" Width="200" HorizontalContentAlignment="Left" IsHitTestVisible="False"/>
+						
 					</StackPanel>
 
 
 		
 					<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="5">
-						<Button Name="AddProject" Content="New Project" Height="30" Width="100" HorizontalContentAlignment="Center"/>
-						<TextBox Name="ProjectName" Width="110"/>
 						<Button Name="FetchMetadata" Content="Fetch MD" Height="30" Width="100" HorizontalContentAlignment="Center"/>
+						<Button Name="AddProject" Content="New Project" Height="30" Width="110" HorizontalContentAlignment="Center"/>
+						<TextBox Name="ProjectName" Width="110"/>
+
 					</StackPanel>
 		
 					<StackPanel Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
-						<Button Name="SelectedProject" Content="" Height="30" Width="110" Background="#ff0073cf" Foreground="White" FontWeight="Bold" HorizontalContentAlignment="Center" Click="on_popup"/>
-						<Button Name="Columns" Content="Filter columns" Height="30" Width="150" HorizontalContentAlignment="Center"/>
+						<Button Classes.accent="true" Name="SelectedProject" Content="" Height="30" Width="110" HorizontalContentAlignment="Center" Click="on_popup"/>
+						<Button Name="Columns" Content="Filter" Height="30" Width="150" HorizontalContentAlignment="Center"/>
 						
 						<Popup Name="PopupList" Height="200" Width="110" PlacementTarget="SelectedProject">
-							<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="200" Width="110">
+							<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="200" Width="110" Background="Gray">
 								<ListBox.ContextMenu>
 									<ContextMenu Name="tesadsda">
 										<MenuItem Name="RemoveProjectMenu" Header="Remove Project" Click="on_remove_project"/>
@@ -101,35 +103,31 @@
 							</ListBox>
 						</Popup>
 
-						<Popup Name="PopupColumnList" Height="350" Width="150" PlacementTarget="Columns">
-							<ListBox Name="ColumnList" Height="350" Width="150">
-								<ListBoxItem Height="25"><CheckBox Content="Name"			Tag="0"		Name="Column0"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="25"><CheckBox Content="Tagg"			Tag="1"		Name="Column1"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="25"><CheckBox Content="Färg"			Tag="2"		Name="Column2"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="25"><CheckBox Content="Handling"		Tag="3"		Name="Column3"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="25"><CheckBox Content="Status"			Tag="4"		Name="Column4"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="25"><CheckBox Content="Datum"			Tag="5"		Name="Column5"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="25"><CheckBox Content="Ritningstyp"	Tag="6"		Name="Column6"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="25"><CheckBox Content="Beskrivning 1"	Tag="7"		Name="Column7"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="25"><CheckBox Content="Beskrivning 2"	Tag="8"		Name="Column8"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="25"><CheckBox Content="Beskrivning 3"  Tag="9"		Name="Column9"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="25"><CheckBox Content="Beskrivning 4"	Tag="10"	Name="Column10"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="25"><CheckBox Content="Revidering"		Tag="11"	Name="Column11"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="25"><CheckBox Content="Filtyp"			Tag="12"	Name="Column12"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="25"><CheckBox Content="Sökväg"			Tag="13"	Name="Column13"	Height="25"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+						<Popup Name="PopupColumnList" Height="450" Width="150" PlacementTarget="Columns">
+							<ListBox Name="ColumnList" Height="450" Width="150" Background="Gray" >
+								<ListBoxItem Height="30"><CheckBox Content="Name"			Tag="0"		Name="Column0"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Tagg"			Tag="1"		Name="Column1"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Färg"			Tag="2"		Name="Column2"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Handling"		Tag="3"		Name="Column3"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Status"			Tag="4"		Name="Column4"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Datum"			Tag="5"		Name="Column5"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Ritningstyp"	Tag="6"		Name="Column6"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Beskrivning 1"	Tag="7"		Name="Column7"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Beskrivning 2"	Tag="8"		Name="Column8"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Beskrivning 3"  Tag="9"		Name="Column9"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Beskrivning 4"	Tag="10"	Name="Column10"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Revidering"		Tag="11"	Name="Column11"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Filtyp"			Tag="12"	Name="Column12"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+								<ListBoxItem Height="30"><CheckBox Content="Sökväg"			Tag="13"	Name="Column13"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
 							</ListBox>
 						</Popup>
 						
 						
 					</StackPanel>
 				
-				<DataGrid Name="DrawingGrid" Grid.Row="2" Margin="5" Padding="10" ItemsSource="{Binding Drawings}" RowHeight="22" SelectionMode="Extended"
+				<DataGrid Name="DrawingGrid" Grid.Row="2" Margin="5" Padding="10" ItemsSource="{Binding Drawings}" RowHeight="22" SelectionMode="Extended" 
 						  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
-					<DataGrid.Styles>
-						<Style Selector="DataGridColumnHeader">
-							<Setter Property="FontSize" Value="16"/>
-						</Style>
-					</DataGrid.Styles>
+
 
 					<DataGrid.ContextMenu>
 						<StaticResource ResourceKey="Menu"/>
@@ -158,11 +156,7 @@
 
 				<DataGrid Name="DocumentGrid" Grid.Row="3" Margin="5" ItemsSource="{Binding Documents}" RowHeight="22" SelectionMode="Extended" 
 					AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
-					<DataGrid.Styles>
-						<Style Selector="DataGridColumnHeader">
-							<Setter Property="FontSize" Value="16"/>
-						</Style>
-					</DataGrid.Styles>
+
 					<DataGrid.ContextMenu>
 						<StaticResource ResourceKey="Menu"/>
 					</DataGrid.ContextMenu>
