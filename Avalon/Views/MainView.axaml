@@ -14,11 +14,10 @@
 			<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile"/>
 			<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="on_remove_files"/>
 			<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch metadata" Click="on_fetch_single_meta"/>
-			<MenuItem Name="GridLines" Header="Gridlines">
-				<MenuItem Name="None" Header="None" Tag ="None" Click="ToggleGridmode"/>
-				<MenuItem Name="Vertical" Header="Vertical" Tag ="Vertical" Click="ToggleGridmode"/>
-				<MenuItem Name="Horizontal" Header="Horizontal" Tag ="Horizontal" Click="ToggleGridmode"/>
-				<MenuItem Name="All" Header="All" Tag ="All" Click="ToggleGridmode"/>
+			<MenuItem Name="TableMenu" Header="Show table">
+				<MenuItem Name="TableBothMenu" Header="Both" Tag="Both" Click="toggle_table"/>
+				<MenuItem Name="TableDrawingMenu" Header="Drawings" Tag="Drawings" Click="toggle_table"/>
+				<MenuItem Name="TableDocumentMenu" Header="Documents" Tag="Documents" Click="toggle_table"/>
 			</MenuItem>
 			<MenuItem Name="ColorMainMenu" Header="Color Tag">
 				<MenuItem Name="WhiteMenu" Header="None" Tag ="White" Click="EditColor"/>
@@ -45,9 +44,9 @@
 
 
 	
-			<Grid Name ="MainGrid" ColumnDefinitions="*" RowDefinitions="40,40,8*,5*" Margin="10" >
+			<Grid Name ="MainGrid" ColumnDefinitions="*" RowDefinitions="50,40,5*,3*" Margin="10" VerticalAlignment="Stretch">
 
-				<DockPanel Width="200" HorizontalAlignment="Left">
+				<DockPanel Width="130" VerticalAlignment="Top" HorizontalAlignment="Left">
 					<Menu DockPanel.Dock="Top">
 						<MenuItem Header="File">
 							<MenuItem Header="Load" Click="on_load_file"/>
@@ -57,21 +56,17 @@
 							<MenuItem Header="Drawing" Click="on_add_drawing"/>
 							<MenuItem Header="Document" Click="on_add_document"/>
 						</MenuItem>
-						<MenuItem Header="Settings">
-							<MenuItem Header="Color mode" Click="on_toggle_colormode"/>
-							<MenuItem Header="Toggle view" Click="on_toggle_view"/>
-						</MenuItem>
 					</Menu>
 					<TextBlock/>
 				</DockPanel>
 
 					<StackPanel Grid.Row="0" Orientation="Vertical" Spacing="10" Margin="5">
-						<Label Name="StatusLabel" Height="30" Width="200" HorizontalContentAlignment="Center" IsHitTestVisible="False"/>
+						<Label Name="StatusLabel" Height="30" Width="200" HorizontalContentAlignment="Center" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
 						<Label Name="ProgressStatus" Height="30" Width="200" HorizontalContentAlignment="Center" VerticalAlignment="Top" IsHitTestVisible="False"/>
 					</StackPanel>
 				
-					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="210,5,5,5">
-						<ToggleSwitch Name="Lockedstatus" Width="50" HorizontalContentAlignment="Center"/>
+					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="120,5,5,5">
+						<ToggleSwitch Name="Lockedstatus" Width="50" Height="30" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
 						<ProgressBar Name="ProgressBar" Width="200" Value="{Binding Status}"/>
 						
 					</StackPanel>
@@ -125,7 +120,7 @@
 						
 					</StackPanel>
 				
-				<DataGrid Name="DrawingGrid" Grid.Row="2" Margin="5" Padding="10" ItemsSource="{Binding Drawings}" RowHeight="22" SelectionMode="Extended" 
+				<DataGrid Name="DrawingGrid" Grid.Row="2" Margin="5" Padding="10" ItemsSource="{Binding Drawings}" RowHeight="22" SelectionMode="Extended"
 						  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 
 
@@ -134,50 +129,50 @@
 					</DataGrid.ContextMenu>
 					
 					<DataGrid.Columns>
-						<DataGridTextColumn Binding="{Binding Namn, Mode=OneWay}"				Header="Namn"           Width="Auto" FontFamily="UbuntuMono"/>
-						<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Namn, Mode=OneWay}"				Header="Namn"           Width="Auto" MinWidth="120" FontFamily="UbuntuMono"/>
+						<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 
-						<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 						
-						<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 
-						<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 					</DataGrid.Columns>
 				</DataGrid>
-
-				<DataGrid Name="DocumentGrid" Grid.Row="3" Margin="5" ItemsSource="{Binding Documents}" RowHeight="22" SelectionMode="Extended" 
+				
+				<DataGrid Name="DocumentGrid" Grid.Row="4" Margin="5" ItemsSource="{Binding Documents}" RowHeight="22" SelectionMode="Extended" 
 					AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 
 					<DataGrid.ContextMenu>
 						<StaticResource ResourceKey="Menu"/>
 					</DataGrid.ContextMenu>
 					<DataGrid.Columns>
-						<DataGridTextColumn Binding="{Binding Namn, Mode=OneWay}"				Header="Namn"           Width="Auto" FontFamily="UbuntuMono"/>
-						<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Namn, Mode=OneWay}"				Header="Namn"           Width="Auto" MinWidth="120" FontFamily="UbuntuMono"/>
+						<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 
-						<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 
-						<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 
-						<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" FontFamily="Ubuntu"/>
-						<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+						<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 					</DataGrid.Columns>
 				</DataGrid>
 			</Grid>

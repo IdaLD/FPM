@@ -28,6 +28,8 @@ public partial class MainView : UserControl
         DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDrawingGridSelected);
         DocumentGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDocumentGridSelected);
 
+       
+
         ProjectList.AddHandler(ListBox.TappedEvent, on_project_selected);
 
         //SelectedProject.AddHandler(Button.PointerEnteredEvent, on_popup);
@@ -188,19 +190,29 @@ public partial class MainView : UserControl
 
     }
     
-    public void on_toggle_view(object sender, RoutedEventArgs e)
+    public void toggle_table(object sender, RoutedEventArgs e)
     {
+        var menuItem = sender as MenuItem;
+        string mode = menuItem.Tag.ToString();
+
+        int a = 1;
+        int b = 1;
+
+        if (mode == "Both") { a = 5; b = 3;}
+        if (mode == "Drawings") { a = 1; b = 0; }
+        if (mode == "Documents") {  a = 0; b = 1; }
+
+
         MainGrid.RowDefinitions.Clear();
         GridLength row1 = new GridLength(40);
         GridLength row2 = new GridLength(40);
-        GridLength row3 = new GridLength(8, GridUnitType.Star);
-        GridLength row4 = new GridLength(5* Convert.ToInt32(ViewMode), GridUnitType.Star);
+        GridLength row3 = new GridLength(a, GridUnitType.Star);
+        GridLength row4 = new GridLength(b, GridUnitType.Star);
         MainGrid.RowDefinitions.Add(new RowDefinition(row1));
         MainGrid.RowDefinitions.Add(new RowDefinition(row2));
         MainGrid.RowDefinitions.Add(new RowDefinition(row3));
         MainGrid.RowDefinitions.Add(new RowDefinition(row4));
         
-        ViewMode = !ViewMode;
     }
 
     private void on_toggle_colormode(object sender, RoutedEventArgs e)
@@ -255,6 +267,8 @@ public partial class MainView : UserControl
             SelectedProject.Content = content.ToString();
         }
         on_ProjectSelectionChange(sender, e);
+
+        on_update_columns(sender, e);
     }
 
     public void EditColor(object sender, RoutedEventArgs e)
@@ -510,6 +524,33 @@ public partial class MainView : UserControl
     {
         var ctx = (MainViewModel)this.DataContext;
         ctx.UpdateLists(ProjectList.SelectedIndex);
+    }
+
+    private void on_update_columns(object sender, EventArgs e)
+    {
+        DrawingGrid.Columns[0].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DrawingGrid.Columns[1].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DrawingGrid.Columns[2].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DrawingGrid.Columns[3].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DrawingGrid.Columns[4].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DrawingGrid.Columns[5].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DrawingGrid.Columns[6].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DrawingGrid.Columns[7].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DrawingGrid.Columns[8].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DrawingGrid.Columns[9].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+
+        DocumentGrid.Columns[0].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DocumentGrid.Columns[1].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DocumentGrid.Columns[2].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DocumentGrid.Columns[3].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DocumentGrid.Columns[4].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DocumentGrid.Columns[5].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DocumentGrid.Columns[6].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DocumentGrid.Columns[7].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DocumentGrid.Columns[8].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        DocumentGrid.Columns[9].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+
+        DrawingGrid.UpdateLayout();
     }
 }
 

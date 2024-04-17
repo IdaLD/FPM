@@ -323,7 +323,17 @@ public class MainViewModel : ViewModelBase
 
         foreach (FileData item in items)
         {
-            Process.Start("explorer.exe", System.IO.Path.GetDirectoryName(item.Sökväg));
+            try
+            {
+                string folderpath = System.IO.Path.GetDirectoryName(item.Sökväg);
+                Process process = Process.Start("explorer.exe", "\"" + folderpath + "\"");
+
+            }
+            catch(Exception e)
+            { 
+                Debug.WriteLine(e);
+            }
+
         }
     }
 
