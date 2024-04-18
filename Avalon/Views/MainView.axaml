@@ -44,7 +44,7 @@
 
 
 	
-			<Grid Name ="MainGrid" ColumnDefinitions="*" RowDefinitions="50,40,5*,3*" Margin="10" VerticalAlignment="Stretch">
+			<Grid Name ="MainGrid" ColumnDefinitions="*" RowDefinitions="50,40,5*,3*" Margin="5" VerticalAlignment="Stretch">
 
 				<DockPanel Width="130" VerticalAlignment="Top" HorizontalAlignment="Left">
 					<Menu DockPanel.Dock="Top">
@@ -80,44 +80,50 @@
 
 					</StackPanel>
 		
+				
 					<StackPanel Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
-						<Button Classes.accent="true" Name="SelectedProject" Content="" Height="30" Width="110" HorizontalContentAlignment="Center" Click="on_popup"/>
-						<Button Name="Columns" Content="Filter" Height="30" Width="150" HorizontalContentAlignment="Center"/>
-						
-						<Popup Name="PopupList" Height="200" Width="110" PlacementTarget="SelectedProject">
-							<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="200" Width="110" Background="Gray">
-								<ListBox.ContextMenu>
-									<ContextMenu Name="tesadsda">
-										<MenuItem Name="RemoveProjectMenu" Header="Remove Project" Click="on_remove_project"/>
-										<MenuItem Name="RenameMenu" Header="Rename Project">
-											<TextBox Name="NewProjectName" Width="160" FlowDirection="LeftToRight"/>
-											<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project"/>
-										</MenuItem>
-									</ContextMenu>
-								</ListBox.ContextMenu>
-							</ListBox>
-						</Popup>
+						<Button Classes.accent="true" Name="SelectedProject" Content="" Height="30" Width="130" HorizontalContentAlignment="Center" Click="Border_PointerPressed">
 
-						<Popup Name="PopupColumnList" Height="450" Width="150" PlacementTarget="Columns">
-							<ListBox Name="ColumnList" Height="450" Width="150" Background="Gray" >
-								<ListBoxItem Height="30"><CheckBox Content="Name"			Tag="0"		Name="Column0"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Tagg"			Tag="1"		Name="Column1"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Färg"			Tag="2"		Name="Column2"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Handling"		Tag="3"		Name="Column3"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Status"			Tag="4"		Name="Column4"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Datum"			Tag="5"		Name="Column5"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Ritningstyp"	Tag="6"		Name="Column6"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Beskrivning 1"	Tag="7"		Name="Column7"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Beskrivning 2"	Tag="8"		Name="Column8"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Beskrivning 3"  Tag="9"		Name="Column9"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Beskrivning 4"	Tag="10"	Name="Column10"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Revidering"		Tag="11"	Name="Column11"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Filtyp"			Tag="12"	Name="Column12"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-								<ListBoxItem Height="30"><CheckBox Content="Sökväg"			Tag="13"	Name="Column13"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-							</ListBox>
-						</Popup>
-						
-						
+							<Button.Flyout>
+								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
+									<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="200" Width="114" FlowDirection="LeftToRight">
+										<ListBox.ContextMenu>
+											<ContextMenu Name="tesadsda">
+												<MenuItem Name="RemoveProjectMenu" Header="Remove Project" Click="on_remove_project"/>
+												<MenuItem Name="RenameMenu" Header="Rename Project">
+													<TextBox Name="NewProjectName" Width="160" FlowDirection="LeftToRight"/>
+													<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project"/>
+												</MenuItem>
+											</ContextMenu>
+										</ListBox.ContextMenu>
+									</ListBox>
+								</Flyout>
+							</Button.Flyout>
+						</Button>	
+							
+						<Button Name="Columns" Content="Filter" Height="30" Width="168" HorizontalContentAlignment="Center" Click="Border_PointerPressed">
+							<Button.Flyout>
+								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
+									<ListBox Name="ColumnList" Height="450" Width="150" FlowDirection="LeftToRight" >
+										<ListBoxItem Height="30"><CheckBox Content="Name"			Tag="0"		Foreground="Black" Name="Column0"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Tagg"			Tag="1"		Foreground="Black" Name="Column1"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Färg"			Tag="2"		Foreground="Black" Name="Column2"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Handling"		Tag="3"		Foreground="Black" Name="Column3"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Status"			Tag="4"		Foreground="Black" Name="Column4"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Datum"			Tag="5"		Foreground="Black" Name="Column5"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Ritningstyp"	Tag="6"		Foreground="Black" Name="Column6"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 1"	Tag="7"		Foreground="Black" Name="Column7"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 2"	Tag="8"		Foreground="Black" Name="Column8"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 3"  Tag="9"		Foreground="Black" Name="Column9"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 4"	Tag="10"	Foreground="Black" Name="Column10"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Revidering"		Tag="11"	Foreground="Black" Name="Column11"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Filtyp"			Tag="12"	Foreground="Black" Name="Column12"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Sökväg"			Tag="13"	Foreground="Black" Name="Column13"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+									</ListBox>
+								</Flyout>
+							</Button.Flyout>
+						</Button>
+
 					</StackPanel>
 				
 				<DataGrid Name="DrawingGrid" Grid.Row="2" Margin="5" Padding="10" ItemsSource="{Binding Drawings}" RowHeight="22" SelectionMode="Extended"

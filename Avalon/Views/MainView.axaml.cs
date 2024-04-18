@@ -8,6 +8,7 @@ using System.Collections;
 using Avalonia.Styling;
 using Avalonia;
 using System.ComponentModel;
+using Avalonia.Controls.Primitives;
 
 namespace Avalon.Views;
 
@@ -17,7 +18,7 @@ public partial class MainView : UserControl
     {
         InitializeComponent();
        
-        MainGrid.Margin = new Thickness(5);
+        //MainGrid.Margin = new Thickness(5);
 
         DrawingGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
         DocumentGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
@@ -30,17 +31,8 @@ public partial class MainView : UserControl
 
        
 
-        ProjectList.AddHandler(ListBox.TappedEvent, on_project_selected);
-
-        //SelectedProject.AddHandler(Button.PointerEnteredEvent, on_popup);
-        //ProjectList.AddHandler(ListBox.PointerExitedEvent, on_popup);
-
-        ColumnList.AddHandler(ListBox.PointerExitedEvent, on_drawingListPopup);
-        //Columns.AddHandler(ListBox.PointerEnteredEvent, on_drawingListPopup);
-        Columns.AddHandler(ListBox.TappedEvent, on_drawingListPopup);
-
+        ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
-
         DrawingGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
         init_columns();
         init_bw();
@@ -66,6 +58,15 @@ public partial class MainView : UserControl
     
 
     private BackgroundWorker bw = new BackgroundWorker();
+
+    public void Border_PointerPressed(object sender, RoutedEventArgs args)
+    {
+        var ctl = sender as Control;
+        if (ctl != null)
+        {
+            FlyoutBase.ShowAttachedFlyout(ctl);
+        }
+    }
 
     private void init_startup(object sender, RoutedEventArgs e)
     {
@@ -164,7 +165,7 @@ public partial class MainView : UserControl
     void on_project_refresh(object sender, EventArgs e)
     {
         ProjectList.SelectedIndex = ProjectList.ItemCount - 1;
-        ProjectList.SelectedItem.ToString();
+        
         SelectedProject.Content = ProjectList.SelectedItem.ToString();
         on_ProjectSelectionChange(sender, e);
     }
@@ -245,30 +246,19 @@ public partial class MainView : UserControl
 
     }
 
-
-    public void on_popup(object sender, RoutedEventArgs e)
-    {
-        PopupList.IsOpen = PopupStatus;
-        PopupStatus = !PopupStatus;
-    }
-
-    public void on_drawingListPopup(object sender, RoutedEventArgs e)
-    {
-        PopupColumnList.IsOpen = PopupColumnList_status;
-        PopupColumnList_status = !PopupColumnList_status;
-    }
-
     public void on_project_selected(object sender, RoutedEventArgs e)
     {
         var content = ProjectList.SelectedItem;
         if (content != null) 
         {
-            on_popup(sender, e);
+            //on_popup(sender, e);
             SelectedProject.Content = content.ToString();
-        }
-        on_ProjectSelectionChange(sender, e);
 
-        on_update_columns(sender, e);
+            on_ProjectSelectionChange(sender, e);
+
+            on_update_columns(sender, e);
+        }
+
     }
 
     public void EditColor(object sender, RoutedEventArgs e)
@@ -329,7 +319,6 @@ public partial class MainView : UserControl
             var ctx = (MainViewModel)this.DataContext;
             ctx.new_project(newName);
             ProjectName.Clear();
-            on_project_refresh(sender, e);
         }
     }
 

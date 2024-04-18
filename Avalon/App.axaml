@@ -7,6 +7,9 @@
 		<themes:MaterialTheme BaseTheme="Inherit" PrimaryColor="Grey" SecondaryColor="Orange" />
 
 
+		<Style Selector="FlyoutPresenter.mySpecialClass">
+			<Setter Property="Background" Value="LightGray" />
+		</Style>
 		
 		<Style Selector="DataGridRow">
 			<Setter Property="Background" Value="{Binding $parent[DataGrid].RowBackground}" />
