@@ -20,17 +20,23 @@
 			<Setter Property="Background" Value="Yellow"/>
 			<Setter Property="Foreground" Value="Black"/>
 		</Style>
+		<Style Selector="DataGridRow.Orange">
+			<Setter Property="Background" Value="Orange"/>
+		</Style>
+		<Style Selector="DataGridRow.Brown">
+			<Setter Property="Background" Value="SaddleBrown"/>
+		</Style>
 		<Style Selector="DataGridRow.Green">
-			<Setter Property="Background" Value="Green"/>
+			<Setter Property="Background" Value="DarkGreen"/>
 		</Style>
 		<Style Selector="DataGridRow.Blue">
-			<Setter Property="Background" Value="Blue"/>
+			<Setter Property="Background" Value="DarkBlue"/>
 		</Style>
 		<Style Selector="DataGridRow.Red">
 			<Setter Property="Background" Value="Red"/>
 		</Style>
 		<Style Selector="DataGridRow.Magenta">
-			<Setter Property="Background" Value="Magenta"/>
+			<Setter Property="Background" Value="Purple"/>
 		</Style>
 	</Window.Styles>
 	<views:MainView />

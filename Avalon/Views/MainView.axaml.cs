@@ -48,6 +48,8 @@ public partial class MainView : UserControl
     }
 
     public string SelectedType = null;
+    public int SelectedIndex = 0;
+
     public bool ViewMode = false;
     public bool DarkMode = false;
     public string StatusMessage = "Ready";
@@ -76,9 +78,8 @@ public partial class MainView : UserControl
             var ctx = (MainViewModel)this.DataContext;
             ctx.read_savefile(path);
 
-            ProjectList.SelectedIndex = ProjectList.ItemCount - 1;
-            ProjectList.SelectedItem.ToString();
-            SelectedProject.Content = ProjectList.SelectedItem.ToString();
+            //ProjectList.SelectedIndex = ProjectList.ItemCount - 1;
+            //SelectedProject.Content = ProjectList.SelectedItem.ToString();
 
             ctx.UpdateLists(ProjectList.SelectedIndex);
         }
@@ -182,8 +183,10 @@ public partial class MainView : UserControl
         var dataObject = e.Row.DataContext as FileData;
         e.Row.Classes.Clear();
 
-        if (dataObject != null && dataObject.Färg == "White") { e.Row.Classes.Clear(); }
+        if (dataObject != null && dataObject.Färg == "") { e.Row.Classes.Clear(); }
         if (dataObject != null && dataObject.Färg == "Yellow"){e.Row.Classes.Add("Yellow");}
+        if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("Orange"); }
+        if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("Brown"); }
         if (dataObject != null && dataObject.Färg == "Green"){e.Row.Classes.Add("Green");}
         if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("Blue"); }
         if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("Red"); }
@@ -251,7 +254,8 @@ public partial class MainView : UserControl
         var content = ProjectList.SelectedItem;
         if (content != null) 
         {
-            //on_popup(sender, e);
+
+            SelectedIndex = ProjectList.SelectedIndex;
             SelectedProject.Content = content.ToString();
 
             on_ProjectSelectionChange(sender, e);
@@ -345,16 +349,14 @@ public partial class MainView : UserControl
 
     private void on_add_document(object sender, RoutedEventArgs e)
     {
-        int currentProject = ProjectList.SelectedIndex;
         var ctx = (MainViewModel)this.DataContext;
-        ctx.AddFile("Document", currentProject, this);
+        ctx.AddFile("Document", SelectedIndex, this);
     }
 
     private void on_add_drawing(object sender, RoutedEventArgs e)
     {
-        int currentProject = ProjectList.SelectedIndex;
         var ctx = (MainViewModel)this.DataContext;
-        ctx.AddFile("Drawing", currentProject, this);
+        ctx.AddFile("Drawing", SelectedIndex, this);
     }
 
     private void on_fetch_single_meta(object sender, RoutedEventArgs e)

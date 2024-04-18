@@ -19,13 +19,15 @@
 				<MenuItem Name="TableDrawingMenu" Header="Drawings" Tag="Drawings" Click="toggle_table"/>
 				<MenuItem Name="TableDocumentMenu" Header="Documents" Tag="Documents" Click="toggle_table"/>
 			</MenuItem>
-			<MenuItem Name="ColorMainMenu" Header="Color Tag">
-				<MenuItem Name="WhiteMenu" Header="None" Tag ="White" Click="EditColor"/>
-				<MenuItem Name="YellowMenu" Header="Yellow" Tag ="Yellow" Click="EditColor"/>
-				<MenuItem Name="GreenMenu" Header="Green" Tag ="Green" Click="EditColor"/>
-				<MenuItem Name="BlueMenu" Header="Blue" Tag ="Blue" Click="EditColor"/>
-				<MenuItem Name="RedMenu" Header="Red" Tag ="Red" Click="EditColor"/>
-				<MenuItem Name="MagentaMenu" Header="Magenta" Tag ="Magenta" Click="EditColor"/>
+			<MenuItem Name="ColorMainMenu" Header="Color Tag" Background="Blue">
+				<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="EditColor"/>
+				<MenuItem Name="YellowMenu" Header="⬛" Foreground="Yellow" Tag ="Yellow" Click="EditColor"/>
+				<MenuItem Name="OrangeMenu" Header="⬛" Foreground="Orange" Tag ="Orange" Click="EditColor"/>
+				<MenuItem Name="BrownMenu" Header="⬛" Foreground="SaddleBrown" Tag ="Brown" Click="EditColor"/>
+				<MenuItem Name="GreenMenu" Header="⬛" Foreground="DarkGreen" Tag ="Green" Click="EditColor"/>
+				<MenuItem Name="BlueMenu" Header="⬛" Foreground="DarkBlue" Tag ="Blue" Click="EditColor"/>
+				<MenuItem Name="RedMenu" Header="⬛" Foreground="Red" Tag ="Red" Click="EditColor"/>
+				<MenuItem Name="MagentaMenu" Header="⬛" Foreground="Purple" Tag ="Magenta" Click="EditColor"/>
 			</MenuItem>
 			<MenuItem Name="TagMenu" Header="User Tag">
 				<TextBox Name="TagMenuInput" Width="160" Text="{Binding user_tag}"/>
@@ -74,19 +76,19 @@
 
 		
 					<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="5">
-						<Button Name="FetchMetadata" Content="Fetch MD" Height="30" Width="100" HorizontalContentAlignment="Center"/>
-						<Button Name="AddProject" Content="New Project" Height="30" Width="110" HorizontalContentAlignment="Center"/>
+						<Button Name="FetchMetadata" Content="FETCH MD" Padding="0,2,0,0" Height="30" Width="110" HorizontalContentAlignment="Center"/>
+						<Button Name="AddProject" Content="NEW PROJECT" Padding="0,2,0,0" Height="30" Width="110" HorizontalContentAlignment="Center"/>
 						<TextBox Name="ProjectName" Width="110"/>
 
 					</StackPanel>
 		
 				
 					<StackPanel Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
-						<Button Classes.accent="true" Name="SelectedProject" Content="" Height="30" Width="130" HorizontalContentAlignment="Center" Click="Border_PointerPressed">
+						<Button Classes.accent="true" Name="SelectedProject" Foreground="White" FontWeight="Bold" Padding="0,2,0,0" Height="30" Width="130" HorizontalContentAlignment="Center" Click="Border_PointerPressed">
 
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="200" Width="114" FlowDirection="LeftToRight">
+									<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Foreground="Black" Height="200" Width="114" FlowDirection="LeftToRight">
 										<ListBox.ContextMenu>
 											<ContextMenu Name="tesadsda">
 												<MenuItem Name="RemoveProjectMenu" Header="Remove Project" Click="on_remove_project"/>
@@ -101,7 +103,7 @@
 							</Button.Flyout>
 						</Button>	
 							
-						<Button Name="Columns" Content="Filter" Height="30" Width="168" HorizontalContentAlignment="Center" Click="Border_PointerPressed">
+						<Button Name="Columns" Content="FILTER" Padding="0,2,0,0" Height="30" Width="168" HorizontalContentAlignment="Center" Click="Border_PointerPressed">
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<ListBox Name="ColumnList" Height="450" Width="150" FlowDirection="LeftToRight" >
