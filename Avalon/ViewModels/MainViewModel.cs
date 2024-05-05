@@ -12,10 +12,25 @@ using System.Text;
 using System;
 using System.Diagnostics.Metrics;
 
+using Docnet.Core;
+using Docnet.Core.Models;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.ComponentModel;
+
+//using Bitmap = Avalonia.Media.Imaging.Bitmap;
+using Avalonia.Media.Imaging;
+using Docnet.Core.Readers;
+using System.Runtime.InteropServices;
+using Avalonia.Platform;
+using iText.IO.Util;
+using Avalonia.Media;
+using System.ComponentModel.DataAnnotations;
+
 namespace Avalon.ViewModels;
 
 
-public class MainViewModel : ViewModelBase
+public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 {
     public MainViewModel()
     {
@@ -37,6 +52,61 @@ public class MainViewModel : ViewModelBase
 
     public List<string[]> metastore = new List<string[]>();
     public List<(string, string)> PathStore = new List<(string, string)>();
+
+
+    public void update_preview(IList drawings, IList documents, string SelectedType)
+    {
+        string filepath = "C:\\marked_642K2161.pdf";
+
+        if (SelectedType == "Drawing"){foreach (FileData drawing in drawings){filepath = drawing.Sökväg;}}
+        if (SelectedType == "Document"){foreach (FileData document in documents){filepath = document.Sökväg;}}
+
+        var docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(1080, 1920)).GetPageReader(0);
+
+        var rawBytes = docReader.GetImage();
+        var width = docReader.GetPageWidth();
+        var height = docReader.GetPageHeight();
+
+
+        var bmp = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+        AddBytes(bmp, rawBytes);
+
+        var stream = new MemoryStream();
+
+        bmp.Save(stream, ImageFormat.Jpeg);
+
+        ImageFromBinding = ConvertToAvaloniaBitmap(bmp);
+        OnPropertyChanged("ImageFromBinding");
+
+    }
+
+    public static Avalonia.Media.Imaging.Bitmap ConvertToAvaloniaBitmap(System.Drawing.Image bitmap)
+    {
+        if (bitmap == null)
+            return null;
+        System.Drawing.Bitmap bitmapTmp = new System.Drawing.Bitmap(bitmap);
+        var bitmapdata = bitmapTmp.LockBits(new Rectangle(0, 0, bitmapTmp.Width, bitmapTmp.Height), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+        Avalonia.Media.Imaging.Bitmap bitmap1 = new Avalonia.Media.Imaging.Bitmap(Avalonia.Platform.PixelFormat.Bgra8888, Avalonia.Platform.AlphaFormat.Premul,
+            bitmapdata.Scan0,
+            new Avalonia.PixelSize(bitmapdata.Width, bitmapdata.Height),
+            new Avalonia.Vector(96, 96),
+            bitmapdata.Stride);
+        bitmapTmp.UnlockBits(bitmapdata);
+        bitmapTmp.Dispose();
+        return bitmap1;
+    }
+
+    private static void AddBytes(System.Drawing.Bitmap bmp, byte[] rawBytes)
+    {
+        var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+
+        var bmpData = bmp.LockBits(rect, ImageLockMode.WriteOnly, bmp.PixelFormat);
+        var pNative = bmpData.Scan0;
+
+        Marshal.Copy(rawBytes, 0, pNative, rawBytes.Length);
+        bmp.UnlockBits(bmpData);
+    }
 
     public async Task LoadFile(Avalonia.Visual window)
     {
@@ -503,5 +573,31 @@ public class MainViewModel : ViewModelBase
 
         return second.OrderBy(x => x.Namn);
     }
+
+
+    private Avalonia.Media.Imaging.Bitmap? previewFile;
+    public Avalonia.Media.Imaging.Bitmap? PreviewFile
+    {
+        get { return previewFile; }
+        set { previewFile = value; OnPropertyChanged("PreviewFile"); }
+    }
+
+
+    private Avalonia.Media.Imaging.Bitmap? imageFromBinding = new Avalonia.Media.Imaging.Bitmap(@"C:\Utvecklingsprojekt\Test\output_image.png");
+    public Avalonia.Media.Imaging.Bitmap? ImageFromBinding
+    {
+        get { return imageFromBinding; }
+        set { imageFromBinding = value; OnPropertyChanged("ImageFromBinding"); }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+
+
 }
 

@@ -9,6 +9,15 @@ using Avalonia.Styling;
 using Avalonia;
 using System.ComponentModel;
 using Avalonia.Controls.Primitives;
+using System.Drawing;
+using System.Drawing.Imaging;
+
+using Bitmap = Avalonia.Media.Imaging.Bitmap;
+using Avalonia.Media.Imaging;
+using Newtonsoft.Json.Bson;
+using iText.Forms.Xfdf;
+using iText.Kernel.Pdf.Filters;
+
 
 namespace Avalon.Views;
 
@@ -29,11 +38,16 @@ public partial class MainView : UserControl
         DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDrawingGridSelected);
         DocumentGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDocumentGridSelected);
 
-       
+        DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, on_preview);
+        DocumentGrid.AddHandler(DataGrid.SelectionChangedEvent, on_preview);
+
 
         ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
         DrawingGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
+
+        PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
+
         init_columns();
         init_bw();
 
@@ -57,6 +71,7 @@ public partial class MainView : UserControl
     public bool PopupColumnList_status = true;
     public string TagInput = "";
 
+    public bool previewMode = false;
     
 
     private BackgroundWorker bw = new BackgroundWorker();
@@ -78,9 +93,6 @@ public partial class MainView : UserControl
             var ctx = (MainViewModel)this.DataContext;
             ctx.read_savefile(path);
 
-            //ProjectList.SelectedIndex = ProjectList.ItemCount - 1;
-            //SelectedProject.Content = ProjectList.SelectedItem.ToString();
-
             ctx.UpdateLists(ProjectList.SelectedIndex);
         }
         catch { }
@@ -89,6 +101,42 @@ public partial class MainView : UserControl
     private void init_window()
     {
         Lockedstatus.IsChecked = true;
+    }
+
+
+    private void on_toggle_preview(object sender, RoutedEventArgs e)
+    {
+        previewMode = !previewMode;
+
+        int a = 1;
+        int b = 0;
+
+        if (previewMode == true) 
+        {
+            b = 1;
+        }
+
+        MainGrid.ColumnDefinitions.Clear();
+        GridLength clmn1 = new GridLength(a, GridUnitType.Star);
+        GridLength clmn2 = new GridLength(b, GridUnitType.Star);
+
+        MainGrid.ColumnDefinitions.Add(new ColumnDefinition(clmn1));
+        MainGrid.ColumnDefinitions.Add(new ColumnDefinition(clmn2));
+
+        
+    }
+
+    private void on_preview(object sender, RoutedEventArgs e)
+    {
+
+        if (previewMode == true)
+        {
+            IList drawings = DrawingGrid.SelectedItems;
+            IList documents = DocumentGrid.SelectedItems;
+
+            var ctx = (MainViewModel)this.DataContext;
+            ctx.update_preview(drawings, documents, SelectedType);
+        }
     }
 
     private void on_lock(object sender, EventArgs e)
@@ -217,36 +265,6 @@ public partial class MainView : UserControl
         MainGrid.RowDefinitions.Add(new RowDefinition(row3));
         MainGrid.RowDefinitions.Add(new RowDefinition(row4));
         
-    }
-
-    private void on_toggle_colormode(object sender, RoutedEventArgs e)
-    {
-        var window = Window.GetTopLevel(this);
-        if (DarkMode == false)
-        {
-            window.RequestedThemeVariant = ThemeVariant.Light;
-        }
-        if (DarkMode == true)
-        {
-            window.RequestedThemeVariant = ThemeVariant.Dark;
-        }
-        DarkMode = !DarkMode;
-    }
-
-    public void ToggleGridmode(object sender, RoutedEventArgs e)
-    {
-        var menuItem = sender as MenuItem;
-        string gridselect = menuItem.Tag.ToString();
-        DataGrid selectedGrid = null;
-
-        if (SelectedType == "Drawing") { selectedGrid = DrawingGrid; }
-        if (SelectedType == "Document") { selectedGrid = DocumentGrid; }
-
-        if (gridselect == "None"){ selectedGrid.GridLinesVisibility = DataGridGridLinesVisibility.None;}
-        if (gridselect == "Vertical") { selectedGrid.GridLinesVisibility = DataGridGridLinesVisibility.Vertical; }
-        if (gridselect == "Horizontal") { selectedGrid.GridLinesVisibility = DataGridGridLinesVisibility.Horizontal; }
-        if (gridselect == "All") { selectedGrid.GridLinesVisibility = DataGridGridLinesVisibility.All; }
-
     }
 
     public void on_project_selected(object sender, RoutedEventArgs e)
@@ -542,6 +560,10 @@ public partial class MainView : UserControl
         DocumentGrid.Columns[9].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
 
         DrawingGrid.UpdateLayout();
+    }
+
+    private void Binding(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
     }
 }
 

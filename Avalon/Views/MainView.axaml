@@ -35,6 +35,7 @@
 				<MenuItem Name="TagMenuClear" Header="Clear Tag" Tag="Clear" Click="on_add_tag"/>
 			</MenuItem>
 			<MenuItem Name="ClearAllMenu" Header="Clear" Click="on_clear_files"/>
+			<MenuItem Name="PreviewMenu" Header="Preview" Click="on_preview"/> 
 		</ContextMenu>
 	</UserControl.Resources>
 
@@ -46,8 +47,10 @@
 
 
 	
-			<Grid Name ="MainGrid" ColumnDefinitions="*" RowDefinitions="50,40,5*,3*" Margin="5" VerticalAlignment="Stretch">
+			<Grid Name ="MainGrid" ColumnDefinitions="*,0" RowDefinitions="50,40,5*,3*" Margin="5" VerticalAlignment="Stretch">
 
+				
+				
 				<DockPanel Width="130" VerticalAlignment="Top" HorizontalAlignment="Left">
 					<Menu DockPanel.Dock="Top">
 						<MenuItem Header="File">
@@ -126,6 +129,8 @@
 							</Button.Flyout>
 						</Button>
 
+						<ToggleSwitch Name="PreviewToggle"/>
+
 					</StackPanel>
 				
 				<DataGrid Name="DrawingGrid" Grid.Row="2" Margin="5" Padding="10" ItemsSource="{Binding Drawings}" RowHeight="22" SelectionMode="Extended"
@@ -157,7 +162,7 @@
 					</DataGrid.Columns>
 				</DataGrid>
 				
-				<DataGrid Name="DocumentGrid" Grid.Row="4" Margin="5" ItemsSource="{Binding Documents}" RowHeight="22" SelectionMode="Extended" 
+				<DataGrid Name="DocumentGrid" Grid.Row="3" Margin="5" ItemsSource="{Binding Documents}" RowHeight="22" SelectionMode="Extended" 
 					AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 
 					<DataGrid.ContextMenu>
@@ -183,5 +188,13 @@
 						<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 					</DataGrid.Columns>
 				</DataGrid>
+
+				<Viewbox Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Stretch="Uniform">
+					<Panel Background="White">
+						<Image Name="ImageGrid" Source="{Binding ImageFromBinding}"/>
+					</Panel>
+				</Viewbox>
+
+				
 			</Grid>
 </UserControl>
