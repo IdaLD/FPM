@@ -17,6 +17,11 @@ using Avalonia.Media.Imaging;
 using Newtonsoft.Json.Bson;
 using iText.Forms.Xfdf;
 using iText.Kernel.Pdf.Filters;
+using Avalonia.Media;
+using Avalonia.Input;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 
 namespace Avalon.Views;
@@ -26,7 +31,9 @@ public partial class MainView : UserControl
     public MainView() 
     {
         InitializeComponent();
-       
+
+        
+
         //MainGrid.Margin = new Thickness(5);
 
         DrawingGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
@@ -48,8 +55,19 @@ public partial class MainView : UserControl
 
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
 
+        //Previewer.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
+
+        Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
+        //Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_zoom_point);
+        Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
+
+        Preview.AddHandler(Viewbox.PointerPressedEvent, on_pan_start);
+        Preview.AddHandler(Viewbox.PointerMovedEvent, on_preview_pan);
+        Preview.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
+
         init_columns();
         init_bw();
+        setup_pw();
 
         init_window();
 
@@ -60,6 +78,8 @@ public partial class MainView : UserControl
         //dotnet publish -c Release -r win-x64 --output ./MyTargetFolder Avalon.sln
 
     }
+
+
 
     public string SelectedType = null;
     public int SelectedIndex = 0;
@@ -72,7 +92,21 @@ public partial class MainView : UserControl
     public string TagInput = "";
 
     public bool previewMode = false;
-    
+
+    public bool preview_pan = false;
+    public double x_start = 0f;
+    public double y_start = 0f;
+
+    public double pw_scale = 1f;
+
+    public string pw_mode = "Zoom";
+
+    private TransformGroup trGrp;
+    private TranslateTransform trTns;
+    private ScaleTransform trScl;
+
+    public TransformGroup transform = new TransformGroup();
+
 
     private BackgroundWorker bw = new BackgroundWorker();
 
@@ -103,17 +137,16 @@ public partial class MainView : UserControl
         Lockedstatus.IsChecked = true;
     }
 
-
     private void on_toggle_preview(object sender, RoutedEventArgs e)
     {
         previewMode = !previewMode;
 
-        int a = 1;
-        int b = 0;
+        float a = 1;
+        float b = 0;
 
         if (previewMode == true) 
         {
-            b = 1;
+            b = 1.5f;
         }
 
         MainGrid.ColumnDefinitions.Clear();
@@ -135,8 +168,131 @@ public partial class MainView : UserControl
             IList documents = DocumentGrid.SelectedItems;
 
             var ctx = (MainViewModel)this.DataContext;
-            ctx.update_preview(drawings, documents, SelectedType);
+            ctx.create_preview_file(drawings, documents, SelectedType, 0);
         }
+    }
+
+    private void setup_pw()
+    {
+        trTns = new TranslateTransform(0, 0);
+        trScl = new ScaleTransform(1, 1);
+
+        trGrp = new TransformGroup();
+        trGrp.Children.Add(trTns);
+        trGrp.Children.Add(trScl);
+    }
+
+    private void on_scroll_mode(object sender, RoutedEventArgs e)
+    {
+        pw_mode = "Scroll";
+    }
+
+    private void on_zoom_mode(object sender, RoutedEventArgs e)
+    {
+        pw_mode = "Zoom";
+    }
+
+    private void on_scroll_preview(object sender, PointerWheelEventArgs args)
+    {
+    
+        if (pw_mode == "Scroll")
+        {
+            var ctx = (MainViewModel)this.DataContext;
+
+            Vector mode = args.Delta;
+
+            Debug.WriteLine(mode.Y);
+
+            if (mode.Y > 0)
+            {
+                ctx.previous_preview_page();
+            }
+            if (mode.Y < 0)
+            {
+                ctx.next_preview_page();
+            }
+        }
+    }
+
+    private void on_pan_start(object sender, PointerEventArgs args)
+    {
+        preview_pan = true;
+
+        double dx = 0;
+        double dy = 0;
+
+        if (Previewer.RenderTransform != null)
+        {
+            dx = trTns.X;
+            dy = trTns.Y;
+        }
+
+        x_start = args.GetPosition(null).X - dx;
+        y_start = args.GetPosition(null).Y - dy;
+
+    }
+
+    private void on_pan_end(object sender, PointerEventArgs args)
+    {
+        preview_pan = false;
+    }
+
+    private void on_preview_pan(object sender, PointerEventArgs args)
+    {
+        if (preview_pan == true)
+        {
+
+            trTns.X = args.GetPosition(null).X - x_start;
+            trTns.Y = args.GetPosition(null).Y - y_start;
+
+            Previewer.RenderTransform = trGrp;
+        }
+    }
+
+    private void on_preview_zoom(object sender, PointerWheelEventArgs args)
+    {
+
+        if (pw_mode == "Zoom")
+        {
+            double preview_x = args.GetCurrentPoint(Previewer).Position.X + trTns.X;
+            double preview_y = args.GetCurrentPoint(Previewer).Position.Y + trTns.Y;
+
+
+            Debug.WriteLine(preview_x);
+
+            Avalonia.Point zoomPoint = new Avalonia.Point(preview_x, preview_y);
+
+            //Previewer.RenderTransformOrigin = new RelativePoint(zoomPoint, RelativeUnit.Absolute);
+
+            Vector mode = args.Delta;
+
+            if (mode.Y > 0)
+            {
+                pw_scale = pw_scale * 1.02;
+                trScl.ScaleX = trScl.ScaleY = pw_scale;
+                Previewer.RenderTransform = trGrp;
+            }
+
+            else if (mode.Y < 0 && pw_scale > 1)
+            {
+                pw_scale = pw_scale * 0.98;
+                trScl.ScaleX = trScl.ScaleY = pw_scale;
+                Previewer.RenderTransform = trGrp;
+            }
+        }
+    }
+
+    private void on_reset_pw(object sender, RoutedEventArgs e)
+    {
+        trScl.ScaleX = 1;
+        trScl.ScaleY = 1;
+        trTns.X = 0;
+        trTns.Y = 0;
+        pw_scale = 1f;
+
+        Previewer.RenderTransform = trGrp;
+
+
     }
 
     private void on_lock(object sender, EventArgs e)
@@ -269,9 +425,13 @@ public partial class MainView : UserControl
 
     public void on_project_selected(object sender, RoutedEventArgs e)
     {
+        
+
         var content = ProjectList.SelectedItem;
         if (content != null) 
         {
+            previewMode = true;
+            on_toggle_preview(sender, null);
 
             SelectedIndex = ProjectList.SelectedIndex;
             SelectedProject.Content = content.ToString();
@@ -562,8 +722,5 @@ public partial class MainView : UserControl
         DrawingGrid.UpdateLayout();
     }
 
-    private void Binding(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-    }
 }
 

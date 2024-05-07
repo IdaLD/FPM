@@ -26,6 +26,7 @@ using Avalonia.Platform;
 using iText.IO.Util;
 using Avalonia.Media;
 using System.ComponentModel.DataAnnotations;
+using iText.Commons.Datastructures;
 
 namespace Avalon.ViewModels;
 
@@ -53,60 +54,64 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public List<string[]> metastore = new List<string[]>();
     public List<(string, string)> PathStore = new List<(string, string)>();
 
+    public IDocReader? docReader { get; set; } = null;
+    public int pw_pagenr { get; set; } = 0;
 
-    public void update_preview(IList drawings, IList documents, string SelectedType)
+    public void create_preview_file(IList? drawings, IList? documents, string SelectedType, int mode)
     {
-        string filepath = "C:\\marked_642K2161.pdf";
+        pw_pagenr = 0;
+        string filepath = "";
+        if (SelectedType == "Drawing") { foreach (FileData drawing in drawings) { filepath = drawing.Sökväg; } }
+        if (SelectedType == "Document") { foreach (FileData document in documents) { filepath = document.Sökväg; } }
+        docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(1440, 2560));
+        preview_page(0);
+    }
 
-        if (SelectedType == "Drawing"){foreach (FileData drawing in drawings){filepath = drawing.Sökväg;}}
-        if (SelectedType == "Document"){foreach (FileData document in documents){filepath = document.Sökväg;}}
+    public void next_preview_page()
+    {
+        if (pw_pagenr < docReader.GetPageCount()-1)
+        {
+            pw_pagenr++;
+            preview_page(pw_pagenr);
+        }
+    }
 
-        var docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(1080, 1920)).GetPageReader(0);
+    public void previous_preview_page()
+    {
+        if (pw_pagenr > 0)
+        {
+            pw_pagenr--;
+            preview_page(pw_pagenr);
+        }
+    }
 
-        var rawBytes = docReader.GetImage();
-        var width = docReader.GetPageWidth();
-        var height = docReader.GetPageHeight();
+    public void preview_page(int pagenr)
+    {
+        IPageReader page = docReader.GetPageReader(pagenr);
 
+        var rawBytes = page.GetImage();
+        var width = page.GetPageWidth();
+        var height = page.GetPageHeight();
 
         var bmp = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-        AddBytes(bmp, rawBytes);
-
-        var stream = new MemoryStream();
-
-        bmp.Save(stream, ImageFormat.Jpeg);
-
-        ImageFromBinding = ConvertToAvaloniaBitmap(bmp);
-        OnPropertyChanged("ImageFromBinding");
-
-    }
-
-    public static Avalonia.Media.Imaging.Bitmap ConvertToAvaloniaBitmap(System.Drawing.Image bitmap)
-    {
-        if (bitmap == null)
-            return null;
-        System.Drawing.Bitmap bitmapTmp = new System.Drawing.Bitmap(bitmap);
-        var bitmapdata = bitmapTmp.LockBits(new Rectangle(0, 0, bitmapTmp.Width, bitmapTmp.Height), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-        Avalonia.Media.Imaging.Bitmap bitmap1 = new Avalonia.Media.Imaging.Bitmap(Avalonia.Platform.PixelFormat.Bgra8888, Avalonia.Platform.AlphaFormat.Premul,
-            bitmapdata.Scan0,
-            new Avalonia.PixelSize(bitmapdata.Width, bitmapdata.Height),
-            new Avalonia.Vector(96, 96),
-            bitmapdata.Stride);
-        bitmapTmp.UnlockBits(bitmapdata);
-        bitmapTmp.Dispose();
-        return bitmap1;
-    }
-
-    private static void AddBytes(System.Drawing.Bitmap bmp, byte[] rawBytes)
-    {
         var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-
         var bmpData = bmp.LockBits(rect, ImageLockMode.WriteOnly, bmp.PixelFormat);
         var pNative = bmpData.Scan0;
 
         Marshal.Copy(rawBytes, 0, pNative, rawBytes.Length);
         bmp.UnlockBits(bmpData);
+
+        using (MemoryStream memory = new MemoryStream())
+        {
+
+            bmp.Save(memory, ImageFormat.Png);
+            memory.Position = 0;
+
+            ImageFromBinding = new Avalonia.Media.Imaging.Bitmap(memory);
+            OnPropertyChanged("ImageFromBinding");
+        }
     }
+    
 
     public async Task LoadFile(Avalonia.Visual window)
     {

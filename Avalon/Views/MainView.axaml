@@ -47,7 +47,7 @@
 
 
 	
-			<Grid Name ="MainGrid" ColumnDefinitions="*,0" RowDefinitions="50,40,5*,3*" Margin="5" VerticalAlignment="Stretch">
+			<Grid Name ="MainGrid" ColumnDefinitions="*,0" RowDefinitions="50,40,5*,3*" Margin="5,5,5,14" VerticalAlignment="Stretch">
 
 				
 				
@@ -65,28 +65,24 @@
 					<TextBlock/>
 				</DockPanel>
 
-					<StackPanel Grid.Row="0" Orientation="Vertical" Spacing="10" Margin="5">
+					<StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Vertical" Spacing="10" Margin="5">
 						<Label Name="StatusLabel" Height="30" Width="200" HorizontalContentAlignment="Center" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
 						<Label Name="ProgressStatus" Height="30" Width="200" HorizontalContentAlignment="Center" VerticalAlignment="Top" IsHitTestVisible="False"/>
 					</StackPanel>
 				
-					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="120,5,5,5">
+					<StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10" Margin="120,5,5,5">
 						<ToggleSwitch Name="Lockedstatus" Width="50" Height="30" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
 						<ProgressBar Name="ProgressBar" Width="200" Value="{Binding Status}"/>
-						
 					</StackPanel>
 
-
-		
-					<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" Margin="5">
+					<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10" Margin="5">
 						<Button Name="FetchMetadata" Content="FETCH MD" Padding="0,2,0,0" Height="30" Width="110" HorizontalContentAlignment="Center"/>
 						<Button Name="AddProject" Content="NEW PROJECT" Padding="0,2,0,0" Height="30" Width="110" HorizontalContentAlignment="Center"/>
 						<TextBox Name="ProjectName" Width="110"/>
-
 					</StackPanel>
 		
 				
-					<StackPanel Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
+					<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
 						<Button Classes.accent="true" Name="SelectedProject" Foreground="White" FontWeight="Bold" Padding="0,2,0,0" Height="30" Width="130" HorizontalContentAlignment="Center" Click="Border_PointerPressed">
 
 							<Button.Flyout>
@@ -162,7 +158,7 @@
 					</DataGrid.Columns>
 				</DataGrid>
 				
-				<DataGrid Name="DocumentGrid" Grid.Row="3" Margin="5" ItemsSource="{Binding Documents}" RowHeight="22" SelectionMode="Extended" 
+				<DataGrid Name="DocumentGrid" Grid.Row="3" Margin="5" Padding="10" ItemsSource="{Binding Documents}" RowHeight="22" SelectionMode="Extended" 
 					AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 
 					<DataGrid.ContextMenu>
@@ -189,11 +185,27 @@
 					</DataGrid.Columns>
 				</DataGrid>
 
-				<Viewbox Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Stretch="Uniform">
-					<Panel Background="White">
-						<Image Name="ImageGrid" Source="{Binding ImageFromBinding}"/>
-					</Panel>
-				</Viewbox>
+
+				<Grid ClipToBounds="True" RowDefinitions="*,40" Grid.Column="1" Grid.Row="2" Grid.RowSpan="2">
+
+					<Viewbox Grid.Row="0" Name="Previewer" Stretch="Uniform" StretchDirection="Both">						
+						<Panel Background="White">
+							<Image x:Name="Preview" Source="{Binding ImageFromBinding}"/>
+						</Panel>
+					</Viewbox>
+	
+					<StackPanel Grid.Row="1" FlowDirection="RightToLeft" Orientation="Vertical">
+						<StackPanel Width="300" Orientation="Horizontal" Background="Transparent" Spacing="5">
+							
+							<Button Content="Reset" Height="30" Click="on_reset_pw"/>
+							<Button Content="Scroll" Height="30" Click="on_scroll_mode"/>
+							<Button Content="Zoom" Height="30" Click="on_zoom_mode"/>
+							<Button Content="Next" Height="30" Command="{Binding next_preview_page}"/>
+							<Button Content="Prev" Height="30" Command="{Binding previous_preview_page}"/>
+							
+						</StackPanel>
+					</StackPanel>
+				</Grid>
 
 				
 			</Grid>
