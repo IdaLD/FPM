@@ -20,6 +20,12 @@ using System.ComponentModel;
 
 using Docnet.Core.Readers;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using Avalonia.Media.Imaging;
+using iText.Layout.Renderer;
+using System.Numerics;
+using Avalonia;
+using Avalonia.Platform;
 
 
 namespace Avalon.ViewModels;
@@ -31,7 +37,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         Projects.Add("New Project");
         Status.Add("Ready");
-        
     }
 
     public ObservableCollection<FileData> Drawings { get; } = new();
@@ -75,7 +80,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         {
             return;
         }
-
     }
 
     public void clear_preview_file()
@@ -122,30 +126,20 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         IPageReader page = docReader.GetPageReader(pagenr);
 
-        var rawBytes = page.GetImage();
-        var width = page.GetPageWidth();
-        var height = page.GetPageHeight();
+        byte[] rawBytes = page.GetImage();
+        int width = page.GetPageWidth();
+        int height = page.GetPageHeight();
 
-        var bmp = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+        Avalonia.Vector dpi = new Avalonia.Vector(96, 96);
 
-        var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-        var bmpData = bmp.LockBits(rect, ImageLockMode.WriteOnly, bmp.PixelFormat);
-        var pNative = bmpData.Scan0;
+        ImageFromBinding = new WriteableBitmap(new PixelSize(width, height),dpi,Avalonia.Platform.PixelFormat.Bgra8888,AlphaFormat.Premul);
 
-        Marshal.Copy(rawBytes, 0, pNative, rawBytes.Length);
-        bmp.UnlockBits(bmpData);
-
-
-        using (MemoryStream memory = new MemoryStream())
+        using (var frameBuffer = ImageFromBinding.Lock())
         {
-            bmp.Save(memory, ImageFormat.Png);
-            memory.Position = 0;
-            ImageFromBinding = new Avalonia.Media.Imaging.Bitmap(memory);
+            Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
 
-            OnPropertyChanged("ImageFromBinding");
         }
     }
-    
 
     public async Task LoadFile(Avalonia.Visual window)
     {
@@ -261,7 +255,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             UpdateLists(selectedProject);
         }
     }
-
 
     public void SelectFiles(bool singleMode, IList drawings, IList documents, string SelectedType)
     {
@@ -391,7 +384,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         }
     }
 
-
     public void OpenFile(IList drawings, IList documents, string SelectedType, string openType)
     {
         string ending = "";
@@ -491,6 +483,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         if (SelectedType == "Document") { SetTag(tagmode, documents, Documents); };
 
     }
+
     public void SetTag(bool tagmode, IList Items, ObservableCollection<FileData> Collection)
     {
         string Tag = "";
@@ -623,7 +616,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         return second.OrderBy(x => x.Namn);
     }
 
-
     private Avalonia.Media.Imaging.Bitmap? previewFile;
     public Avalonia.Media.Imaging.Bitmap? PreviewFile
     {
@@ -632,8 +624,8 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     }
 
 
-    private Avalonia.Media.Imaging.Bitmap? imageFromBinding = new Avalonia.Media.Imaging.Bitmap(@"C:\Utvecklingsprojekt\Test\output_image.png");
-    public Avalonia.Media.Imaging.Bitmap? ImageFromBinding
+    private WriteableBitmap? imageFromBinding = null;
+    public WriteableBitmap? ImageFromBinding
     {
         get { return imageFromBinding; }
         set { imageFromBinding = value; OnPropertyChanged("ImageFromBinding"); }

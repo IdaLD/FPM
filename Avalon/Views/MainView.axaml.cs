@@ -34,10 +34,6 @@ public partial class MainView : UserControl
     {
         InitializeComponent();
 
-        
-
-        //MainGrid.Margin = new Thickness(5);
-
         DrawingGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
         DocumentGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
 
@@ -76,10 +72,6 @@ public partial class MainView : UserControl
         init_window();
 
         StatusLabel.Content = "Ready";
-
-        //dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=True -p:TrimMode=link --output ./MyTargetFolder Avalon.sln
-
-        //dotnet publish -c Release -r win-x64 --output ./MyTargetFolder Avalon.sln
 
     }
 
