@@ -83,6 +83,10 @@
 						<ProgressBar Name="ProgressBar" Width="200" Value="{Binding Status}"/>
 					</StackPanel>
 
+				<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical">
+					<TextBlock Text="{Binding ProjectMessage}" HorizontalAlignment="Center"/>
+				</StackPanel>
+
 					<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10" Margin="5">
 						<Button Name="FetchMetadata" Content="FETCH MD" Padding="0,2,0,0" Height="30" Width="110" HorizontalContentAlignment="Center"/>
 						<Button Name="AddProject" Content="NEW PROJECT" Padding="0,2,0,0" Height="30" Width="110" HorizontalContentAlignment="Center"/>
@@ -192,9 +196,9 @@
 						</Panel>
 					</Viewbox>
 	
-					<StackPanel Grid.Row="1" FlowDirection="RightToLeft" Orientation="Vertical">
-						<StackPanel Width="500" Orientation="Horizontal" Background="Transparent" Spacing="5">
-							<Slider Name="PreviewQuality" FlowDirection="LeftToRight" Width="90" Margin="10" Minimum="1" Maximum="8" Value="3" IsSnapToTickEnabled="True" TickFrequency="1"/>
+					<StackPanel Grid.Row="1" FlowDirection="RightToLeft" Orientation="Vertical" Margin="5">
+						<StackPanel Width="700" Orientation="Horizontal" Background="Transparent" Spacing="5">
+							<Slider Name="PreviewQuality" FlowDirection="LeftToRight" Width="90" Margin="10" Minimum="1" Maximum="8" Value="3" IsSnapToTickEnabled="True" SmallChange="1" TickFrequency="1"/>
 							<Button Content="Reset" Height="30" Click="on_reset_pw"/>
 							<Button Name="ScrollMode" Content="Scroll" Height="30" Background="Orange" Click="on_scroll_mode"/>
 							<Button Name="ZoomMode" Content="Zoom" Height="30" Click="on_zoom_mode"/>
@@ -202,7 +206,7 @@
 							<Button Content="Prev" Height="30" Command="{Binding previous_preview_page}"/>
 							<Label Content="{Binding pw_pagecount_view}" VerticalAlignment="Center"/>
 							<Label Content="/" VerticalAlignment="Center"/>
-							<Label Content="{Binding pw_pagenr_view}" VerticalAlignment="Center"/>
+							<Label Content="{Binding pw_pagenr_view}" Width="30" VerticalAlignment="Center"/>
 							<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Width="200" Margin="10" Minimum="1" Maximum="{Binding pw_pagecount_view}" Value="{Binding pw_pagenr_view}"/>
 							
 							

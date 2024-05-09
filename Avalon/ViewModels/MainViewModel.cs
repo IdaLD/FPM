@@ -18,16 +18,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.ComponentModel;
 
-//using Bitmap = Avalonia.Media.Imaging.Bitmap;
-using Avalonia.Media.Imaging;
 using Docnet.Core.Readers;
 using System.Runtime.InteropServices;
-using Avalonia.Platform;
-using iText.IO.Util;
-using Avalonia.Media;
-using System.ComponentModel.DataAnnotations;
-using iText.Commons.Datastructures;
-using System.Numerics;
+
 
 namespace Avalon.ViewModels;
 
@@ -54,6 +47,8 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public List<string[]> metastore = new List<string[]>();
     public List<(string, string)> PathStore = new List<(string, string)>();
+
+    public string ProjectMessage { get; set; } = "";
 
     public IDocReader? docReader { get; set; } = null;
     public int pw_pagenr { get; set; } = 0;
@@ -113,15 +108,18 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void selected_page(int pagenr)
     {
-        pw_pagenr = pagenr; OnPropertyChanged("pw_pagenr");
-        pw_pagenr_view = pw_pagenr + 1; OnPropertyChanged("pw_pagenr_view");
+        if (pagenr != pw_pagenr)
+        {
+            pw_pagenr = pagenr; OnPropertyChanged("pw_pagenr");
+            pw_pagenr_view = pw_pagenr + 1; OnPropertyChanged("pw_pagenr_view");
 
-        preview_page(pagenr);
+            preview_page(pw_pagenr);
+        }
+
     }
 
     public void preview_page(int pagenr)
     {
-
         IPageReader page = docReader.GetPageReader(pagenr);
 
         var rawBytes = page.GetImage();
@@ -137,12 +135,11 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         Marshal.Copy(rawBytes, 0, pNative, rawBytes.Length);
         bmp.UnlockBits(bmpData);
 
+
         using (MemoryStream memory = new MemoryStream())
         {
-
             bmp.Save(memory, ImageFormat.Png);
             memory.Position = 0;
-
             ImageFromBinding = new Avalonia.Media.Imaging.Bitmap(memory);
 
             OnPropertyChanged("ImageFromBinding");
@@ -392,7 +389,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         {
             metastore.Add(["", "", "", "", "", "", "", "", ""]);
         }
-        
     }
 
 
@@ -592,6 +588,12 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             {
                 Documents.Add(file);
             }
+
+            int drawingcount = filteredDraw.Count();
+            int documentcount = filteredDoc.Count();
+
+            ProjectMessage = string.Format("Project {0}: {1} Drawings / {2} Documents", currentProject, drawingcount, documentcount);
+            OnPropertyChanged("ProjectMessage");
         }
 
     }

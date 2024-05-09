@@ -68,6 +68,7 @@ public partial class MainView : UserControl
 
         ScrollSlider.AddHandler(Slider.ValueChangedEvent, on_select_page);
 
+
         init_columns();
         init_bw();
         setup_pw();
@@ -86,31 +87,25 @@ public partial class MainView : UserControl
 
     public string SelectedType = null;
     public int SelectedIndex = 0;
-    //public string SelectedProject = "";
 
-    public bool ViewMode = false;
-    public bool DarkMode = false;
     public string StatusMessage = "Ready";
     public bool PopupStatus = true;
     public bool PopupColumnList_status = true;
     public string TagInput = "";
 
     public bool previewMode = false;
-
     public bool preview_pan = false;
+
     public double x_start = 0f;
     public double y_start = 0f;
 
     public double pw_scale = 1f;
-
     public string pw_mode = "Scroll";
 
     private TransformGroup trGrp;
     private TranslateTransform trTns;
     private ScaleTransform trScl;
-
     public TransformGroup transform = new TransformGroup();
-
 
     private BackgroundWorker bw = new BackgroundWorker();
 
@@ -217,8 +212,6 @@ public partial class MainView : UserControl
 
             Vector mode = args.Delta;
 
-            Debug.WriteLine(mode.Y);
-
             if (mode.Y > 0)
             {
                 ctx.previous_preview_page();
@@ -232,14 +225,16 @@ public partial class MainView : UserControl
 
     private void on_select_page(object sender, RoutedEventArgs e)
     {
-        var ctx = (MainViewModel)this.DataContext;
-        ctx.selected_page((int)ScrollSlider.Value-1);
+        if (ScrollSlider.IsPointerOver == true)
+        {
+            var ctx = (MainViewModel)this.DataContext;
+            ctx.selected_page((int)ScrollSlider.Value - 1);
+        }
     }
 
     private void on_pan_start(object sender, PointerEventArgs args)
     {
         preview_pan = true;
-        Debug.WriteLine("panstart");
 
         double dx = 0;
         double dy = 0;
@@ -312,7 +307,6 @@ public partial class MainView : UserControl
 
     private void on_lock(object sender, EventArgs e)
     {
-        Debug.WriteLine(Lockedstatus.IsChecked);
         if (Lockedstatus.IsChecked == true)
         {
             AddProject.IsEnabled = false;
@@ -450,8 +444,6 @@ public partial class MainView : UserControl
             on_toggle_preview(sender, null);
 
             SelectedIndex = ProjectList.SelectedIndex;
-
-            Debug.WriteLine(SelectedIndex);
             SelectedProject.Content = content.ToString();
 
             NewProjectName.Text = content.ToString();
