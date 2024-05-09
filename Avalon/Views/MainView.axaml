@@ -51,7 +51,7 @@
 
 				
 				
-				<DockPanel Width="130" VerticalAlignment="Top" HorizontalAlignment="Left">
+				<DockPanel Width="190" VerticalAlignment="Top" HorizontalAlignment="Left">
 					<Menu DockPanel.Dock="Top">
 						<MenuItem Header="File">
 							<MenuItem Header="Load" Click="on_load_file"/>
@@ -61,6 +61,14 @@
 							<MenuItem Header="Drawing" Click="on_add_drawing"/>
 							<MenuItem Header="Document" Click="on_add_document"/>
 						</MenuItem>
+						<MenuItem Header="Project">
+							<MenuItem Name="RemoveProjectMenu" Header="Remove Project" Click="on_remove_project"/>
+							<MenuItem Name="RenameMenu" Header="Rename Project">
+								<TextBox Name="NewProjectName" Width="160" FlowDirection="LeftToRight"/>
+								<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project"/>
+							</MenuItem>
+						</MenuItem>
+						
 					</Menu>
 					<TextBlock/>
 				</DockPanel>
@@ -70,7 +78,7 @@
 						<Label Name="ProgressStatus" Height="30" Width="200" HorizontalContentAlignment="Center" VerticalAlignment="Top" IsHitTestVisible="False"/>
 					</StackPanel>
 				
-					<StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10" Margin="120,5,5,5">
+					<StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10" Margin="200,5,5,5">
 						<ToggleSwitch Name="Lockedstatus" Width="50" Height="30" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
 						<ProgressBar Name="ProgressBar" Width="200" Value="{Binding Status}"/>
 					</StackPanel>
@@ -83,21 +91,11 @@
 		
 				
 					<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
-						<Button Classes.accent="true" Name="SelectedProject" Foreground="White" FontWeight="Bold" Padding="0,2,0,0" Height="30" Width="130" HorizontalContentAlignment="Center" Click="Border_PointerPressed">
+						<Button Classes.accent="true" Name="SelectedProject" Padding="0,2,0,0" Height="30" Width="130" HorizontalContentAlignment="Center" Click="Border_PointerPressed">
 
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Foreground="Black" Height="200" Width="114" FlowDirection="LeftToRight">
-										<ListBox.ContextMenu>
-											<ContextMenu Name="tesadsda">
-												<MenuItem Name="RemoveProjectMenu" Header="Remove Project" Click="on_remove_project"/>
-												<MenuItem Name="RenameMenu" Header="Rename Project">
-													<TextBox Name="NewProjectName" Width="160" FlowDirection="LeftToRight"/>
-													<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project"/>
-												</MenuItem>
-											</ContextMenu>
-										</ListBox.ContextMenu>
-									</ListBox>
+									<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Foreground="Black" Height="200" Width="114" FlowDirection="LeftToRight"/>
 								</Flyout>
 							</Button.Flyout>
 						</Button>	
@@ -195,13 +193,18 @@
 					</Viewbox>
 	
 					<StackPanel Grid.Row="1" FlowDirection="RightToLeft" Orientation="Vertical">
-						<StackPanel Width="300" Orientation="Horizontal" Background="Transparent" Spacing="5">
-							
+						<StackPanel Width="500" Orientation="Horizontal" Background="Transparent" Spacing="5">
+							<Slider Name="PreviewQuality" FlowDirection="LeftToRight" Width="90" Margin="10" Minimum="1" Maximum="8" Value="3" IsSnapToTickEnabled="True" TickFrequency="1"/>
 							<Button Content="Reset" Height="30" Click="on_reset_pw"/>
-							<Button Content="Scroll" Height="30" Click="on_scroll_mode"/>
-							<Button Content="Zoom" Height="30" Click="on_zoom_mode"/>
+							<Button Name="ScrollMode" Content="Scroll" Height="30" Background="Orange" Click="on_scroll_mode"/>
+							<Button Name="ZoomMode" Content="Zoom" Height="30" Click="on_zoom_mode"/>
 							<Button Content="Next" Height="30" Command="{Binding next_preview_page}"/>
 							<Button Content="Prev" Height="30" Command="{Binding previous_preview_page}"/>
+							<Label Content="{Binding pw_pagecount_view}" VerticalAlignment="Center"/>
+							<Label Content="/" VerticalAlignment="Center"/>
+							<Label Content="{Binding pw_pagenr_view}" VerticalAlignment="Center"/>
+							<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Width="200" Margin="10" Minimum="1" Maximum="{Binding pw_pagecount_view}" Value="{Binding pw_pagenr_view}"/>
+							
 							
 						</StackPanel>
 					</StackPanel>

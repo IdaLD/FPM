@@ -27,6 +27,7 @@ using iText.IO.Util;
 using Avalonia.Media;
 using System.ComponentModel.DataAnnotations;
 using iText.Commons.Datastructures;
+using System.Numerics;
 
 namespace Avalon.ViewModels;
 
@@ -56,23 +57,46 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public IDocReader? docReader { get; set; } = null;
     public int pw_pagenr { get; set; } = 0;
+    public int pw_pagenr_view { get; set; } = 1;
+    public int pw_pagecount_view { get; set; } = 1;
 
-    public void create_preview_file(IList? drawings, IList? documents, string SelectedType, int mode)
+    public void create_preview_file(IList? drawings, IList? documents, string SelectedType, int mode, int fak)
     {
-        pw_pagenr = 0;
-        string filepath = "";
-        if (SelectedType == "Drawing") { foreach (FileData drawing in drawings) { filepath = drawing.Sökväg; } }
-        if (SelectedType == "Document") { foreach (FileData document in documents) { filepath = document.Sökväg; } }
-        docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(1440, 2560));
-        preview_page(0);
+        try
+        {
+            pw_pagenr = 0;
+            string filepath = "";
+            if (SelectedType == "Drawing") { foreach (FileData drawing in drawings) { filepath = drawing.Sökväg; } }
+            if (SelectedType == "Document") { foreach (FileData document in documents) { filepath = document.Sökväg; } }
+            docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(fak * 1080/4, fak * 1920/4));
+
+            pw_pagecount_view = docReader.GetPageCount(); OnPropertyChanged("pw_pagecount_view");
+
+            pw_pagenr_view = 1; OnPropertyChanged("pw_pagenr_view");
+
+            preview_page(0);
+        }
+        catch
+        {
+            return;
+        }
+
+    }
+
+    public void clear_preview_file()
+    {
+        docReader = null;
+        ImageFromBinding = null;
     }
 
     public void next_preview_page()
     {
         if (pw_pagenr < docReader.GetPageCount()-1)
         {
-            pw_pagenr++;
+            pw_pagenr++; OnPropertyChanged("pw_pagenr");
             preview_page(pw_pagenr);
+
+            pw_pagenr_view = pw_pagenr + 1; OnPropertyChanged("pw_pagenr_view");
         }
     }
 
@@ -80,13 +104,24 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         if (pw_pagenr > 0)
         {
-            pw_pagenr--;
+            pw_pagenr--; OnPropertyChanged("pw_pagenr");
             preview_page(pw_pagenr);
+
+            pw_pagenr_view = pw_pagenr + 1; OnPropertyChanged("pw_pagenr_view");
         }
+    }
+
+    public void selected_page(int pagenr)
+    {
+        pw_pagenr = pagenr; OnPropertyChanged("pw_pagenr");
+        pw_pagenr_view = pw_pagenr + 1; OnPropertyChanged("pw_pagenr_view");
+
+        preview_page(pagenr);
     }
 
     public void preview_page(int pagenr)
     {
+
         IPageReader page = docReader.GetPageReader(pagenr);
 
         var rawBytes = page.GetImage();
@@ -94,6 +129,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         var height = page.GetPageHeight();
 
         var bmp = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
         var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
         var bmpData = bmp.LockBits(rect, ImageLockMode.WriteOnly, bmp.PixelFormat);
         var pNative = bmpData.Scan0;
@@ -108,6 +144,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             memory.Position = 0;
 
             ImageFromBinding = new Avalonia.Media.Imaging.Bitmap(memory);
+
             OnPropertyChanged("ImageFromBinding");
         }
     }
@@ -569,6 +606,11 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         {
             Projects.Add(project);
         }
+    }
+
+    public string GetCurrentProject(int selectedproject)
+    {
+        return Globals.projects[selectedproject];
     }
 
     private IEnumerable<FileData> get_filtered_res(string currentProject, string type)

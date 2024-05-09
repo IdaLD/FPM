@@ -22,6 +22,8 @@ using Avalonia.Input;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using System.Drawing.Printing;
+using System.Runtime.CompilerServices;
 
 
 namespace Avalon.Views;
@@ -58,12 +60,13 @@ public partial class MainView : UserControl
         //Previewer.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
 
         Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
-        //Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_zoom_point);
         Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
 
         Preview.AddHandler(Viewbox.PointerPressedEvent, on_pan_start);
         Preview.AddHandler(Viewbox.PointerMovedEvent, on_preview_pan);
         Preview.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
+
+        ScrollSlider.AddHandler(Slider.ValueChangedEvent, on_select_page);
 
         init_columns();
         init_bw();
@@ -83,6 +86,7 @@ public partial class MainView : UserControl
 
     public string SelectedType = null;
     public int SelectedIndex = 0;
+    //public string SelectedProject = "";
 
     public bool ViewMode = false;
     public bool DarkMode = false;
@@ -99,7 +103,7 @@ public partial class MainView : UserControl
 
     public double pw_scale = 1f;
 
-    public string pw_mode = "Zoom";
+    public string pw_mode = "Scroll";
 
     private TransformGroup trGrp;
     private TranslateTransform trTns;
@@ -126,8 +130,7 @@ public partial class MainView : UserControl
             string path = "C:\\FIlePathManager\\Projects.json";
             var ctx = (MainViewModel)this.DataContext;
             ctx.read_savefile(path);
-
-            ctx.UpdateLists(ProjectList.SelectedIndex);
+            on_project_refresh(sender, e);
         }
         catch { }
     }
@@ -156,7 +159,12 @@ public partial class MainView : UserControl
         MainGrid.ColumnDefinitions.Add(new ColumnDefinition(clmn1));
         MainGrid.ColumnDefinitions.Add(new ColumnDefinition(clmn2));
 
-        
+        if (previewMode == false)
+        {
+            var ctx = (MainViewModel)this.DataContext;
+            ctx.clear_preview_file();
+        }
+
     }
 
     private void on_preview(object sender, RoutedEventArgs e)
@@ -167,8 +175,12 @@ public partial class MainView : UserControl
             IList drawings = DrawingGrid.SelectedItems;
             IList documents = DocumentGrid.SelectedItems;
 
+            int fak = (int)PreviewQuality.Value;
+
             var ctx = (MainViewModel)this.DataContext;
-            ctx.create_preview_file(drawings, documents, SelectedType, 0);
+            ctx.create_preview_file(drawings, documents, SelectedType, 0, fak);
+
+            ScrollSlider.Value = 0;
         }
     }
 
@@ -185,11 +197,15 @@ public partial class MainView : UserControl
     private void on_scroll_mode(object sender, RoutedEventArgs e)
     {
         pw_mode = "Scroll";
+        ScrollMode.Background = Avalonia.Media.Brushes.Orange;
+        ZoomMode.Background = Avalonia.Media.Brushes.DarkGray;
     }
 
     private void on_zoom_mode(object sender, RoutedEventArgs e)
     {
         pw_mode = "Zoom";
+        ScrollMode.Background = Avalonia.Media.Brushes.DarkGray;
+        ZoomMode.Background = Avalonia.Media.Brushes.Orange;
     }
 
     private void on_scroll_preview(object sender, PointerWheelEventArgs args)
@@ -214,9 +230,16 @@ public partial class MainView : UserControl
         }
     }
 
+    private void on_select_page(object sender, RoutedEventArgs e)
+    {
+        var ctx = (MainViewModel)this.DataContext;
+        ctx.selected_page((int)ScrollSlider.Value-1);
+    }
+
     private void on_pan_start(object sender, PointerEventArgs args)
     {
         preview_pan = true;
+        Debug.WriteLine("panstart");
 
         double dx = 0;
         double dy = 0;
@@ -241,7 +264,6 @@ public partial class MainView : UserControl
     {
         if (preview_pan == true)
         {
-
             trTns.X = args.GetPosition(null).X - x_start;
             trTns.Y = args.GetPosition(null).Y - y_start;
 
@@ -257,25 +279,18 @@ public partial class MainView : UserControl
             double preview_x = args.GetCurrentPoint(Previewer).Position.X + trTns.X;
             double preview_y = args.GetCurrentPoint(Previewer).Position.Y + trTns.Y;
 
-
-            Debug.WriteLine(preview_x);
-
-            Avalonia.Point zoomPoint = new Avalonia.Point(preview_x, preview_y);
-
-            //Previewer.RenderTransformOrigin = new RelativePoint(zoomPoint, RelativeUnit.Absolute);
-
             Vector mode = args.Delta;
 
             if (mode.Y > 0)
             {
-                pw_scale = pw_scale * 1.02;
+                pw_scale = pw_scale * 1.05;
                 trScl.ScaleX = trScl.ScaleY = pw_scale;
                 Previewer.RenderTransform = trGrp;
             }
 
             else if (mode.Y < 0 && pw_scale > 1)
             {
-                pw_scale = pw_scale * 0.98;
+                pw_scale = pw_scale * 0.95;
                 trScl.ScaleX = trScl.ScaleY = pw_scale;
                 Previewer.RenderTransform = trGrp;
             }
@@ -318,7 +333,6 @@ public partial class MainView : UserControl
         }
     }
 
-
     private void init_columns()
     {
         int nval = DrawingGrid.Columns.Count();
@@ -339,6 +353,7 @@ public partial class MainView : UserControl
         Column9.IsChecked = true;
 
     }
+
     private void init_bw()
     {
         bw.DoWork += Bw_DoWork;
@@ -369,18 +384,19 @@ public partial class MainView : UserControl
 
     void on_project_refresh(object sender, EventArgs e)
     {
-        ProjectList.SelectedIndex = ProjectList.ItemCount - 1;
-        
-        SelectedProject.Content = ProjectList.SelectedItem.ToString();
+        var ctx = (MainViewModel)this.DataContext;
+
+        ProjectList.SelectedIndex = SelectedIndex = 0;
+
+        SelectedProject.Content = ctx.GetCurrentProject(SelectedIndex);
+
         on_ProjectSelectionChange(sender, e);
     }
-
 
     void OnMenuOpen(object sender, RoutedEventArgs e)
     {
         on_open_file(sender, e);
     }
-
 
     private void DataGrid_OnLoadingRow(object? sender, DataGridRowEventArgs e)
     {
@@ -434,7 +450,11 @@ public partial class MainView : UserControl
             on_toggle_preview(sender, null);
 
             SelectedIndex = ProjectList.SelectedIndex;
+
+            Debug.WriteLine(SelectedIndex);
             SelectedProject.Content = content.ToString();
+
+            NewProjectName.Text = content.ToString();
 
             on_ProjectSelectionChange(sender, e);
 
@@ -507,22 +527,20 @@ public partial class MainView : UserControl
     private void on_remove_project(object sender, RoutedEventArgs e)
     {
         var ctx = (MainViewModel)this.DataContext;
-        ctx.remove_project(ProjectList.SelectedIndex);
+        ctx.remove_project(SelectedIndex);
+
         on_project_refresh(sender, e);
     }
 
     private void on_rename_project(object sender, RoutedEventArgs e)
     {
-
-        int currentProject = ProjectList.SelectedIndex;
+        int currentProject = SelectedIndex;
         string newName = NewProjectName.Text.ToString();
 
         var ctx = (MainViewModel)this.DataContext;
         ctx.rename_project(currentProject, newName);
-        if (currentProject == ProjectList.ItemCount - 1)
-        {
-            SelectedProject.Content = newName;
-        }
+
+        SelectedProject.Content = newName.ToString();
     }
 
     private void on_add_document(object sender, RoutedEventArgs e)
@@ -547,6 +565,7 @@ public partial class MainView : UserControl
         ctx.SelectFiles(true, drawings, documents, SelectedType);
         on_fetch_metadata();
     }
+
     private void on_fetch_full_meta(object sender, RoutedEventArgs e)
     {
         ProgressStatus.Content = "Fetching Metadata";
@@ -556,7 +575,6 @@ public partial class MainView : UserControl
         
         on_fetch_metadata();
     }
-
 
     private void on_fetch_metadata()
     {
@@ -590,7 +608,6 @@ public partial class MainView : UserControl
         ProgressStatus.Content = "";
         ProgressBar.Value = 0;
     }
-
 
     private void on_open_path(object sender, RoutedEventArgs e)
     {
@@ -678,7 +695,6 @@ public partial class MainView : UserControl
         ctx.RemoveFiles(drawings, documents, SelectedType);
     }
 
-
     private void OnDrawingGridSelected(object sender, EventArgs e)
     {
         SelectedType = "Drawing";
@@ -692,7 +708,7 @@ public partial class MainView : UserControl
     private void on_ProjectSelectionChange(object sender, EventArgs e)
     {
         var ctx = (MainViewModel)this.DataContext;
-        ctx.UpdateLists(ProjectList.SelectedIndex);
+        ctx.UpdateLists(SelectedIndex);
     }
 
     private void on_update_columns(object sender, EventArgs e)
