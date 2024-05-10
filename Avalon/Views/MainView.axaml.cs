@@ -37,7 +37,6 @@ public partial class MainView : UserControl
         DrawingGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
         DocumentGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
 
-        AddProject.AddHandler(Button.ClickEvent, on_add_project);
         FetchMetadata.AddHandler(Button.ClickEvent, on_fetch_full_meta);
 
         DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDrawingGridSelected);
@@ -63,7 +62,6 @@ public partial class MainView : UserControl
         Preview.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
 
         ScrollSlider.AddHandler(Slider.ValueChangedEvent, on_select_page);
-
 
         init_columns();
         init_bw();
@@ -301,7 +299,6 @@ public partial class MainView : UserControl
     {
         if (Lockedstatus.IsChecked == true)
         {
-            AddProject.IsEnabled = false;
             RemoveProjectMenu.IsEnabled = false;
 
             ContextMenu Menu = this.Resources["Menu"] as ContextMenu;
@@ -310,7 +307,6 @@ public partial class MainView : UserControl
         }
         if (Lockedstatus.IsChecked == false)
         {
-            AddProject.IsEnabled = true;
             RemoveProjectMenu.IsEnabled = true;
 
             ContextMenu Menu = this.Resources["Menu"] as ContextMenu;
@@ -496,7 +492,7 @@ public partial class MainView : UserControl
         
     }
 
-    private void on_add_project(object sender, EventArgs e)
+    private void on_add_project(object sender, RoutedEventArgs e)
     {
         var Name = ProjectName.Text;
         if (Name != null)
