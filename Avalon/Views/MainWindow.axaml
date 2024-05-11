@@ -10,7 +10,6 @@
         x:Class="Avalon.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         WindowStartupLocation="CenterScreen"
-		RequestedThemeVariant="Dark"
         ExtendClientAreaToDecorationsHint="True"
         Title="Avalon">
 

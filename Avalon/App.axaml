@@ -10,15 +10,19 @@
 
 
 	<Application.Styles>
-		<themes:MaterialTheme BaseTheme="Inherit" PrimaryColor="Grey" SecondaryColor="Orange" />
-
+		<themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Grey" SecondaryColor="Orange" />
+		
 		<Style Selector="FlyoutPresenter.mySpecialClass">
 			<Setter Property="Background" Value="{DynamicResource MaterialCardBackgroundBrush}"/>
 		</Style>
 
 		<Style Selector="Button">
-			<Setter Property="BorderBrush" Value="{DynamicResource MaterialSecondaryDarkForegroundBrush}"/>
-			<Setter Property="BorderThickness" Value="{TemplateBinding BorderThickness}"/>
+			<Setter Property="Height" Value="30"/>
+			<Setter Property="MinWidth" Value="50"/>
+			<Setter Property="Padding" Value="0,1,0,0"/>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="BorderThickness" Value="1.5"/>
+			<Setter Property="BorderBrush" Value="Gray"/>
 		</Style>
 		
 		<Style Selector="DataGridRow">
@@ -49,22 +53,6 @@
 			</Setter>
 		</Style>
 	</Application.Styles>
-
-	<Application.Resources>
-		<ControlTheme x:Key="MaterialOutlineComboBoxMod" TargetType="ComboBox" BasedOn="{StaticResource MaterialOutlineComboBox}">
-
-			<Setter Property="BorderBrush" Value="{DynamicResource MaterialSecondaryDarkForegroundBrush}"/>
-			<Setter Property="BorderThickness" Value="{TemplateBinding BorderThickness}"/>
-
-
-			<Style Selector="^ /template/ Grid#PART_RootBorder">
-				<Setter Property="Height" Value="31" />
-				<Setter Property="MinHeight" Value="31" />
-			</Style>
-
-			
-		</ControlTheme>
-	</Application.Resources>
 	
 </Application>
 

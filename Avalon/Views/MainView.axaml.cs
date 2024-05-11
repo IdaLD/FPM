@@ -24,6 +24,10 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Drawing.Printing;
 using System.Runtime.CompilerServices;
+using Material.Styles.Themes;
+using ReactiveUI;
+using Material.Colors.Recommended;
+using Material.Colors;
 
 
 namespace Avalon.Views;
@@ -51,8 +55,6 @@ public partial class MainView : UserControl
         DrawingGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
 
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
-
-        //Previewer.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
 
         Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
         Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
@@ -83,6 +85,8 @@ public partial class MainView : UserControl
     public bool PopupColumnList_status = true;
     public string TagInput = "";
 
+    public bool darkmode = true;
+
     public bool previewMode = false;
     public bool preview_pan = false;
 
@@ -98,6 +102,22 @@ public partial class MainView : UserControl
     public TransformGroup transform = new TransformGroup();
 
     private BackgroundWorker bw = new BackgroundWorker();
+
+    public void on_toggle_theme(object sender, RoutedEventArgs e)
+    {
+        var MaterialThemeStyles = Application.Current!.LocateMaterialTheme<MaterialTheme>();
+
+        darkmode = !darkmode;
+
+        if (darkmode == false)
+        {
+            MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Light;
+        }
+        if (darkmode == true)
+        {
+            MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Dark;
+        }
+    }
 
     public void Border_PointerPressed(object sender, RoutedEventArgs args)
     {
@@ -428,8 +448,9 @@ public partial class MainView : UserControl
         var content = ProjectList.SelectedItem;
         if (content != null) 
         {
-            previewMode = true;
-            on_toggle_preview(sender, null);
+            //previewMode = true;
+            PreviewToggle.IsChecked = false;
+            //on_toggle_preview(sender, null);
 
             SelectedIndex = ProjectList.SelectedIndex;
             SelectedProject.Content = content.ToString();
