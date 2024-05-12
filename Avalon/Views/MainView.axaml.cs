@@ -3,31 +3,13 @@ using System;
 using Avalonia.Interactivity;
 using System.Linq;
 using Avalon.ViewModels;
-using System.Diagnostics;
 using System.Collections;
-using Avalonia.Styling;
 using Avalonia;
 using System.ComponentModel;
 using Avalonia.Controls.Primitives;
-using System.Drawing;
-using System.Drawing.Imaging;
-
-using Bitmap = Avalonia.Media.Imaging.Bitmap;
-using Avalonia.Media.Imaging;
-using Newtonsoft.Json.Bson;
-using iText.Forms.Xfdf;
-using iText.Kernel.Pdf.Filters;
 using Avalonia.Media;
 using Avalonia.Input;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using System.Drawing.Printing;
-using System.Runtime.CompilerServices;
 using Material.Styles.Themes;
-using ReactiveUI;
-using Material.Colors.Recommended;
-using Material.Colors;
 
 
 namespace Avalon.Views;
@@ -85,8 +67,6 @@ public partial class MainView : UserControl
     public bool PopupColumnList_status = true;
     public string TagInput = "";
 
-    public bool darkmode = true;
-
     public bool previewMode = false;
     public bool preview_pan = false;
 
@@ -103,20 +83,16 @@ public partial class MainView : UserControl
 
     private BackgroundWorker bw = new BackgroundWorker();
 
-    public void on_toggle_theme(object sender, RoutedEventArgs e)
+    public void on_theme_dark(object sender, RoutedEventArgs e)
     {
         var MaterialThemeStyles = Application.Current!.LocateMaterialTheme<MaterialTheme>();
+        MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Dark;
+    }
 
-        darkmode = !darkmode;
-
-        if (darkmode == false)
-        {
-            MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Light;
-        }
-        if (darkmode == true)
-        {
-            MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Dark;
-        }
+    public void on_theme_light(object sender, RoutedEventArgs e)
+    {
+        var MaterialThemeStyles = Application.Current!.LocateMaterialTheme<MaterialTheme>();
+        MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Light;
     }
 
     public void Border_PointerPressed(object sender, RoutedEventArgs args)
@@ -429,15 +405,11 @@ public partial class MainView : UserControl
         if (mode == "Documents") {  a = 0; b = 1; }
 
 
-        MainGrid.RowDefinitions.Clear();
-        GridLength row1 = new GridLength(40);
-        GridLength row2 = new GridLength(40);
+        TableGrid.RowDefinitions.Clear();
         GridLength row3 = new GridLength(a, GridUnitType.Star);
         GridLength row4 = new GridLength(b, GridUnitType.Star);
-        MainGrid.RowDefinitions.Add(new RowDefinition(row1));
-        MainGrid.RowDefinitions.Add(new RowDefinition(row2));
-        MainGrid.RowDefinitions.Add(new RowDefinition(row3));
-        MainGrid.RowDefinitions.Add(new RowDefinition(row4));
+        TableGrid.RowDefinitions.Add(new RowDefinition(row3));
+        TableGrid.RowDefinitions.Add(new RowDefinition(row4));
         
     }
 
@@ -448,17 +420,13 @@ public partial class MainView : UserControl
         var content = ProjectList.SelectedItem;
         if (content != null) 
         {
-            //previewMode = true;
             PreviewToggle.IsChecked = false;
-            //on_toggle_preview(sender, null);
 
             SelectedIndex = ProjectList.SelectedIndex;
             SelectedProject.Content = content.ToString();
-
             NewProjectName.Text = content.ToString();
 
             on_ProjectSelectionChange(sender, e);
-
             on_update_columns(sender, e);
         }
 
