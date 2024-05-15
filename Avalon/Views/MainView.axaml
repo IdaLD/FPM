@@ -208,7 +208,7 @@
 					<StackPanel Grid.Row="1" FlowDirection="RightToLeft" Orientation="Vertical" Margin="5">
 						<StackPanel Width="700" Orientation="Horizontal" Background="Transparent" Spacing="5">
 							<Slider Name="PreviewQuality" FlowDirection="LeftToRight" Width="90" Margin="10" Minimum="1" Maximum="8" Value="3" IsSnapToTickEnabled="True" SmallChange="1" TickFrequency="1"/>
-							<Button Content="Reset" BorderThickness="0" Click="on_reset_pw"/>
+							<Button Content="Reset" BorderThickness="0" Click="reset_preview_transform"/>
 							<Button Name="ScrollMode" Content="Scroll" BorderThickness="0" Background="Orange" Click="on_scroll_mode"/>
 							<Button Name="ZoomMode" Content="Zoom" BorderThickness="0" Click="on_zoom_mode"/>
 							<Button Content="Next" BorderThickness="0" Command="{Binding next_preview_page}"/>

@@ -60,21 +60,22 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public int pw_pagenr_view { get; set; } = 1;
     public int pw_pagecount_view { get; set; } = 1;
 
-    public void create_preview_file(IList? drawings, IList? documents, string SelectedType, int mode, int fak)
+    public void create_preview_file(string filepath, int fak)
     {
+        if (docReader != null)
+        {
+            docReader.Dispose();
+        }
+
         try
         {
             pw_pagenr = 0;
-            string filepath = "";
-            if (SelectedType == "Drawing") { foreach (FileData drawing in drawings) { filepath = drawing.Sökväg; } }
-            if (SelectedType == "Document") { foreach (FileData document in documents) { filepath = document.Sökväg; } }
+
             docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(fak * 1080/4, fak * 1920/4));
 
             pw_pagecount_view = docReader.GetPageCount(); OnPropertyChanged("pw_pagecount_view");
 
             pw_pagenr_view = 1; OnPropertyChanged("pw_pagenr_view");
-
-            preview_page(0);
         }
         catch
         {
@@ -122,6 +123,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     }
 
+
     public void preview_page(int pagenr)
     {
         IPageReader page = docReader.GetPageReader(pagenr);
@@ -137,7 +139,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         using (var frameBuffer = ImageFromBinding.Lock())
         {
             Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
-
         }
     }
 
