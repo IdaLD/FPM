@@ -52,7 +52,8 @@
 					<Menu DockPanel.Dock="Top">
 						<MenuItem Header="File">
 							<MenuItem Header="Load" Click="on_load_file"/>
-							<MenuItem Header="Save" Click="on_save_file"/>
+							<MenuItem Header="Save" Click="on_save_file_auto"/>
+							<MenuItem Header="Save as" Click="on_save_file"/>
 						</MenuItem>
 						<MenuItem Header="Add">
 							<MenuItem Header="Drawing" Click="on_add_drawing"/>

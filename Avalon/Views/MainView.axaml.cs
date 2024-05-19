@@ -11,6 +11,8 @@ using Avalonia.Media;
 using Avalonia.Input;
 using Material.Styles.Themes;
 using System.Runtime.CompilerServices;
+using Newtonsoft.Json.Bson;
+using System.Threading;
 
 
 namespace Avalon.Views;
@@ -29,8 +31,8 @@ public partial class MainView : UserControl
         DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDrawingGridSelected);
         DocumentGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDocumentGridSelected);
 
-        DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, on_preview);
-        DocumentGrid.AddHandler(DataGrid.SelectionChangedEvent, on_preview);
+        DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
+        DocumentGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
 
 
         ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
@@ -77,6 +79,9 @@ public partial class MainView : UserControl
     public double pw_scale = 1f;
     public string pw_mode = "Scroll";
 
+    public string preview_request = "";
+    public string preview_current = "";
+
     private TransformGroup trGrp;
     private TranslateTransform trTns;
     private ScaleTransform trScl;
@@ -84,6 +89,8 @@ public partial class MainView : UserControl
 
     private BackgroundWorker MetaWorker = new BackgroundWorker();
     private BackgroundWorker PreviewWorker = new BackgroundWorker();
+
+    private Thread taskThread = null;
 
     private bool PreviewWorker_busy = false;
 
@@ -153,52 +160,73 @@ public partial class MainView : UserControl
             ctx.clear_preview_file();
         }
 
+        
+
     }
 
-    private string set_preview_file()
+    private void set_preview_request(object sender, RoutedEventArgs r)
     {
-        FileData drawing = (FileData)DrawingGrid.SelectedItem;
-        FileData document = (FileData)DocumentGrid.SelectedItem;
+        if (previewMode == true)
+        {
+            
 
-        string filepath = "";
-        if (SelectedType == "Drawing") { filepath = drawing.Sökväg; }
-        if (SelectedType == "Document") {filepath = document.Sökväg; } 
+            FileData drawing = (FileData)DrawingGrid.SelectedItem;
+            FileData document = (FileData)DocumentGrid.SelectedItem;
 
-        return filepath;
+            string filepath = "";
+            if (SelectedType == "Drawing") { filepath = drawing.Sökväg; }
+            if (SelectedType == "Document") { filepath = document.Sökväg; }
+
+            preview_request = filepath;
+
+            
+
+            //on_preview();
+            int QFak = (int)PreviewQuality.Value;
+
+            if (PreviewWorker_busy == false)
+            {
+                PreviewWorker_busy = true;
+                PreviewWorker.RunWorkerAsync(QFak);
+            }
+            
+            
+            
+
+    
+        }
     }
     private void init_PreviewWorker()
     {
         PreviewWorker.DoWork += PreviewWorker_DoWork;
         PreviewWorker.RunWorkerCompleted += PreviewWorker_RunWorkerCompleted;
+        PreviewWorker.WorkerSupportsCancellation = true;
     }
 
     private void PreviewWorker_DoWork(object sender, DoWorkEventArgs e)
     {
-        int QFak = (int)e.Argument;
-        string filepath = set_preview_file();
+        ctx.clear_preview_file();
 
-        ctx.create_preview_file(filepath, QFak);
-        ctx.preview_page(0);
+        int QFak = (int)e.Argument;
+        string current_task = preview_request;
+        ctx.create_preview_file(current_task, QFak);
+        preview_current = current_task;
+        
     }
 
     private void PreviewWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
         
         PreviewWorker_busy = false;
-    }
 
-    private void on_preview(object sender, RoutedEventArgs e)
-    {
-        if (previewMode == true)
+        if (preview_current != preview_request)
         {
-            int QFak = (int)PreviewQuality.Value;
-
-            if (PreviewWorker_busy != true)
-            {
-                PreviewWorker_busy = true;
-                PreviewWorker.RunWorkerAsync(QFak);
-
-            }
+            PreviewWorker_busy = true;
+            PreviewWorker.RunWorkerAsync(4);
+        }
+        else
+        {
+            ctx.preview_page(0);
         }
     }
 
@@ -633,6 +661,14 @@ public partial class MainView : UserControl
     {
         StatusLabel.Content = "Saving file";
         await ctx.SaveFile(this);
+        StatusLabel.Content = "Ready";
+    }
+
+    private async void on_save_file_auto(object sender, RoutedEventArgs e)
+    {
+        StatusLabel.Content = "Saving file";
+        string path = "C:\\FIlePathManager\\Projects.json";
+        await ctx.SaveFileAuto(path);
         StatusLabel.Content = "Ready";
     }
 

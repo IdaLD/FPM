@@ -26,6 +26,7 @@ using iText.Layout.Renderer;
 using System.Numerics;
 using Avalonia;
 using Avalonia.Platform;
+using Newtonsoft.Json.Bson;
 
 
 namespace Avalon.ViewModels;
@@ -86,7 +87,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public void clear_preview_file()
     {
         docReader = null;
-        ImageFromBinding = null;
+        ImageFromBinding = null; OnPropertyChanged("ImageFromBinding");
     }
 
     public void next_preview_page()
@@ -224,6 +225,15 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         {
             await using var stream = await file.OpenWriteAsync();
             using var streamWriter = new StreamWriter(stream);
+            var data = JsonConvert.SerializeObject(Globals.storedFiles);
+            await streamWriter.WriteLineAsync(data);
+        }
+    }
+
+    public async Task SaveFileAuto(string path)
+    {
+        using (StreamWriter streamWriter = new StreamWriter(path))
+        {
             var data = JsonConvert.SerializeObject(Globals.storedFiles);
             await streamWriter.WriteLineAsync(data);
         }
