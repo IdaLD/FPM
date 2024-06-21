@@ -13,11 +13,15 @@ using Material.Styles.Themes;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json.Bson;
 using System.Threading;
+using System.IO;
+using System.Diagnostics;
+using Avalonia.Controls.Generators;
+using System.Collections.Generic;
 
 
 namespace Avalon.Views;
 
-public partial class MainView : UserControl
+public partial class MainView : UserControl, INotifyPropertyChanged
 {
     public MainView() 
     {
@@ -39,6 +43,8 @@ public partial class MainView : UserControl
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
         DrawingGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
 
+        ViewSlider.AddHandler(Slider.ValueChangedEvent, toggle_table);
+
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
 
         Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
@@ -57,10 +63,7 @@ public partial class MainView : UserControl
         setup_preview_transform();
 
         StatusLabel.Content = "Ready";
-
     }
-
-
 
     public string SelectedType = null;
     public int SelectedIndex = 0;
@@ -95,6 +98,9 @@ public partial class MainView : UserControl
     private bool PreviewWorker_busy = false;
 
     public MainViewModel ctx = null;
+
+    public List<DataGridRowEventArgs> Args = new List<DataGridRowEventArgs>();
+
 
     public void get_datacontext()
     {
@@ -139,6 +145,7 @@ public partial class MainView : UserControl
     private void on_toggle_preview(object sender, RoutedEventArgs e)
     {
         previewMode = !previewMode;
+        CurrentPreview.IsVisible = previewMode;
 
         float a = 1;
         float b = 0;
@@ -159,43 +166,41 @@ public partial class MainView : UserControl
         {
             ctx.clear_preview_file();
         }
-
-        
-
     }
 
     private void set_preview_request(object sender, RoutedEventArgs r)
     {
         if (previewMode == true)
         {
-            
-
             FileData drawing = (FileData)DrawingGrid.SelectedItem;
             FileData document = (FileData)DocumentGrid.SelectedItem;
 
             string filepath = "";
-            if (SelectedType == "Drawing") { filepath = drawing.Sökväg; }
-            if (SelectedType == "Document") { filepath = document.Sökväg; }
+            if (SelectedType == "Drawing" && drawing != null) { filepath = drawing.Sökväg; }
+            if (SelectedType == "Document" && document != null) { filepath = document.Sökväg; }
 
-            preview_request = filepath;
-
-            
-
-            //on_preview();
-            int QFak = (int)PreviewQuality.Value;
-
-            if (PreviewWorker_busy == false)
+            if (filepath != "")
             {
-                PreviewWorker_busy = true;
-                PreviewWorker.RunWorkerAsync(QFak);
-            }
-            
-            
-            
+                Debug.WriteLine("OK");
 
-    
+                preview_request = filepath;
+
+                int QFak = (int)PreviewQuality.Value;
+
+                if (PreviewWorker_busy == false)
+                {
+                    try
+                    {
+                        PreviewWorker_busy = true;
+                        PreviewWorker.RunWorkerAsync(QFak);
+                    }
+                    catch (Exception e) { }
+                }
+            }
+
         }
     }
+
     private void init_PreviewWorker()
     {
         PreviewWorker.DoWork += PreviewWorker_DoWork;
@@ -211,12 +216,11 @@ public partial class MainView : UserControl
         string current_task = preview_request;
         ctx.create_preview_file(current_task, QFak);
         preview_current = current_task;
-        
     }
 
     private void PreviewWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
-        
+        CurrentPreview.Text = Path.GetFileNameWithoutExtension(preview_current);
         PreviewWorker_busy = false;
 
         if (preview_current != preview_request)
@@ -349,8 +353,6 @@ public partial class MainView : UserControl
         }
     }
 
-
-
     private void on_lock(object sender, EventArgs e)
     {
         if (Lockedstatus.IsChecked == true)
@@ -426,38 +428,62 @@ public partial class MainView : UserControl
 
     private void DataGrid_OnLoadingRow(object? sender, DataGridRowEventArgs e)
     {
+
+        Args.Add(e);
+
         var dataObject = e.Row.DataContext as FileData;
         e.Row.Classes.Clear();
 
         if (dataObject != null && dataObject.Färg == "") { e.Row.Classes.Clear(); }
-        if (dataObject != null && dataObject.Färg == "Yellow"){e.Row.Classes.Add("Yellow");}
+        if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("Yellow"); }
         if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("Orange"); }
         if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("Brown"); }
-        if (dataObject != null && dataObject.Färg == "Green"){e.Row.Classes.Add("Green");}
+        if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("Green"); }
         if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("Blue"); }
         if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("Red"); }
         if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("Magenta"); }
+    }
 
+    private void update_row_color()
+    {
+        foreach (DataGridRowEventArgs e in Args)
+        {
+            var dataObject = e.Row.DataContext as FileData;
+
+            e.Row.Classes.Clear();
+
+            if (dataObject != null && dataObject.Färg == "") { e.Row.Classes.Clear(); }
+            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("Yellow"); }
+            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("Orange"); }
+            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("Brown"); }
+            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("Green"); }
+            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("Blue"); }
+            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("Red"); }
+            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("Magenta"); }
+        }
     }
     
+
     public void toggle_table(object sender, RoutedEventArgs e)
     {
-        var menuItem = sender as MenuItem;
-        string mode = menuItem.Tag.ToString();
+        int mode = (int)ViewSlider.Value;
 
         int a = 1;
         int b = 1;
+        int c = 0;
 
-        if (mode == "Both") { a = 5; b = 3;}
-        if (mode == "Drawings") { a = 1; b = 0; }
-        if (mode == "Documents") {  a = 0; b = 1; }
+        if (mode == 2) { a = 5; b = 3; c = 5; ViewLabel.Content = "Drawings and Documents";}
+        if (mode == 1) { a = 1; b = 0; c = 0;  ViewLabel.Content = "Drawings"; }
+        if (mode == 3) {  a = 0; b = 1; c = 0;  ViewLabel.Content = "Documents"; }
 
 
         TableGrid.RowDefinitions.Clear();
-        GridLength row3 = new GridLength(a, GridUnitType.Star);
-        GridLength row4 = new GridLength(b, GridUnitType.Star);
-        TableGrid.RowDefinitions.Add(new RowDefinition(row3));
-        TableGrid.RowDefinitions.Add(new RowDefinition(row4));
+        GridLength row0 = new GridLength(a, GridUnitType.Star);
+        GridLength row1 = new GridLength(c,GridUnitType.Pixel);
+        GridLength row2 = new GridLength(b, GridUnitType.Star);
+        TableGrid.RowDefinitions.Add(new RowDefinition(row0));
+        TableGrid.RowDefinitions.Add(new RowDefinition(row1));
+        TableGrid.RowDefinitions.Add(new RowDefinition(row2));
         
     }
 
@@ -479,31 +505,51 @@ public partial class MainView : UserControl
 
     public void EditColor(object sender, RoutedEventArgs e)
     {
+
         var menuItem = sender as MenuItem;
         string color = menuItem.Tag.ToString();
 
-        IList drawings = DrawingGrid.SelectedItems;
-        IList documents = DocumentGrid.SelectedItems;
+        IList items = get_selected_items();
 
-        ctx.AddColor(color, drawings, documents, SelectedType);
+        ctx.add_color(color, items);
+
+        deselect_items();
+        update_row_color();
+
+    }
+
+    public IList get_selected_items()
+    {
+        IList items = null;
+
+        if (SelectedType == "Drawing") { items = DrawingGrid.SelectedItems; };
+        if (SelectedType == "Document") { items = DocumentGrid.SelectedItems; };
+
+        return items;
+    }
+
+    public void deselect_items()
+    {
         DrawingGrid.SelectedItem = null;
         DocumentGrid.SelectedItem = null;
     }
 
     public void on_clear_files(object sender, RoutedEventArgs e)
     {
-        IList drawings = DrawingGrid.SelectedItems;
-        IList documents = DocumentGrid.SelectedItems;
 
-        ctx.ClearAll(drawings, documents, SelectedType);
-        DrawingGrid.SelectedItem = null;
-        DocumentGrid.SelectedItem = null;
+        IList items = get_selected_items();
+
+        ctx.clear_all(items);
+
+        deselect_items();
+        update_row_color();
     }
 
     private void on_add_tag(object sender, RoutedEventArgs e)
     {
 
         bool currentMode = false;
+
         var tagMode = sender as MenuItem;
         string mode = tagMode.Tag.ToString();
 
@@ -512,12 +558,11 @@ public partial class MainView : UserControl
             currentMode = true;
         }
 
-        IList drawings = DrawingGrid.SelectedItems;
-        IList documents = DocumentGrid.SelectedItems;
+        IList items = get_selected_items();
 
-        ctx.AddTag(currentMode, drawings, documents, SelectedType);
-        DrawingGrid.SelectedItem = null;
-        DocumentGrid.SelectedItem = null;
+        ctx.add_tag(currentMode, items);
+
+        deselect_items();
     }
 
     private void on_add_project(object sender, RoutedEventArgs e)
@@ -642,8 +687,23 @@ public partial class MainView : UserControl
             IList drawings = DrawingGrid.SelectedItems;
             IList documents = DocumentGrid.SelectedItems;
 
-            ctx.OpenFile(drawings, documents, SelectedType,"MD");
+            ctx.OpenFile(drawings, documents, SelectedType, "MD");
             StatusLabel.Content = "Ready";
+        }
+    }
+
+    private void on_open_dwg(object sender, RoutedEventArgs e)
+    {
+        if (StatusLabel.Content == "Ready")
+        {
+            if (SelectedType == "Drawing")
+            {
+                StatusLabel.Content = "Opening Drawing";
+                FileData drawing = (FileData)DrawingGrid.SelectedItem;
+                ctx.OpenDwg(drawing);
+                StatusLabel.Content = "Ready";
+            }
+
         }
     }
 

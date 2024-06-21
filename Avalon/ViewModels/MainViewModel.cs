@@ -27,6 +27,7 @@ using System.Numerics;
 using Avalonia;
 using Avalonia.Platform;
 using Newtonsoft.Json.Bson;
+using Avalonia.Media;
 
 
 namespace Avalon.ViewModels;
@@ -40,8 +41,8 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         Status.Add("Ready");
     }
 
-    public ObservableCollection<FileData> Drawings { get; } = new();
-    public ObservableCollection<FileData> Documents { get; } = new();
+    public ObservableCollection<FileData> Drawings { get; set; } = new();
+    public ObservableCollection<FileData> Documents { get; set; } = new();
     public ObservableCollection<string> Projects { get; } = new();
     public ObservableCollection<string> Properties { get; } = new();
     public ObservableCollection<string> Status { get; } = new();
@@ -56,7 +57,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public string ProjectMessage { get; set; } = "";
 
-    public IDocReader? docReader { get; set; } = null;
+    public IDocReader docReader { get; set; } = null;
     public int pw_pagenr { get; set; } = 0;
     public int pw_pagenr_view { get; set; } = 1;
     public int pw_pagecount_view { get; set; } = 1;
@@ -121,25 +122,26 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
             preview_page(pw_pagenr);
         }
-
     }
-
 
     public void preview_page(int pagenr)
     {
-        IPageReader page = docReader.GetPageReader(pagenr);
-
-        byte[] rawBytes = page.GetImage();
-        int width = page.GetPageWidth();
-        int height = page.GetPageHeight();
-
-        Avalonia.Vector dpi = new Avalonia.Vector(96, 96);
-
-        ImageFromBinding = new WriteableBitmap(new PixelSize(width, height),dpi,Avalonia.Platform.PixelFormat.Bgra8888,AlphaFormat.Premul);
-
-        using (var frameBuffer = ImageFromBinding.Lock())
+        if (docReader != null)
         {
-            Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
+            IPageReader page = docReader.GetPageReader(pagenr);
+
+            byte[] rawBytes = page.GetImage();
+            int width = page.GetPageWidth();
+            int height = page.GetPageHeight();
+
+            Avalonia.Vector dpi = new Avalonia.Vector(96, 96);
+
+            ImageFromBinding = new WriteableBitmap(new PixelSize(width, height), dpi, Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
+
+            using (var frameBuffer = ImageFromBinding.Lock())
+            {
+                Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
+            }
         }
     }
 
@@ -426,6 +428,23 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         { }
     }
 
+    public void OpenDwg(FileData drawing)
+    {
+        string dwgPath = drawing.Sökväg.Replace("Ritning", "Ritdef").Replace("pdf","dwg");
+
+
+        try
+        {
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.FileName = dwgPath;
+            psi.UseShellExecute = true;
+            Process.Start(psi);
+        }
+        catch (Exception)
+        { }
+
+    }
+
     public void OpenPath(IList drawings, IList documents, string SelectedType)
     {
         IList items = null;
@@ -448,65 +467,31 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         }
     }
 
-    public void AddColor(string color, IList drawings, IList documents, string SelectedType)
+    public void add_color(string color, IList items)
     {
-        List<FileData> filesToReplace = [];
-
-        IList items = null;
-        ObservableCollection<FileData> collection = null;
-        if (SelectedType == "Drawing") { items = drawings; collection = Drawings; };
-        if (SelectedType == "Document") { items = documents; collection = Documents; };
-        
-        foreach (FileData item in items) { filesToReplace.Add(item); }
-        foreach (FileData file in filesToReplace) 
+        foreach (FileData file in items)
         {
-            int index = collection.IndexOf(file);
-            collection[index] = null;
             file.Färg = color;
-            collection[index] = file;
         }
     }
 
-    public void ClearAll(IList drawings, IList documents, string SelectedType)
+
+    public void clear_all(IList items)
     {
-        List<FileData> filesToReplace = [];
-
-        IList items = null;
-        ObservableCollection<FileData> collection = null;
-        if (SelectedType == "Drawing") { items = drawings; collection = Drawings; };
-        if (SelectedType == "Document") { items = documents; collection = Documents; };
-
-        foreach (FileData item in items) { filesToReplace.Add(item); }
-        foreach (FileData file in filesToReplace)
+        foreach (FileData file in items)
         {
-            int index = collection.IndexOf(file);
-            collection[index] = null;
             file.Färg = "";
             file.Tagg = "";
-            collection[index] = file;
         }
     }
 
-    public void AddTag(bool tagmode, IList drawings, IList documents, string SelectedType)
-    {
-
-        if (SelectedType == "Drawing") { SetTag(tagmode, drawings, Drawings); };
-        if (SelectedType == "Document") { SetTag(tagmode, documents, Documents); };
-
-    }
-
-    public void SetTag(bool tagmode, IList Items, ObservableCollection<FileData> Collection)
+    public void add_tag(bool tagmode, IList items)
     {
         string Tag = "";
         if (tagmode == true) { Tag = user_tag; };
-        List<FileData> filesToReplace = [];
-        foreach (FileData item in Items) { filesToReplace.Add(item); }
-        foreach (FileData file in filesToReplace)
+        foreach (FileData file in items)
         {
-            int index = Collection.IndexOf(file);
-            Collection[index] = null;
             file.Tagg = Tag;
-            Collection[index] = file;
         }
     }
 

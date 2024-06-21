@@ -13,12 +13,8 @@
 			<MenuItem Name="OpenPathMenu" Header="Open Path" Click="on_open_path"/>
 			<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile"/>
 			<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="on_remove_files"/>
+			<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg"/>
 			<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch metadata" Click="on_fetch_single_meta"/>
-			<MenuItem Name="TableMenu" Header="Show table">
-				<MenuItem Name="TableBothMenu" Header="Both" Tag="Both" Click="toggle_table"/>
-				<MenuItem Name="TableDrawingMenu" Header="Drawings" Tag="Drawings" Click="toggle_table"/>
-				<MenuItem Name="TableDocumentMenu" Header="Documents" Tag="Documents" Click="toggle_table"/>
-			</MenuItem>
 			<MenuItem Name="ColorMainMenu" Header="Color Tag" Background="Blue">
 				<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="EditColor"/>
 				<MenuItem Name="YellowMenu" Header="⬛" Foreground="Yellow" Tag ="Yellow" Click="EditColor"/>
@@ -81,16 +77,22 @@
 
 					<StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Vertical" Spacing="10" Margin="5">
 						<Label Name="StatusLabel" Height="40" Width="200" HorizontalContentAlignment="Center" VerticalAlignment="Bottom" IsHitTestVisible="False" FontStyle="Italic" Foreground="Gray" Padding="10"/>
-						
 					</StackPanel>
+
+
 				
 					<StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="250,0,0,0">
 						<ProgressBar Name="ProgressBar" Width="200" Value="{Binding Status}" VerticalAlignment="Center"/>
 						<Label Name="ProgressStatus" Width="200" Height="40" VerticalAlignment="Bottom" IsHitTestVisible="False" FontStyle="Italic" Foreground="Gray" Padding="10"/>
 					</StackPanel>
 
-				<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical">
-					<TextBlock Text="{Binding ProjectMessage}" Foreground="Gray" FontStyle="Italic" Padding="8,15,0,0"/>
+				<StackPanel Grid.Row="1" Grid.ColumnSpan="1" Orientation="Vertical">
+					<TextBlock Text="{Binding ProjectMessage}" Foreground="Gray" FontStyle="Italic" Padding="8,0,0,0"/>
+					<Label Name="ViewLabel" Height="40" Width="200" Content="Drawings and Documents"  HorizontalAlignment="Left" FontStyle="Italic" Foreground="Gray" Padding="8,0,0,0"/>
+					
+				</StackPanel>
+				<StackPanel Grid.Row="1" Grid.ColumnSpan="1" Orientation="Vertical" FlowDirection="RightToLeft">
+					<TextBlock Name="CurrentPreview" Foreground="Gray" FontStyle="Italic" Padding="0,15,8,0"/>
 				</StackPanel>
 		
 				
@@ -135,12 +137,15 @@
 
 						<ToggleSwitch Name="Lockedstatus" Margin="10,0,0,0" VerticalAlignment="Center"/>
 						<Label Content="Lock" VerticalContentAlignment="Center"/>
+
+						<Slider Name="ViewSlider" FlowDirection="LeftToRight" Width="50" Margin="10" Minimum="1" Maximum="3" IsSnapToTickEnabled="True" TickFrequency="1" Value="2"/>
+						<Label Content="View" VerticalContentAlignment="Center"/>
 						
 					</StackPanel>
 
-				<Grid Name="TableGrid" Grid.Row="2" RowDefinitions="5*,3*">
+				<Grid Name="TableGrid" Grid.Row="2" Margin="5" RowDefinitions="5*,5,3*">
 				
-					<DataGrid Name="DrawingGrid" Grid.Row="0" Margin="5" Padding="10" ItemsSource="{Binding Drawings}" RowHeight="22" SelectionMode="Extended"
+					<DataGrid Name="DrawingGrid" Grid.Row="0" Margin="0 0 0 0" Padding="0" ItemsSource="{Binding Drawings}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
 							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 
 
@@ -169,7 +174,7 @@
 						</DataGrid.Columns>
 					</DataGrid>
 				
-					<DataGrid Name="DocumentGrid" Grid.Row="1" Margin="5" Padding="10" ItemsSource="{Binding Documents}" RowHeight="22" SelectionMode="Extended" 
+					<DataGrid Name="DocumentGrid" Grid.Row="2" Margin="0 0 0 0" Padding="0" ItemsSource="{Binding Documents}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
 						AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 
 						<DataGrid.ContextMenu>

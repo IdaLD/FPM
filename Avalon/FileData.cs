@@ -1,28 +1,126 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Avalon
 {
-    public class FileData
+    public class FileData : INotifyPropertyChanged
     {
-        public string Namn { get; set; } = string.Empty;
-        public string Tagg { get; set; } = string.Empty;
-        public string Färg { get; set; } = string.Empty;
-        public string Handling { get; set; } = string.Empty;
-        public string Status { get; set; } = string.Empty;
-        public string Datum { get; set; } = string.Empty;
-        public string Ritningstyp { get; set; } = string.Empty;
-        public string Beskrivning1 { get; set; } = string.Empty;
-        public string Beskrivning2 { get; set; } = string.Empty;
-        public string Beskrivning3 { get; set; } = string.Empty;
-        public string Beskrivning4 { get; set; } = string.Empty;
-        public string Uppdrag { get; set; } = string.Empty;
-        public string Filtyp { get; set; } = string.Empty;
-        public string Revidering { get; set; } = string.Empty;
-        public string Sökväg { get; set; } = string.Empty;
-        
+
+        private string namn = string.Empty;
+        public string Namn
+        {
+            get { return namn; }
+            set { namn = value; RaisePropertyChanged("Namn"); }
+        }
+
+        private string tagg = string.Empty;
+        public string Tagg
+        {
+            get { return tagg;}
+            set { tagg = value; RaisePropertyChanged("Tagg"); }
+        }
+
+        private string färg = string.Empty;
+        public string Färg
+        {
+            get { return färg; }
+            set { färg = value; RaisePropertyChanged("Färg"); }
+        }
+
+        private string handling = string.Empty;
+        public string Handling
+        {
+            get { return handling; }
+            set { handling = value; RaisePropertyChanged("Handling"); }
+        }
+
+        private string status = string.Empty;
+        public string Status
+        {
+            get { return status; }
+            set { status = value; RaisePropertyChanged("Status"); }
+        }
+
+        private string datum = string.Empty;
+        public string Datum
+        {
+            get { return datum; }
+            set { datum = value; RaisePropertyChanged("Datum"); }
+        }
+
+        private string ritningstyp = string.Empty;
+        public string Ritningstyp
+        {
+            get { return ritningstyp; }
+            set { ritningstyp = value; RaisePropertyChanged("Ritningstyp"); }
+        }
+
+        private string beskrivning1 = string.Empty;
+        public string Beskrivning1
+        {
+            get { return beskrivning1; }
+            set { beskrivning1 = value; RaisePropertyChanged("Beskrivning1"); }
+        }
+
+        private string beskrivning2 = string.Empty;
+        public string Beskrivning2
+        {
+            get { return beskrivning2; }
+            set { beskrivning2 = value; RaisePropertyChanged("Beskrivning2"); }
+        }
+
+        private string beskrivning3 = string.Empty;
+        public string Beskrivning3
+        {
+            get { return beskrivning3; }
+            set { beskrivning3 = value; RaisePropertyChanged("Beskrivning3"); }
+        }
+
+        private string beskrivning4 = string.Empty;
+        public string Beskrivning4
+        {
+            get { return beskrivning4; }
+            set { beskrivning4 = value; RaisePropertyChanged("Beskrivning4"); }
+        }
+
+        private string uppdrag = string.Empty;
+        public string Uppdrag
+        {
+            get { return uppdrag; }
+            set { uppdrag = value; RaisePropertyChanged("Uppdrag"); }
+        }
+
+        private string filtyp = string.Empty;
+        public string Filtyp
+        {
+            get { return filtyp; }
+            set { filtyp = value; RaisePropertyChanged("Filtyp"); }
+        }
+
+        private string revidering = string.Empty;
+        public string Revidering
+        {
+            get { return revidering; }
+            set { revidering = value; RaisePropertyChanged("Revidering"); }
+        }
+
+        private string sökväg = string.Empty;
+        public string Sökväg
+        {
+            get { return sökväg; }
+            set { sökväg = value; RaisePropertyChanged("Sökväg"); }
+        }
+
+
+        private void RaisePropertyChanged(string propName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propName));
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
     }  
 }
