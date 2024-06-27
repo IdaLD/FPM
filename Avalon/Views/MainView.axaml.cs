@@ -18,6 +18,7 @@ using System.Diagnostics;
 using Avalonia.Controls.Generators;
 using System.Collections.Generic;
 using iText.Commons.Bouncycastle.Asn1.X509;
+using System.Drawing;
 
 
 namespace Avalon.Views;
@@ -84,6 +85,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     public string preview_request = "";
     public string preview_current = "";
 
+    public bool darkmode = true;
+
     private TransformGroup trGrp;
     private TranslateTransform trTns;
     private ScaleTransform trScl;
@@ -108,14 +111,46 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     public void on_theme_dark(object sender, RoutedEventArgs e)
     {
+        darkmode = true;
         var MaterialThemeStyles = Application.Current!.LocateMaterialTheme<MaterialTheme>();
         MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Dark;
+        set_theme_colors();
+        on_refresh_table();
     }
 
     public void on_theme_light(object sender, RoutedEventArgs e)
     {
+        darkmode = false;
         var MaterialThemeStyles = Application.Current!.LocateMaterialTheme<MaterialTheme>();
         MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Light;
+        set_theme_colors();
+        on_refresh_table();
+    }
+
+    public void set_theme_colors()
+    {
+        if (darkmode == true)
+        {
+
+            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#646424");
+            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#643e24");
+            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#3e3124");
+            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#244a24");
+            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#243e64");
+            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#642424");
+            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#57244a");
+        }
+
+        if (darkmode == false)
+        {
+            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffff99");
+            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffd699");
+            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#c2ad99");
+            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#8cd1a3");
+            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#a3a3ff");
+            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ff8c8c");
+            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#eb99eb");
+        }
     }
 
     public void Border_PointerPressed(object sender, RoutedEventArgs args)
@@ -350,18 +385,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (Lockedstatus.IsChecked == true)
         {
             RemoveProjectMenu.IsEnabled = false;
-
-            ContextMenu Menu = this.Resources["Menu"] as ContextMenu;
-            MenuItem removeMenu = Menu.Items[1] as MenuItem;
-            removeMenu.IsEnabled = false;
+            RemoveFileMenu.IsEnabled = false;
         }
         if (Lockedstatus.IsChecked == false)
         {
             RemoveProjectMenu.IsEnabled = true;
-
-            ContextMenu Menu = this.Resources["Menu"] as ContextMenu;
-            MenuItem removeMenu = Menu.Items[1] as MenuItem;
-            removeMenu.IsEnabled = true;
+            RemoveFileMenu.IsEnabled = true;
         }
     }
 
@@ -416,13 +445,27 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         e.Row.Classes.Clear();
 
         if (dataObject != null && dataObject.Färg == "") { e.Row.Classes.Clear(); }
-        if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("Yellow"); }
-        if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("Orange"); }
-        if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("Brown"); }
-        if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("Green"); }
-        if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("Blue"); }
-        if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("Red"); }
-        if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("Magenta"); }
+
+        if (darkmode == true)
+        {
+            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowDark"); }
+            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeDark"); }
+            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownDark"); }
+            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenDark"); }
+            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueDark"); }
+            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedDark"); }
+            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaDark"); }
+        }
+        else
+        {
+            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowLight"); }
+            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeLight"); }
+            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownLight"); }
+            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenLight"); }
+            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueLight"); }
+            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedLight"); }
+            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaLight"); }
+        }
     }
 
     private void update_row_color()
@@ -433,14 +476,26 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             e.Row.Classes.Clear();
 
-            if (dataObject != null && dataObject.Färg == "") { e.Row.Classes.Clear(); }
-            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("Yellow"); }
-            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("Orange"); }
-            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("Brown"); }
-            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("Green"); }
-            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("Blue"); }
-            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("Red"); }
-            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("Magenta"); }
+            if (darkmode == true)
+            {
+                if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowDark"); }
+                if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeDark"); }
+                if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownDark"); }
+                if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenDark"); }
+                if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueDark"); }
+                if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedDark"); }
+                if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaDark"); }
+            }
+            else
+            {
+                if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowLight"); }
+                if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeLight"); }
+                if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownLight"); }
+                if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenLight"); }
+                if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueLight"); }
+                if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedLight"); }
+                if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaLight"); }
+            }
         }
     }
     
