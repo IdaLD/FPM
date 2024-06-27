@@ -9,11 +9,16 @@
              x:DataType="vm:MainViewModel">
 	<UserControl.Resources>
 		<ContextMenu Name="Menu" x:Key="Menu">
-			<MenuItem Name="OpenFileMenu" Header="Open File" Click="OnMenuOpen"/>
-			<MenuItem Name="OpenPathMenu" Header="Open Path" Click="on_open_path"/>
-			<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile"/>
+			<MenuItem Name="OpenMenu" Header="Open">
+				<MenuItem Name="OpenFileMenu" Header="Open File" Click="OnMenuOpen"/>
+				<MenuItem Name="OpenPathMenu" Header="Open Path" Click="on_open_path"/>
+				<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile"/>
+				<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg"/>
+			</MenuItem>
+				
+
 			<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="on_remove_files"/>
-			<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg"/>
+			
 			<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch metadata" Click="on_fetch_single_meta"/>
 			<MenuItem Name="ColorMainMenu" Header="Color Tag" Background="Blue">
 				<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="EditColor"/>
@@ -30,6 +35,15 @@
 				<MenuItem Name="TagMenuAdd" Header="Add Tag" Tag="Add" Click="on_add_tag" FlowDirection="LeftToRight"/>
 				<MenuItem Name="TagMenuClear" Header="Clear Tag" Tag="Clear" Click="on_add_tag"/>
 			</MenuItem>
+			<MenuItem Name="TypeMenu" Header="Type">
+				<MenuItem Header="None" Tag ="" Click="EditType"/>
+				<MenuItem Header="Drawing" Tag ="Drawing" Click="EditType"/>
+				<MenuItem Header="Document" Tag ="Document" Click="EditType"/>
+				<MenuItem Header="Handbook" Tag ="Handbook" Click="EditType"/>
+				<MenuItem Header="Standard" Tag ="Standard" Click="EditType"/>
+				<MenuItem Header="Other" Tag ="Other" Click="EditType"/>
+			</MenuItem>
+			
 			<MenuItem Name="ClearAllMenu" Header="Clear" Click="on_clear_files"/>
 		</ContextMenu>
 	</UserControl.Resources>
@@ -42,7 +56,7 @@
 
 
 	
-			<Grid Name ="MainGrid" ColumnDefinitions="*,0" RowDefinitions="35,30,*" Margin="5,5,5,12">
+			<Grid Name ="MainGrid" ColumnDefinitions="*,0" RowDefinitions="35,30,*" Margin="5,5,5,5">
 
 				<DockPanel Width="190" VerticalAlignment="Top" HorizontalAlignment="Left">
 					<Menu DockPanel.Dock="Top">
@@ -52,8 +66,7 @@
 							<MenuItem Header="Save as" Click="on_save_file"/>
 						</MenuItem>
 						<MenuItem Header="Add">
-							<MenuItem Header="Drawing" Click="on_add_drawing"/>
-							<MenuItem Header="Document" Click="on_add_document"/>
+							<MenuItem Header="File" Click="on_add_file"/>
 						</MenuItem>
 						<MenuItem Header="Project">
 							
@@ -87,18 +100,25 @@
 					</StackPanel>
 
 				<StackPanel Grid.Row="1" Grid.ColumnSpan="1" Orientation="Vertical">
-					<TextBlock Text="{Binding ProjectMessage}" Foreground="Gray" FontStyle="Italic" Padding="8,0,0,0"/>
-					<Label Name="ViewLabel" Height="40" Width="200" Content="Drawings and Documents"  HorizontalAlignment="Left" FontStyle="Italic" Foreground="Gray" Padding="8,0,0,0"/>
-					
+					<TextBlock Text="{Binding ProjectMessage}" Foreground="Gray" FontStyle="Italic" Padding="8,16,0,0"/>
 				</StackPanel>
+				
 				<StackPanel Grid.Row="1" Grid.ColumnSpan="1" Orientation="Vertical" FlowDirection="RightToLeft">
 					<TextBlock Name="CurrentPreview" Foreground="Gray" FontStyle="Italic" Padding="0,15,8,0"/>
 				</StackPanel>
 		
 				
 					<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
+						
+						<Button Name="SelectedType" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
+							<Button.Flyout>
+								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
+									<ListBox Name="TypeList" ItemsSource="{Binding Types}" Height="200" Width="114" FlowDirection="LeftToRight"/>
+								</Flyout>
+							</Button.Flyout>
+						</Button>
+						
 						<Button Name="SelectedProject" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
-
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="200" Width="114" FlowDirection="LeftToRight"/>
@@ -106,23 +126,23 @@
 							</Button.Flyout>
 						</Button>	
 							
-						<Button Name="Columns" Content="FILTER" Width="168" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
+						<Button Name="Columns" Content="Columns" Width="168" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<ListBox Name="ColumnList" Height="450" Width="150" FlowDirection="LeftToRight" >
 										<ListBoxItem Height="30"><CheckBox Content="Name"			Tag="0"		Name="Column0"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Tagg"			Tag="1"		Name="Column1"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Färg"			Tag="2"		Name="Column2"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Handling"		Tag="3"		Name="Column3"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Status"			Tag="4"		Name="Column4"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Datum"			Tag="5"		Name="Column5"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Ritningstyp"	Tag="6"		Name="Column6"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 1"	Tag="7"		Name="Column7"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 2"	Tag="8"		Name="Column8"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 3"  Tag="9"		Name="Column9"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 4"	Tag="10"	Name="Column10"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Revidering"		Tag="11"	Name="Column11"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Filtyp"			Tag="12"	Name="Column12"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Filtyp"			Tag="1"		Name="Column1"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Tagg"			Tag="2"		Name="Column2"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Färg"			Tag="3"		Name="Column3"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Handling"		Tag="4"		Name="Column4"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Status"			Tag="5"		Name="Column5"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Datum"			Tag="6"		Name="Column6"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Ritningstyp"	Tag="7"		Name="Column7"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 1"	Tag="8"		Name="Column8"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 2"	Tag="9"		Name="Column9"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 3"  Tag="10"	Name="Column10"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 4"	Tag="11"	Name="Column11"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Revidering"		Tag="12"	Name="Column12"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="Sökväg"			Tag="13"	Name="Column13"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
 									</ListBox>
 								</Flyout>
@@ -138,14 +158,9 @@
 						<ToggleSwitch Name="Lockedstatus" Margin="10,0,0,0" VerticalAlignment="Center"/>
 						<Label Content="Lock" VerticalContentAlignment="Center"/>
 
-						<Slider Name="ViewSlider" FlowDirection="LeftToRight" Width="50" Margin="10" Minimum="1" Maximum="3" IsSnapToTickEnabled="True" TickFrequency="1" Value="2"/>
-						<Label Content="View" VerticalContentAlignment="Center"/>
-						
 					</StackPanel>
 
-				<Grid Name="TableGrid" Grid.Row="2" Margin="5" RowDefinitions="5*,5,3*">
-				
-					<DataGrid Name="DrawingGrid" Grid.Row="0" Margin="0 0 0 0" Padding="0" ItemsSource="{Binding Drawings}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
+					<DataGrid Name="DrawingGrid" Grid.Row="2" Margin="5" Padding="0" ItemsSource="{Binding FilteredFiles}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
 							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 
 
@@ -155,6 +170,8 @@
 					
 						<DataGrid.Columns>
 							<DataGridTextColumn Binding="{Binding Namn, Mode=OneWay}"				Header="Namn"           Width="Auto" MinWidth="120" FontFamily="UbuntuMono"/>
+							<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+							
 							<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 							<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 
@@ -169,44 +186,17 @@
 							<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 							<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 
-							<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+							
 							<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 						</DataGrid.Columns>
 					</DataGrid>
-				
-					<DataGrid Name="DocumentGrid" Grid.Row="2" Margin="0 0 0 0" Padding="0" ItemsSource="{Binding Documents}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
-						AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="2" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
-
-						<DataGrid.ContextMenu>
-							<StaticResource ResourceKey="Menu"/>
-						</DataGrid.ContextMenu>
-						<DataGrid.Columns>
-							<DataGridTextColumn Binding="{Binding Namn, Mode=OneWay}"				Header="Namn"           Width="Auto" MinWidth="120" FontFamily="UbuntuMono"/>
-							<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-
-							<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-
-							<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-
-							<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-						</DataGrid.Columns>
-					</DataGrid>
-				</Grid>
+			
 
 
-				<Grid ClipToBounds="True" RowDefinitions="*,40" Grid.Column="1" Grid.Row="2" Grid.RowSpan="2">
+				<Grid ClipToBounds="True" RowDefinitions="*,40" Grid.Column="1" Grid.Row="2" >
 
-					<Viewbox Grid.Row="0" Name="Previewer" Stretch="Uniform" StretchDirection="Both">						
-						<Panel Background="White">
+					<Viewbox Grid.Row="0" Name="Previewer" Stretch="Uniform" StretchDirection="Both" Margin="-10">						
+						<Panel Background="White" Margin="20">
 							<Image x:Name="Preview" Source="{Binding ImageFromBinding}"/>
 						</Panel>
 					</Viewbox>

@@ -28,6 +28,8 @@ using Avalonia;
 using Avalonia.Platform;
 using Newtonsoft.Json.Bson;
 using Avalonia.Media;
+using Avalonia.Collections;
+using DynamicData;
 
 
 namespace Avalon.ViewModels;
@@ -41,19 +43,46 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         Status.Add("Ready");
     }
 
-    public ObservableCollection<FileData> Drawings { get; set; } = new();
-    public ObservableCollection<FileData> Documents { get; set; } = new();
-    public ObservableCollection<string> Projects { get; } = new();
+    public ObservableCollection<FileData> StoredFiles = new ObservableCollection<FileData>();
+
+    private IEnumerable<FileData> filteredFiles = null;
+    public IEnumerable<FileData> FilteredFiles
+    {
+        get { return filteredFiles; }
+        set { filteredFiles = value; OnPropertyChanged("FilteredFiles"); }
+    }
+
+    public List<string> Projects { get; set; } = new();
+
+    private List<string> types = new List<string>();
+    public List<string> Types
+    {
+        get { return types; }
+        set { types = value; OnPropertyChanged("Types"); }
+    }
+
     public ObservableCollection<string> Properties { get; } = new();
     public ObservableCollection<string> Status { get; } = new();
-    public ObservableCounter<int> Progress { get; set; } 
+    public ObservableCounter<int> Progress { get; set; }
 
+    private Avalonia.Media.Imaging.Bitmap? previewFile;
+    public Avalonia.Media.Imaging.Bitmap? PreviewFile
+    {
+        get { return previewFile; }
+        set { previewFile = value; OnPropertyChanged("PreviewFile"); }
+    }
 
+    private WriteableBitmap? imageFromBinding = null;
+    public WriteableBitmap? ImageFromBinding
+    {
+        get { return imageFromBinding; }
+        set { imageFromBinding = value; OnPropertyChanged("ImageFromBinding"); }
+    }
 
     public string user_tag { get; set; }
 
     public List<string[]> metastore = new List<string[]>();
-    public List<(string, string)> PathStore = new List<(string, string)>();
+    public List<string> PathStore = new List<string>();
 
     public string ProjectMessage { get; set; } = "";
 
@@ -167,11 +196,12 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             using var streamReader = new StreamReader(stream);
             string fileContent = await streamReader.ReadToEndAsync();
 
-            List<FileData> getFiles = JsonConvert.DeserializeObject<List<FileData>>(fileContent);
-            List<string> getProjects = getFiles.Select(x => x.Uppdrag).Distinct().ToList();
+            StoredFiles = JsonConvert.DeserializeObject<ObservableCollection<FileData>>(fileContent);
+            Projects = StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
+            Types = StoredFiles.Select(x => x.Filtyp).Distinct().ToList();
 
-            Globals.storedFiles = getFiles;
-            Globals.projects = getProjects;
+            Types.Sort();
+            Projects.Sort();
 
             var properties = typeof(FileData).GetProperties().ToList();
             foreach (var property in properties)
@@ -179,8 +209,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
                 string val = property.Name;
                 Properties.Add(val);
             }
-            UpdateProjectList();
-
         }
     }
 
@@ -190,11 +218,13 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         using (StreamReader r = new StreamReader(path))
         {
             string json = r.ReadToEnd();
-            List<FileData> getFiles = JsonConvert.DeserializeObject<List<FileData>>(json);
-            List<string> getProjects = getFiles.Select(x => x.Uppdrag).Distinct().ToList();
 
-            Globals.storedFiles = getFiles;
-            Globals.projects = getProjects;
+            StoredFiles = JsonConvert.DeserializeObject<ObservableCollection<FileData>>(json);
+            Projects = StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
+            Projects.Sort();
+
+            UpdateTypes();
+            
         }
 
         var properties = typeof(FileData).GetProperties().ToList();
@@ -203,8 +233,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             string val = property.Name;
             Properties.Add(val);
         }
-        UpdateProjectList();
-
     }
 
     public async Task SaveFile(Avalonia.Visual window)
@@ -227,7 +255,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         {
             await using var stream = await file.OpenWriteAsync();
             using var streamWriter = new StreamWriter(stream);
-            var data = JsonConvert.SerializeObject(Globals.storedFiles);
+            var data = JsonConvert.SerializeObject(StoredFiles);
             await streamWriter.WriteLineAsync(data);
         }
     }
@@ -236,14 +264,14 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         using (StreamWriter streamWriter = new StreamWriter(path))
         {
-            var data = JsonConvert.SerializeObject(Globals.storedFiles);
+            var data = JsonConvert.SerializeObject(StoredFiles);
             await streamWriter.WriteLineAsync(data);
         }
     }
 
-    public async Task AddFile(string type, int selectedProject, Avalonia.Visual window)
+    public async Task AddFile(string selectedProject, Avalonia.Visual window)
     {
-        if (Globals.projects.Count > 0)
+        if (Projects.Count > 0)
         {
             var topLevel = TopLevel.GetTopLevel(window);
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
@@ -257,51 +285,45 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             {
                 string path = file.Path.LocalPath;
 
-                Globals.storedFiles.Add(new FileData
+                StoredFiles.Add(new FileData
                 {
                     Namn = System.IO.Path.GetFileNameWithoutExtension(path),
-                    Uppdrag = Globals.projects[selectedProject],
-                    Filtyp = type,
+                    Uppdrag = selectedProject,
+                    Filtyp = "",
                     Sökväg = path
                 });
             }
-            UpdateLists(selectedProject);
+            UpdateLists(selectedProject, "");
         }
     }
 
-    public void SelectFiles(bool singleMode, IList drawings, IList documents, string SelectedType)
+    public void UpdateTypes()
+    {
+        List<string> newTypes = StoredFiles.Select(x => x.Filtyp).Distinct().ToList();
+
+        newTypes.Remove("");
+        newTypes.Sort();
+
+        Types = new List<string>();
+        Types.Add("All");
+        Types.Add(newTypes);
+        Types.Add("Empty");
+    }
+
+    public void SelectFiles(bool singleMode, IList files)
     {
         metastore.Clear();
         PathStore.Clear();
 
-        IList selectedDrawings = null;
-        IList selectedDocuments = null;
-
         if (singleMode == true)
         {
-            if (SelectedType == "Drawing")
-            {
-                selectedDrawings = drawings;
-            }
-            if (SelectedType == "Document")
-            {
-                selectedDocuments = documents;
-            }
+            foreach (FileData file in files) { PathStore.Add((file.Sökväg)); }
         }
         if (singleMode == false)
         {
-            selectedDrawings = Drawings;
-            selectedDocuments = Documents;
+            foreach (FileData file in FilteredFiles) { PathStore.Add((file.Sökväg)); }
         }
 
-        if (selectedDrawings != null)
-        {
-            foreach (FileData file in selectedDrawings) { PathStore.Add(("Drawing", file.Sökväg)); }
-        }
-        if (selectedDocuments != null)
-        {
-            foreach (FileData file in selectedDocuments) { PathStore.Add(("Document", file.Sökväg)); }
-        }
     }
 
     public int GetNrSelectedFiles()
@@ -311,27 +333,13 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void SetMetadata()
     {
-        IList items = null;
-        FileData file = null;
 
-        int nSelected = PathStore.Count();
-        for (int i = 0; i < nSelected; i++)
+        int i = 0;
+        foreach (string path in PathStore)
         {
-            if (PathStore[i].Item1 == "Drawing")
-            {
-                items = Drawings;
-                file = Drawings.First(x => x.Sökväg == PathStore[i].Item2);
-            }
-            if (PathStore[i].Item1 == "Document")
-            {
-                items = Documents;
-                file = Documents.First(x => x.Sökväg == PathStore[i].Item2);
-            }
+            FileData file = FilteredFiles.FirstOrDefault(x => x.Sökväg == path);
 
-            string path         = file.Sökväg;
             string[] md         = metastore[i];
-
-            int index           = items.IndexOf(file);
 
             file.Handling       = md[0];
             file.Status         = md[1];
@@ -344,8 +352,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             file.Revidering     = md[8];
             file.Sökväg         = path;
 
-            items[index] = null;
-            items[index] = file;
+            i++;
         }
     }
 
@@ -356,7 +363,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
         List<string[]> metadata = new List<string[]>();
 
-        string path = PathStore[k].Item2;
+        string path = PathStore[k];
         string[] description = new string[ntags];
         try
         {
@@ -397,31 +404,18 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         }
     }
 
-    public void OpenFile(IList drawings, IList documents, string SelectedType, string openType)
+    public void OpenFile(IList files, string openType)
     {
         string ending = "";
         if (openType == "MD") { ending = ".md"; }
         try
         {
-            if (SelectedType == "Drawing")
+            foreach (FileData file in files)
             {
-                foreach (FileData drawing in drawings)
-                {
-                    ProcessStartInfo psi = new ProcessStartInfo();
-                    psi.FileName = drawing.Sökväg + ending;
-                    psi.UseShellExecute = true;
-                    Process.Start(psi);
-                }
-            }
-            if (SelectedType == "Document")
-            {
-                foreach (FileData document in documents)
-                {
-                    ProcessStartInfo psi = new ProcessStartInfo();
-                    psi.FileName = document.Sökväg + ending;
-                    psi.UseShellExecute = true;
-                    Process.Start(psi);
-                }
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.FileName = file.Sökväg + ending;
+                psi.UseShellExecute = true;
+                Process.Start(psi);
             }
         }
         catch (Exception)
@@ -431,7 +425,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public void OpenDwg(FileData drawing)
     {
         string dwgPath = drawing.Sökväg.Replace("Ritning", "Ritdef").Replace("pdf","dwg");
-
 
         try
         {
@@ -445,17 +438,14 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     }
 
-    public void OpenPath(IList drawings, IList documents, string SelectedType)
+    public void OpenPath(IList files)
     {
-        IList items = null;
-        if (SelectedType == "Drawing") { items = drawings; }
-        if (SelectedType == "Document") { items = documents; }
 
-        foreach (FileData item in items)
+        foreach (FileData file in files)
         {
             try
             {
-                string folderpath = System.IO.Path.GetDirectoryName(item.Sökväg);
+                string folderpath = System.IO.Path.GetDirectoryName(file.Sökväg);
                 Process process = Process.Start("explorer.exe", "\"" + folderpath + "\"");
 
             }
@@ -495,136 +485,89 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         }
     }
 
+    public void add_type(string type, IList items)
+    {
+        foreach (FileData file in items)
+        {
+            file.Filtyp = type;
+        }
+    }
+
     public void RemoveFiles(IList files)
     {
         foreach (FileData file in files)
         {
-            Globals.storedFiles.Remove(file);
-            Drawings.Remove(file);
+            StoredFiles.Remove(file);
         }
     }
 
     public void new_project(string newName)
     {
-        Globals.projects.Add(newName);
-        UpdateProjectList();
+        Projects.Add(newName);
+        Projects.Sort();
 
     }
 
     public void remove_project(int projectIndex)
     {
-        if (Globals.projects.Count > 1)
+        if (Projects.Count > 1)
         {
-            Globals.storedFiles.RemoveAll(x => x.Uppdrag == Globals.projects[projectIndex]);
-            Globals.projects.RemoveAt(projectIndex);
-            UpdateProjectList();
+            IEnumerable<FileData> RemoveFiles = StoredFiles.Where(x => x.Uppdrag == Projects[projectIndex]);
+
+            foreach (FileData file in RemoveFiles)
+            {
+                StoredFiles.Remove(file);
+            }
+
+            Projects.RemoveAt(projectIndex);
         }
     }
 
-    public void rename_project(int projectindex, string newName)
+    public void rename_project(string currentProject, string newProjectName)
     {
-        for (int i = 0; i < Globals.storedFiles.Count; i++)
+        for (int i = 0; i < StoredFiles.Count; i++)
         {
-            if (Globals.storedFiles[i].Uppdrag == Globals.projects[projectindex])
+            if (StoredFiles[i].Uppdrag == currentProject)
             {
-                Globals.storedFiles[i].Uppdrag = newName;
+                StoredFiles[i].Uppdrag = newProjectName;
             }
         }
-        Globals.projects[projectindex] = newName;
-        UpdateProjectList();
+        Projects.Replace(currentProject, newProjectName);
+        Projects.Sort();
     }
 
-    public void RemoveFiles(IList drawings, IList documents, string SelectedType)
+
+    public void UpdateLists(string selectedProject, string selectedType)
     {
-        List<FileData> filesToremove = [];
-        if (SelectedType == "Drawing")
+        if (Projects.Count() > 0)
         {
-            foreach (FileData drawing in drawings){filesToremove.Add(drawing);}
-            foreach (FileData file in filesToremove)
-            {
-                Globals.storedFiles.Remove(file);
-                Drawings.Remove(file);
-            }
-        }
-        if (SelectedType == "Document")
-        {
-            foreach (FileData document in documents){filesToremove.Add(document);}
-            foreach (FileData file in filesToremove)
-            {
-                Globals.storedFiles.Remove(file);
-                Documents.Remove(file);
-            }
-        }
-    }
+            set_filtered_res(selectedProject, selectedType);
 
-    public void UpdateLists(int selectedProject)
-    {
-        Drawings.Clear();
-        Documents.Clear();
+            int fileCount = FilteredFiles.Count();
 
-        if (Globals.projects.Count() > 0)
-        {
-            string currentProject = Globals.projects[selectedProject];
-            IEnumerable<FileData> filteredDraw = get_filtered_res(currentProject, "Drawing");
-            IEnumerable<FileData> filteredDoc = get_filtered_res(currentProject, "Document");
-
-            foreach (FileData file in filteredDraw)
-            {
-                Drawings.Add(file);
-            }
-
-            foreach (FileData file in filteredDoc)
-            {
-                Documents.Add(file);
-            }
-
-            int drawingcount = filteredDraw.Count();
-            int documentcount = filteredDoc.Count();
-
-            ProjectMessage = string.Format("Project {0}: {1} Drawings / {2} Documents", currentProject, drawingcount, documentcount);
+            ProjectMessage = string.Format("Project {0}, Type {1}: {2} Files", selectedProject, selectedType, fileCount);
             OnPropertyChanged("ProjectMessage");
         }
 
     }
 
-    public void UpdateProjectList()
+    private void set_filtered_res(string currentProject, string type)
     {
-        Projects.Clear();
-
-        Globals.projects.Sort();
-
-        foreach (string project in Globals.projects)
+        if (type == "All")
         {
-            Projects.Add(project);
+            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject).OrderBy(x=>x.Filtyp);
         }
-    }
 
-    public string GetCurrentProject(int selectedproject)
-    {
-        return Globals.projects[selectedproject];
-    }
-
-    private IEnumerable<FileData> get_filtered_res(string currentProject, string type)
-    {
-        IEnumerable<FileData> first = Globals.storedFiles.Where(x => x.Uppdrag == currentProject);
-        IEnumerable<FileData> second = first.Where(x => x.Filtyp == type);
-
-        return second.OrderBy(x => x.Namn);
-    }
-
-    private Avalonia.Media.Imaging.Bitmap? previewFile;
-    public Avalonia.Media.Imaging.Bitmap? PreviewFile
-    {
-        get { return previewFile; }
-        set { previewFile = value; OnPropertyChanged("PreviewFile"); }
-    }
-
-
-    private WriteableBitmap? imageFromBinding = null;
-    public WriteableBitmap? ImageFromBinding
-    {
-        get { return imageFromBinding; }
-        set { imageFromBinding = value; OnPropertyChanged("ImageFromBinding"); }
+        if (type == "Empty")
+        {
+            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject).Where(x => x.Filtyp == "").OrderBy(x => x.Namn);
+        }
+        
+        if (type != "All" && type != "Empty")
+        {
+            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject).Where(x => x.Filtyp == type).OrderBy(x => x.Namn);
+        }
+        
     }
 
     public event PropertyChangedEventHandler PropertyChanged;

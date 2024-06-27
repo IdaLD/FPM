@@ -17,6 +17,7 @@ using System.IO;
 using System.Diagnostics;
 using Avalonia.Controls.Generators;
 using System.Collections.Generic;
+using iText.Commons.Bouncycastle.Asn1.X509;
 
 
 namespace Avalon.Views;
@@ -28,22 +29,18 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         InitializeComponent();
 
         DrawingGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
-        DocumentGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
 
         FetchMetadata.AddHandler(Button.ClickEvent, on_fetch_full_meta);
 
-        DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDrawingGridSelected);
-        DocumentGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDocumentGridSelected);
-
         DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
-        DocumentGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
 
 
         ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
+        TypeList.AddHandler(ListBox.SelectionChangedEvent, on_type_selected);
+
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
         DrawingGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
 
-        ViewSlider.AddHandler(Slider.ValueChangedEvent, toggle_table);
 
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
 
@@ -65,8 +62,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         StatusLabel.Content = "Ready";
     }
 
-    public string SelectedType = null;
     public int SelectedIndex = 0;
+
+    public string currentProject = "";
+    public string currentType = "";
 
     public string StatusMessage = "Ready";
     public bool PopupStatus = true;
@@ -137,7 +136,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             string path = "C:\\FIlePathManager\\Projects.json";
             ctx.read_savefile(path);
-            on_project_refresh(sender, e);
+            on_project_refresh();
         }
         catch { }
     }
@@ -172,18 +171,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         if (previewMode == true)
         {
-            FileData drawing = (FileData)DrawingGrid.SelectedItem;
-            FileData document = (FileData)DocumentGrid.SelectedItem;
+            FileData file = (FileData)DrawingGrid.SelectedItem;
 
-            string filepath = "";
-            if (SelectedType == "Drawing" && drawing != null) { filepath = drawing.Sökväg; }
-            if (SelectedType == "Document" && document != null) { filepath = document.Sökväg; }
-
-            if (filepath != "")
+            if (file != null)
             {
-                Debug.WriteLine("OK");
-
-                preview_request = filepath;
+                preview_request = file.Sökväg;
 
                 int QFak = (int)PreviewQuality.Value;
 
@@ -360,7 +352,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             RemoveProjectMenu.IsEnabled = false;
 
             ContextMenu Menu = this.Resources["Menu"] as ContextMenu;
-            MenuItem removeMenu = Menu.Items[3] as MenuItem;
+            MenuItem removeMenu = Menu.Items[1] as MenuItem;
             removeMenu.IsEnabled = false;
         }
         if (Lockedstatus.IsChecked == false)
@@ -368,7 +360,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             RemoveProjectMenu.IsEnabled = true;
 
             ContextMenu Menu = this.Resources["Menu"] as ContextMenu;
-            MenuItem removeMenu = Menu.Items[3] as MenuItem;
+            MenuItem removeMenu = Menu.Items[1] as MenuItem;
             removeMenu.IsEnabled = true;
         }
     }
@@ -380,17 +372,18 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         for (int i = 0; i < nval; i++)
         {
             DrawingGrid.Columns[i].IsVisible = false;
-            DocumentGrid.Columns[i].IsVisible = false;
         }
 
         Column0.IsChecked = true;
         Column1.IsChecked = true;
+        Column2.IsChecked = true;
 
-        Column5.IsChecked = true;
         Column6.IsChecked = true;
         Column7.IsChecked = true;
         Column8.IsChecked = true;
         Column9.IsChecked = true;
+        Column10.IsChecked = true;
+
 
     }
 
@@ -400,8 +393,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         int column = Int32.Parse(item.Tag.ToString());
 
         DrawingGrid.Columns[column].IsVisible = true;
-        DocumentGrid.Columns[column].IsVisible = true;
-
     }
 
     private void ColumnUncheck(object sender, RoutedEventArgs e)
@@ -410,15 +401,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         int column = Int32.Parse(item.Tag.ToString());
 
         DrawingGrid.Columns[column].IsVisible = false;
-        DocumentGrid.Columns[column].IsVisible = false;
-
-    }
-
-    void on_project_refresh(object sender, EventArgs e)
-    {
-        ProjectList.SelectedIndex = SelectedIndex = 0;
-        SelectedProject.Content = ctx.GetCurrentProject(SelectedIndex);
-        on_ProjectSelectionChange(sender, e);
     }
 
     void OnMenuOpen(object sender, RoutedEventArgs e)
@@ -464,43 +446,50 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     }
     
 
-    public void toggle_table(object sender, RoutedEventArgs e)
-    {
-        int mode = (int)ViewSlider.Value;
-
-        int a = 1;
-        int b = 1;
-        int c = 0;
-
-        if (mode == 2) { a = 5; b = 3; c = 5; ViewLabel.Content = "Drawings and Documents";}
-        if (mode == 1) { a = 1; b = 0; c = 0;  ViewLabel.Content = "Drawings"; }
-        if (mode == 3) {  a = 0; b = 1; c = 0;  ViewLabel.Content = "Documents"; }
-
-
-        TableGrid.RowDefinitions.Clear();
-        GridLength row0 = new GridLength(a, GridUnitType.Star);
-        GridLength row1 = new GridLength(c,GridUnitType.Pixel);
-        GridLength row2 = new GridLength(b, GridUnitType.Star);
-        TableGrid.RowDefinitions.Add(new RowDefinition(row0));
-        TableGrid.RowDefinitions.Add(new RowDefinition(row1));
-        TableGrid.RowDefinitions.Add(new RowDefinition(row2));
-        
-    }
-
     public void on_project_selected(object sender, RoutedEventArgs e)
     {
-        var content = ProjectList.SelectedItem;
-        if (content != null) 
+
+        object selected = ProjectList.SelectedItem;
+        if (selected != null) 
         {
-            PreviewToggle.IsChecked = false;
+            currentProject = (string)selected;
+            //PreviewToggle.IsChecked = false;
+            SelectedProject.Content = currentProject;
 
-            SelectedIndex = ProjectList.SelectedIndex;
-            SelectedProject.Content = content.ToString();
-            NewProjectName.Text = content.ToString();
-
-            on_ProjectSelectionChange(sender, e);
-            on_update_columns(sender, e);
+            on_refresh_table();
         }
+    }
+
+    public void on_type_selected(object sender, RoutedEventArgs e)
+    {
+        object selected = TypeList.SelectedItem;
+
+        if (selected != null)
+        {
+            currentType = (string)selected;
+            SelectedType.Content = currentType;
+
+            on_refresh_table();
+        }
+    }
+
+    public void on_refresh_table()
+    {
+        ctx.UpdateLists(currentProject, currentType);
+        on_update_columns();
+    }
+
+    void on_project_refresh()
+    {
+
+        currentProject = ctx.Projects.FirstOrDefault();
+        currentType = ctx.Types.FirstOrDefault();
+
+        SelectedProject.Content = currentProject;
+        SelectedType.Content = currentType;
+
+        on_refresh_table();
+
     }
 
     public void EditColor(object sender, RoutedEventArgs e)
@@ -509,7 +498,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var menuItem = sender as MenuItem;
         string color = menuItem.Tag.ToString();
 
-        IList items = get_selected_items();
+        IList items = DrawingGrid.SelectedItems;
 
         ctx.add_color(color, items);
 
@@ -518,26 +507,33 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     }
 
-    public IList get_selected_items()
+    public void EditType(object sender, RoutedEventArgs e)
     {
-        IList items = null;
 
-        if (SelectedType == "Drawing") { items = DrawingGrid.SelectedItems; };
-        if (SelectedType == "Document") { items = DocumentGrid.SelectedItems; };
+        var menuItem = sender as MenuItem;
+        string type = menuItem.Tag.ToString();
 
-        return items;
+        Debug.WriteLine(type);
+
+        IList items = DrawingGrid.SelectedItems;
+
+        ctx.add_type(type, items);
+
+        ctx.UpdateTypes();
+
+        on_refresh_table();
+
     }
 
     public void deselect_items()
     {
         DrawingGrid.SelectedItem = null;
-        DocumentGrid.SelectedItem = null;
     }
 
     public void on_clear_files(object sender, RoutedEventArgs e)
     {
 
-        IList items = get_selected_items();
+        IList items = DrawingGrid.SelectedItems;
 
         ctx.clear_all(items);
 
@@ -558,7 +554,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             currentMode = true;
         }
 
-        IList items = get_selected_items();
+        IList items = DrawingGrid.SelectedItems;
 
         ctx.add_tag(currentMode, items);
 
@@ -579,35 +575,29 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void on_remove_project(object sender, RoutedEventArgs e)
     {
         ctx.remove_project(SelectedIndex);
-        on_project_refresh(sender, e);
+        on_project_refresh();
     }
 
     private void on_rename_project(object sender, RoutedEventArgs e)
     {
-        int currentProject = SelectedIndex;
         string newName = NewProjectName.Text.ToString();
 
         ctx.rename_project(currentProject, newName);
         SelectedProject.Content = newName.ToString();
     }
 
-    private void on_add_document(object sender, RoutedEventArgs e)
+    private void on_add_file(object sender, RoutedEventArgs e)
     {
-        ctx.AddFile("Document", SelectedIndex, this);
-    }
-
-    private void on_add_drawing(object sender, RoutedEventArgs e)
-    {
-        ctx.AddFile("Drawing", SelectedIndex, this);
+        ctx.AddFile(currentProject, this);
     }
 
     private void on_fetch_single_meta(object sender, RoutedEventArgs e)
     {
         ProgressStatus.Content = "Fetching Metadata";
-        IList drawings = DrawingGrid.SelectedItems;
-        IList documents = DocumentGrid.SelectedItems;
 
-        ctx.SelectFiles(true, drawings, documents, SelectedType);
+        IList files = DrawingGrid.SelectedItems;
+
+        ctx.SelectFiles(true, files);
         MetaWorker.RunWorkerAsync();
     }
 
@@ -615,7 +605,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         ProgressStatus.Content = "Fetching Metadata";
 
-        ctx.SelectFiles(false, null, null, null);
+        ctx.SelectFiles(false, null);
         MetaWorker.RunWorkerAsync();
     }
 
@@ -657,10 +647,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (StatusLabel.Content == "Ready")
         {
             StatusLabel.Content = "Opening path";
-            IList drawings = DrawingGrid.SelectedItems;
-            IList documents = DocumentGrid.SelectedItems;
+            IList files = DrawingGrid.SelectedItems;
 
-            ctx.OpenPath(drawings, documents, SelectedType);
+            ctx.OpenPath(files);
             StatusLabel.Content = "Ready";
         }
 
@@ -671,10 +660,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (StatusLabel.Content == "Ready")
         {
             StatusLabel.Content = "Opening file";
-            IList drawings = DrawingGrid.SelectedItems;
-            IList documents = DocumentGrid.SelectedItems;
+            IList files = DrawingGrid.SelectedItems;
 
-            ctx.OpenFile(drawings, documents, SelectedType,"PDF");
+            ctx.OpenFile(files, "PDF");
             StatusLabel.Content = "Ready";
         }
     }
@@ -684,10 +672,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (StatusLabel.Content == "Ready")
         {
             StatusLabel.Content = "Opening metafile";
-            IList drawings = DrawingGrid.SelectedItems;
-            IList documents = DocumentGrid.SelectedItems;
+            IList files = DrawingGrid.SelectedItems;
 
-            ctx.OpenFile(drawings, documents, SelectedType, "MD");
+            ctx.OpenFile(files, "MD");
             StatusLabel.Content = "Ready";
         }
     }
@@ -696,7 +683,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         if (StatusLabel.Content == "Ready")
         {
-            if (SelectedType == "Drawing")
+            if (TypeList.SelectedItem == "Drawing")
             {
                 StatusLabel.Content = "Opening Drawing";
                 FileData drawing = (FileData)DrawingGrid.SelectedItem;
@@ -713,7 +700,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         await ctx.LoadFile(this);
 
-        on_project_refresh(sender, e);
+        on_project_refresh();
         StatusLabel.Content = "Ready";
     }
 
@@ -732,40 +719,14 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         StatusLabel.Content = "Ready";
     }
 
-    public void update_projectList()
-    {
-        ctx.UpdateProjectList();
-    }
-
-    public void update_fileLists(int selectedProject)
-    {   
-        ctx.UpdateLists(selectedProject);
-    }
-
     private void on_remove_files(object sender, RoutedEventArgs e)
     {
-        IList drawings      = DrawingGrid.SelectedItems;
-        IList documents     = DocumentGrid.SelectedItems;
+        IList items      = DrawingGrid.SelectedItems;
 
-        ctx.RemoveFiles(drawings, documents, SelectedType);
+        ctx.RemoveFiles(items);
     }
 
-    private void OnDrawingGridSelected(object sender, EventArgs e)
-    {
-        SelectedType = "Drawing";
-    }
-
-    private void OnDocumentGridSelected(object sender, EventArgs e)
-    {
-        SelectedType = "Document";
-    }
-
-    private void on_ProjectSelectionChange(object sender, EventArgs e)
-    {
-        ctx.UpdateLists(SelectedIndex);
-    }
-
-    private void on_update_columns(object sender, EventArgs e)
+    private void on_update_columns()
     {
         DrawingGrid.Columns[0].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
         DrawingGrid.Columns[1].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
@@ -777,17 +738,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         DrawingGrid.Columns[7].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
         DrawingGrid.Columns[8].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
         DrawingGrid.Columns[9].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-
-        DocumentGrid.Columns[0].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[1].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[2].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[3].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[4].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[5].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[6].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[7].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[8].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[9].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
 
         DrawingGrid.UpdateLayout();
     }
