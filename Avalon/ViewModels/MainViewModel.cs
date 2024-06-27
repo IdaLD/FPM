@@ -16,7 +16,7 @@ using Docnet.Core;
 using Docnet.Core.Models;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.ComponentModel;
+using System.ComponentModel; 
 
 using Docnet.Core.Readers;
 using System.Runtime.InteropServices;
@@ -103,9 +103,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             pw_pagenr = 0;
 
             docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(fak * 1080/4, fak * 1920/4));
-
             pw_pagecount_view = docReader.GetPageCount(); OnPropertyChanged("pw_pagecount_view");
-
             pw_pagenr_view = 1; OnPropertyChanged("pw_pagenr_view");
         }
         catch
@@ -198,10 +196,9 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
             StoredFiles = JsonConvert.DeserializeObject<ObservableCollection<FileData>>(fileContent);
             Projects = StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
-            Types = StoredFiles.Select(x => x.Filtyp).Distinct().ToList();
-
-            Types.Sort();
             Projects.Sort();
+
+            UpdateTypes();
 
             var properties = typeof(FileData).GetProperties().ToList();
             foreach (var property in properties)
@@ -285,15 +282,19 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             {
                 string path = file.Path.LocalPath;
 
-                StoredFiles.Add(new FileData
+                if(!StoredFiles.Any(x => x.Sökväg == path))
                 {
-                    Namn = System.IO.Path.GetFileNameWithoutExtension(path),
-                    Uppdrag = selectedProject,
-                    Filtyp = "",
-                    Sökväg = path
-                });
+                    StoredFiles.Add(new FileData
+                    {
+                        Namn = System.IO.Path.GetFileNameWithoutExtension(path),
+                        Uppdrag = selectedProject,
+                        Filtyp = "",
+                        Sökväg = path
+                    });
+                }
+
+
             }
-            UpdateLists(selectedProject, "");
         }
     }
 
@@ -305,7 +306,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         newTypes.Sort();
 
         Types = new List<string>();
-        Types.Add("All");
+        Types.Add("All Files");
         Types.Add(newTypes);
         Types.Add("Empty");
     }
@@ -493,7 +494,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         }
     }
 
-    public void RemoveFiles(IList files)
+    public void remove_files(IList files)
     {
         foreach (FileData file in files)
         {
@@ -508,18 +509,12 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     }
 
-    public void remove_project(int projectIndex)
+    public void remove_project(string currentProject)
     {
         if (Projects.Count > 1)
         {
-            IEnumerable<FileData> RemoveFiles = StoredFiles.Where(x => x.Uppdrag == Projects[projectIndex]);
-
-            foreach (FileData file in RemoveFiles)
-            {
-                StoredFiles.Remove(file);
-            }
-
-            Projects.RemoveAt(projectIndex);
+            StoredFiles.RemoveMany(StoredFiles.Where(x => x.Uppdrag == currentProject));
+            Projects.Remove(currentProject);
         }
     }
 
@@ -545,7 +540,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
             int fileCount = FilteredFiles.Count();
 
-            ProjectMessage = string.Format("Project {0}, Type {1}: {2} Files", selectedProject, selectedType, fileCount);
+            ProjectMessage = string.Format("Project {0}/ Type {1}: {2} Files", selectedProject, selectedType, fileCount);
             OnPropertyChanged("ProjectMessage");
         }
 
@@ -553,9 +548,9 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     private void set_filtered_res(string currentProject, string type)
     {
-        if (type == "All")
+        if (type == "All Files")
         {
-            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject).OrderBy(x=>x.Filtyp);
+            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject).OrderBy(x=>x.Filtyp).OrderBy(x=>x.Namn);
         }
 
         if (type == "Empty")
@@ -563,7 +558,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject).Where(x => x.Filtyp == "").OrderBy(x => x.Namn);
         }
         
-        if (type != "All" && type != "Empty")
+        if (type != "All Files" && type != "Empty")
         {
             FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject).Where(x => x.Filtyp == type).OrderBy(x => x.Namn);
         }

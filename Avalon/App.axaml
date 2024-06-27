@@ -18,6 +18,7 @@
 
 		<Style Selector="MenuItem">
 			<Setter Property="Height" Value="35"/>
+
 		</Style>
 
 		<Style Selector="Button">

@@ -28,18 +28,18 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         InitializeComponent();
 
-        DrawingGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
+        FileGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
 
         FetchMetadata.AddHandler(Button.ClickEvent, on_fetch_full_meta);
 
-        DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
+        FileGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
 
 
         ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
         TypeList.AddHandler(ListBox.SelectionChangedEvent, on_type_selected);
 
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
-        DrawingGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
+        FileGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
 
 
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
@@ -171,7 +171,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         if (previewMode == true)
         {
-            FileData file = (FileData)DrawingGrid.SelectedItem;
+            FileData file = (FileData)FileGrid.SelectedItem;
 
             if (file != null)
             {
@@ -367,11 +367,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void init_columns()
     {
-        int nval = DrawingGrid.Columns.Count();
+        int nval = FileGrid.Columns.Count();
 
         for (int i = 0; i < nval; i++)
         {
-            DrawingGrid.Columns[i].IsVisible = false;
+            FileGrid.Columns[i].IsVisible = false;
         }
 
         Column0.IsChecked = true;
@@ -384,7 +384,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         Column9.IsChecked = true;
         Column10.IsChecked = true;
 
-
     }
 
     private void ColumnCheck(object sender, RoutedEventArgs e)
@@ -392,7 +391,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var item = sender as CheckBox;
         int column = Int32.Parse(item.Tag.ToString());
 
-        DrawingGrid.Columns[column].IsVisible = true;
+        FileGrid.Columns[column].IsVisible = true;
     }
 
     private void ColumnUncheck(object sender, RoutedEventArgs e)
@@ -400,7 +399,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var item = sender as CheckBox;
         int column = Int32.Parse(item.Tag.ToString());
 
-        DrawingGrid.Columns[column].IsVisible = false;
+        FileGrid.Columns[column].IsVisible = false;
     }
 
     void OnMenuOpen(object sender, RoutedEventArgs e)
@@ -453,7 +452,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (selected != null) 
         {
             currentProject = (string)selected;
-            //PreviewToggle.IsChecked = false;
             SelectedProject.Content = currentProject;
 
             on_refresh_table();
@@ -498,7 +496,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var menuItem = sender as MenuItem;
         string color = menuItem.Tag.ToString();
 
-        IList items = DrawingGrid.SelectedItems;
+        IList items = FileGrid.SelectedItems;
 
         ctx.add_color(color, items);
 
@@ -513,12 +511,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var menuItem = sender as MenuItem;
         string type = menuItem.Tag.ToString();
 
-        Debug.WriteLine(type);
-
-        IList items = DrawingGrid.SelectedItems;
+        IList items = FileGrid.SelectedItems;
 
         ctx.add_type(type, items);
-
         ctx.UpdateTypes();
 
         on_refresh_table();
@@ -527,13 +522,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     public void deselect_items()
     {
-        DrawingGrid.SelectedItem = null;
+        FileGrid.SelectedItem = null;
     }
 
     public void on_clear_files(object sender, RoutedEventArgs e)
     {
 
-        IList items = DrawingGrid.SelectedItems;
+        IList items = FileGrid.SelectedItems;
 
         ctx.clear_all(items);
 
@@ -554,7 +549,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             currentMode = true;
         }
 
-        IList items = DrawingGrid.SelectedItems;
+        IList items = FileGrid.SelectedItems;
 
         ctx.add_tag(currentMode, items);
 
@@ -574,7 +569,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_remove_project(object sender, RoutedEventArgs e)
     {
-        ctx.remove_project(SelectedIndex);
+        ctx.remove_project(currentProject);
         on_project_refresh();
     }
 
@@ -589,13 +584,19 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void on_add_file(object sender, RoutedEventArgs e)
     {
         ctx.AddFile(currentProject, this);
+
+        currentType = ctx.Types.FirstOrDefault();
+        SelectedType.Content = currentType;
+
+        on_refresh_table();
+
     }
 
     private void on_fetch_single_meta(object sender, RoutedEventArgs e)
     {
         ProgressStatus.Content = "Fetching Metadata";
 
-        IList files = DrawingGrid.SelectedItems;
+        IList files = FileGrid.SelectedItems;
 
         ctx.SelectFiles(true, files);
         MetaWorker.RunWorkerAsync();
@@ -647,7 +648,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (StatusLabel.Content == "Ready")
         {
             StatusLabel.Content = "Opening path";
-            IList files = DrawingGrid.SelectedItems;
+            IList files = FileGrid.SelectedItems;
 
             ctx.OpenPath(files);
             StatusLabel.Content = "Ready";
@@ -660,7 +661,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (StatusLabel.Content == "Ready")
         {
             StatusLabel.Content = "Opening file";
-            IList files = DrawingGrid.SelectedItems;
+            IList files = FileGrid.SelectedItems;
 
             ctx.OpenFile(files, "PDF");
             StatusLabel.Content = "Ready";
@@ -672,7 +673,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (StatusLabel.Content == "Ready")
         {
             StatusLabel.Content = "Opening metafile";
-            IList files = DrawingGrid.SelectedItems;
+            IList files = FileGrid.SelectedItems;
 
             ctx.OpenFile(files, "MD");
             StatusLabel.Content = "Ready";
@@ -683,14 +684,17 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         if (StatusLabel.Content == "Ready")
         {
-            if (TypeList.SelectedItem == "Drawing")
-            {
-                StatusLabel.Content = "Opening Drawing";
-                FileData drawing = (FileData)DrawingGrid.SelectedItem;
-                ctx.OpenDwg(drawing);
-                StatusLabel.Content = "Ready";
-            }
 
+            StatusLabel.Content = "Opening Drawing";
+            FileData file = (FileData)FileGrid.SelectedItem;
+
+            if (file.Filtyp == "Drawing")
+            {
+                ctx.OpenDwg(file);
+            }
+            
+            StatusLabel.Content = "Ready";
+            
         }
     }
 
@@ -721,25 +725,26 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_remove_files(object sender, RoutedEventArgs e)
     {
-        IList items      = DrawingGrid.SelectedItems;
+        IList items      = FileGrid.SelectedItems;
 
-        ctx.RemoveFiles(items);
+        ctx.remove_files(items);
+        on_refresh_table();
     }
 
     private void on_update_columns()
     {
-        DrawingGrid.Columns[0].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[1].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[2].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[3].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[4].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[5].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[6].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[7].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[8].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[9].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[0].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[1].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[2].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[3].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[4].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[5].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[6].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[7].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[8].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[9].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
 
-        DrawingGrid.UpdateLayout();
+        FileGrid.UpdateLayout();
     }
 
 }

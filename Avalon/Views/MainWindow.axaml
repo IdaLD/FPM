@@ -8,7 +8,7 @@
 		MinWidth="1400"
 		MinHeight="800"
         x:Class="Avalon.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/folder.ico"
         WindowStartupLocation="CenterScreen"
         ExtendClientAreaToDecorationsHint="True"
         Title="Avalon">
@@ -16,26 +16,25 @@
 
 	<Window.Styles>
 		<Style Selector="DataGridRow.Yellow">
-			<Setter Property="Background" Value="Yellow"/>
-			<Setter Property="Foreground" Value="Black"/>
+			<Setter Property="Background" Value="#646424"/>
 		</Style>
 		<Style Selector="DataGridRow.Orange">
-			<Setter Property="Background" Value="Orange"/>
+			<Setter Property="Background" Value="#643e24"/>
 		</Style>
 		<Style Selector="DataGridRow.Brown">
-			<Setter Property="Background" Value="SaddleBrown"/>
+			<Setter Property="Background" Value="#3e3124"/>
 		</Style>
 		<Style Selector="DataGridRow.Green">
-			<Setter Property="Background" Value="DarkGreen"/>
+			<Setter Property="Background" Value="#244a24"/>
 		</Style>
 		<Style Selector="DataGridRow.Blue">
-			<Setter Property="Background" Value="DarkBlue"/>
+			<Setter Property="Background" Value="#243e64"/>
 		</Style>
 		<Style Selector="DataGridRow.Red">
-			<Setter Property="Background" Value="Red"/>
+			<Setter Property="Background" Value="#642424"/>
 		</Style>
 		<Style Selector="DataGridRow.Magenta">
-			<Setter Property="Background" Value="Purple"/>
+			<Setter Property="Background" Value="#57244a"/>
 		</Style>
 	</Window.Styles>
 	<views:MainView />
