@@ -26,7 +26,7 @@
 			<Setter Property="MinWidth" Value="50"/>
 			<Setter Property="Padding" Value="0,1,0,0"/>
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
-			<Setter Property="BorderThickness" Value="1.5"/>
+			<Setter Property="BorderThickness" Value="1"/>
 			<Setter Property="BorderBrush" Value="Gray"/>
 		</Style>
 

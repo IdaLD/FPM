@@ -114,6 +114,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         darkmode = true;
         var MaterialThemeStyles = Application.Current!.LocateMaterialTheme<MaterialTheme>();
         MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Dark;
+        MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Grey;
+
+        
+        
         set_theme_colors();
         on_refresh_table();
     }
@@ -123,6 +127,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         darkmode = false;
         var MaterialThemeStyles = Application.Current!.LocateMaterialTheme<MaterialTheme>();
         MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Light;
+        MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Blue;
+
         set_theme_colors();
         on_refresh_table();
     }
