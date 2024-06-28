@@ -181,6 +181,11 @@
 									<MenuItem Header="Other" Tag ="Other" Click="EditType"/>
 								</MenuItem>
 
+								<MenuItem Name="CopyMenu" Header="Copy">
+									<MenuItem Name="FilenameCopyMenu" Header="Filename" Click="on_copy_filename"/>
+									<MenuItem Name="ListviewCopyMenu" Header="Listview" Click="on_copy_listview"/>
+								</MenuItem>
+
 								<MenuItem Name="ClearAllMenu" Header="Clear" Click="on_clear_files"/>
 							</ContextMenu>
 						</DataGrid.ContextMenu>

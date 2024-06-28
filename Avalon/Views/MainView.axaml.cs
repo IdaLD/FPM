@@ -400,6 +400,39 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
+    private void on_copy_filename(object sender, RoutedEventArgs e)
+    {
+        IList files = FileGrid.SelectedItems;
+        ctx.CopyFilenameToClipboard(this, files);
+    }
+
+    private void on_copy_listview(object sender, RoutedEventArgs e)
+    {
+        bool?[] checkstate = new bool?[7];
+
+        IList files = FileGrid.SelectedItems;
+
+        checkstate =
+            [
+            Column0.IsChecked,
+            Column1.IsChecked,
+            Column2.IsChecked,
+            Column3.IsChecked,
+            Column4.IsChecked,
+            Column5.IsChecked,
+            Column6.IsChecked,
+            Column7.IsChecked,
+            Column8.IsChecked,
+            Column9.IsChecked,
+            Column10.IsChecked,
+            Column11.IsChecked,
+            Column12.IsChecked,
+            Column13.IsChecked
+            ];
+
+        ctx.CopyListviewToClipboard(this, files, checkstate);
+    }
+
     private void init_columns()
     {
         int nval = FileGrid.Columns.Count();

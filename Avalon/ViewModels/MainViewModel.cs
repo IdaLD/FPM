@@ -311,6 +311,47 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         Types.Add("Empty");
     }
 
+    public void CopyFilenameToClipboard(Avalonia.Visual window, IList files)
+    {
+        string store = string.Empty;
+
+        foreach (FileData file in files)
+        {
+            store += file.Namn + Environment.NewLine;
+        }
+
+        TopLevel.GetTopLevel(window).Clipboard.SetTextAsync(store);
+
+    }
+
+    public void CopyListviewToClipboard(Avalonia.Visual window, IList files, bool?[] checkstate)
+    {
+        string store = string.Empty;
+        
+        foreach (FileData file in files)
+        {
+            if (checkstate[0] == true) { store += file.Namn + "\t"; };
+            if (checkstate[1] == true) { store += file.Filtyp + "\t"; };
+            if (checkstate[2] == true) { store += file.Tagg + "\t"; };
+            if (checkstate[3] == true) { store += file.Färg + "\t"; };
+            if (checkstate[4] == true) { store += file.Handling + "\t"; };
+            if (checkstate[5] == true) { store += file.Status + "\t"; };
+            if (checkstate[6] == true) { store += file.Datum + "\t"; };
+            if (checkstate[7] == true) { store += file.Ritningstyp + "\t"; };
+            if (checkstate[8] == true) { store += file.Beskrivning1 + "\t"; };
+            if (checkstate[9] == true) { store += file.Beskrivning2 + "\t"; };
+            if (checkstate[10] == true) { store += file.Beskrivning3 + "\t"; };
+            if (checkstate[11] == true) { store += file.Beskrivning4 + "\t"; };
+            if (checkstate[12] == true) { store += file.Revidering + "\t"; };
+            if (checkstate[13] == true) { store += file.Sökväg + "\t"; };
+
+            store += Environment.NewLine;
+
+            
+        }
+        TopLevel.GetTopLevel(window).Clipboard.SetTextAsync(store);
+    }
+
     public void SelectFiles(bool singleMode, IList files)
     {
         metastore.Clear();
