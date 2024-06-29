@@ -206,7 +206,7 @@
 	
 					<StackPanel Grid.Row="1" FlowDirection="RightToLeft" Orientation="Vertical" Margin="5">
 						<StackPanel Width="700" Orientation="Horizontal" Background="Transparent" Spacing="5">
-							<ToggleSwitch Name="DualMode" Command="{Binding toggle_pw_mode}"/>
+							<ToggleSwitch Name="DualMode" Command="{Binding toggle_pw_mode}" Click="on_toggle_dualmode"/>
 							<Slider Name="PreviewQuality" FlowDirection="LeftToRight" Width="90" Margin="10" Minimum="1" Maximum="8" Value="3" IsSnapToTickEnabled="True" SmallChange="1" TickFrequency="1"/>
 							<Button Content="Reset" BorderThickness="0" Click="reset_preview_transform"/>
 							<Button Name="ScrollMode" Content="Scroll" BorderThickness="0" Background="Orange" Click="on_scroll_mode"/>
@@ -216,7 +216,7 @@
 							<Label Content="{Binding pw_pagecount_view}" VerticalAlignment="Center"/>
 							<Label Content="/" VerticalAlignment="Center"/>
 							<Label Content="{Binding pw_pagenr_view}" Width="30" VerticalAlignment="Center"/>
-							<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Width="200" Margin="10" Minimum="1" Maximum="{Binding pw_pagecount_view}" Value="{Binding pw_pagenr_view}"/>
+							<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Width="200" Margin="10" Minimum="1" IsSnapToTickEnabled="True" TickFrequency="1" Maximum="{Binding pw_pagecount_view}" Value="{Binding pw_pagenr_view}"/>
 							
 							
 						</StackPanel>

@@ -394,7 +394,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     }
     private void on_toggle_dualmode(object sender, RoutedEventArgs e)
     {
-        Preview2.IsVisible = (bool)DualMode.IsChecked;
+        if (DualMode.IsChecked == true)
+        {
+            ScrollSlider.TickFrequency = 2;
+        }
+        if (DualMode.IsChecked == false)
+        {
+            ScrollSlider.TickFrequency = 1;
+        }
+
     }
     private void on_lock(object sender, EventArgs e)
     {

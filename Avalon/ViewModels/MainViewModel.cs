@@ -151,18 +151,22 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         if (pw_pagenr < docReader.GetPageCount()-1)
         {
-            pw_pagenr++;
+            if (pw_dualmode == false)
+            {
+                pw_pagenr++;
+                preview_page(pw_pagenr, 0);
+            }
 
-            preview_page(pw_pagenr, 0);
-            pw_pagenr_view = pw_pagenr + 1;
 
             if (pw_dualmode == true)
             {
-                pw_pagenr++;
+                pw_pagenr = pw_pagenr + 2;
 
-                preview_page(pw_pagenr, 1);
-                pw_pagenr_view = pw_pagenr + 1;
+                preview_page(pw_pagenr, 0);
+                preview_page(pw_pagenr+1, 1);
             }
+
+            pw_pagenr_view = pw_pagenr + 1;
         }
     }
 
@@ -174,25 +178,21 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             {
                 pw_pagenr--;
                 preview_page(pw_pagenr, 0);
-
-                pw_pagenr_view = pw_pagenr + 1;
             }
         }
+
         if (pw_dualmode == true)
         {
             if (pw_pagenr > 1)
             {
+                preview_page(pw_pagenr-2, 0);
+                preview_page(pw_pagenr-1, 1);
+
                 pw_pagenr = pw_pagenr - 2;
-                preview_page(pw_pagenr, 0);
-
-                pw_pagenr++;
-                preview_page(pw_pagenr, 1);
-
-                pw_pagenr--;
-
-                pw_pagenr_view = pw_pagenr+1;
             }
         }
+
+        pw_pagenr_view = pw_pagenr + 1;
 
     }
 
@@ -200,37 +200,47 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         if (pagenr != pw_pagenr)
         {
-            pw_pagenr = pagenr;
-            pw_pagenr_view = pw_pagenr + 1;
-
-            preview_page(pw_pagenr, 0);      
-
+            if (pw_dualmode == false)
+            {
+                preview_page(pagenr, 0);
+            }
+            
+            if (pw_dualmode == true)
+            {
+                preview_page(pagenr, 0);
+                preview_page(pagenr+1, 1);
+            }
         }
     }
 
     public void toggle_pw_mode()
     {
         pw_dualmode = !pw_dualmode;
+        start_preview_page();
     }
 
     public void start_preview_page()
     {
         if (pw_dualmode == false)
         {
-            preview_page(0, 0);
+            pw_pagenr = 0;
+            preview_page(pw_pagenr, 0);
         }
         if (pw_dualmode == true)
         {
-            preview_page(0, 0);
-            preview_page(1, 1);
+            pw_pagenr = 0;
+            preview_page(pw_pagenr, 0);
+            preview_page(pw_pagenr+1, 1);
         }
+
+        pw_pagenr_view = pw_pagenr + 1;
     }
 
     public void preview_page(int pagenr, int mode)
     {
-        Debug.WriteLine(pagenr);
         if (docReader != null && docReader.GetPageCount()-1 >= pagenr)
         {
+            
             IPageReader page = docReader.GetPageReader(pagenr);
 
             byte[] rawBytes = page.GetImage();
