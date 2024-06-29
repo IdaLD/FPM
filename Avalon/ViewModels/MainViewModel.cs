@@ -30,6 +30,7 @@ using Newtonsoft.Json.Bson;
 using Avalonia.Media;
 using Avalonia.Collections;
 using DynamicData;
+using iText.Kernel.Pdf;
 
 
 namespace Avalon.ViewModels;
@@ -132,8 +133,11 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             pw_pagenr = 0;
 
             docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(fak * 1080/4, fak * 1920/4));
-            pw_pagecount_view = docReader.GetPageCount(); OnPropertyChanged("pw_pagecount_view");
-            pw_pagenr_view = 1; OnPropertyChanged("pw_pagenr_view");
+            pw_pagecount_view = docReader.GetPageCount();
+            pw_pagenr_view = 1;
+
+            PdfDocument test = (PdfDocument)docReader;
+
         }
         catch
         {
@@ -211,6 +215,8 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
                 preview_page(pagenr, 0);
                 preview_page(pagenr+1, 1);
             }
+
+            pw_pagenr = pagenr;
         }
     }
 
@@ -246,6 +252,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         {
             
             IPageReader page = docReader.GetPageReader(pagenr);
+
 
             byte[] rawBytes = page.GetImage();
             int width = page.GetPageWidth();

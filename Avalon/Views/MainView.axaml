@@ -211,8 +211,8 @@
 							<Button Content="Reset" BorderThickness="0" Click="reset_preview_transform"/>
 							<Button Name="ScrollMode" Content="Scroll" BorderThickness="0" Background="Orange" Click="on_scroll_mode"/>
 							<Button Name="ZoomMode" Content="Zoom" BorderThickness="0" Click="on_zoom_mode"/>
-							<Button Content="Next" BorderThickness="0" Command="{Binding next_preview_page}"/>
-							<Button Content="Prev" BorderThickness="0" Command="{Binding previous_preview_page}"/>
+							<Button Content="🠊" FontSize="18" BorderThickness="0" Command="{Binding next_preview_page}"/>
+							<Button Content="🠈" FontSize="18"  BorderThickness="0" Command="{Binding previous_preview_page}"/>
 							<Label Content="{Binding pw_pagecount_view}" VerticalAlignment="Center"/>
 							<Label Content="/" VerticalAlignment="Center"/>
 							<Label Content="{Binding pw_pagenr_view}" Width="30" VerticalAlignment="Center"/>
