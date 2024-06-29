@@ -145,6 +145,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         docReader = null;
         ImageFromBinding = null;
+        ImageFromBinding2 = null;
     }
 
     public void next_preview_page()
@@ -221,6 +222,9 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void start_preview_page()
     {
+        imageFromBinding = null;
+        imageFromBinding2 = null;
+
         if (pw_dualmode == false)
         {
             pw_pagenr = 0;
