@@ -48,9 +48,16 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
         Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
 
+        Preview2.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
+        Preview2.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
+
         Preview.AddHandler(Viewbox.PointerPressedEvent, on_pan_start);
         Preview.AddHandler(Viewbox.PointerMovedEvent, on_preview_pan);
         Preview.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
+
+        Preview2.AddHandler(Viewbox.PointerPressedEvent, on_pan_start);
+        Preview2.AddHandler(Viewbox.PointerMovedEvent, on_preview_pan);
+        Preview2.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
 
         ScrollSlider.AddHandler(Slider.ValueChangedEvent, on_select_page);
         
@@ -192,7 +199,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         if (previewMode == true) 
         {
-            b = 1.5f;
+            b = 3.2f;
         }
 
         MainGrid.ColumnDefinitions.Clear();
@@ -263,7 +270,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
         else
         {
-            ctx.preview_page(0);
+            ctx.start_preview_page();
         }
     }
 
@@ -385,7 +392,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             }
         }
     }
-
+    private void on_toggle_dualmode(object sender, RoutedEventArgs e)
+    {
+        Preview2.IsVisible = (bool)DualMode.IsChecked;
+    }
     private void on_lock(object sender, EventArgs e)
     {
         if (Lockedstatus.IsChecked == true)

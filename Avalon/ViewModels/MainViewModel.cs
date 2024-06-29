@@ -79,6 +79,12 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         set { imageFromBinding = value; OnPropertyChanged("ImageFromBinding"); }
     }
 
+    private WriteableBitmap? imageFromBinding2 = null;
+    public WriteableBitmap? ImageFromBinding2
+    {
+        get { return imageFromBinding2; }
+        set { imageFromBinding2 = value; OnPropertyChanged("ImageFromBinding2"); }
+    }
     public string user_tag { get; set; }
 
     public List<string[]> metastore = new List<string[]>();
@@ -87,9 +93,32 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public string ProjectMessage { get; set; } = "";
 
     public IDocReader docReader { get; set; } = null;
-    public int pw_pagenr { get; set; } = 0;
-    public int pw_pagenr_view { get; set; } = 1;
-    public int pw_pagecount_view { get; set; } = 1;
+
+    public int _pw_pagenr = 0;
+    public int pw_pagenr
+    {
+        get { return _pw_pagenr; }
+        set { _pw_pagenr = value; OnPropertyChanged("pw_pagenr"); }
+    }
+    public int _pw_pagenr_view = 1;
+    public int pw_pagenr_view
+    {
+        get { return _pw_pagenr_view; }
+        set { _pw_pagenr_view = value; OnPropertyChanged("pw_pagenr_view"); }
+    }
+    public int _pw_pagecount_view = 1;
+    public int pw_pagecount_view
+    {
+        get { return _pw_pagecount_view; }
+        set { _pw_pagecount_view = value; OnPropertyChanged("pw_pagecount_view"); }
+    }
+
+    public bool _pw_dualmode = false;
+    public bool pw_dualmode
+    {
+        get { return _pw_dualmode; }
+        set { _pw_dualmode = value; OnPropertyChanged("pw_dualmode"); }
+    }
 
     public void create_preview_file(string filepath, int fak)
     {
@@ -115,45 +144,92 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public void clear_preview_file()
     {
         docReader = null;
-        ImageFromBinding = null; OnPropertyChanged("ImageFromBinding");
+        ImageFromBinding = null;
     }
 
     public void next_preview_page()
     {
         if (pw_pagenr < docReader.GetPageCount()-1)
         {
-            pw_pagenr++; OnPropertyChanged("pw_pagenr");
-            preview_page(pw_pagenr);
+            pw_pagenr++;
 
-            pw_pagenr_view = pw_pagenr + 1; OnPropertyChanged("pw_pagenr_view");
+            preview_page(pw_pagenr, 0);
+            pw_pagenr_view = pw_pagenr + 1;
+
+            if (pw_dualmode == true)
+            {
+                pw_pagenr++;
+
+                preview_page(pw_pagenr, 1);
+                pw_pagenr_view = pw_pagenr + 1;
+            }
         }
     }
 
     public void previous_preview_page()
     {
-        if (pw_pagenr > 0)
+        if (pw_dualmode == false)
         {
-            pw_pagenr--; OnPropertyChanged("pw_pagenr");
-            preview_page(pw_pagenr);
+            if (pw_pagenr > 0)
+            {
+                pw_pagenr--;
+                preview_page(pw_pagenr, 0);
 
-            pw_pagenr_view = pw_pagenr + 1; OnPropertyChanged("pw_pagenr_view");
+                pw_pagenr_view = pw_pagenr + 1;
+            }
         }
+        if (pw_dualmode == true)
+        {
+            if (pw_pagenr > 1)
+            {
+                pw_pagenr = pw_pagenr - 2;
+                preview_page(pw_pagenr, 0);
+
+                pw_pagenr++;
+                preview_page(pw_pagenr, 1);
+
+                pw_pagenr--;
+
+                pw_pagenr_view = pw_pagenr+1;
+            }
+        }
+
     }
 
     public void selected_page(int pagenr)
     {
         if (pagenr != pw_pagenr)
         {
-            pw_pagenr = pagenr; OnPropertyChanged("pw_pagenr");
-            pw_pagenr_view = pw_pagenr + 1; OnPropertyChanged("pw_pagenr_view");
+            pw_pagenr = pagenr;
+            pw_pagenr_view = pw_pagenr + 1;
 
-            preview_page(pw_pagenr);
+            preview_page(pw_pagenr, 0);      
+
         }
     }
 
-    public void preview_page(int pagenr)
+    public void toggle_pw_mode()
     {
-        if (docReader != null)
+        pw_dualmode = !pw_dualmode;
+    }
+
+    public void start_preview_page()
+    {
+        if (pw_dualmode == false)
+        {
+            preview_page(0, 0);
+        }
+        if (pw_dualmode == true)
+        {
+            preview_page(0, 0);
+            preview_page(1, 1);
+        }
+    }
+
+    public void preview_page(int pagenr, int mode)
+    {
+        Debug.WriteLine(pagenr);
+        if (docReader != null && docReader.GetPageCount()-1 >= pagenr)
         {
             IPageReader page = docReader.GetPageReader(pagenr);
 
@@ -163,12 +239,25 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
             Avalonia.Vector dpi = new Avalonia.Vector(96, 96);
 
-            ImageFromBinding = new WriteableBitmap(new PixelSize(width, height), dpi, Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
-
-            using (var frameBuffer = ImageFromBinding.Lock())
+            if (mode == 0)
             {
-                Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
+                ImageFromBinding = new WriteableBitmap(new PixelSize(width, height), dpi, Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
+                using (var frameBuffer = ImageFromBinding.Lock())
+                {
+                    Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
+                }
+                ImageFromBinding2 = null;
             }
+
+            if (mode == 1)
+            {
+                ImageFromBinding2 = new WriteableBitmap(new PixelSize(width, height), dpi, Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
+                using (var frameBuffer = ImageFromBinding2.Lock())
+                {
+                    Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
+                }
+            }
+
         }
     }
 

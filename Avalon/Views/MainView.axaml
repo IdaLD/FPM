@@ -48,8 +48,8 @@
 					<TextBlock/>
 				</DockPanel>
 
-					<StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Vertical" Spacing="10" Margin="5">
-						<Label Name="StatusLabel" Height="40" Width="200" HorizontalContentAlignment="Center" VerticalAlignment="Bottom" IsHitTestVisible="False" FontStyle="Italic" Foreground="Gray" Padding="10"/>
+					<StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Vertical" Spacing="10" Margin="0">
+						<Label Name="StatusLabel" Height="40" Width="250" HorizontalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Foreground="Gray" Padding="10"/>
 					</StackPanel>
 
 
@@ -73,7 +73,7 @@
 						<Button Name="SelectedType" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<ListBox Name="TypeList" ItemsSource="{Binding Types}" Height="200" Width="114" FlowDirection="LeftToRight"/>
+									<ListBox Name="TypeList" ItemsSource="{Binding Types}" Height="260" Width="114" FlowDirection="LeftToRight"/>
 								</Flyout>
 							</Button.Flyout>
 						</Button>
@@ -81,7 +81,7 @@
 						<Button Name="SelectedProject" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="200" Width="114" FlowDirection="LeftToRight"/>
+									<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="260" Width="114" FlowDirection="LeftToRight"/>
 								</Flyout>
 							</Button.Flyout>
 						</Button>	
@@ -197,12 +197,16 @@
 
 					<Viewbox Grid.Row="0" Name="Previewer" Stretch="Uniform" StretchDirection="Both" Margin="-10">						
 						<Panel Background="White" Margin="20">
+							<StackPanel Orientation="Horizontal">
 							<Image x:Name="Preview" Source="{Binding ImageFromBinding}"/>
+							<Image x:Name="Preview2" Source="{Binding ImageFromBinding2}" IsVisible="{Binding pw_dualmode}"/>
+							</StackPanel>
 						</Panel>
 					</Viewbox>
 	
 					<StackPanel Grid.Row="1" FlowDirection="RightToLeft" Orientation="Vertical" Margin="5">
 						<StackPanel Width="700" Orientation="Horizontal" Background="Transparent" Spacing="5">
+							<ToggleSwitch Name="DualMode" Command="{Binding toggle_pw_mode}"/>
 							<Slider Name="PreviewQuality" FlowDirection="LeftToRight" Width="90" Margin="10" Minimum="1" Maximum="8" Value="3" IsSnapToTickEnabled="True" SmallChange="1" TickFrequency="1"/>
 							<Button Content="Reset" BorderThickness="0" Click="reset_preview_transform"/>
 							<Button Name="ScrollMode" Content="Scroll" BorderThickness="0" Background="Orange" Click="on_scroll_mode"/>
@@ -222,3 +226,4 @@
 				
 			</Grid>
 </UserControl>
+ 
