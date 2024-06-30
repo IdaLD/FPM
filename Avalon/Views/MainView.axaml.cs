@@ -35,6 +35,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
 
+        FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_file);
 
         ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
         TypeList.AddHandler(ListBox.SelectionChangedEvent, on_type_selected);
@@ -192,22 +193,26 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void on_toggle_preview(object sender, RoutedEventArgs e)
     {
         previewMode = !previewMode;
-        CurrentPreview.IsVisible = previewMode;
 
         float a = 1;
         float b = 0;
+        float c = 0;
+
 
         if (previewMode == true) 
         {
-            b = 3.2f;
+            b = 5;
+            c = 3.2f;
         }
 
         MainGrid.ColumnDefinitions.Clear();
         GridLength clmn1 = new GridLength(a, GridUnitType.Star);
-        GridLength clmn2 = new GridLength(b, GridUnitType.Star);
+        GridLength clmn2 = new GridLength(b, GridUnitType.Pixel);
+        GridLength clmn3 = new GridLength(c, GridUnitType.Star);
 
         MainGrid.ColumnDefinitions.Add(new ColumnDefinition(clmn1));
         MainGrid.ColumnDefinitions.Add(new ColumnDefinition(clmn2));
+        MainGrid.ColumnDefinitions.Add(new ColumnDefinition(clmn3));
 
         if (previewMode == false)
         {
@@ -260,7 +265,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void PreviewWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
-        CurrentPreview.Text = Path.GetFileNameWithoutExtension(preview_current);
         PreviewWorker_busy = false;
 
         if (preview_current != preview_request)
@@ -415,6 +419,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             RemoveProjectMenu.IsEnabled = true;
             RemoveFileMenu.IsEnabled = true;
+        }
+    }
+
+    private void select_file(object sender, RoutedEventArgs e)
+    {
+        if (FileGrid.SelectedItem != null)
+        {
+            FileData selectedFile = (FileData)FileGrid.SelectedItem;
+            SelectedFileName.Text = selectedFile.Namn;
         }
     }
 
