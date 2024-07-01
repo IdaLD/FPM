@@ -16,7 +16,7 @@ using Docnet.Core;
 using Docnet.Core.Models;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.ComponentModel;
+using System.ComponentModel; 
 
 using Docnet.Core.Readers;
 using System.Runtime.InteropServices;
@@ -28,6 +28,10 @@ using Avalonia;
 using Avalonia.Platform;
 using Newtonsoft.Json.Bson;
 using Avalonia.Media;
+using Avalonia.Collections;
+using DynamicData;
+using iText.Kernel.Pdf;
+using ReactiveUI;
 
 
 namespace Avalon.ViewModels;
@@ -41,26 +45,107 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         Status.Add("Ready");
     }
 
-    public ObservableCollection<FileData> Drawings { get; set; } = new();
-    public ObservableCollection<FileData> Documents { get; set; } = new();
-    public ObservableCollection<string> Projects { get; } = new();
+    public ObservableCollection<FileData> StoredFiles = new ObservableCollection<FileData>();
+
+    private IEnumerable<FileData> filteredFiles = null;
+    public IEnumerable<FileData> FilteredFiles
+    {
+        get { return filteredFiles; }
+        set { filteredFiles = value; OnPropertyChanged("FilteredFiles"); }
+    }
+
+    public List<string> Projects { get; set; } = new();
+    public List<string> Notes { get; set;} = new();
+
+    private List<string> types = new List<string>();
+    public List<string> Types
+    {
+        get { return types; }
+        set { types = value; OnPropertyChanged("Types"); }
+    }
+
     public ObservableCollection<string> Properties { get; } = new();
     public ObservableCollection<string> Status { get; } = new();
-    public ObservableCounter<int> Progress { get; set; } 
+    public ObservableCounter<int> Progress { get; set; }
 
+    private Avalonia.Media.Imaging.Bitmap? previewFile;
+    public Avalonia.Media.Imaging.Bitmap? PreviewFile
+    {
+        get { return previewFile; }
+        set { previewFile = value; OnPropertyChanged("PreviewFile"); }
+    }
 
+    private WriteableBitmap? imageFromBinding = null;
+    public WriteableBitmap? ImageFromBinding
+    {
+        get { return imageFromBinding; }
+        set { imageFromBinding = value; OnPropertyChanged("ImageFromBinding"); }
+    }
+
+    private WriteableBitmap? imageFromBinding2 = null;
+    public WriteableBitmap? ImageFromBinding2
+    {
+        get { return imageFromBinding2; }
+        set { imageFromBinding2 = value; OnPropertyChanged("ImageFromBinding2"); }
+    }
+
+    private FileData currentInfoFile = new FileData();
+    public FileData CurrentInfoFile
+    {
+        get { return currentInfoFile; }
+        set { currentInfoFile = value; OnPropertyChanged("CurrentInfoFile"); }
+    }
 
     public string user_tag { get; set; }
 
     public List<string[]> metastore = new List<string[]>();
-    public List<(string, string)> PathStore = new List<(string, string)>();
+    public List<string> PathStore = new List<string>();
 
     public string ProjectMessage { get; set; } = "";
 
     public IDocReader docReader { get; set; } = null;
-    public int pw_pagenr { get; set; } = 0;
-    public int pw_pagenr_view { get; set; } = 1;
-    public int pw_pagecount_view { get; set; } = 1;
+
+    public int _pw_pagenr = 0;
+    public int pw_pagenr
+    {
+        get { return _pw_pagenr; }
+        set { _pw_pagenr = value; OnPropertyChanged("pw_pagenr"); }
+    }
+    public int _pw_pagenr_view = 1;
+    public int pw_pagenr_view
+    {
+        get { return _pw_pagenr_view; }
+        set { _pw_pagenr_view = value; OnPropertyChanged("pw_pagenr_view"); }
+    }
+    public int _pw_pagecount_view = 1;
+    public int pw_pagecount_view
+    {
+        get { return _pw_pagecount_view; }
+        set { _pw_pagecount_view = value; OnPropertyChanged("pw_pagecount_view"); }
+    }
+
+    public bool _pw_dualmode = false;
+    public bool pw_dualmode
+    {
+        get { return _pw_dualmode; }
+        set { _pw_dualmode = value; OnPropertyChanged("pw_dualmode"); }
+    }
+
+    public void set_info_file(string project)
+    {
+        FileData infoFile = StoredFiles.FirstOrDefault(x => x.Uppdrag == project && x.Filtyp == "Info");
+
+        if (infoFile == null)
+        {
+            currentInfoFile = new FileData {Namn = "Infofil", Uppdrag = project, Filtyp = "Info", Info = "Project: " + project + Environment.NewLine};
+            StoredFiles.Add(CurrentInfoFile);
+        }
+
+        else
+        {
+            currentInfoFile = infoFile;
+        }
+    }
 
     public void create_preview_file(string filepath, int fak)
     {
@@ -73,11 +158,12 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         {
             pw_pagenr = 0;
 
-            docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(fak * 1080/4, fak * 1920/4));
+            docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(fak * 1080/2, fak * 1920/2));
+            pw_pagecount_view = docReader.GetPageCount();
+            pw_pagenr_view = 1;
 
-            pw_pagecount_view = docReader.GetPageCount(); OnPropertyChanged("pw_pagecount_view");
+            PdfDocument test = (PdfDocument)docReader;
 
-            pw_pagenr_view = 1; OnPropertyChanged("pw_pagenr_view");
         }
         catch
         {
@@ -88,46 +174,109 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public void clear_preview_file()
     {
         docReader = null;
-        ImageFromBinding = null; OnPropertyChanged("ImageFromBinding");
+        ImageFromBinding = null;
+        ImageFromBinding2 = null;
     }
 
     public void next_preview_page()
     {
         if (pw_pagenr < docReader.GetPageCount()-1)
         {
-            pw_pagenr++; OnPropertyChanged("pw_pagenr");
-            preview_page(pw_pagenr);
+            if (pw_dualmode == false)
+            {
+                pw_pagenr++;
+                preview_page(pw_pagenr, 0);
+            }
 
-            pw_pagenr_view = pw_pagenr + 1; OnPropertyChanged("pw_pagenr_view");
+
+            if (pw_dualmode == true)
+            {
+                pw_pagenr = pw_pagenr + 2;
+
+                preview_page(pw_pagenr, 0);
+                preview_page(pw_pagenr+1, 1);
+            }
+
+            pw_pagenr_view = pw_pagenr + 1;
         }
     }
 
     public void previous_preview_page()
     {
-        if (pw_pagenr > 0)
+        if (pw_dualmode == false)
         {
-            pw_pagenr--; OnPropertyChanged("pw_pagenr");
-            preview_page(pw_pagenr);
-
-            pw_pagenr_view = pw_pagenr + 1; OnPropertyChanged("pw_pagenr_view");
+            if (pw_pagenr > 0)
+            {
+                pw_pagenr--;
+                preview_page(pw_pagenr, 0);
+            }
         }
+
+        if (pw_dualmode == true)
+        {
+            if (pw_pagenr > 1)
+            {
+                preview_page(pw_pagenr-2, 0);
+                preview_page(pw_pagenr-1, 1);
+
+                pw_pagenr = pw_pagenr - 2;
+            }
+        }
+
+        pw_pagenr_view = pw_pagenr + 1;
+
     }
 
     public void selected_page(int pagenr)
     {
         if (pagenr != pw_pagenr)
         {
-            pw_pagenr = pagenr; OnPropertyChanged("pw_pagenr");
-            pw_pagenr_view = pw_pagenr + 1; OnPropertyChanged("pw_pagenr_view");
+            if (pw_dualmode == false)
+            {
+                preview_page(pagenr, 0);
+            }
+            
+            if (pw_dualmode == true)
+            {
+                preview_page(pagenr, 0);
+                preview_page(pagenr+1, 1);
+            }
 
-            preview_page(pw_pagenr);
+            pw_pagenr = pagenr;
         }
     }
 
-    public void preview_page(int pagenr)
+    public void toggle_pw_mode()
     {
-        if (docReader != null)
+        pw_dualmode = !pw_dualmode;
+        start_preview_page();
+    }
+
+    public void start_preview_page()
+    {
+        imageFromBinding = null;
+        imageFromBinding2 = null;
+
+        if (pw_dualmode == false)
         {
+            pw_pagenr = 0;
+            preview_page(pw_pagenr, 0);
+        }
+        if (pw_dualmode == true)
+        {
+            pw_pagenr = 0;
+            preview_page(pw_pagenr, 0);
+            preview_page(pw_pagenr+1, 1);
+        }
+
+        pw_pagenr_view = pw_pagenr + 1;
+    }
+
+    public void preview_page(int pagenr, int mode)
+    {
+        if (docReader != null && docReader.GetPageCount()-1 >= pagenr)
+        {
+            
             IPageReader page = docReader.GetPageReader(pagenr);
 
             byte[] rawBytes = page.GetImage();
@@ -136,14 +285,28 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
             Avalonia.Vector dpi = new Avalonia.Vector(96, 96);
 
-            ImageFromBinding = new WriteableBitmap(new PixelSize(width, height), dpi, Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
-
-            using (var frameBuffer = ImageFromBinding.Lock())
-            {
-                Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
+            if (mode == 0)
+            { // Bgra8888
+                ImageFromBinding = new WriteableBitmap(new PixelSize(width, height), dpi, Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
+                using (var frameBuffer = ImageFromBinding.Lock())
+                {
+                    Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
+                }
+                ImageFromBinding2 = null;
             }
+
+            if (mode == 1)
+            {
+                ImageFromBinding2 = new WriteableBitmap(new PixelSize(width, height), dpi, Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
+                using (var frameBuffer = ImageFromBinding2.Lock())
+                {
+                    Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
+                }
+            }
+
         }
     }
+
 
     public async Task LoadFile(Avalonia.Visual window)
     {
@@ -167,11 +330,11 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             using var streamReader = new StreamReader(stream);
             string fileContent = await streamReader.ReadToEndAsync();
 
-            List<FileData> getFiles = JsonConvert.DeserializeObject<List<FileData>>(fileContent);
-            List<string> getProjects = getFiles.Select(x => x.Uppdrag).Distinct().ToList();
+            StoredFiles = JsonConvert.DeserializeObject<ObservableCollection<FileData>>(fileContent);
+            Projects = StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
+            Projects.Sort();
 
-            Globals.storedFiles = getFiles;
-            Globals.projects = getProjects;
+            UpdateTypes();
 
             var properties = typeof(FileData).GetProperties().ToList();
             foreach (var property in properties)
@@ -179,8 +342,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
                 string val = property.Name;
                 Properties.Add(val);
             }
-            UpdateProjectList();
-
         }
     }
 
@@ -190,11 +351,13 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         using (StreamReader r = new StreamReader(path))
         {
             string json = r.ReadToEnd();
-            List<FileData> getFiles = JsonConvert.DeserializeObject<List<FileData>>(json);
-            List<string> getProjects = getFiles.Select(x => x.Uppdrag).Distinct().ToList();
 
-            Globals.storedFiles = getFiles;
-            Globals.projects = getProjects;
+            StoredFiles = JsonConvert.DeserializeObject<ObservableCollection<FileData>>(json);
+            Projects = StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
+            Projects.Sort();
+
+            UpdateTypes();
+            
         }
 
         var properties = typeof(FileData).GetProperties().ToList();
@@ -203,8 +366,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             string val = property.Name;
             Properties.Add(val);
         }
-        UpdateProjectList();
-
     }
 
     public async Task SaveFile(Avalonia.Visual window)
@@ -227,7 +388,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         {
             await using var stream = await file.OpenWriteAsync();
             using var streamWriter = new StreamWriter(stream);
-            var data = JsonConvert.SerializeObject(Globals.storedFiles);
+            var data = JsonConvert.SerializeObject(StoredFiles);
             await streamWriter.WriteLineAsync(data);
         }
     }
@@ -236,14 +397,14 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         using (StreamWriter streamWriter = new StreamWriter(path))
         {
-            var data = JsonConvert.SerializeObject(Globals.storedFiles);
+            var data = JsonConvert.SerializeObject(StoredFiles);
             await streamWriter.WriteLineAsync(data);
         }
     }
 
-    public async Task AddFile(string type, int selectedProject, Avalonia.Visual window)
+    public async Task AddFile(string selectedProject, Avalonia.Visual window)
     {
-        if (Globals.projects.Count > 0)
+        if (Projects.Count > 0)
         {
             var topLevel = TopLevel.GetTopLevel(window);
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
@@ -257,51 +418,90 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             {
                 string path = file.Path.LocalPath;
 
-                Globals.storedFiles.Add(new FileData
+                if(!StoredFiles.Any(x => x.Sökväg == path))
                 {
-                    Namn = System.IO.Path.GetFileNameWithoutExtension(path),
-                    Uppdrag = Globals.projects[selectedProject],
-                    Filtyp = type,
-                    Sökväg = path
-                });
+                    StoredFiles.Add(new FileData
+                    {
+                        Namn = System.IO.Path.GetFileNameWithoutExtension(path),
+                        Uppdrag = selectedProject,
+                        Filtyp = "",
+                        Sökväg = path
+                    });
+                }
+
+
             }
-            UpdateLists(selectedProject);
         }
     }
 
-    public void SelectFiles(bool singleMode, IList drawings, IList documents, string SelectedType)
+    public void UpdateTypes()
+    {
+        List<string> newTypes = StoredFiles.Select(x => x.Filtyp).Distinct().ToList();
+
+        newTypes.Remove("");
+        newTypes.Sort();
+
+        Types = new List<string>();
+        Types.Add("All Files");
+        Types.Add(newTypes);
+        Types.Add("Empty");
+    }
+
+    public void CopyFilenameToClipboard(Avalonia.Visual window, IList files)
+    {
+        string store = string.Empty;
+
+        foreach (FileData file in files)
+        {
+            store += file.Namn + Environment.NewLine;
+        }
+
+        TopLevel.GetTopLevel(window).Clipboard.SetTextAsync(store);
+
+    }
+
+    public void CopyListviewToClipboard(Avalonia.Visual window, IList files, bool?[] checkstate)
+    {
+        string store = string.Empty;
+        
+        foreach (FileData file in files)
+        {
+            if (checkstate[0] == true) { store += file.Namn + "\t"; };
+            if (checkstate[1] == true) { store += file.Filtyp + "\t"; };
+            if (checkstate[2] == true) { store += file.Tagg + "\t"; };
+            if (checkstate[3] == true) { store += file.Färg + "\t"; };
+            if (checkstate[4] == true) { store += file.Handling + "\t"; };
+            if (checkstate[5] == true) { store += file.Status + "\t"; };
+            if (checkstate[6] == true) { store += file.Datum + "\t"; };
+            if (checkstate[7] == true) { store += file.Ritningstyp + "\t"; };
+            if (checkstate[8] == true) { store += file.Beskrivning1 + "\t"; };
+            if (checkstate[9] == true) { store += file.Beskrivning2 + "\t"; };
+            if (checkstate[10] == true) { store += file.Beskrivning3 + "\t"; };
+            if (checkstate[11] == true) { store += file.Beskrivning4 + "\t"; };
+            if (checkstate[12] == true) { store += file.Revidering + "\t"; };
+            if (checkstate[13] == true) { store += file.Sökväg + "\t"; };
+
+            store += Environment.NewLine;
+
+            
+        }
+        TopLevel.GetTopLevel(window).Clipboard.SetTextAsync(store);
+    }
+
+    public void SelectFiles(bool singleMode, IList files)
     {
         metastore.Clear();
         PathStore.Clear();
 
-        IList selectedDrawings = null;
-        IList selectedDocuments = null;
-
         if (singleMode == true)
         {
-            if (SelectedType == "Drawing")
-            {
-                selectedDrawings = drawings;
-            }
-            if (SelectedType == "Document")
-            {
-                selectedDocuments = documents;
-            }
+            foreach (FileData file in files) { PathStore.Add((file.Sökväg)); }
         }
         if (singleMode == false)
         {
-            selectedDrawings = Drawings;
-            selectedDocuments = Documents;
+            foreach (FileData file in FilteredFiles) { PathStore.Add((file.Sökväg)); }
         }
 
-        if (selectedDrawings != null)
-        {
-            foreach (FileData file in selectedDrawings) { PathStore.Add(("Drawing", file.Sökväg)); }
-        }
-        if (selectedDocuments != null)
-        {
-            foreach (FileData file in selectedDocuments) { PathStore.Add(("Document", file.Sökväg)); }
-        }
     }
 
     public int GetNrSelectedFiles()
@@ -311,27 +511,13 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void SetMetadata()
     {
-        IList items = null;
-        FileData file = null;
 
-        int nSelected = PathStore.Count();
-        for (int i = 0; i < nSelected; i++)
+        int i = 0;
+        foreach (string path in PathStore)
         {
-            if (PathStore[i].Item1 == "Drawing")
-            {
-                items = Drawings;
-                file = Drawings.First(x => x.Sökväg == PathStore[i].Item2);
-            }
-            if (PathStore[i].Item1 == "Document")
-            {
-                items = Documents;
-                file = Documents.First(x => x.Sökväg == PathStore[i].Item2);
-            }
+            FileData file = FilteredFiles.FirstOrDefault(x => x.Sökväg == path);
 
-            string path         = file.Sökväg;
             string[] md         = metastore[i];
-
-            int index           = items.IndexOf(file);
 
             file.Handling       = md[0];
             file.Status         = md[1];
@@ -344,8 +530,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             file.Revidering     = md[8];
             file.Sökväg         = path;
 
-            items[index] = null;
-            items[index] = file;
+            i++;
         }
     }
 
@@ -356,7 +541,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
         List<string[]> metadata = new List<string[]>();
 
-        string path = PathStore[k].Item2;
+        string path = PathStore[k];
         string[] description = new string[ntags];
         try
         {
@@ -397,31 +582,34 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         }
     }
 
-    public void OpenFile(IList drawings, IList documents, string SelectedType, string openType)
+    public void ClearMeta(IList files)
+    {
+        foreach (FileData file in files)
+        {
+            file.Handling = "";
+            file.Status = "";
+            file.Datum = "";
+            file.Ritningstyp = "";
+            file.Beskrivning1 = "";
+            file.Beskrivning2 = "";
+            file.Beskrivning3 = "";
+            file.Beskrivning4 = "";
+            file.Revidering = "";
+        }
+    }
+
+    public void OpenFile(IList files, string openType)
     {
         string ending = "";
         if (openType == "MD") { ending = ".md"; }
         try
         {
-            if (SelectedType == "Drawing")
+            foreach (FileData file in files)
             {
-                foreach (FileData drawing in drawings)
-                {
-                    ProcessStartInfo psi = new ProcessStartInfo();
-                    psi.FileName = drawing.Sökväg + ending;
-                    psi.UseShellExecute = true;
-                    Process.Start(psi);
-                }
-            }
-            if (SelectedType == "Document")
-            {
-                foreach (FileData document in documents)
-                {
-                    ProcessStartInfo psi = new ProcessStartInfo();
-                    psi.FileName = document.Sökväg + ending;
-                    psi.UseShellExecute = true;
-                    Process.Start(psi);
-                }
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.FileName = file.Sökväg + ending;
+                psi.UseShellExecute = true;
+                Process.Start(psi);
             }
         }
         catch (Exception)
@@ -431,7 +619,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public void OpenDwg(FileData drawing)
     {
         string dwgPath = drawing.Sökväg.Replace("Ritning", "Ritdef").Replace("pdf","dwg");
-
 
         try
         {
@@ -445,17 +632,14 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     }
 
-    public void OpenPath(IList drawings, IList documents, string SelectedType)
+    public void OpenPath(IList files)
     {
-        IList items = null;
-        if (SelectedType == "Drawing") { items = drawings; }
-        if (SelectedType == "Document") { items = documents; }
 
-        foreach (FileData item in items)
+        foreach (FileData file in files)
         {
             try
             {
-                string folderpath = System.IO.Path.GetDirectoryName(item.Sökväg);
+                string folderpath = System.IO.Path.GetDirectoryName(file.Sökväg);
                 Process process = Process.Start("explorer.exe", "\"" + folderpath + "\"");
 
             }
@@ -495,136 +679,83 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         }
     }
 
-    public void RemoveFiles(IList files)
+    public void add_type(string type, IList items)
+    {
+        foreach (FileData file in items)
+        {
+            file.Filtyp = type;
+        }
+    }
+
+    public void remove_files(IList files)
     {
         foreach (FileData file in files)
         {
-            Globals.storedFiles.Remove(file);
-            Drawings.Remove(file);
+            StoredFiles.Remove(file);
         }
     }
 
     public void new_project(string newName)
     {
-        Globals.projects.Add(newName);
-        UpdateProjectList();
+        Projects.Add(newName);
+        Projects.Sort();
 
     }
 
-    public void remove_project(int projectIndex)
+    public void remove_project(string currentProject)
     {
-        if (Globals.projects.Count > 1)
+        if (Projects.Count > 1)
         {
-            Globals.storedFiles.RemoveAll(x => x.Uppdrag == Globals.projects[projectIndex]);
-            Globals.projects.RemoveAt(projectIndex);
-            UpdateProjectList();
+            StoredFiles.RemoveMany(StoredFiles.Where(x => x.Uppdrag == currentProject));
+            Projects.Remove(currentProject);
         }
     }
 
-    public void rename_project(int projectindex, string newName)
+    public void rename_project(string currentProject, string newProjectName)
     {
-        for (int i = 0; i < Globals.storedFiles.Count; i++)
+        for (int i = 0; i < StoredFiles.Count; i++)
         {
-            if (Globals.storedFiles[i].Uppdrag == Globals.projects[projectindex])
+            if (StoredFiles[i].Uppdrag == currentProject)
             {
-                Globals.storedFiles[i].Uppdrag = newName;
+                StoredFiles[i].Uppdrag = newProjectName;
             }
         }
-        Globals.projects[projectindex] = newName;
-        UpdateProjectList();
+        Projects.Replace(currentProject, newProjectName);
+        Projects.Sort();
     }
 
-    public void RemoveFiles(IList drawings, IList documents, string SelectedType)
+
+    public void UpdateLists(string selectedProject, string selectedType)
     {
-        List<FileData> filesToremove = [];
-        if (SelectedType == "Drawing")
+        if (Projects.Count() > 0)
         {
-            foreach (FileData drawing in drawings){filesToremove.Add(drawing);}
-            foreach (FileData file in filesToremove)
-            {
-                Globals.storedFiles.Remove(file);
-                Drawings.Remove(file);
-            }
-        }
-        if (SelectedType == "Document")
-        {
-            foreach (FileData document in documents){filesToremove.Add(document);}
-            foreach (FileData file in filesToremove)
-            {
-                Globals.storedFiles.Remove(file);
-                Documents.Remove(file);
-            }
-        }
-    }
+            set_filtered_res(selectedProject, selectedType);
 
-    public void UpdateLists(int selectedProject)
-    {
-        Drawings.Clear();
-        Documents.Clear();
+            int fileCount = FilteredFiles.Count();
 
-        if (Globals.projects.Count() > 0)
-        {
-            string currentProject = Globals.projects[selectedProject];
-            IEnumerable<FileData> filteredDraw = get_filtered_res(currentProject, "Drawing");
-            IEnumerable<FileData> filteredDoc = get_filtered_res(currentProject, "Document");
-
-            foreach (FileData file in filteredDraw)
-            {
-                Drawings.Add(file);
-            }
-
-            foreach (FileData file in filteredDoc)
-            {
-                Documents.Add(file);
-            }
-
-            int drawingcount = filteredDraw.Count();
-            int documentcount = filteredDoc.Count();
-
-            ProjectMessage = string.Format("Project {0}: {1} Drawings / {2} Documents", currentProject, drawingcount, documentcount);
+            ProjectMessage = string.Format("Project {0}/ Type {1}: {2} Files", selectedProject, selectedType, fileCount);
             OnPropertyChanged("ProjectMessage");
         }
 
     }
 
-    public void UpdateProjectList()
+    private void set_filtered_res(string currentProject, string type)
     {
-        Projects.Clear();
-
-        Globals.projects.Sort();
-
-        foreach (string project in Globals.projects)
+        if (type == "All Files")
         {
-            Projects.Add(project);
+            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject && x.Filtyp != "Info").OrderBy(x=>x.Filtyp).OrderBy(x=>x.Namn);
         }
-    }
 
-    public string GetCurrentProject(int selectedproject)
-    {
-        return Globals.projects[selectedproject];
-    }
-
-    private IEnumerable<FileData> get_filtered_res(string currentProject, string type)
-    {
-        IEnumerable<FileData> first = Globals.storedFiles.Where(x => x.Uppdrag == currentProject);
-        IEnumerable<FileData> second = first.Where(x => x.Filtyp == type);
-
-        return second.OrderBy(x => x.Namn);
-    }
-
-    private Avalonia.Media.Imaging.Bitmap? previewFile;
-    public Avalonia.Media.Imaging.Bitmap? PreviewFile
-    {
-        get { return previewFile; }
-        set { previewFile = value; OnPropertyChanged("PreviewFile"); }
-    }
-
-
-    private WriteableBitmap? imageFromBinding = null;
-    public WriteableBitmap? ImageFromBinding
-    {
-        get { return imageFromBinding; }
-        set { imageFromBinding = value; OnPropertyChanged("ImageFromBinding"); }
+        if (type == "Empty")
+        {
+            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject && x.Filtyp != "Info").Where(x => x.Filtyp == "").OrderBy(x => x.Namn);
+        }
+        
+        if (type != "All Files" && type != "Empty")
+        {
+            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject && x.Filtyp != "Info").Where(x => x.Filtyp == type).OrderBy(x => x.Namn);
+        }
+        
     }
 
     public event PropertyChangedEventHandler PropertyChanged;

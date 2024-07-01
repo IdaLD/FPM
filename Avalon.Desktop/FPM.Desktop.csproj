@@ -10,10 +10,17 @@
     <PublishAot>False</PublishAot>
     <ErrorReport>none</ErrorReport>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <ApplicationIcon>avalonia-logo.ico</ApplicationIcon>
+    <ApplicationIcon>folder.ico</ApplicationIcon>
+    <PackageIcon>folder.ico</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="avalonia-logo.ico" />
+    <Content Include="folder.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Avalon\Assets\folder.ico">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

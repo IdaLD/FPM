@@ -17,6 +17,8 @@ using System.IO;
 using System.Diagnostics;
 using Avalonia.Controls.Generators;
 using System.Collections.Generic;
+using iText.Commons.Bouncycastle.Asn1.X509;
+using System.Drawing;
 
 
 namespace Avalon.Views;
@@ -27,32 +29,36 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         InitializeComponent();
 
-        DrawingGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
-        DocumentGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
+        FileGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
 
         FetchMetadata.AddHandler(Button.ClickEvent, on_fetch_full_meta);
 
-        DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDrawingGridSelected);
-        DocumentGrid.AddHandler(DataGrid.SelectionChangedEvent, OnDocumentGridSelected);
+        FileGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
 
-        DrawingGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
-        DocumentGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
-
+        FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_file);
 
         ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
-        Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
-        DrawingGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
+        TypeList.AddHandler(ListBox.SelectionChangedEvent, on_type_selected);
 
-        ViewSlider.AddHandler(Slider.ValueChangedEvent, toggle_table);
+        Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
+        FileGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
+
 
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
 
         Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
         Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
 
+        Preview2.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
+        Preview2.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
+
         Preview.AddHandler(Viewbox.PointerPressedEvent, on_pan_start);
         Preview.AddHandler(Viewbox.PointerMovedEvent, on_preview_pan);
         Preview.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
+
+        Preview2.AddHandler(Viewbox.PointerPressedEvent, on_pan_start);
+        Preview2.AddHandler(Viewbox.PointerMovedEvent, on_preview_pan);
+        Preview2.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
 
         ScrollSlider.AddHandler(Slider.ValueChangedEvent, on_select_page);
         
@@ -65,8 +71,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         StatusLabel.Content = "Ready";
     }
 
-    public string SelectedType = null;
     public int SelectedIndex = 0;
+
+    public string currentProject = "";
+    public string currentType = "";
 
     public string StatusMessage = "Ready";
     public bool PopupStatus = true;
@@ -84,6 +92,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     public string preview_request = "";
     public string preview_current = "";
+
+    public bool darkmode = true;
 
     private TransformGroup trGrp;
     private TranslateTransform trTns;
@@ -109,14 +119,52 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     public void on_theme_dark(object sender, RoutedEventArgs e)
     {
+        darkmode = true;
         var MaterialThemeStyles = Application.Current!.LocateMaterialTheme<MaterialTheme>();
         MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Dark;
+        MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Grey;
+
+        
+        
+        set_theme_colors();
+        on_refresh_table();
     }
 
     public void on_theme_light(object sender, RoutedEventArgs e)
     {
+        darkmode = false;
         var MaterialThemeStyles = Application.Current!.LocateMaterialTheme<MaterialTheme>();
         MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Light;
+        MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Blue;
+
+        set_theme_colors();
+        on_refresh_table();
+    }
+
+    public void set_theme_colors()
+    {
+        if (darkmode == true)
+        {
+
+            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#646424");
+            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#643e24");
+            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#3e3124");
+            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#244a24");
+            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#243e64");
+            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#642424");
+            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#57244a");
+        }
+
+        if (darkmode == false)
+        {
+            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffff99");
+            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffd699");
+            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#c2ad99");
+            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#8cd1a3");
+            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#a3a3ff");
+            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ff8c8c");
+            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#eb99eb");
+        }
     }
 
     public void Border_PointerPressed(object sender, RoutedEventArgs args)
@@ -137,7 +185,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             string path = "C:\\FIlePathManager\\Projects.json";
             ctx.read_savefile(path);
-            on_project_refresh(sender, e);
+            on_project_refresh();
         }
         catch { }
     }
@@ -145,22 +193,26 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void on_toggle_preview(object sender, RoutedEventArgs e)
     {
         previewMode = !previewMode;
-        CurrentPreview.IsVisible = previewMode;
 
         float a = 1;
         float b = 0;
+        float c = 0;
+
 
         if (previewMode == true) 
         {
-            b = 1.5f;
+            b = 5;
+            c = 3.2f;
         }
 
         MainGrid.ColumnDefinitions.Clear();
         GridLength clmn1 = new GridLength(a, GridUnitType.Star);
-        GridLength clmn2 = new GridLength(b, GridUnitType.Star);
+        GridLength clmn2 = new GridLength(b, GridUnitType.Pixel);
+        GridLength clmn3 = new GridLength(c, GridUnitType.Star);
 
         MainGrid.ColumnDefinitions.Add(new ColumnDefinition(clmn1));
         MainGrid.ColumnDefinitions.Add(new ColumnDefinition(clmn2));
+        MainGrid.ColumnDefinitions.Add(new ColumnDefinition(clmn3));
 
         if (previewMode == false)
         {
@@ -172,18 +224,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         if (previewMode == true)
         {
-            FileData drawing = (FileData)DrawingGrid.SelectedItem;
-            FileData document = (FileData)DocumentGrid.SelectedItem;
+            FileData file = (FileData)FileGrid.SelectedItem;
 
-            string filepath = "";
-            if (SelectedType == "Drawing" && drawing != null) { filepath = drawing.Sökväg; }
-            if (SelectedType == "Document" && document != null) { filepath = document.Sökväg; }
-
-            if (filepath != "")
+            if (file != null)
             {
-                Debug.WriteLine("OK");
-
-                preview_request = filepath;
+                preview_request = file.Sökväg;
 
                 int QFak = (int)PreviewQuality.Value;
 
@@ -220,7 +265,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void PreviewWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
-        CurrentPreview.Text = Path.GetFileNameWithoutExtension(preview_current);
         PreviewWorker_busy = false;
 
         if (preview_current != preview_request)
@@ -230,7 +274,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
         else
         {
-            ctx.preview_page(0);
+            ctx.start_preview_page();
         }
     }
 
@@ -352,45 +396,92 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             }
         }
     }
+    private void on_toggle_dualmode(object sender, RoutedEventArgs e)
+    {
+        if (DualMode.IsChecked == true)
+        {
+            ScrollSlider.TickFrequency = 2;
+        }
+        if (DualMode.IsChecked == false)
+        {
+            ScrollSlider.TickFrequency = 1;
+        }
 
+    }
     private void on_lock(object sender, EventArgs e)
     {
         if (Lockedstatus.IsChecked == true)
         {
             RemoveProjectMenu.IsEnabled = false;
-
-            ContextMenu Menu = this.Resources["Menu"] as ContextMenu;
-            MenuItem removeMenu = Menu.Items[3] as MenuItem;
-            removeMenu.IsEnabled = false;
+            RemoveFileMenu.IsEnabled = false;
         }
         if (Lockedstatus.IsChecked == false)
         {
             RemoveProjectMenu.IsEnabled = true;
-
-            ContextMenu Menu = this.Resources["Menu"] as ContextMenu;
-            MenuItem removeMenu = Menu.Items[3] as MenuItem;
-            removeMenu.IsEnabled = true;
+            RemoveFileMenu.IsEnabled = true;
         }
+    }
+
+    private void select_file(object sender, RoutedEventArgs e)
+    {
+        if (FileGrid.SelectedItem != null)
+        {
+            FileData selectedFile = (FileData)FileGrid.SelectedItem;
+            SelectedFileName.Text = selectedFile.Namn;
+        }
+    }
+
+    private void on_copy_filename(object sender, RoutedEventArgs e)
+    {
+        IList files = FileGrid.SelectedItems;
+        ctx.CopyFilenameToClipboard(this, files);
+    }
+
+    private void on_copy_listview(object sender, RoutedEventArgs e)
+    {
+        bool?[] checkstate = new bool?[7];
+
+        IList files = FileGrid.SelectedItems;
+
+        checkstate =
+            [
+            Column0.IsChecked,
+            Column1.IsChecked,
+            Column2.IsChecked,
+            Column3.IsChecked,
+            Column4.IsChecked,
+            Column5.IsChecked,
+            Column6.IsChecked,
+            Column7.IsChecked,
+            Column8.IsChecked,
+            Column9.IsChecked,
+            Column10.IsChecked,
+            Column11.IsChecked,
+            Column12.IsChecked,
+            Column13.IsChecked
+            ];
+
+        ctx.CopyListviewToClipboard(this, files, checkstate);
     }
 
     private void init_columns()
     {
-        int nval = DrawingGrid.Columns.Count();
+        int nval = FileGrid.Columns.Count();
 
         for (int i = 0; i < nval; i++)
         {
-            DrawingGrid.Columns[i].IsVisible = false;
-            DocumentGrid.Columns[i].IsVisible = false;
+            FileGrid.Columns[i].IsVisible = false;
         }
 
         Column0.IsChecked = true;
         Column1.IsChecked = true;
+        Column2.IsChecked = true;
 
-        Column5.IsChecked = true;
         Column6.IsChecked = true;
         Column7.IsChecked = true;
         Column8.IsChecked = true;
         Column9.IsChecked = true;
+        Column10.IsChecked = true;
 
     }
 
@@ -399,9 +490,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var item = sender as CheckBox;
         int column = Int32.Parse(item.Tag.ToString());
 
-        DrawingGrid.Columns[column].IsVisible = true;
-        DocumentGrid.Columns[column].IsVisible = true;
-
+        FileGrid.Columns[column].IsVisible = true;
     }
 
     private void ColumnUncheck(object sender, RoutedEventArgs e)
@@ -409,16 +498,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var item = sender as CheckBox;
         int column = Int32.Parse(item.Tag.ToString());
 
-        DrawingGrid.Columns[column].IsVisible = false;
-        DocumentGrid.Columns[column].IsVisible = false;
-
-    }
-
-    void on_project_refresh(object sender, EventArgs e)
-    {
-        ProjectList.SelectedIndex = SelectedIndex = 0;
-        SelectedProject.Content = ctx.GetCurrentProject(SelectedIndex);
-        on_ProjectSelectionChange(sender, e);
+        FileGrid.Columns[column].IsVisible = false;
     }
 
     void OnMenuOpen(object sender, RoutedEventArgs e)
@@ -435,13 +515,27 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         e.Row.Classes.Clear();
 
         if (dataObject != null && dataObject.Färg == "") { e.Row.Classes.Clear(); }
-        if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("Yellow"); }
-        if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("Orange"); }
-        if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("Brown"); }
-        if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("Green"); }
-        if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("Blue"); }
-        if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("Red"); }
-        if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("Magenta"); }
+
+        if (darkmode == true)
+        {
+            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowDark"); }
+            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeDark"); }
+            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownDark"); }
+            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenDark"); }
+            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueDark"); }
+            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedDark"); }
+            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaDark"); }
+        }
+        else
+        {
+            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowLight"); }
+            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeLight"); }
+            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownLight"); }
+            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenLight"); }
+            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueLight"); }
+            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedLight"); }
+            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaLight"); }
+        }
     }
 
     private void update_row_color()
@@ -452,55 +546,74 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             e.Row.Classes.Clear();
 
-            if (dataObject != null && dataObject.Färg == "") { e.Row.Classes.Clear(); }
-            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("Yellow"); }
-            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("Orange"); }
-            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("Brown"); }
-            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("Green"); }
-            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("Blue"); }
-            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("Red"); }
-            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("Magenta"); }
+            if (darkmode == true)
+            {
+                if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowDark"); }
+                if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeDark"); }
+                if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownDark"); }
+                if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenDark"); }
+                if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueDark"); }
+                if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedDark"); }
+                if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaDark"); }
+            }
+            else
+            {
+                if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowLight"); }
+                if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeLight"); }
+                if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownLight"); }
+                if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenLight"); }
+                if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueLight"); }
+                if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedLight"); }
+                if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaLight"); }
+            }
         }
     }
     
 
-    public void toggle_table(object sender, RoutedEventArgs e)
-    {
-        int mode = (int)ViewSlider.Value;
-
-        int a = 1;
-        int b = 1;
-        int c = 0;
-
-        if (mode == 2) { a = 5; b = 3; c = 5; ViewLabel.Content = "Drawings and Documents";}
-        if (mode == 1) { a = 1; b = 0; c = 0;  ViewLabel.Content = "Drawings"; }
-        if (mode == 3) {  a = 0; b = 1; c = 0;  ViewLabel.Content = "Documents"; }
-
-
-        TableGrid.RowDefinitions.Clear();
-        GridLength row0 = new GridLength(a, GridUnitType.Star);
-        GridLength row1 = new GridLength(c,GridUnitType.Pixel);
-        GridLength row2 = new GridLength(b, GridUnitType.Star);
-        TableGrid.RowDefinitions.Add(new RowDefinition(row0));
-        TableGrid.RowDefinitions.Add(new RowDefinition(row1));
-        TableGrid.RowDefinitions.Add(new RowDefinition(row2));
-        
-    }
-
     public void on_project_selected(object sender, RoutedEventArgs e)
     {
-        var content = ProjectList.SelectedItem;
-        if (content != null) 
+
+        object selected = ProjectList.SelectedItem;
+        if (selected != null) 
         {
-            PreviewToggle.IsChecked = false;
+            currentProject = (string)selected;
+            SelectedProject.Content = currentProject;
 
-            SelectedIndex = ProjectList.SelectedIndex;
-            SelectedProject.Content = content.ToString();
-            NewProjectName.Text = content.ToString();
-
-            on_ProjectSelectionChange(sender, e);
-            on_update_columns(sender, e);
+            on_refresh_table();
         }
+    }
+
+    public void on_type_selected(object sender, RoutedEventArgs e)
+    {
+        object selected = TypeList.SelectedItem;
+
+        if (selected != null)
+        {
+            currentType = (string)selected;
+            SelectedType.Content = currentType;
+
+            on_refresh_table();
+        }
+    }
+
+    public void on_refresh_table()
+    {
+        ctx.set_info_file(currentProject);
+        ctx.UpdateLists(currentProject, currentType);
+        on_update_columns();
+    }
+
+    void on_project_refresh()
+    {
+
+        currentProject = ctx.Projects.FirstOrDefault();
+        currentType = ctx.Types.FirstOrDefault();
+
+        SelectedProject.Content = currentProject;
+        SelectedType.Content = currentType;
+
+        on_refresh_table();
+
     }
 
     public void EditColor(object sender, RoutedEventArgs e)
@@ -509,7 +622,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var menuItem = sender as MenuItem;
         string color = menuItem.Tag.ToString();
 
-        IList items = get_selected_items();
+        IList items = FileGrid.SelectedItems;
 
         ctx.add_color(color, items);
 
@@ -518,26 +631,30 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     }
 
-    public IList get_selected_items()
+    public void EditType(object sender, RoutedEventArgs e)
     {
-        IList items = null;
 
-        if (SelectedType == "Drawing") { items = DrawingGrid.SelectedItems; };
-        if (SelectedType == "Document") { items = DocumentGrid.SelectedItems; };
+        var menuItem = sender as MenuItem;
+        string type = menuItem.Tag.ToString();
 
-        return items;
+        IList items = FileGrid.SelectedItems;
+
+        ctx.add_type(type, items);
+        ctx.UpdateTypes();
+
+        on_refresh_table();
+
     }
 
     public void deselect_items()
     {
-        DrawingGrid.SelectedItem = null;
-        DocumentGrid.SelectedItem = null;
+        FileGrid.SelectedItem = null;
     }
 
     public void on_clear_files(object sender, RoutedEventArgs e)
     {
 
-        IList items = get_selected_items();
+        IList items = FileGrid.SelectedItems;
 
         ctx.clear_all(items);
 
@@ -558,7 +675,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             currentMode = true;
         }
 
-        IList items = get_selected_items();
+        IList items = FileGrid.SelectedItems;
 
         ctx.add_tag(currentMode, items);
 
@@ -578,44 +695,51 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_remove_project(object sender, RoutedEventArgs e)
     {
-        ctx.remove_project(SelectedIndex);
-        on_project_refresh(sender, e);
+        ctx.remove_project(currentProject);
+        on_project_refresh();
     }
 
     private void on_rename_project(object sender, RoutedEventArgs e)
     {
-        int currentProject = SelectedIndex;
         string newName = NewProjectName.Text.ToString();
 
         ctx.rename_project(currentProject, newName);
         SelectedProject.Content = newName.ToString();
     }
 
-    private void on_add_document(object sender, RoutedEventArgs e)
+    private void on_add_file(object sender, RoutedEventArgs e)
     {
-        ctx.AddFile("Document", SelectedIndex, this);
-    }
+        ctx.AddFile(currentProject, this);
 
-    private void on_add_drawing(object sender, RoutedEventArgs e)
-    {
-        ctx.AddFile("Drawing", SelectedIndex, this);
+        currentType = ctx.Types.FirstOrDefault();
+        SelectedType.Content = currentType;
+
+        on_refresh_table();
+
     }
 
     private void on_fetch_single_meta(object sender, RoutedEventArgs e)
     {
         ProgressStatus.Content = "Fetching Metadata";
-        IList drawings = DrawingGrid.SelectedItems;
-        IList documents = DocumentGrid.SelectedItems;
 
-        ctx.SelectFiles(true, drawings, documents, SelectedType);
+        IList files = FileGrid.SelectedItems;
+
+        ctx.SelectFiles(true, files);
         MetaWorker.RunWorkerAsync();
+    }
+
+    private void on_clear_meta(object sender, RoutedEventArgs e)
+    {
+        IList files = FileGrid.SelectedItems;
+
+        ctx.ClearMeta(files);
     }
 
     private void on_fetch_full_meta(object sender, RoutedEventArgs e)
     {
         ProgressStatus.Content = "Fetching Metadata";
 
-        ctx.SelectFiles(false, null, null, null);
+        ctx.SelectFiles(false, null);
         MetaWorker.RunWorkerAsync();
     }
 
@@ -657,10 +781,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (StatusLabel.Content == "Ready")
         {
             StatusLabel.Content = "Opening path";
-            IList drawings = DrawingGrid.SelectedItems;
-            IList documents = DocumentGrid.SelectedItems;
+            IList files = FileGrid.SelectedItems;
 
-            ctx.OpenPath(drawings, documents, SelectedType);
+            ctx.OpenPath(files);
             StatusLabel.Content = "Ready";
         }
 
@@ -671,10 +794,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (StatusLabel.Content == "Ready")
         {
             StatusLabel.Content = "Opening file";
-            IList drawings = DrawingGrid.SelectedItems;
-            IList documents = DocumentGrid.SelectedItems;
+            IList files = FileGrid.SelectedItems;
 
-            ctx.OpenFile(drawings, documents, SelectedType,"PDF");
+            ctx.OpenFile(files, "PDF");
             StatusLabel.Content = "Ready";
         }
     }
@@ -684,10 +806,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (StatusLabel.Content == "Ready")
         {
             StatusLabel.Content = "Opening metafile";
-            IList drawings = DrawingGrid.SelectedItems;
-            IList documents = DocumentGrid.SelectedItems;
+            IList files = FileGrid.SelectedItems;
 
-            ctx.OpenFile(drawings, documents, SelectedType, "MD");
+            ctx.OpenFile(files, "MD");
             StatusLabel.Content = "Ready";
         }
     }
@@ -696,14 +817,17 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         if (StatusLabel.Content == "Ready")
         {
-            if (SelectedType == "Drawing")
-            {
-                StatusLabel.Content = "Opening Drawing";
-                FileData drawing = (FileData)DrawingGrid.SelectedItem;
-                ctx.OpenDwg(drawing);
-                StatusLabel.Content = "Ready";
-            }
 
+            StatusLabel.Content = "Opening Drawing";
+            FileData file = (FileData)FileGrid.SelectedItem;
+
+            if (file.Filtyp == "Drawing")
+            {
+                ctx.OpenDwg(file);
+            }
+            
+            StatusLabel.Content = "Ready";
+            
         }
     }
 
@@ -713,7 +837,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         await ctx.LoadFile(this);
 
-        on_project_refresh(sender, e);
+        on_project_refresh();
         StatusLabel.Content = "Ready";
     }
 
@@ -732,64 +856,28 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         StatusLabel.Content = "Ready";
     }
 
-    public void update_projectList()
-    {
-        ctx.UpdateProjectList();
-    }
-
-    public void update_fileLists(int selectedProject)
-    {   
-        ctx.UpdateLists(selectedProject);
-    }
-
     private void on_remove_files(object sender, RoutedEventArgs e)
     {
-        IList drawings      = DrawingGrid.SelectedItems;
-        IList documents     = DocumentGrid.SelectedItems;
+        IList items      = FileGrid.SelectedItems;
 
-        ctx.RemoveFiles(drawings, documents, SelectedType);
+        ctx.remove_files(items);
+        on_refresh_table();
     }
 
-    private void OnDrawingGridSelected(object sender, EventArgs e)
+    private void on_update_columns()
     {
-        SelectedType = "Drawing";
-    }
+        FileGrid.Columns[0].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[1].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[2].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[3].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[4].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[5].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[6].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[7].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[8].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[9].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
 
-    private void OnDocumentGridSelected(object sender, EventArgs e)
-    {
-        SelectedType = "Document";
-    }
-
-    private void on_ProjectSelectionChange(object sender, EventArgs e)
-    {
-        ctx.UpdateLists(SelectedIndex);
-    }
-
-    private void on_update_columns(object sender, EventArgs e)
-    {
-        DrawingGrid.Columns[0].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[1].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[2].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[3].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[4].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[5].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[6].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[7].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[8].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DrawingGrid.Columns[9].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-
-        DocumentGrid.Columns[0].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[1].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[2].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[3].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[4].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[5].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[6].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[7].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[8].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        DocumentGrid.Columns[9].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-
-        DrawingGrid.UpdateLayout();
+        FileGrid.UpdateLayout();
     }
 
 }
