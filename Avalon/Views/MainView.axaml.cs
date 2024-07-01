@@ -579,7 +579,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (selected != null) 
         {
             currentProject = (string)selected;
-            SelectedProject.Content = currentProject;
+            SelectedProjectLabel.Content = currentProject;
 
             on_refresh_table();
         }
@@ -592,7 +592,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (selected != null)
         {
             currentType = (string)selected;
-            SelectedType.Content = currentType;
+            SelectedTypeLabel.Content = currentType;
 
             on_refresh_table();
         }
@@ -611,8 +611,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         currentProject = ctx.Projects.FirstOrDefault();
         currentType = ctx.Types.FirstOrDefault();
 
-        SelectedProject.Content = currentProject;
-        SelectedType.Content = currentType;
+        SelectedProjectLabel.Content = currentProject;
+        SelectedTypeLabel.Content = currentType;
 
         on_refresh_table();
 
@@ -706,7 +706,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         string newName = NewProjectName.Text.ToString();
 
         ctx.rename_project(currentProject, newName);
-        SelectedProject.Content = newName.ToString();
+        SelectedProjectLabel.Content = newName.ToString();
     }
 
     private void on_add_file(object sender, RoutedEventArgs e)
@@ -714,7 +714,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.AddFile(currentProject, this);
 
         currentType = ctx.Types.FirstOrDefault();
-        SelectedType.Content = currentType;
+        SelectedTypeLabel.Content = currentType;
         //on_project_refresh();
         //on_refresh_table();
 

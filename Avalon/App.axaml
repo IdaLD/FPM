@@ -14,8 +14,11 @@
 		
 		<Style Selector="FlyoutPresenter.mySpecialClass">
 			<Setter Property="Background" Value="{DynamicResource MaterialCardBackgroundBrush}"/>
+			<Setter Property="MaxWidth" Value="999" />
+			<Setter Property="Padding" Value="0" />
 		</Style>
 
+		
 		<Style Selector="MenuItem">
 			<Setter Property="Height" Value="35"/>
 

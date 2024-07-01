@@ -69,25 +69,41 @@
 				
 					<StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
 						
-						<Button Name="SelectedType" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed"> 
+						<Button Name="SelectedType" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
+							<Button.Content>
+								<Grid ColumnDefinitions="*,30" FlowDirection="LeftToRight" Width="130">
+									<Label Grid.Column="0" Name="SelectedTypeLabel" HorizontalAlignment="Center"/>
+									<Label Grid.Column="1" Content="⮟" HorizontalAlignment="Left"/>
+								</Grid>
+							</Button.Content>
 							<Button.Flyout>
-								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<ListBox Name="TypeList" ItemsSource="{Binding Types}" Height="260" Width="114" FlowDirection="LeftToRight"/>
+								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
+									<ListBox Name="TypeList" ItemsSource="{Binding Types}" Height="260" Width="130" FlowDirection="LeftToRight"/>
 								</Flyout>
 							</Button.Flyout>
 						</Button>
 						
-						<Button Name="SelectedProject" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
+						<Button Name="SelectedProject" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed" FlowDirection="LeftToRight">
+							<Button.Content>
+								<Grid ColumnDefinitions="*,30" FlowDirection="LeftToRight" Width="130">
+									<Label Grid.Column="0" Name="SelectedProjectLabel" HorizontalAlignment="Center"/>
+									<Label Grid.Column="1" Content="⮟" HorizontalAlignment="Left"/>
+								</Grid>
+							</Button.Content>
 							<Button.Flyout>
-								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="260" Width="114" FlowDirection="LeftToRight"/>
+								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
+									<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="260" Width="130" FlowDirection="LeftToRight"/>
 								</Flyout>
 							</Button.Flyout>
 						</Button>	
 							
-						<Button Name="Columns" Content="Columns" Width="168" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
+						<Button Name="Columns" Width="150" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
+							<Grid ColumnDefinitions="*,30" FlowDirection="LeftToRight" Width="150">
+								<Label Grid.Column="0" Content="Metadata" HorizontalAlignment="Center"/>
+								<Label Grid.Column="1" Content="⮟" HorizontalAlignment="Left"/>
+							</Grid>
 							<Button.Flyout>
-								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
+								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<ListBox Name="ColumnList" Height="450" Width="150" FlowDirection="LeftToRight" >
 										<ListBoxItem Height="30"><CheckBox Content="Name"			Tag="0"		Name="Column0"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="Filtyp"			Tag="1"		Name="Column1"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
@@ -108,10 +124,18 @@
 							</Button.Flyout>
 						</Button>
 
-						<Button Name="InfoText" Content="Notes" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
+						<Button Name="InfoText" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
+							<Grid ColumnDefinitions="*,30" FlowDirection="LeftToRight" Width="130">
+								<Label Grid.Column="0" Content="Notepad" HorizontalAlignment="Center"/>
+								<Label Grid.Column="1" Content="⮟" HorizontalAlignment="Left"/>
+							</Grid>
 							<Button.Flyout>
-								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="140" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<TextBox Text="{Binding CurrentInfoFile.Info}" Margin="0" Padding="0" Width="400" FontSize="12" Height="300" AcceptsReturn="True" AcceptsTab="True" FlowDirection="LeftToRight" />
+								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="211" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
+									<TextBox Text="{Binding CurrentInfoFile.Info}" InnerLeftContent="   " InnerRightContent="   " AcceptsReturn="True" AcceptsTab="True"
+											 Width="560" FontSize="14" FontWeight="Medium" Height="500" FlowDirection="LeftToRight" IsEnabled="True">
+
+									</TextBox>
+									
 								</Flyout>
 							</Button.Flyout>
 						</Button>
