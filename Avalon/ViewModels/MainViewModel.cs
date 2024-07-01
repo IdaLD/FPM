@@ -31,6 +31,7 @@ using Avalonia.Media;
 using Avalonia.Collections;
 using DynamicData;
 using iText.Kernel.Pdf;
+using ReactiveUI;
 
 
 namespace Avalon.ViewModels;
@@ -54,6 +55,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     }
 
     public List<string> Projects { get; set; } = new();
+    public List<string> Notes { get; set;} = new();
 
     private List<string> types = new List<string>();
     public List<string> Types
@@ -86,6 +88,14 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         get { return imageFromBinding2; }
         set { imageFromBinding2 = value; OnPropertyChanged("ImageFromBinding2"); }
     }
+
+    private FileData currentInfoFile = new FileData();
+    public FileData CurrentInfoFile
+    {
+        get { return currentInfoFile; }
+        set { currentInfoFile = value; OnPropertyChanged("CurrentInfoFile"); }
+    }
+
     public string user_tag { get; set; }
 
     public List<string[]> metastore = new List<string[]>();
@@ -121,6 +131,22 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         set { _pw_dualmode = value; OnPropertyChanged("pw_dualmode"); }
     }
 
+    public void set_info_file(string project)
+    {
+        FileData infoFile = StoredFiles.FirstOrDefault(x => x.Uppdrag == project && x.Filtyp == "Info");
+
+        if (infoFile == null)
+        {
+            currentInfoFile = new FileData {Namn = "Infofil", Uppdrag = project, Filtyp = "Info", Info = "Project: " + project + Environment.NewLine};
+            StoredFiles.Add(CurrentInfoFile);
+        }
+
+        else
+        {
+            currentInfoFile = infoFile;
+        }
+    }
+
     public void create_preview_file(string filepath, int fak)
     {
         if (docReader != null)
@@ -132,7 +158,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         {
             pw_pagenr = 0;
 
-            docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(fak * 1080/4, fak * 1920/4));
+            docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(fak * 1080/2, fak * 1920/2));
             pw_pagecount_view = docReader.GetPageCount();
             pw_pagenr_view = 1;
 
@@ -253,7 +279,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             
             IPageReader page = docReader.GetPageReader(pagenr);
 
-
             byte[] rawBytes = page.GetImage();
             int width = page.GetPageWidth();
             int height = page.GetPageHeight();
@@ -261,7 +286,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             Avalonia.Vector dpi = new Avalonia.Vector(96, 96);
 
             if (mode == 0)
-            {
+            { // Bgra8888
                 ImageFromBinding = new WriteableBitmap(new PixelSize(width, height), dpi, Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
                 using (var frameBuffer = ImageFromBinding.Lock())
                 {
@@ -281,6 +306,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
         }
     }
+
 
     public async Task LoadFile(Avalonia.Visual window)
     {
@@ -556,6 +582,22 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         }
     }
 
+    public void ClearMeta(IList files)
+    {
+        foreach (FileData file in files)
+        {
+            file.Handling = "";
+            file.Status = "";
+            file.Datum = "";
+            file.Ritningstyp = "";
+            file.Beskrivning1 = "";
+            file.Beskrivning2 = "";
+            file.Beskrivning3 = "";
+            file.Beskrivning4 = "";
+            file.Revidering = "";
+        }
+    }
+
     public void OpenFile(IList files, string openType)
     {
         string ending = "";
@@ -701,17 +743,17 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         if (type == "All Files")
         {
-            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject).OrderBy(x=>x.Filtyp).OrderBy(x=>x.Namn);
+            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject && x.Filtyp != "Info").OrderBy(x=>x.Filtyp).OrderBy(x=>x.Namn);
         }
 
         if (type == "Empty")
         {
-            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject).Where(x => x.Filtyp == "").OrderBy(x => x.Namn);
+            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject && x.Filtyp != "Info").Where(x => x.Filtyp == "").OrderBy(x => x.Namn);
         }
         
         if (type != "All Files" && type != "Empty")
         {
-            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject).Where(x => x.Filtyp == type).OrderBy(x => x.Namn);
+            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject && x.Filtyp != "Info").Where(x => x.Filtyp == type).OrderBy(x => x.Namn);
         }
         
     }

@@ -69,7 +69,7 @@
 				
 					<StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
 						
-						<Button Name="SelectedType" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
+						<Button Name="SelectedType" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed"> 
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<ListBox Name="TypeList" ItemsSource="{Binding Types}" Height="260" Width="114" FlowDirection="LeftToRight"/>
@@ -104,6 +104,14 @@
 										<ListBoxItem Height="30"><CheckBox Content="Revidering"		Tag="12"	Name="Column12"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="Sökväg"			Tag="13"	Name="Column13"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
 									</ListBox>
+								</Flyout>
+							</Button.Flyout>
+						</Button>
+
+						<Button Name="InfoText" Content="Notes" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
+							<Button.Flyout>
+								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="140" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
+									<TextBox Text="{Binding CurrentInfoFile.Info}" Margin="0" Padding="0" Width="400" FontSize="12" Height="300" AcceptsReturn="True" AcceptsTab="True" FlowDirection="LeftToRight" />
 								</Flyout>
 							</Button.Flyout>
 						</Button>
@@ -151,11 +159,11 @@
 									<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile"/>
 									<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg"/>
 								</MenuItem>
-
-
-								<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="on_remove_files"/>
-
-								<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch metadata" Click="on_fetch_single_meta"/>
+								<MenuItem Name="MetaMenu" Header="Metadata">
+									<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta"/>
+									<MenuItem Name="ClearMetaMenu" Header="Clear" Click="on_clear_meta"/>
+								</MenuItem>
+								
 								<MenuItem Name="ColorMainMenu" Header="Color Tag" Background="Blue">
 									<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="EditColor"/>
 									<MenuItem Name="YellowMenu" Header="⬛⬛⬛⬛" Foreground="#646424" Tag ="Yellow" Click="EditColor"/>
@@ -171,7 +179,7 @@
 									<MenuItem Name="TagMenuAdd" Header="Add Tag" Tag="Add" Click="on_add_tag" FlowDirection="LeftToRight"/>
 									<MenuItem Name="TagMenuClear" Header="Clear Tag" Tag="Clear" Click="on_add_tag"/>
 								</MenuItem>
-								<MenuItem Name="TypeMenu" Header="Type">
+								<MenuItem Name="TypeMenu" Header="Filetype">
 									<MenuItem Header="None" Tag ="" Click="EditType"/>
 									<MenuItem Header="Drawing" Tag ="Drawing" Click="EditType"/>
 									<MenuItem Header="Document" Tag ="Document" Click="EditType"/>
@@ -185,7 +193,9 @@
 									<MenuItem Name="ListviewCopyMenu" Header="Listview" Click="on_copy_listview"/>
 								</MenuItem>
 
-								<MenuItem Name="ClearAllMenu" Header="Clear" Click="on_clear_files"/>
+								<MenuItem Name="ClearAllMenu" Header="Clear Tags" Click="on_clear_files"/>
+
+								<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="on_remove_files"/>
 							</ContextMenu>
 						</DataGrid.ContextMenu>
 					</DataGrid>

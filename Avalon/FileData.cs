@@ -116,6 +116,14 @@ namespace Avalon
         }
 
 
+        private string info = string.Empty;
+        public string Info
+        {
+            get { return info; }
+            set { info = value; RaisePropertyChanged("Info"); }
+        }
+
+
         private void RaisePropertyChanged(string propName)
         {
             if (PropertyChanged != null)

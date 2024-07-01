@@ -598,6 +598,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     public void on_refresh_table()
     {
+        ctx.set_info_file(currentProject);
         ctx.UpdateLists(currentProject, currentType);
         on_update_columns();
     }
@@ -725,6 +726,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         ctx.SelectFiles(true, files);
         MetaWorker.RunWorkerAsync();
+    }
+
+    private void on_clear_meta(object sender, RoutedEventArgs e)
+    {
+        IList files = FileGrid.SelectedItems;
+
+        ctx.ClearMeta(files);
     }
 
     private void on_fetch_full_meta(object sender, RoutedEventArgs e)
