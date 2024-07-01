@@ -203,6 +203,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             b = 5;
             c = 3.2f;
+
+            set_preview_request(null, null); 
         }
 
         MainGrid.ColumnDefinitions.Clear();
