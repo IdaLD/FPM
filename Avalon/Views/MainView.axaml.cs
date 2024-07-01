@@ -713,8 +713,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         currentType = ctx.Types.FirstOrDefault();
         SelectedType.Content = currentType;
-
-        on_refresh_table();
+        //on_project_refresh();
+        //on_refresh_table();
 
     }
 

@@ -431,8 +431,12 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
 
             }
+
+            UpdateLists(selectedProject, "All Files");
         }
+        
     }
+
 
     public void UpdateTypes()
     {
