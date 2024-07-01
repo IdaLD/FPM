@@ -41,7 +41,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 {
     public MainViewModel()
     {
-        Projects.Add("New Project");
         Status.Add("Ready");
     }
 
@@ -135,7 +134,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         FileData infoFile = StoredFiles.FirstOrDefault(x => x.Uppdrag == project && x.Filtyp == "Info");
 
-        if (infoFile == null)
+        if (infoFile == null && project != "All Projects")
         {
             currentInfoFile = new FileData {Namn = "Infofil", Uppdrag = project, Filtyp = "Info", Info = "Project: " + project + Environment.NewLine};
             StoredFiles.Add(CurrentInfoFile);
@@ -331,9 +330,8 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             string fileContent = await streamReader.ReadToEndAsync();
 
             StoredFiles = JsonConvert.DeserializeObject<ObservableCollection<FileData>>(fileContent);
-            Projects = StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
-            Projects.Sort();
 
+            UpdateProjects(null);
             UpdateTypes();
 
             var properties = typeof(FileData).GetProperties().ToList();
@@ -353,9 +351,8 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             string json = r.ReadToEnd();
 
             StoredFiles = JsonConvert.DeserializeObject<ObservableCollection<FileData>>(json);
-            Projects = StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
-            Projects.Sort();
 
+            UpdateProjects(null);
             UpdateTypes();
             
         }
@@ -424,17 +421,33 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
                     {
                         Namn = System.IO.Path.GetFileNameWithoutExtension(path),
                         Uppdrag = selectedProject,
-                        Filtyp = "",
+                        Filtyp = "New",
                         Sökväg = path
                     });
                 }
-
-
             }
-
-            UpdateLists(selectedProject, "All Files");
+            UpdateTypes();
+            UpdateLists(selectedProject, "All Types");
         }
         
+    }
+
+    public void UpdateProjects(string newProject)
+    {
+        List<string> newProjects = StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
+
+        if (newProject != null)
+        {
+            newProjects.Add(newProject);
+        }
+
+        newProjects.Remove("");
+        newProjects.Sort();
+
+        Projects = new List<string>();
+        Projects.Add("All Projects");
+        Projects.Add(newProjects);
+
     }
 
 
@@ -446,9 +459,8 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         newTypes.Sort();
 
         Types = new List<string>();
-        Types.Add("All Files");
+        Types.Add("All Types");
         Types.Add(newTypes);
-        Types.Add("Empty");
     }
 
     public void CopyFilenameToClipboard(Avalonia.Visual window, IList files)
@@ -701,14 +713,13 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void new_project(string newName)
     {
-        Projects.Add(newName);
-        Projects.Sort();
+        UpdateProjects(newName);
 
     }
 
     public void remove_project(string currentProject)
     {
-        if (Projects.Count > 1)
+        if (Projects.Count > 1 && currentProject != "All Projects")
         {
             StoredFiles.RemoveMany(StoredFiles.Where(x => x.Uppdrag == currentProject));
             Projects.Remove(currentProject);
@@ -725,7 +736,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             }
         }
         Projects.Replace(currentProject, newProjectName);
-        Projects.Sort();
     }
 
 
@@ -745,20 +755,23 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     private void set_filtered_res(string currentProject, string type)
     {
-        if (type == "All Files")
-        {
-            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject && x.Filtyp != "Info").OrderBy(x=>x.Filtyp).OrderBy(x=>x.Namn);
-        }
+        FilteredFiles = StoredFiles.Where(x => x.Filtyp != "Info").OrderBy(x => x.Filtyp).OrderBy(x => x.Uppdrag);
 
-        if (type == "Empty")
+        if (currentProject == "All Projects")
         {
-            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject && x.Filtyp != "Info").Where(x => x.Filtyp == "").OrderBy(x => x.Namn);
+            FilteredFiles = FilteredFiles;
+        }
+        else
+        {
+            FilteredFiles = FilteredFiles.Where(x => x.Uppdrag == currentProject);
         }
         
-        if (type != "All Files" && type != "Empty")
+        
+        if (type != "All Types")
         {
-            FilteredFiles = StoredFiles.Where(x => x.Uppdrag == currentProject && x.Filtyp != "Info").Where(x => x.Filtyp == type).OrderBy(x => x.Namn);
+            FilteredFiles = FilteredFiles.Where(x=>x.Filtyp == type);
         }
+
         
     }
 

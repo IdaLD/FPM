@@ -18,6 +18,9 @@
 			<Setter Property="Padding" Value="0" />
 		</Style>
 
+		<Style Selector="ToggleButton">
+			
+		</Style>
 		
 		<Style Selector="MenuItem">
 			<Setter Property="Height" Value="35"/>

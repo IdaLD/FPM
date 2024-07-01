@@ -73,8 +73,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     public int SelectedIndex = 0;
 
-    public string currentProject = "";
-    public string currentType = "";
+    public string currentProject = string.Empty;
+    public string currentType = string.Empty;
 
     public string StatusMessage = "Ready";
     public bool PopupStatus = true;
@@ -123,8 +123,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var MaterialThemeStyles = Application.Current!.LocateMaterialTheme<MaterialTheme>();
         MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Dark;
         MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Grey;
-
-        
         
         set_theme_colors();
         on_refresh_table();
@@ -187,7 +185,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             ctx.read_savefile(path);
             on_project_refresh();
         }
-        catch { }
+        catch 
+        {
+            SelectedProjectLabel.Content = currentType;
+            SelectedTypeLabel.Content = currentType;
+        }
     }
 
     private void on_toggle_preview(object sender, RoutedEventArgs e)
@@ -460,7 +462,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             Column10.IsChecked,
             Column11.IsChecked,
             Column12.IsChecked,
-            Column13.IsChecked
+            Column13.IsChecked,
+            Column14.IsChecked
             ];
 
         ctx.CopyListviewToClipboard(this, files, checkstate);
@@ -478,12 +481,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         Column0.IsChecked = true;
         Column1.IsChecked = true;
         Column2.IsChecked = true;
+        Column3.IsChecked = true;
 
-        Column6.IsChecked = true;
         Column7.IsChecked = true;
         Column8.IsChecked = true;
         Column9.IsChecked = true;
         Column10.IsChecked = true;
+        Column11.IsChecked = true;
 
     }
 
@@ -580,7 +584,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             currentProject = (string)selected;
             SelectedProjectLabel.Content = currentProject;
-
             on_refresh_table();
         }
     }
@@ -689,9 +692,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var Name = ProjectName.Text;
         if (Name != null)
         {
-            string newName = Name.ToString();
-            ctx.new_project(newName);
+            currentProject = Name.ToString();
+            ctx.new_project(currentProject);
             ProjectName.Clear();
+
+            SelectedProjectLabel.Content = currentProject;
+            on_refresh_table();
         }
     }
 
@@ -703,20 +709,30 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_rename_project(object sender, RoutedEventArgs e)
     {
-        string newName = NewProjectName.Text.ToString();
+        if (currentProject != "All Projects")
+        {
+            string newName = NewProjectName.Text.ToString();
 
-        ctx.rename_project(currentProject, newName);
-        SelectedProjectLabel.Content = newName.ToString();
+            ctx.rename_project(currentProject, newName);
+            SelectedProjectLabel.Content = newName.ToString();
+        }
     }
 
     private void on_add_file(object sender, RoutedEventArgs e)
     {
-        ctx.AddFile(currentProject, this);
+        if (currentProject == "All Projects")
+        {
+            StatusLabel.Content = "Please select a project";
+        }
+        else
+        {
+            ctx.AddFile(currentProject, this);
+            on_refresh_table();
 
-        currentType = ctx.Types.FirstOrDefault();
-        SelectedTypeLabel.Content = currentType;
-        //on_project_refresh();
-        //on_refresh_table();
+            SelectedTypeLabel.Content = "New";
+
+            StatusLabel.Content = "Files added";
+        }
 
     }
 

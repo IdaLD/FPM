@@ -78,7 +78,10 @@
 							</Button.Content>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
+									<StackPanel>
 									<ListBox Name="TypeList" ItemsSource="{Binding Types}" Height="260" Width="130" FlowDirection="LeftToRight"/>
+									<Button Content="test" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0"/>
+									</StackPanel>
 								</Flyout>
 							</Button.Flyout>
 						</Button>
@@ -92,7 +95,10 @@
 							</Button.Content>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="260" Width="130" FlowDirection="LeftToRight"/>
+									<StackPanel Orientation="Vertical">
+										<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="260" Width="130" FlowDirection="LeftToRight"/>
+										<Button Content="test" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0"/>
+									</StackPanel>
 								</Flyout>
 							</Button.Flyout>
 						</Button>	
@@ -107,18 +113,19 @@
 									<ListBox Name="ColumnList" Height="450" Width="150" FlowDirection="LeftToRight" >
 										<ListBoxItem Height="30"><CheckBox Content="Name"			Tag="0"		Name="Column0"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="Filtyp"			Tag="1"		Name="Column1"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Tagg"			Tag="2"		Name="Column2"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Färg"			Tag="3"		Name="Column3"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Handling"		Tag="4"		Name="Column4"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Status"			Tag="5"		Name="Column5"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Datum"			Tag="6"		Name="Column6"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Ritningstyp"	Tag="7"		Name="Column7"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 1"	Tag="8"		Name="Column8"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 2"	Tag="9"		Name="Column9"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 3"  Tag="10"	Name="Column10"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 4"	Tag="11"	Name="Column11"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Revidering"		Tag="12"	Name="Column12"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Sökväg"			Tag="13"	Name="Column13"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Uppdrag"		Tag="2"		Name="Column2"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Tagg"			Tag="3"		Name="Column3"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Färg"			Tag="4"		Name="Column4"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Handling"		Tag="5"		Name="Column5"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Status"			Tag="6"		Name="Column6"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Datum"			Tag="7"		Name="Column7"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Ritningstyp"	Tag="8"		Name="Column8"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 1"	Tag="9"		Name="Column9"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 2"	Tag="10"	Name="Column10"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 3"  Tag="11"	Name="Column11"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 4"	Tag="12"	Name="Column12"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Revidering"		Tag="13"	Name="Column13"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Sökväg"			Tag="14"	Name="Column14"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
 									</ListBox>
 								</Flyout>
 							</Button.Flyout>
@@ -157,6 +164,7 @@
 						<DataGrid.Columns>
 							<DataGridTextColumn Binding="{Binding Namn, Mode=OneWay}"				Header="Namn"           Width="Auto" MinWidth="120" FontFamily="UbuntuMono"/>
 							<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Uppdrag, Mode=OneWay}"			Header="Uppdrag"		Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 							
 							<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
 							<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
