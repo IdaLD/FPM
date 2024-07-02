@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Avalon
+namespace FPM.Model
 {
     public class FileData : INotifyPropertyChanged
     {
@@ -20,7 +20,7 @@ namespace Avalon
         private string tagg = string.Empty;
         public string Tagg
         {
-            get { return tagg;}
+            get { return tagg; }
             set { tagg = value; RaisePropertyChanged("Tagg"); }
         }
 
@@ -130,5 +130,5 @@ namespace Avalon
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
         public event PropertyChangedEventHandler PropertyChanged;
-    }  
+    }
 }

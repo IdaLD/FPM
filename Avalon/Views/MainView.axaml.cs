@@ -12,6 +12,10 @@ using Avalonia.Input;
 using Material.Styles.Themes;
 using System.Threading;
 using System.Collections.Generic;
+using FPM.Model;
+using System.Diagnostics;
+using Newtonsoft.Json.Bson;
+using System.Xml.Serialization;
 
 
 namespace Avalon.Views;
@@ -28,7 +32,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
 
-        FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_file);
+        FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_files);
 
         ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
         TypeList.AddHandler(ListBox.SelectionChangedEvent, on_type_selected);
@@ -118,7 +122,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Grey;
         
         set_theme_colors();
-        on_refresh_table();
     }
 
     public void on_theme_light(object sender, RoutedEventArgs e)
@@ -129,7 +132,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Blue;
 
         set_theme_colors();
-        on_refresh_table();
     }
 
     public void set_theme_colors()
@@ -176,13 +178,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             string path = "C:\\FIlePathManager\\Projects.json";
             ctx.read_savefile(path);
-            on_project_refresh();
         }
         catch 
-        {
-            SelectedProjectLabel.Content = currentType;
-            SelectedTypeLabel.Content = currentType;
-        }
+        { }
     }
 
     private void on_toggle_preview(object sender, RoutedEventArgs e)
@@ -426,26 +424,14 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void select_file(object sender, RoutedEventArgs e)
-    {
-        if (FileGrid.SelectedItem != null)
-        {
-            FileData selectedFile = (FileData)FileGrid.SelectedItem;
-            SelectedFileName.Text = selectedFile.Namn;
-        }
-    }
-
     private void on_copy_filename(object sender, RoutedEventArgs e)
     {
-        IList files = FileGrid.SelectedItems;
-        ctx.CopyFilenameToClipboard(this, files);
+        ctx.CopyFilenameToClipboard(this);
     }
 
     private void on_copy_listview(object sender, RoutedEventArgs e)
     {
         bool?[] checkstate = new bool?[7];
-
-        IList files = FileGrid.SelectedItems;
 
         checkstate =
             [
@@ -466,7 +452,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             Column14.IsChecked
             ];
 
-        ctx.CopyListviewToClipboard(this, files, checkstate);
+        ctx.CopyListviewToClipboard(this, checkstate);
     }
 
     private void init_columns()
@@ -582,43 +568,20 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         object selected = ProjectList.SelectedItem;
         if (selected != null) 
         {
-            currentProject = (string)selected;
-            SelectedProjectLabel.Content = currentProject;
-            on_refresh_table();
+            string name = selected.ToString();
+            ctx.select_project(name);
         }
     }
 
     public void on_type_selected(object sender, RoutedEventArgs e)
     {
-        object selected = TypeList.SelectedItem;
+        object type = TypeList.SelectedItem;
 
-        if (selected != null)
+        if (type != null)
         {
-            currentType = (string)selected;
-            SelectedTypeLabel.Content = currentType;
 
-            on_refresh_table();
+            ctx.set_typefilter(type.ToString());
         }
-    }
-
-    public void on_refresh_table()
-    {
-        ctx.set_info_file(currentProject);
-        ctx.UpdateLists(currentProject, currentType);
-        on_update_columns();
-    }
-
-    void on_project_refresh()
-    {
-
-        currentProject = ctx.Projects.FirstOrDefault();
-        currentType = ctx.Types.FirstOrDefault();
-
-        SelectedProjectLabel.Content = currentProject;
-        SelectedTypeLabel.Content = currentType;
-
-        on_refresh_table();
-
     }
 
     public void EditColor(object sender, RoutedEventArgs e)
@@ -627,9 +590,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var menuItem = sender as MenuItem;
         string color = menuItem.Tag.ToString();
 
-        IList items = FileGrid.SelectedItems;
-
-        ctx.add_color(color, items);
+        ctx.add_color(color);
 
         deselect_items();
         update_row_color();
@@ -642,13 +603,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var menuItem = sender as MenuItem;
         string type = menuItem.Tag.ToString();
 
-        IList items = FileGrid.SelectedItems;
-
-        ctx.add_type(type, items);
-        ctx.UpdateTypes();
-
-        on_refresh_table();
-
+        ctx.edit_type(type);
     }
 
     public void deselect_items()
@@ -658,32 +613,21 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     public void on_clear_files(object sender, RoutedEventArgs e)
     {
-
-        IList items = FileGrid.SelectedItems;
-
-        ctx.clear_all(items);
+        ctx.clear_all();
 
         deselect_items();
         update_row_color();
     }
 
-    private void on_add_tag(object sender, RoutedEventArgs e)
+    public void on_add_tag(object sender, RoutedEventArgs e)
     {
+        ctx.add_tag();
+        deselect_items();
+    }
 
-        bool currentMode = false;
-
-        var tagMode = sender as MenuItem;
-        string mode = tagMode.Tag.ToString();
-
-        if (mode == "Add")
-        {
-            currentMode = true;
-        }
-
-        IList items = FileGrid.SelectedItems;
-
-        ctx.add_tag(currentMode, items);
-
+    public void on_clear_tag(object sender, RoutedEventArgs e)
+    {
+        ctx.clear_tag();
         deselect_items();
     }
 
@@ -694,17 +638,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             currentProject = Name.ToString();
             ctx.new_project(currentProject);
-            ProjectName.Clear();
 
-            SelectedProjectLabel.Content = currentProject;
-            on_refresh_table();
         }
-    }
-
-    private void on_remove_project(object sender, RoutedEventArgs e)
-    {
-        ctx.remove_project(currentProject);
-        on_project_refresh();
     }
 
     private void on_rename_project(object sender, RoutedEventArgs e)
@@ -713,27 +648,16 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             string newName = NewProjectName.Text.ToString();
 
-            ctx.rename_project(currentProject, newName);
-            SelectedProjectLabel.Content = newName.ToString();
+            ctx.rename_project(newName);
         }
     }
 
     private void on_add_file(object sender, RoutedEventArgs e)
     {
-        if (currentProject == "All Projects")
-        {
-            StatusLabel.Content = "Please select a project";
-        }
-        else
-        {
-            ctx.AddFile(currentProject, this);
-            on_refresh_table();
-
-            SelectedTypeLabel.Content = "New";
-
-            StatusLabel.Content = "Files added";
-        }
-
+        StatusLabel.Content = "Adding Files";
+        ctx.AddFile(this);
+        ctx.set_typefilter("New");
+        StatusLabel.Content = "Ready";
     }
 
     private void on_fetch_single_meta(object sender, RoutedEventArgs e)
@@ -742,13 +666,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         IList files = FileGrid.SelectedItems;
 
-        ctx.SelectFiles(true, files);
+        ctx.SelectFilesForMetaworker(true);
         MetaWorker.RunWorkerAsync();
     }
 
     private void on_clear_meta(object sender, RoutedEventArgs e)
     {
-        IList files = FileGrid.SelectedItems;
+        IList<FileData> files = FileGrid.SelectedItems.Cast<FileData>().ToList();
 
         ctx.ClearMeta(files);
     }
@@ -757,7 +681,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         ProgressStatus.Content = "Fetching Metadata";
 
-        ctx.SelectFiles(false, null);
+        ctx.SelectFilesForMetaworker(false);
         MetaWorker.RunWorkerAsync();
     }
 
@@ -799,22 +723,27 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (StatusLabel.Content == "Ready")
         {
             StatusLabel.Content = "Opening path";
-            IList files = FileGrid.SelectedItems;
-
-            ctx.OpenPath(files);
+            ctx.open_path();
             StatusLabel.Content = "Ready";
         }
 
     }
 
+    private void select_files(object sender, RoutedEventArgs e)
+    {
+        IList<FileData> files = FileGrid.SelectedItems.Cast<FileData>().ToList();
+        ctx.select_files(files);
+    }
+
     private void on_open_file(object sender, EventArgs e)
     {
+        
         if (StatusLabel.Content == "Ready")
         {
             StatusLabel.Content = "Opening file";
-            IList files = FileGrid.SelectedItems;
 
-            ctx.OpenFile(files, "PDF");
+            ctx.open_files();
+
             StatusLabel.Content = "Ready";
         }
     }
@@ -824,9 +753,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (StatusLabel.Content == "Ready")
         {
             StatusLabel.Content = "Opening metafile";
-            IList files = FileGrid.SelectedItems;
 
-            ctx.OpenFile(files, "MD");
+            ctx.open_meta();
+
             StatusLabel.Content = "Ready";
         }
     }
@@ -837,13 +766,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
 
             StatusLabel.Content = "Opening Drawing";
-            FileData file = (FileData)FileGrid.SelectedItem;
-
-            if (file.Filtyp == "Drawing")
-            {
-                ctx.OpenDwg(file);
-            }
-            
+            ctx.open_dwg();
             StatusLabel.Content = "Ready";
             
         }
@@ -852,10 +775,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private async void on_load_file(object sender, RoutedEventArgs e)
     {
         StatusLabel.Content = "Loading file";
-
         await ctx.LoadFile(this);
-
-        on_project_refresh();
         StatusLabel.Content = "Ready";
     }
 
@@ -876,10 +796,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_remove_files(object sender, RoutedEventArgs e)
     {
-        IList items      = FileGrid.SelectedItems;
-
+        IList<FileData> items = FileGrid.SelectedItems.Cast<FileData>().ToList();
         ctx.remove_files(items);
-        on_refresh_table();
     }
 
     private void on_update_columns()
