@@ -4,6 +4,7 @@
 			 xmlns:assists="clr-namespace:Material.Styles.Assists"
 			 xmlns:controls="clr-namespace:Material.Styles.Controls"
 			 xmlns:system="clr-namespace:System;assembly=netstandard"
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia" 
              x:Class="Avalon.App">
 
 	
@@ -11,6 +12,8 @@
 
 	<Application.Styles>
 		<themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Grey" SecondaryColor="Orange" />
+
+		<materialIcons:MaterialIconStyles />
 		
 		<Style Selector="FlyoutPresenter.mySpecialClass">
 			<Setter Property="Background" Value="{DynamicResource MaterialCardBackgroundBrush}"/>

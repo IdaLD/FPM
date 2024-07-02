@@ -3,8 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Avalon.ViewModels"
+			 xmlns:extensions="clr-namespace:Material.Styles.Controls.Extensions"
              mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
              x:Class="Avalon.Views.MainView"
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 			 
              x:DataType="vm:MainViewModel">
 
@@ -21,28 +23,28 @@
 				<DockPanel Width="190" VerticalAlignment="Top" HorizontalAlignment="Left">
 					<Menu DockPanel.Dock="Top">
 						<MenuItem Header="File">
-							<MenuItem Header="Load" Click="on_load_file"/>
-							<MenuItem Header="Save" Click="on_save_file_auto"/>
-							<MenuItem Header="Save as" Click="on_save_file"/>
+							<MenuItem Header="Load" Click="on_load_file" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
+							<MenuItem Header="Save" Click="on_save_file_auto" Icon="{materialIcons:MaterialIconExt Kind=ContentSave}"/>
+							<MenuItem Header="Save As" Click="on_save_file" Icon="{materialIcons:MaterialIconExt Kind=ContentSaveEdit}"/>
 						</MenuItem>
 						<MenuItem Header="Add">
-							<MenuItem Header="File" Click="on_add_file"/>
+							<MenuItem Header="File" Click="on_add_file" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
 						</MenuItem>
 						<MenuItem Header="Project">
 							
-							<MenuItem Name="RemoveProjectMenu" Header="Remove" Click="on_remove_project"/>
-							
-							<MenuItem Name="NewProjectMenu" Header="New">
+							<MenuItem Name="RemoveProjectMenu" Header="Remove" Click="on_remove_project" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
+						
+							<MenuItem Name="NewProjectMenu" Header="New" Icon="{materialIcons:MaterialIconExt Kind=FolderPlus}">
 								<TextBox Name="ProjectName" Width="110"/>
 								<MenuItem Name="AddProject" Header="Add" Click="on_add_project"/>
 							</MenuItem>
 							
-							<MenuItem Name="RenameMenu" Header="Rename">
+							<MenuItem Name="RenameMenu" Header="Rename" Icon="{materialIcons:MaterialIconExt Kind=Rename}">
 								<TextBox Name="NewProjectName" Width="160" FlowDirection="LeftToRight"/>
 								<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project"/>
 							</MenuItem>
 
-							<MenuItem Name="FetchMetadata" Header="Fetch MD" Click="on_fetch_full_meta"/>
+							<MenuItem Name="FetchMetadata" Header="Fetch MD" Click="on_fetch_full_meta" Icon="{materialIcons:MaterialIconExt Kind=Database}"/>
 						</MenuItem>
 					</Menu>
 					<TextBlock/>
@@ -71,9 +73,10 @@
 						
 						<Button Name="SelectedType" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
 							<Button.Content>
-								<Grid ColumnDefinitions="*,30" FlowDirection="LeftToRight" Width="130">
-									<Label Grid.Column="0" Name="SelectedTypeLabel" HorizontalAlignment="Center"/>
-									<Label Grid.Column="1" Content="⮟" HorizontalAlignment="Left"/>
+								<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="130">
+									<materialIcons:MaterialIcon Grid.Column="0" Kind="FolderQuestion" Width="20" Height="20"/>
+									<Label Grid.Column="1" Name="SelectedTypeLabel" HorizontalAlignment="Center"/>
+									<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
 								</Grid>
 							</Button.Content>
 							<Button.Flyout>
@@ -85,11 +88,12 @@
 							</Button.Flyout>
 						</Button>
 						
-						<Button Name="SelectedProject" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed" FlowDirection="LeftToRight">
+						<Button Name="SelectedProject" Width="150" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed" FlowDirection="LeftToRight">
 							<Button.Content>
-								<Grid ColumnDefinitions="*,30" FlowDirection="LeftToRight" Width="130">
-									<Label Grid.Column="0" Name="SelectedProjectLabel" HorizontalAlignment="Center"/>
-									<Label Grid.Column="1" Content="⮟" HorizontalAlignment="Left"/>
+								<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="150">
+									<materialIcons:MaterialIcon Grid.Column="0" Kind="Folder" Width="20" Height="20"/>
+									<Label Grid.Column="1" Name="SelectedProjectLabel" HorizontalAlignment="Center"/>
+									<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
 								</Grid>
 							</Button.Content>
 							<Button.Flyout>
@@ -102,9 +106,10 @@
 						</Button>	
 							
 						<Button Name="Columns" Width="150" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
-							<Grid ColumnDefinitions="*,30" FlowDirection="LeftToRight" Width="150">
-								<Label Grid.Column="0" Content="Metadata" HorizontalAlignment="Center"/>
-								<Label Grid.Column="1" Content="⮟" HorizontalAlignment="Left"/>
+							<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="150">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="Database" Width="20" Height="20"/>
+								<Label Grid.Column="1" Content="Metadata" HorizontalAlignment="Center"/>
+								<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
 							</Grid>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
@@ -130,9 +135,10 @@
 						</Button>
 
 						<Button Name="InfoText" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
-							<Grid ColumnDefinitions="*,30" FlowDirection="LeftToRight" Width="130">
-								<Label Grid.Column="0" Content="Notepad" HorizontalAlignment="Center"/>
-								<Label Grid.Column="1" Content="⮟" HorizontalAlignment="Left"/>
+							<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="130">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="NoteText" Width="20" Height="20"/>
+								<Label Grid.Column="1" Content="Notepad" HorizontalAlignment="Center"/>
+								<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
 							</Grid>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="211" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
@@ -146,13 +152,15 @@
 						</Button>
 
 						<ToggleSwitch Name="PreviewToggle" Margin="10,0,0,0"/>
-						<Label Content="Preview" VerticalContentAlignment="Center"/>
+						<materialIcons:MaterialIcon Name="EyeOnIcon" Kind="Eye" Width="20" Height="20" IsVisible="False"/>
+						<materialIcons:MaterialIcon Name="EyeOffIcon" Kind="EyeOff" Width="20" Height="20"/>
 
 						<ToggleSwitch Name="ThemeToggle" Margin="10,0,0,0" Checked="on_theme_light" Unchecked="on_theme_dark" />
-						<Label Content="Theme" VerticalContentAlignment="Center"/>
+						<materialIcons:MaterialIcon Kind="ThemeLightDark" Width="20" Height="20"/>
 
 						<ToggleSwitch Name="Lockedstatus" Margin="10,0,0,0" VerticalAlignment="Center"/>
-						<Label Content="Lock" VerticalContentAlignment="Center"/>
+						<materialIcons:MaterialIcon Name="LockIcon" Kind="Lock" Width="20" Height="20"/>
+						<materialIcons:MaterialIcon Name="UnlockedIcon" Kind="LockOpenVariant" Width="20" Height="20" IsVisible="False"/>
 
 					</StackPanel>
 
@@ -183,18 +191,18 @@
 						</DataGrid.Columns>
 						<DataGrid.ContextMenu>
 							<ContextMenu Name="Menu">
-								<MenuItem Name="OpenMenu" Header="Open">
+								<MenuItem Name="OpenMenu" Header="Open" Icon="{materialIcons:MaterialIconExt Kind=File}">
 									<MenuItem Name="OpenFileMenu" Header="Open File" Click="OnMenuOpen"/>
 									<MenuItem Name="OpenPathMenu" Header="Open Path" Click="on_open_path"/>
 									<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile"/>
 									<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg"/>
 								</MenuItem>
-								<MenuItem Name="MetaMenu" Header="Metadata">
+								<MenuItem Name="MetaMenu" Header="Metadata" Icon="{materialIcons:MaterialIconExt Kind=Database}">
 									<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta"/>
 									<MenuItem Name="ClearMetaMenu" Header="Clear" Click="on_clear_meta"/>
 								</MenuItem>
 								
-								<MenuItem Name="ColorMainMenu" Header="Color Tag" Background="Blue">
+								<MenuItem Name="ColorMainMenu" Header="Color Tag" Background="Blue" Icon="{materialIcons:MaterialIconExt Kind=PaintBucket}">
 									<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="EditColor"/>
 									<MenuItem Name="YellowMenu" Header="⬛⬛⬛⬛" Foreground="#646424" Tag ="Yellow" Click="EditColor"/>
 									<MenuItem Name="OrangeMenu" Header="⬛⬛⬛⬛" Foreground="#643e24" Tag ="Orange" Click="EditColor"/>
@@ -204,12 +212,12 @@
 									<MenuItem Name="RedMenu" Header="⬛⬛⬛⬛" Foreground="#642424" Tag ="Red" Click="EditColor"/>
 									<MenuItem Name="MagentaMenu" Header="⬛⬛⬛⬛" Foreground="#57244a" Tag ="Magenta" Click="EditColor"/>
 								</MenuItem>
-								<MenuItem Name="TagMenu" Header="User Tag">
+								<MenuItem Name="TagMenu" Header="User Tag" Icon="{materialIcons:MaterialIconExt Kind=Tag}">
 									<TextBox Name="TagMenuInput" Width="160" Text="{Binding user_tag}"/>
 									<MenuItem Name="TagMenuAdd" Header="Add Tag" Tag="Add" Click="on_add_tag" FlowDirection="LeftToRight"/>
 									<MenuItem Name="TagMenuClear" Header="Clear Tag" Tag="Clear" Click="on_add_tag"/>
 								</MenuItem>
-								<MenuItem Name="TypeMenu" Header="Filetype">
+								<MenuItem Name="TypeMenu" Header="Filetype" Icon="{materialIcons:MaterialIconExt Kind=FolderQuestion}">
 									<MenuItem Header="None" Tag ="" Click="EditType"/>
 									<MenuItem Header="Drawing" Tag ="Drawing" Click="EditType"/>
 									<MenuItem Header="Document" Tag ="Document" Click="EditType"/>
@@ -218,14 +226,14 @@
 									<MenuItem Header="Other" Tag ="Other" Click="EditType"/>
 								</MenuItem>
 
-								<MenuItem Name="CopyMenu" Header="Copy">
+								<MenuItem Name="CopyMenu" Header="Copy" Icon="{materialIcons:MaterialIconExt Kind=ContentCopy}">
 									<MenuItem Name="FilenameCopyMenu" Header="Filename" Click="on_copy_filename"/>
 									<MenuItem Name="ListviewCopyMenu" Header="Listview" Click="on_copy_listview"/>
 								</MenuItem>
 
-								<MenuItem Name="ClearAllMenu" Header="Clear Tags" Click="on_clear_files"/>
+								<MenuItem Name="ClearAllMenu" Header="Clear Tags" Click="on_clear_files" Icon="{materialIcons:MaterialIconExt Kind=TagRemove}"/>
 
-								<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="on_remove_files"/>
+								<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="on_remove_files" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
 							</ContextMenu>
 						</DataGrid.ContextMenu>
 					</DataGrid>
@@ -245,13 +253,34 @@
 	
 					<StackPanel Grid.Row="1" FlowDirection="RightToLeft" Orientation="Vertical" Margin="5">
 						<StackPanel Width="700" Orientation="Horizontal" Background="Transparent" Spacing="5">
+							
 							<ToggleSwitch Name="DualMode" Command="{Binding toggle_pw_mode}" Click="on_toggle_dualmode"/>
+							<materialIcons:MaterialIcon Kind="FileDocument" Width="20" Height="20" IsVisible="{Binding !pw_dualmode}"/>
+							<materialIcons:MaterialIcon Kind="BookOpenPageVariant" Width="20" Height="20" IsVisible="{Binding pw_dualmode}"/>
+
 							<Slider Name="PreviewQuality" FlowDirection="LeftToRight" Width="90" Margin="10" Minimum="1" Maximum="8" Value="3" IsSnapToTickEnabled="True" SmallChange="1" TickFrequency="1"/>
-							<Button Content="Reset" BorderThickness="0" Click="reset_preview_transform"/>
-							<Button Name="ScrollMode" Content="Scroll" BorderThickness="0" Background="Orange" Click="on_scroll_mode"/>
-							<Button Name="ZoomMode" Content="Zoom" BorderThickness="0" Click="on_zoom_mode"/>
-							<Button Content="🠊" FontSize="18" BorderThickness="0" Command="{Binding next_preview_page}"/>
-							<Button Content="🠈" FontSize="18"  BorderThickness="0" Command="{Binding previous_preview_page}"/>
+							<materialIcons:MaterialIcon Kind="ImageSizeSelectActual" Width="20" Height="20"/>
+							
+							<Button MinWidth="35" BorderThickness="0" Click="reset_preview_transform">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="StretchToPageOutline" Width="20" Height="20"/>
+							</Button>
+
+							<Button Name="ScrollMode" MinWidth="35" BorderThickness="0" Background="Orange" Click="on_scroll_mode">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="ScrollText" Width="20" Height="20"/>
+							</Button>
+							
+							<Button Name="ZoomMode" MinWidth="35" BorderThickness="0" Click="on_zoom_mode">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="ZoomIn" Width="20" Height="20"/>
+							</Button>
+							
+							<Button  MinWidth="35" BorderThickness="0" Command="{Binding next_preview_page}">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
+							</Button>
+								
+							<Button MinWidth="35" BorderThickness="0" Command="{Binding previous_preview_page}">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
+							</Button>
+							
 							<Label Content="{Binding pw_pagecount_view}" VerticalAlignment="Center"/>
 							<Label Content="/" VerticalAlignment="Center"/>
 							<Label Content="{Binding pw_pagenr_view}" Width="30" VerticalAlignment="Center"/>

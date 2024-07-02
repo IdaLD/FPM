@@ -196,6 +196,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         previewMode = !previewMode;
 
+        EyeOnIcon.IsVisible = previewMode;
+        EyeOffIcon.IsVisible = !previewMode;
+
         float a = 1;
         float b = 0;
         float c = 0;
@@ -418,11 +421,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             RemoveProjectMenu.IsEnabled = false;
             RemoveFileMenu.IsEnabled = false;
+            LockIcon.IsVisible = true;
+            UnlockedIcon.IsVisible = false;
         }
         if (Lockedstatus.IsChecked == false)
         {
             RemoveProjectMenu.IsEnabled = true;
             RemoveFileMenu.IsEnabled = true;
+            LockIcon.IsVisible = false;
+            UnlockedIcon.IsVisible = true;
         }
     }
 
