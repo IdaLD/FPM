@@ -14,24 +14,13 @@ using System.Diagnostics.Metrics;
 
 using Docnet.Core;
 using Docnet.Core.Models;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.ComponentModel; 
 
 using Docnet.Core.Readers;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using Avalonia.Media.Imaging;
-using iText.Layout.Renderer;
-using System.Numerics;
 using Avalonia;
 using Avalonia.Platform;
-using Newtonsoft.Json.Bson;
-using Avalonia.Media;
-using Avalonia.Collections;
-using DynamicData;
-using iText.Kernel.Pdf;
-using ReactiveUI;
 
 
 namespace Avalon.ViewModels;
@@ -160,8 +149,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(fak * 1080/2, fak * 1920/2));
             pw_pagecount_view = docReader.GetPageCount();
             pw_pagenr_view = 1;
-
-            PdfDocument test = (PdfDocument)docReader;
 
         }
         catch
@@ -446,8 +433,11 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
         Projects = new List<string>();
         Projects.Add("All Projects");
-        Projects.Add(newProjects);
 
+        foreach(string project in newProjects)
+        {
+            Projects.Add(project);
+        }
     }
 
 
@@ -461,7 +451,11 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
         Types = new List<string>();
         Types.Add("All Types");
-        Types.Add(newTypes);
+
+        foreach(string type in newTypes)
+        {
+            Types.Add(type);
+        }
     }
 
     public void CopyFilenameToClipboard(Avalonia.Visual window, IList files)
@@ -722,7 +716,11 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         if (Projects.Count > 1 && currentProject != "All Projects")
         {
-            StoredFiles.RemoveMany(StoredFiles.Where(x => x.Uppdrag == currentProject));
+            IEnumerable removelist = StoredFiles.Where(x => x.Uppdrag == currentProject);
+            foreach(FileData file in removelist)
+            {
+                StoredFiles.Remove(file);
+            }
             Projects.Remove(currentProject);
         }
     }
@@ -736,7 +734,10 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
                 StoredFiles[i].Uppdrag = newProjectName;
             }
         }
-        Projects.Replace(currentProject, newProjectName);
+
+        int index = Projects.FindIndex(s => s == currentProject);
+        Projects[index] = newProjectName;
+
     }
 
 

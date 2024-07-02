@@ -10,15 +10,8 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Media;
 using Avalonia.Input;
 using Material.Styles.Themes;
-using System.Runtime.CompilerServices;
-using Newtonsoft.Json.Bson;
 using System.Threading;
-using System.IO;
-using System.Diagnostics;
-using Avalonia.Controls.Generators;
 using System.Collections.Generic;
-using iText.Commons.Bouncycastle.Asn1.X509;
-using System.Drawing;
 
 
 namespace Avalon.Views;
