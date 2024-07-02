@@ -56,14 +56,20 @@
 
 
 				
-					<StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="250,0,0,0">
+					<StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="210,2,0,0">
 						<ProgressBar Name="ProgressBar" Width="200" Value="{Binding Status}" VerticalAlignment="Center"/>
-						<Label Name="ProgressStatus" Width="200" Height="40" VerticalAlignment="Bottom" IsHitTestVisible="False" FontStyle="Italic" Foreground="Gray" Padding="10"/>
+						<Label Name="ProgressStatus" Width="200" Height="40" VerticalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Foreground="Gray" Padding="10"/>
 					</StackPanel>
 
 				<StackPanel Grid.Row="1" Grid.ColumnSpan="1" Orientation="Vertical">
-					<TextBlock Text="{Binding ProjectMessage}" Foreground="Gray" FontStyle="Italic" Padding="8,0,0,0"/>
-					<TextBlock Name="SelectedFileName" Foreground="Gray" FontStyle="Italic" Padding="8,0,0,0"/>
+					<StackPanel Margin="8 -1 0 0" Orientation="Horizontal">
+						<materialIcons:MaterialIcon Grid.Column="0" Kind="Folder" Foreground="Gray" Width="25" Height="15"/>
+						<TextBlock Text="{Binding ProjectMessage}" Foreground="Gray" FontStyle="Italic"/>
+					</StackPanel>
+					<StackPanel Margin="8 0 0 0" Orientation="Horizontal">
+						<materialIcons:MaterialIcon Grid.Column="0" Kind="File" Foreground="Gray" Width="25" Height="15"/>
+						<TextBlock Name="SelectedFileName" Foreground="Gray" FontStyle="Italic"/>
+					</StackPanel>
 				</StackPanel>
 				
 
