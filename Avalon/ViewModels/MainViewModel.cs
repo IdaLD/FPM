@@ -456,6 +456,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         List<string> newTypes = StoredFiles.Select(x => x.Filtyp).Distinct().ToList();
 
         newTypes.Remove("");
+        newTypes.Remove("Info");
         newTypes.Sort();
 
         Types = new List<string>();

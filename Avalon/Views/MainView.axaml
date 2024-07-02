@@ -79,8 +79,7 @@
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<StackPanel>
-									<ListBox Name="TypeList" ItemsSource="{Binding Types}" Height="260" Width="130" FlowDirection="LeftToRight"/>
-									<Button Content="test" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0"/>
+									<ListBox Name="TypeList" ItemsSource="{Binding Types}" Height="300" Width="130" FlowDirection="LeftToRight"/>
 									</StackPanel>
 								</Flyout>
 							</Button.Flyout>
@@ -96,8 +95,7 @@
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<StackPanel Orientation="Vertical">
-										<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="260" Width="130" FlowDirection="LeftToRight"/>
-										<Button Content="test" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0"/>
+										<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="300" Width="130" FlowDirection="LeftToRight"/>
 									</StackPanel>
 								</Flyout>
 							</Button.Flyout>
