@@ -16,6 +16,7 @@ using FPM.Model;
 using System.Diagnostics;
 using Newtonsoft.Json.Bson;
 using System.Xml.Serialization;
+using System.Reflection;
 
 
 namespace Avalon.Views;
@@ -33,6 +34,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
 
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_files);
+
+        
 
         ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
         TypeList.AddHandler(ListBox.SelectionChangedEvent, on_type_selected);
@@ -58,7 +61,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         Preview2.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
 
         ScrollSlider.AddHandler(Slider.ValueChangedEvent, on_select_page);
-        
+
 
         init_columns();
         init_MetaWorker();
@@ -68,14 +71,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         StatusLabel.Content = "Ready";
     }
 
-    public int SelectedIndex = 0;
-
-    public string currentProject = string.Empty;
-    public string currentType = string.Empty;
-
-    public string StatusMessage = "Ready";
-    public bool PopupStatus = true;
-    public bool PopupColumnList_status = true;
     public string TagInput = "";
 
     public bool previewMode = false;
@@ -112,7 +107,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     public void get_datacontext()
     {
         ctx = (MainViewModel)this.DataContext;
+        ctx.PropertyChanged += on_binding_ctx;
+
     }
+
+    public void on_binding_ctx(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == "FilteredFiles") { on_update_columns(); }
+    }
+
 
     public void on_theme_dark(object sender, RoutedEventArgs e)
     {
@@ -122,9 +125,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Grey;
         
         set_theme_colors();
+        update_row_color();
     }
 
-    public void on_theme_light(object sender, RoutedEventArgs e)
+    private void on_theme_light(object sender, RoutedEventArgs e)
     {
         darkmode = false;
         var MaterialThemeStyles = Application.Current!.LocateMaterialTheme<MaterialTheme>();
@@ -132,35 +136,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Blue;
 
         set_theme_colors();
+        update_row_color();
     }
 
-    public void set_theme_colors()
-    {
-        if (darkmode == true)
-        {
 
-            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#646424");
-            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#643e24");
-            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#3e3124");
-            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#244a24");
-            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#243e64");
-            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#642424");
-            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#57244a");
-        }
 
-        if (darkmode == false)
-        {
-            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffff99");
-            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffd699");
-            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#c2ad99");
-            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#8cd1a3");
-            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#a3a3ff");
-            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ff8c8c");
-            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#eb99eb");
-        }
-    }
-
-    public void Border_PointerPressed(object sender, RoutedEventArgs args)
+    private void Border_PointerPressed(object sender, RoutedEventArgs args)
     {
         var ctl = sender as Control;
         if (ctl != null)
@@ -394,6 +375,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             }
         }
     }
+
     private void on_toggle_dualmode(object sender, RoutedEventArgs e)
     {
         if (DualMode.IsChecked == true)
@@ -406,12 +388,14 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
 
     }
+
     private void on_lock(object sender, EventArgs e)
     {
         if (Lockedstatus.IsChecked == true)
         {
             RemoveProjectMenu.IsEnabled = false;
             RemoveFileMenu.IsEnabled = false;
+            MoveFileMenu.IsEnabled = false;
             LockIcon.IsVisible = true;
             UnlockedIcon.IsVisible = false;
         }
@@ -419,6 +403,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             RemoveProjectMenu.IsEnabled = true;
             RemoveFileMenu.IsEnabled = true;
+            MoveFileMenu.IsEnabled = true;
             LockIcon.IsVisible = false;
             UnlockedIcon.IsVisible = true;
         }
@@ -455,138 +440,35 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.CopyListviewToClipboard(this, checkstate);
     }
 
-    private void init_columns()
+
+
+    private void on_project_selected(object sender, RoutedEventArgs e)
     {
-        int nval = FileGrid.Columns.Count();
-
-        for (int i = 0; i < nval; i++)
-        {
-            FileGrid.Columns[i].IsVisible = false;
-        }
-
-        Column0.IsChecked = true;
-        Column1.IsChecked = true;
-        Column2.IsChecked = true;
-        Column3.IsChecked = true;
-
-        Column7.IsChecked = true;
-        Column8.IsChecked = true;
-        Column9.IsChecked = true;
-        Column10.IsChecked = true;
-        Column11.IsChecked = true;
-
-    }
-
-    private void ColumnCheck(object sender, RoutedEventArgs e)
-    {
-        var item = sender as CheckBox;
-        int column = Int32.Parse(item.Tag.ToString());
-
-        FileGrid.Columns[column].IsVisible = true;
-    }
-
-    private void ColumnUncheck(object sender, RoutedEventArgs e)
-    {
-        var item = sender as CheckBox;
-        int column = Int32.Parse(item.Tag.ToString());
-
-        FileGrid.Columns[column].IsVisible = false;
-    }
-
-    void OnMenuOpen(object sender, RoutedEventArgs e)
-    {
-        on_open_file(sender, e);
-    }
-
-    private void DataGrid_OnLoadingRow(object? sender, DataGridRowEventArgs e)
-    {
-
-        Args.Add(e);
-
-        var dataObject = e.Row.DataContext as FileData;
-        e.Row.Classes.Clear();
-
-        if (dataObject != null && dataObject.Färg == "") { e.Row.Classes.Clear(); }
-
-        if (darkmode == true)
-        {
-            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowDark"); }
-            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeDark"); }
-            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownDark"); }
-            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenDark"); }
-            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueDark"); }
-            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedDark"); }
-            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaDark"); }
-        }
-        else
-        {
-            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowLight"); }
-            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeLight"); }
-            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownLight"); }
-            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenLight"); }
-            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueLight"); }
-            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedLight"); }
-            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaLight"); }
-        }
-    }
-
-    private void update_row_color()
-    {
-        foreach (DataGridRowEventArgs e in Args)
-        {
-            var dataObject = e.Row.DataContext as FileData;
-
-            e.Row.Classes.Clear();
-
-            if (darkmode == true)
-            {
-                if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowDark"); }
-                if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeDark"); }
-                if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownDark"); }
-                if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenDark"); }
-                if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueDark"); }
-                if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedDark"); }
-                if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaDark"); }
-            }
-            else
-            {
-                if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowLight"); }
-                if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeLight"); }
-                if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownLight"); }
-                if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenLight"); }
-                if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueLight"); }
-                if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedLight"); }
-                if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaLight"); }
-            }
-        }
-    }
-    
-
-    public void on_project_selected(object sender, RoutedEventArgs e)
-    {
-
         object selected = ProjectList.SelectedItem;
+
         if (selected != null) 
         {
             string name = selected.ToString();
             ctx.select_project(name);
         }
+
+        on_update_columns();
     }
 
-    public void on_type_selected(object sender, RoutedEventArgs e)
+    private void on_type_selected(object sender, RoutedEventArgs e)
     {
         object type = TypeList.SelectedItem;
 
         if (type != null)
         {
-
-            ctx.set_typefilter(type.ToString());
+            ctx.select_type(type.ToString());
         }
+
+        on_update_columns();
     }
 
-    public void EditColor(object sender, RoutedEventArgs e)
+    private void edit_color(object sender, RoutedEventArgs e)
     {
-
         var menuItem = sender as MenuItem;
         string color = menuItem.Tag.ToString();
 
@@ -594,24 +476,22 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         deselect_items();
         update_row_color();
-
     }
 
-    public void EditType(object sender, RoutedEventArgs e)
+    private void edit_type(object sender, RoutedEventArgs e)
     {
-
         var menuItem = sender as MenuItem;
         string type = menuItem.Tag.ToString();
 
         ctx.edit_type(type);
     }
 
-    public void deselect_items()
+    private void deselect_items()
     {
         FileGrid.SelectedItem = null;
     }
 
-    public void on_clear_files(object sender, RoutedEventArgs e)
+    private void on_clear_files(object sender, RoutedEventArgs e)
     {
         ctx.clear_all();
 
@@ -619,13 +499,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         update_row_color();
     }
 
-    public void on_add_tag(object sender, RoutedEventArgs e)
+    private void on_add_tag(object sender, RoutedEventArgs e)
     {
         ctx.add_tag();
         deselect_items();
     }
 
-    public void on_clear_tag(object sender, RoutedEventArgs e)
+    private void on_clear_tag(object sender, RoutedEventArgs e)
     {
         ctx.clear_tag();
         deselect_items();
@@ -636,27 +516,19 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var Name = ProjectName.Text;
         if (Name != null)
         {
-            currentProject = Name.ToString();
-            ctx.new_project(currentProject);
-
+            ctx.new_project(Name.ToString());
         }
     }
 
     private void on_rename_project(object sender, RoutedEventArgs e)
     {
-        if (currentProject != "All Projects")
-        {
-            string newName = NewProjectName.Text.ToString();
-
-            ctx.rename_project(newName);
-        }
+        ctx.rename_project(NewProjectName.Text.ToString());
     }
 
     private void on_add_file(object sender, RoutedEventArgs e)
     {
         StatusLabel.Content = "Adding Files";
         ctx.AddFile(this);
-        ctx.set_typefilter("New");
         StatusLabel.Content = "Ready";
     }
 
@@ -664,17 +536,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         ProgressStatus.Content = "Fetching Metadata";
 
-        IList files = FileGrid.SelectedItems;
-
         ctx.SelectFilesForMetaworker(true);
         MetaWorker.RunWorkerAsync();
-    }
-
-    private void on_clear_meta(object sender, RoutedEventArgs e)
-    {
-        IList<FileData> files = FileGrid.SelectedItems.Cast<FileData>().ToList();
-
-        ctx.ClearMeta(files);
     }
 
     private void on_fetch_full_meta(object sender, RoutedEventArgs e)
@@ -713,9 +576,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void MetaWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
-        ctx.SetMetadata();
+        ctx.set_meta();
         ProgressStatus.Content = "";
         ProgressBar.Value = 0;
+    }
+
+    private void select_files(object sender, RoutedEventArgs e)
+    {
+        IList<FileData> files = FileGrid.SelectedItems.Cast<FileData>().ToList();
+        ctx.select_files(files);
     }
 
     private void on_open_path(object sender, RoutedEventArgs e)
@@ -729,13 +598,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     }
 
-    private void select_files(object sender, RoutedEventArgs e)
-    {
-        IList<FileData> files = FileGrid.SelectedItems.Cast<FileData>().ToList();
-        ctx.select_files(files);
-    }
-
-    private void on_open_file(object sender, EventArgs e)
+    private void on_open_file(object sender, RoutedEventArgs e)
     {
         
         if (StatusLabel.Content == "Ready")
@@ -779,13 +642,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         StatusLabel.Content = "Ready";
     }
 
-    private async void on_load_old_file(object sender, RoutedEventArgs e)
-    {
-        StatusLabel.Content = "Loading file";
-        await ctx.LoadOldFile(this);
-        StatusLabel.Content = "Ready";
-    }
-
     private async void on_save_file(object sender, RoutedEventArgs e)
     {
         StatusLabel.Content = "Saving file";
@@ -807,10 +663,42 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.move_files(projectname);
     }
 
-    private void on_remove_files(object sender, RoutedEventArgs e)
+    private void init_columns()
     {
-        IList<FileData> items = FileGrid.SelectedItems.Cast<FileData>().ToList();
-        ctx.remove_files(items);
+        int nval = FileGrid.Columns.Count();
+
+        for (int i = 0; i < nval; i++)
+        {
+            FileGrid.Columns[i].IsVisible = false;
+        }
+
+        Column0.IsChecked = true;
+        Column1.IsChecked = true;
+        Column2.IsChecked = true;
+        Column3.IsChecked = true;
+
+        Column7.IsChecked = true;
+        Column8.IsChecked = true;
+        Column9.IsChecked = true;
+        Column10.IsChecked = true;
+        Column11.IsChecked = true;
+
+    }
+
+    private void ColumnCheck(object sender, RoutedEventArgs e)
+    {
+        var item = sender as CheckBox;
+        int column = Int32.Parse(item.Tag.ToString());
+
+        FileGrid.Columns[column].IsVisible = true;
+    }
+
+    private void ColumnUncheck(object sender, RoutedEventArgs e)
+    {
+        var item = sender as CheckBox;
+        int column = Int32.Parse(item.Tag.ToString());
+
+        FileGrid.Columns[column].IsVisible = false;
     }
 
     private void on_update_columns()
@@ -827,10 +715,97 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         FileGrid.Columns[9].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
 
         FileGrid.UpdateLayout();
+
     }
 
-    private void Binding(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
+    private void DataGrid_OnLoadingRow(object? sender, DataGridRowEventArgs e)
     {
+
+        Args.Add(e);
+
+        var dataObject = e.Row.DataContext as FileData;
+        e.Row.Classes.Clear();
+
+        if (dataObject != null && dataObject.Färg == "") { e.Row.Classes.Clear(); }
+
+        if (darkmode == true)
+        {
+            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowDark"); }
+            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeDark"); }
+            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownDark"); }
+            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenDark"); }
+            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueDark"); }
+            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedDark"); }
+            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaDark"); }
+        }
+        else
+        {
+            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowLight"); }
+            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeLight"); }
+            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownLight"); }
+            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenLight"); }
+            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueLight"); }
+            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedLight"); }
+            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaLight"); }
+        }
     }
+
+    private void set_theme_colors()
+    {
+        if (darkmode == true)
+        {
+
+            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#646424");
+            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#643e24");
+            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#3e3124");
+            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#244a24");
+            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#243e64");
+            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#642424");
+            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#57244a");
+        }
+
+        if (darkmode == false)
+        {
+            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffff99");
+            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffd699");
+            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#c2ad99");
+            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#8cd1a3");
+            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#a3a3ff");
+            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ff8c8c");
+            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#eb99eb");
+        }
+    }
+
+    private void update_row_color()
+    {
+        foreach (DataGridRowEventArgs e in Args)
+        {
+            var dataObject = e.Row.DataContext as FileData;
+
+            e.Row.Classes.Clear();
+
+            if (darkmode == true)
+            {
+                if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowDark"); }
+                if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeDark"); }
+                if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownDark"); }
+                if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenDark"); }
+                if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueDark"); }
+                if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedDark"); }
+                if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaDark"); }
+            }
+            else
+            {
+                if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowLight"); }
+                if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeLight"); }
+                if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownLight"); }
+                if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenLight"); }
+                if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueLight"); }
+                if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedLight"); }
+                if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaLight"); }
+            }
+        }
+    }
+
 }
 
