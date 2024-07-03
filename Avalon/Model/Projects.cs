@@ -59,6 +59,23 @@ namespace FPM.Model
             }
         }
 
+        public void TransferFiles(ProjectData fromProject , string toProjectName, IList<FileData> files)
+        {
+            ProjectData toProject = StoredProjects.FirstOrDefault(x => x.Namn == toProjectName);
+
+            if (toProject == null)
+            {
+                NewProject(toProjectName);
+                toProject = GetProject(toProjectName);
+            }
+
+            toProject.AddFiles(files);
+            fromProject.RemoveFiles(files);
+
+            toProject.SetFiletypeList();
+            fromProject.SetFiletypeList();
+        }
+
         private void RaisePropertyChanged(string propName)
         {
             if (PropertyChanged != null)

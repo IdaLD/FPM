@@ -23,6 +23,7 @@
 				<DockPanel Width="190" VerticalAlignment="Top" HorizontalAlignment="Left">
 					<Menu DockPanel.Dock="Top">
 						<MenuItem Header="File">
+							<MenuItem Header="LoadOld" Click="on_load_old_file" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
 							<MenuItem Header="Load" Click="on_load_file" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
 							<MenuItem Header="Save" Click="on_save_file_auto" Icon="{materialIcons:MaterialIconExt Kind=ContentSave}"/>
 							<MenuItem Header="Save As" Click="on_save_file" Icon="{materialIcons:MaterialIconExt Kind=ContentSaveEdit}"/>
@@ -237,8 +238,15 @@
 									<MenuItem Name="ListviewCopyMenu" Header="Listview" Click="on_copy_listview"/>
 								</MenuItem>
 
+								<Separator></Separator>
+
 								<MenuItem Name="ClearAllMenu" Header="Clear Tags" Click="on_clear_files" Icon="{materialIcons:MaterialIconExt Kind=TagRemove}"/>
 
+								<MenuItem Name="MoveFileMenu" Header="Move Files To" Icon="{materialIcons:MaterialIconExt Kind=MoveFromInbox}">
+									<TextBox Name="MoveFileToProjectName" Width="160" FlowDirection="LeftToRight"/>
+									<MenuItem Name="MoveMenu" Header="Move" Click="on_move_files"/>
+								</MenuItem>
+								
 								<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="on_remove_files" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
 							</ContextMenu>
 						</DataGrid.ContextMenu>

@@ -57,9 +57,13 @@ namespace FPM.Model
         }
 
 
-        public void AddFile(FileData file)
+        public void AddFiles(IList<FileData> files)
         {
-            StoredFiles.Add(file);
+            foreach(FileData file in files)
+            {
+                StoredFiles.Add(file);
+            }
+            SetFiletypeList();
         }
 
         public void Newfile(string filepath)

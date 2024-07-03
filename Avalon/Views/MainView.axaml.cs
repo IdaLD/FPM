@@ -779,6 +779,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         StatusLabel.Content = "Ready";
     }
 
+    private async void on_load_old_file(object sender, RoutedEventArgs e)
+    {
+        StatusLabel.Content = "Loading file";
+        await ctx.LoadOldFile(this);
+        StatusLabel.Content = "Ready";
+    }
+
     private async void on_save_file(object sender, RoutedEventArgs e)
     {
         StatusLabel.Content = "Saving file";
@@ -792,6 +799,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         string path = "C:\\FIlePathManager\\Projects.json";
         await ctx.SaveFileAuto(path);
         StatusLabel.Content = "Ready";
+    }
+
+    private void on_move_files(object sender, RoutedEventArgs e)
+    {
+        string projectname = MoveFileToProjectName.Text;
+        ctx.move_files(projectname);
     }
 
     private void on_remove_files(object sender, RoutedEventArgs e)
@@ -816,5 +829,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         FileGrid.UpdateLayout();
     }
 
+    private void Binding(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
+    {
+    }
 }
 

@@ -320,6 +320,8 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             using var streamReader = new StreamReader(stream);
             string fileContent = await streamReader.ReadToEndAsync();
 
+
+
             ProjectsModel = JsonConvert.DeserializeObject<Projects>(fileContent);
 
             var properties = typeof(FileData).GetProperties().ToList();
@@ -328,6 +330,39 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
                 string val = property.Name;
                 Properties.Add(val);
             }
+        }
+    }
+
+    public async Task LoadOldFile(Avalonia.Visual window)
+    {
+        var topLevel = TopLevel.GetTopLevel(window);
+
+        var jsonformat = new FilePickerFileType("Json format") { Patterns = new[] { "*.json" } };
+        List<FilePickerFileType> formatlist = new List<FilePickerFileType>();
+        formatlist.Add(jsonformat);
+        IReadOnlyList<FilePickerFileType> fileformat = formatlist;
+
+        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Load File",
+            AllowMultiple = false,
+            FileTypeFilter = fileformat
+        });
+
+        if (files.Count > 0)
+        {
+            await using var stream = await files[0].OpenReadAsync();
+            using var streamReader = new StreamReader(stream);
+            string fileContent = await streamReader.ReadToEndAsync();
+
+            ObservableCollection<FileData> AllFiles = JsonConvert.DeserializeObject<ObservableCollection<FileData>>(fileContent);
+
+            ProjectsModel.NewProject("Old files");
+
+            CurrentProject = ProjectsModel.GetProject("Old files");
+
+            CurrentProject.AddFiles(AllFiles);
+
         }
     }
 
@@ -677,6 +712,11 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public void select_project(string name)
     {
         CurrentProject = ProjectsModel.GetProject(name);
+    }
+
+    public void move_files(string projectname)
+    {
+        ProjectsModel.TransferFiles(CurrentProject, projectname, CurrentFiles);
     }
 
     public void UpdateLists(string selectedProject, string selectedType)
