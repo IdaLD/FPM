@@ -12,6 +12,11 @@ using Avalonia.Input;
 using Material.Styles.Themes;
 using System.Threading;
 using System.Collections.Generic;
+using FPM.Model;
+using System.Diagnostics;
+using Newtonsoft.Json.Bson;
+using System.Xml.Serialization;
+using System.Reflection;
 
 
 namespace Avalon.Views;
@@ -28,7 +33,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
 
-        FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_file);
+        FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_files);
+
+        
 
         ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
         TypeList.AddHandler(ListBox.SelectionChangedEvent, on_type_selected);
@@ -54,7 +61,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         Preview2.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
 
         ScrollSlider.AddHandler(Slider.ValueChangedEvent, on_select_page);
-        
+
 
         init_columns();
         init_MetaWorker();
@@ -64,14 +71,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         StatusLabel.Content = "Ready";
     }
 
-    public int SelectedIndex = 0;
-
-    public string currentProject = string.Empty;
-    public string currentType = string.Empty;
-
-    public string StatusMessage = "Ready";
-    public bool PopupStatus = true;
-    public bool PopupColumnList_status = true;
     public string TagInput = "";
 
     public bool previewMode = false;
@@ -108,7 +107,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     public void get_datacontext()
     {
         ctx = (MainViewModel)this.DataContext;
+        ctx.PropertyChanged += on_binding_ctx;
+
     }
+
+    public void on_binding_ctx(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == "FilteredFiles") { on_update_columns(); }
+    }
+
 
     public void on_theme_dark(object sender, RoutedEventArgs e)
     {
@@ -118,10 +125,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Grey;
         
         set_theme_colors();
-        on_refresh_table();
+        update_row_color();
     }
 
-    public void on_theme_light(object sender, RoutedEventArgs e)
+    private void on_theme_light(object sender, RoutedEventArgs e)
     {
         darkmode = false;
         var MaterialThemeStyles = Application.Current!.LocateMaterialTheme<MaterialTheme>();
@@ -129,36 +136,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Blue;
 
         set_theme_colors();
-        on_refresh_table();
+        update_row_color();
     }
 
-    public void set_theme_colors()
-    {
-        if (darkmode == true)
-        {
 
-            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#646424");
-            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#643e24");
-            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#3e3124");
-            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#244a24");
-            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#243e64");
-            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#642424");
-            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#57244a");
-        }
 
-        if (darkmode == false)
-        {
-            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffff99");
-            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffd699");
-            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#c2ad99");
-            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#8cd1a3");
-            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#a3a3ff");
-            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ff8c8c");
-            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#eb99eb");
-        }
-    }
-
-    public void Border_PointerPressed(object sender, RoutedEventArgs args)
+    private void Border_PointerPressed(object sender, RoutedEventArgs args)
     {
         var ctl = sender as Control;
         if (ctl != null)
@@ -176,13 +159,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             string path = "C:\\FIlePathManager\\Projects.json";
             ctx.read_savefile(path);
-            on_project_refresh();
         }
         catch 
-        {
-            SelectedProjectLabel.Content = currentType;
-            SelectedTypeLabel.Content = currentType;
-        }
+        { }
     }
 
     private void on_toggle_preview(object sender, RoutedEventArgs e)
@@ -396,6 +375,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             }
         }
     }
+
     private void on_toggle_dualmode(object sender, RoutedEventArgs e)
     {
         if (DualMode.IsChecked == true)
@@ -408,12 +388,14 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
 
     }
+
     private void on_lock(object sender, EventArgs e)
     {
         if (Lockedstatus.IsChecked == true)
         {
             RemoveProjectMenu.IsEnabled = false;
             RemoveFileMenu.IsEnabled = false;
+            MoveFileMenu.IsEnabled = false;
             LockIcon.IsVisible = true;
             UnlockedIcon.IsVisible = false;
         }
@@ -421,31 +403,20 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             RemoveProjectMenu.IsEnabled = true;
             RemoveFileMenu.IsEnabled = true;
+            MoveFileMenu.IsEnabled = true;
             LockIcon.IsVisible = false;
             UnlockedIcon.IsVisible = true;
         }
     }
 
-    private void select_file(object sender, RoutedEventArgs e)
-    {
-        if (FileGrid.SelectedItem != null)
-        {
-            FileData selectedFile = (FileData)FileGrid.SelectedItem;
-            SelectedFileName.Text = selectedFile.Namn;
-        }
-    }
-
     private void on_copy_filename(object sender, RoutedEventArgs e)
     {
-        IList files = FileGrid.SelectedItems;
-        ctx.CopyFilenameToClipboard(this, files);
+        ctx.CopyFilenameToClipboard(this);
     }
 
     private void on_copy_listview(object sender, RoutedEventArgs e)
     {
         bool?[] checkstate = new bool?[7];
-
-        IList files = FileGrid.SelectedItems;
 
         checkstate =
             [
@@ -466,7 +437,230 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             Column14.IsChecked
             ];
 
-        ctx.CopyListviewToClipboard(this, files, checkstate);
+        ctx.CopyListviewToClipboard(this, checkstate);
+    }
+
+
+
+    private void on_project_selected(object sender, RoutedEventArgs e)
+    {
+        object selected = ProjectList.SelectedItem;
+
+        if (selected != null) 
+        {
+            string name = selected.ToString();
+            ctx.select_project(name);
+        }
+
+        on_update_columns();
+    }
+
+    private void on_type_selected(object sender, RoutedEventArgs e)
+    {
+        object type = TypeList.SelectedItem;
+
+        if (type != null)
+        {
+            ctx.select_type(type.ToString());
+        }
+
+        on_update_columns();
+    }
+
+    private void edit_color(object sender, RoutedEventArgs e)
+    {
+        var menuItem = sender as MenuItem;
+        string color = menuItem.Tag.ToString();
+
+        ctx.add_color(color);
+
+        deselect_items();
+        update_row_color();
+    }
+
+    private void edit_type(object sender, RoutedEventArgs e)
+    {
+        var menuItem = sender as MenuItem;
+        string type = menuItem.Tag.ToString();
+
+        ctx.edit_type(type);
+    }
+
+    private void deselect_items()
+    {
+        FileGrid.SelectedItem = null;
+    }
+
+    private void on_clear_files(object sender, RoutedEventArgs e)
+    {
+        ctx.clear_all();
+
+        deselect_items();
+        update_row_color();
+    }
+
+    private void on_add_tag(object sender, RoutedEventArgs e)
+    {
+        ctx.add_tag();
+        deselect_items();
+    }
+
+    private void on_clear_tag(object sender, RoutedEventArgs e)
+    {
+        ctx.clear_tag();
+        deselect_items();
+    }
+
+    private void on_add_project(object sender, RoutedEventArgs e)
+    {
+        var Name = ProjectName.Text;
+        if (Name != null)
+        {
+            ctx.new_project(Name.ToString());
+        }
+    }
+
+    private void on_rename_project(object sender, RoutedEventArgs e)
+    {
+        ctx.rename_project(NewProjectName.Text.ToString());
+    }
+
+    private void on_add_file(object sender, RoutedEventArgs e)
+    {
+        StatusLabel.Content = "Adding Files";
+        ctx.AddFile(this);
+        StatusLabel.Content = "Ready";
+    }
+
+    private void on_fetch_single_meta(object sender, RoutedEventArgs e)
+    {
+        ProgressStatus.Content = "Fetching Metadata";
+
+        ctx.SelectFilesForMetaworker(true);
+        MetaWorker.RunWorkerAsync();
+    }
+
+    private void on_fetch_full_meta(object sender, RoutedEventArgs e)
+    {
+        ProgressStatus.Content = "Fetching Metadata";
+
+        ctx.SelectFilesForMetaworker(false);
+        MetaWorker.RunWorkerAsync();
+    }
+
+    private void init_MetaWorker()
+    {
+        MetaWorker.DoWork += MetaWorker_DoWork;
+        MetaWorker.WorkerReportsProgress = true;
+        MetaWorker.ProgressChanged += MetaWorker_progress;
+        MetaWorker.RunWorkerCompleted += MetaWorker_RunWorkerCompleted;
+    }
+
+    private void MetaWorker_DoWork(object sender, DoWorkEventArgs e)
+    {
+        int nPaths = ctx.GetNrSelectedFiles();
+
+        for (int k = 0; k < nPaths; k++)
+        {
+            ctx.GetMetadata(k);
+
+            int percentage = (k + 1) * 100 / nPaths;
+            MetaWorker.ReportProgress(percentage);
+        }
+    }
+
+    private void MetaWorker_progress(object sender, ProgressChangedEventArgs e)
+    {
+        ProgressBar.Value = e.ProgressPercentage;
+    }
+
+    private void MetaWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+        ctx.set_meta();
+        ProgressStatus.Content = "";
+        ProgressBar.Value = 0;
+    }
+
+    private void select_files(object sender, RoutedEventArgs e)
+    {
+        IList<FileData> files = FileGrid.SelectedItems.Cast<FileData>().ToList();
+        ctx.select_files(files);
+    }
+
+    private void on_open_path(object sender, RoutedEventArgs e)
+    {
+        if (StatusLabel.Content == "Ready")
+        {
+            StatusLabel.Content = "Opening path";
+            ctx.open_path();
+            StatusLabel.Content = "Ready";
+        }
+
+    }
+
+    private void on_open_file(object sender, RoutedEventArgs e)
+    {
+        
+        if (StatusLabel.Content == "Ready")
+        {
+            StatusLabel.Content = "Opening file";
+
+            ctx.open_files();
+
+            StatusLabel.Content = "Ready";
+        }
+    }
+
+    private void on_open_metafile(object sender, RoutedEventArgs e)
+    {
+        if (StatusLabel.Content == "Ready")
+        {
+            StatusLabel.Content = "Opening metafile";
+
+            ctx.open_meta();
+
+            StatusLabel.Content = "Ready";
+        }
+    }
+
+    private void on_open_dwg(object sender, RoutedEventArgs e)
+    {
+        if (StatusLabel.Content == "Ready")
+        {
+
+            StatusLabel.Content = "Opening Drawing";
+            ctx.open_dwg();
+            StatusLabel.Content = "Ready";
+            
+        }
+    }
+
+    private async void on_load_file(object sender, RoutedEventArgs e)
+    {
+        StatusLabel.Content = "Loading file";
+        await ctx.LoadFile(this);
+        StatusLabel.Content = "Ready";
+    }
+
+    private async void on_save_file(object sender, RoutedEventArgs e)
+    {
+        StatusLabel.Content = "Saving file";
+        await ctx.SaveFile(this);
+        StatusLabel.Content = "Ready";
+    }
+
+    private async void on_save_file_auto(object sender, RoutedEventArgs e)
+    {
+        StatusLabel.Content = "Saving file";
+        string path = "C:\\FIlePathManager\\Projects.json";
+        await ctx.SaveFileAuto(path);
+        StatusLabel.Content = "Ready";
+    }
+
+    private void on_move_files(object sender, RoutedEventArgs e)
+    {
+        string projectname = MoveFileToProjectName.Text;
+        ctx.move_files(projectname);
     }
 
     private void init_columns()
@@ -507,9 +701,21 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         FileGrid.Columns[column].IsVisible = false;
     }
 
-    void OnMenuOpen(object sender, RoutedEventArgs e)
+    private void on_update_columns()
     {
-        on_open_file(sender, e);
+        FileGrid.Columns[0].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[1].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[2].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[3].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[4].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[5].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[6].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[7].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[8].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+        FileGrid.Columns[9].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
+
+        FileGrid.UpdateLayout();
+
     }
 
     private void DataGrid_OnLoadingRow(object? sender, DataGridRowEventArgs e)
@@ -544,6 +750,32 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
+    private void set_theme_colors()
+    {
+        if (darkmode == true)
+        {
+
+            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#646424");
+            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#643e24");
+            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#3e3124");
+            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#244a24");
+            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#243e64");
+            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#642424");
+            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#57244a");
+        }
+
+        if (darkmode == false)
+        {
+            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffff99");
+            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffd699");
+            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#c2ad99");
+            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#8cd1a3");
+            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#a3a3ff");
+            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ff8c8c");
+            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#eb99eb");
+        }
+    }
+
     private void update_row_color()
     {
         foreach (DataGridRowEventArgs e in Args)
@@ -573,329 +805,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                 if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaLight"); }
             }
         }
-    }
-    
-
-    public void on_project_selected(object sender, RoutedEventArgs e)
-    {
-
-        object selected = ProjectList.SelectedItem;
-        if (selected != null) 
-        {
-            currentProject = (string)selected;
-            SelectedProjectLabel.Content = currentProject;
-            on_refresh_table();
-        }
-    }
-
-    public void on_type_selected(object sender, RoutedEventArgs e)
-    {
-        object selected = TypeList.SelectedItem;
-
-        if (selected != null)
-        {
-            currentType = (string)selected;
-            SelectedTypeLabel.Content = currentType;
-
-            on_refresh_table();
-        }
-    }
-
-    public void on_refresh_table()
-    {
-        ctx.set_info_file(currentProject);
-        ctx.UpdateLists(currentProject, currentType);
-        on_update_columns();
-    }
-
-    void on_project_refresh()
-    {
-
-        currentProject = ctx.Projects.FirstOrDefault();
-        currentType = ctx.Types.FirstOrDefault();
-
-        SelectedProjectLabel.Content = currentProject;
-        SelectedTypeLabel.Content = currentType;
-
-        on_refresh_table();
-
-    }
-
-    public void EditColor(object sender, RoutedEventArgs e)
-    {
-
-        var menuItem = sender as MenuItem;
-        string color = menuItem.Tag.ToString();
-
-        IList items = FileGrid.SelectedItems;
-
-        ctx.add_color(color, items);
-
-        deselect_items();
-        update_row_color();
-
-    }
-
-    public void EditType(object sender, RoutedEventArgs e)
-    {
-
-        var menuItem = sender as MenuItem;
-        string type = menuItem.Tag.ToString();
-
-        IList items = FileGrid.SelectedItems;
-
-        ctx.add_type(type, items);
-        ctx.UpdateTypes();
-
-        on_refresh_table();
-
-    }
-
-    public void deselect_items()
-    {
-        FileGrid.SelectedItem = null;
-    }
-
-    public void on_clear_files(object sender, RoutedEventArgs e)
-    {
-
-        IList items = FileGrid.SelectedItems;
-
-        ctx.clear_all(items);
-
-        deselect_items();
-        update_row_color();
-    }
-
-    private void on_add_tag(object sender, RoutedEventArgs e)
-    {
-
-        bool currentMode = false;
-
-        var tagMode = sender as MenuItem;
-        string mode = tagMode.Tag.ToString();
-
-        if (mode == "Add")
-        {
-            currentMode = true;
-        }
-
-        IList items = FileGrid.SelectedItems;
-
-        ctx.add_tag(currentMode, items);
-
-        deselect_items();
-    }
-
-    private void on_add_project(object sender, RoutedEventArgs e)
-    {
-        var Name = ProjectName.Text;
-        if (Name != null)
-        {
-            currentProject = Name.ToString();
-            ctx.new_project(currentProject);
-            ProjectName.Clear();
-
-            SelectedProjectLabel.Content = currentProject;
-            on_refresh_table();
-        }
-    }
-
-    private void on_remove_project(object sender, RoutedEventArgs e)
-    {
-        ctx.remove_project(currentProject);
-        on_project_refresh();
-    }
-
-    private void on_rename_project(object sender, RoutedEventArgs e)
-    {
-        if (currentProject != "All Projects")
-        {
-            string newName = NewProjectName.Text.ToString();
-
-            ctx.rename_project(currentProject, newName);
-            SelectedProjectLabel.Content = newName.ToString();
-        }
-    }
-
-    private void on_add_file(object sender, RoutedEventArgs e)
-    {
-        if (currentProject == "All Projects")
-        {
-            StatusLabel.Content = "Please select a project";
-        }
-        else
-        {
-            ctx.AddFile(currentProject, this);
-            on_refresh_table();
-
-            SelectedTypeLabel.Content = "New";
-
-            StatusLabel.Content = "Files added";
-        }
-
-    }
-
-    private void on_fetch_single_meta(object sender, RoutedEventArgs e)
-    {
-        ProgressStatus.Content = "Fetching Metadata";
-
-        IList files = FileGrid.SelectedItems;
-
-        ctx.SelectFiles(true, files);
-        MetaWorker.RunWorkerAsync();
-    }
-
-    private void on_clear_meta(object sender, RoutedEventArgs e)
-    {
-        IList files = FileGrid.SelectedItems;
-
-        ctx.ClearMeta(files);
-    }
-
-    private void on_fetch_full_meta(object sender, RoutedEventArgs e)
-    {
-        ProgressStatus.Content = "Fetching Metadata";
-
-        ctx.SelectFiles(false, null);
-        MetaWorker.RunWorkerAsync();
-    }
-
-    private void init_MetaWorker()
-    {
-        MetaWorker.DoWork += MetaWorker_DoWork;
-        MetaWorker.WorkerReportsProgress = true;
-        MetaWorker.ProgressChanged += MetaWorker_progress;
-        MetaWorker.RunWorkerCompleted += MetaWorker_RunWorkerCompleted;
-    }
-
-    private void MetaWorker_DoWork(object sender, DoWorkEventArgs e)
-    {
-        int nPaths = ctx.GetNrSelectedFiles();
-
-        for (int k = 0; k < nPaths; k++)
-        {
-            ctx.GetMetadata(k);
-
-            int percentage = (k + 1) * 100 / nPaths;
-            MetaWorker.ReportProgress(percentage);
-        }
-    }
-
-    private void MetaWorker_progress(object sender, ProgressChangedEventArgs e)
-    {
-        ProgressBar.Value = e.ProgressPercentage;
-    }
-
-    private void MetaWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        ctx.SetMetadata();
-        ProgressStatus.Content = "";
-        ProgressBar.Value = 0;
-    }
-
-    private void on_open_path(object sender, RoutedEventArgs e)
-    {
-        if (StatusLabel.Content == "Ready")
-        {
-            StatusLabel.Content = "Opening path";
-            IList files = FileGrid.SelectedItems;
-
-            ctx.OpenPath(files);
-            StatusLabel.Content = "Ready";
-        }
-
-    }
-
-    private void on_open_file(object sender, EventArgs e)
-    {
-        if (StatusLabel.Content == "Ready")
-        {
-            StatusLabel.Content = "Opening file";
-            IList files = FileGrid.SelectedItems;
-
-            ctx.OpenFile(files, "PDF");
-            StatusLabel.Content = "Ready";
-        }
-    }
-
-    private void on_open_metafile(object sender, RoutedEventArgs e)
-    {
-        if (StatusLabel.Content == "Ready")
-        {
-            StatusLabel.Content = "Opening metafile";
-            IList files = FileGrid.SelectedItems;
-
-            ctx.OpenFile(files, "MD");
-            StatusLabel.Content = "Ready";
-        }
-    }
-
-    private void on_open_dwg(object sender, RoutedEventArgs e)
-    {
-        if (StatusLabel.Content == "Ready")
-        {
-
-            StatusLabel.Content = "Opening Drawing";
-            FileData file = (FileData)FileGrid.SelectedItem;
-
-            if (file.Filtyp == "Drawing")
-            {
-                ctx.OpenDwg(file);
-            }
-            
-            StatusLabel.Content = "Ready";
-            
-        }
-    }
-
-    private async void on_load_file(object sender, RoutedEventArgs e)
-    {
-        StatusLabel.Content = "Loading file";
-
-        await ctx.LoadFile(this);
-
-        on_project_refresh();
-        StatusLabel.Content = "Ready";
-    }
-
-    private async void on_save_file(object sender, RoutedEventArgs e)
-    {
-        StatusLabel.Content = "Saving file";
-        await ctx.SaveFile(this);
-        StatusLabel.Content = "Ready";
-    }
-
-    private async void on_save_file_auto(object sender, RoutedEventArgs e)
-    {
-        StatusLabel.Content = "Saving file";
-        string path = "C:\\FIlePathManager\\Projects.json";
-        await ctx.SaveFileAuto(path);
-        StatusLabel.Content = "Ready";
-    }
-
-    private void on_remove_files(object sender, RoutedEventArgs e)
-    {
-        IList items      = FileGrid.SelectedItems;
-
-        ctx.remove_files(items);
-        on_refresh_table();
-    }
-
-    private void on_update_columns()
-    {
-        FileGrid.Columns[0].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        FileGrid.Columns[1].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        FileGrid.Columns[2].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        FileGrid.Columns[3].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        FileGrid.Columns[4].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        FileGrid.Columns[5].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        FileGrid.Columns[6].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        FileGrid.Columns[7].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        FileGrid.Columns[8].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-        FileGrid.Columns[9].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
-
-        FileGrid.UpdateLayout();
     }
 
 }

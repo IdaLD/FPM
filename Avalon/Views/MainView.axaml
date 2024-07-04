@@ -31,8 +31,6 @@
 							<MenuItem Header="File" Click="on_add_file" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
 						</MenuItem>
 						<MenuItem Header="Project">
-							
-							<MenuItem Name="RemoveProjectMenu" Header="Remove" Click="on_remove_project" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
 						
 							<MenuItem Name="NewProjectMenu" Header="New" Icon="{materialIcons:MaterialIconExt Kind=FolderPlus}">
 								<TextBox Name="ProjectName" Width="110"/>
@@ -45,6 +43,12 @@
 							</MenuItem>
 
 							<MenuItem Name="FetchMetadata" Header="Fetch MD" Click="on_fetch_full_meta" Icon="{materialIcons:MaterialIconExt Kind=Database}"/>
+							
+							<Separator></Separator>
+							
+							<MenuItem Name="RemoveDuplicates" Header="Remove Duplicates" Command="{Binding remove_duplicate_files}" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
+							<MenuItem Name="RemoveProjectMenu" Header="Remove" Command="{Binding remove_project}" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
+							
 						</MenuItem>
 					</Menu>
 					<TextBlock/>
@@ -68,7 +72,7 @@
 					</StackPanel>
 					<StackPanel Margin="8 0 0 0" Orientation="Horizontal">
 						<materialIcons:MaterialIcon Grid.Column="0" Kind="File" Foreground="Gray" Width="25" Height="15"/>
-						<TextBlock Name="SelectedFileName" Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text="{Binding ProjectsModel.CurrentFile.Namn}" Foreground="Gray" FontStyle="Italic"/>
 					</StackPanel>
 				</StackPanel>
 				
@@ -81,14 +85,14 @@
 							<Button.Content>
 								<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="130">
 									<materialIcons:MaterialIcon Grid.Column="0" Kind="FolderQuestion" Width="20" Height="20"/>
-									<Label Grid.Column="1" Name="SelectedTypeLabel" HorizontalAlignment="Center"/>
+									<Label Grid.Column="1" Content="{Binding ProjectsModel.Type}" HorizontalAlignment="Center"/>
 									<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
 								</Grid>
 							</Button.Content>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<StackPanel>
-									<ListBox Name="TypeList" ItemsSource="{Binding Types}" Height="300" Width="130" FlowDirection="LeftToRight"/>
+										<ListBox Name="TypeList" ItemsSource="{Binding ProjectsModel.CurrentProject.Filetypes}" Height="300" Width="130" FlowDirection="LeftToRight"/>
 									</StackPanel>
 								</Flyout>
 							</Button.Flyout>
@@ -98,14 +102,14 @@
 							<Button.Content>
 								<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="150">
 									<materialIcons:MaterialIcon Grid.Column="0" Kind="Folder" Width="20" Height="20"/>
-									<Label Grid.Column="1" Name="SelectedProjectLabel" HorizontalAlignment="Center"/>
+									<Label Grid.Column="1" Content="{Binding ProjectsModel.CurrentProject.Namn}" HorizontalAlignment="Center"/>
 									<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
 								</Grid>
 							</Button.Content>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<StackPanel Orientation="Vertical">
-										<ListBox Name="ProjectList" ItemsSource="{Binding Projects}" Height="300" Width="130" FlowDirection="LeftToRight"/>
+										<ListBox Name="ProjectList" ItemsSource="{Binding ProjectsModel.ProjectList}" Height="300" Width="130" FlowDirection="LeftToRight"/>
 									</StackPanel>
 								</Flyout>
 							</Button.Flyout>
@@ -148,7 +152,7 @@
 							</Grid>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="211" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<TextBox Text="{Binding CurrentInfoFile.Info}" InnerLeftContent="   " InnerRightContent="   " AcceptsReturn="True" AcceptsTab="True"
+									<TextBox Text="{Binding ProjectsModel.CurrentProject.Notes}" InnerLeftContent="   " InnerRightContent="   " AcceptsReturn="True" AcceptsTab="True"
 											 Width="560" FontSize="14" FontWeight="Medium" Height="500" FlowDirection="LeftToRight" IsEnabled="True">
 
 									</TextBox>
@@ -170,7 +174,7 @@
 
 					</StackPanel>
 
-					<DataGrid Name="FileGrid" Grid.Row="2" Margin="5" Padding="0" ItemsSource="{Binding FilteredFiles}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
+					<DataGrid Name="FileGrid" Grid.Row="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsModel.FilteredFiles}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
 							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 					
 						<DataGrid.Columns>
@@ -198,38 +202,38 @@
 						<DataGrid.ContextMenu>
 							<ContextMenu Name="Menu">
 								<MenuItem Name="OpenMenu" Header="Open" Icon="{materialIcons:MaterialIconExt Kind=File}">
-									<MenuItem Name="OpenFileMenu" Header="Open File" Click="OnMenuOpen"/>
+									<MenuItem Name="OpenFileMenu" Header="Open File" Click="on_open_file"/>
 									<MenuItem Name="OpenPathMenu" Header="Open Path" Click="on_open_path"/>
 									<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile"/>
 									<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg"/>
 								</MenuItem>
 								<MenuItem Name="MetaMenu" Header="Metadata" Icon="{materialIcons:MaterialIconExt Kind=Database}">
 									<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta"/>
-									<MenuItem Name="ClearMetaMenu" Header="Clear" Click="on_clear_meta"/>
+									<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding clear_meta}"/>
 								</MenuItem>
 								
-								<MenuItem Name="ColorMainMenu" Header="Color Tag" Background="Blue" Icon="{materialIcons:MaterialIconExt Kind=PaintBucket}">
-									<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="EditColor"/>
-									<MenuItem Name="YellowMenu" Header="⬛⬛⬛⬛" Foreground="#646424" Tag ="Yellow" Click="EditColor"/>
-									<MenuItem Name="OrangeMenu" Header="⬛⬛⬛⬛" Foreground="#643e24" Tag ="Orange" Click="EditColor"/>
-									<MenuItem Name="BrownMenu" Header="⬛⬛⬛⬛" Foreground="#3e3124" Tag ="Brown" Click="EditColor"/>
-									<MenuItem Name="GreenMenu" Header="⬛⬛⬛⬛" Foreground="#244a24" Tag ="Green" Click="EditColor"/>
-									<MenuItem Name="BlueMenu" Header="⬛⬛⬛⬛" Foreground="#243e64" Tag ="Blue" Click="EditColor"/>
-									<MenuItem Name="RedMenu" Header="⬛⬛⬛⬛" Foreground="#642424" Tag ="Red" Click="EditColor"/>
-									<MenuItem Name="MagentaMenu" Header="⬛⬛⬛⬛" Foreground="#57244a" Tag ="Magenta" Click="EditColor"/>
+								<MenuItem Name="ColorMainMenu" Header="Color Tag" Icon="{materialIcons:MaterialIconExt Kind=PaintBucket}">
+									<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="edit_color"/>
+									<MenuItem Name="YellowMenu" Header="⬛⬛⬛⬛" Foreground="#646424" Tag ="Yellow" Click="edit_color"/>
+									<MenuItem Name="OrangeMenu" Header="⬛⬛⬛⬛" Foreground="#643e24" Tag ="Orange" Click="edit_color"/>
+									<MenuItem Name="BrownMenu" Header="⬛⬛⬛⬛" Foreground="#3e3124" Tag ="Brown" Click="edit_color"/>
+									<MenuItem Name="GreenMenu" Header="⬛⬛⬛⬛" Foreground="#244a24" Tag ="Green" Click="edit_color"/>
+									<MenuItem Name="BlueMenu" Header="⬛⬛⬛⬛" Foreground="#243e64" Tag ="Blue" Click="edit_color"/>
+									<MenuItem Name="RedMenu" Header="⬛⬛⬛⬛" Foreground="#642424" Tag ="Red" Click="edit_color"/>
+									<MenuItem Name="MagentaMenu" Header="⬛⬛⬛⬛" Foreground="#57244a" Tag ="Magenta" Click="edit_color"/>
 								</MenuItem>
 								<MenuItem Name="TagMenu" Header="User Tag" Icon="{materialIcons:MaterialIconExt Kind=Tag}">
 									<TextBox Name="TagMenuInput" Width="160" Text="{Binding user_tag}"/>
-									<MenuItem Name="TagMenuAdd" Header="Add Tag" Tag="Add" Click="on_add_tag" FlowDirection="LeftToRight"/>
-									<MenuItem Name="TagMenuClear" Header="Clear Tag" Tag="Clear" Click="on_add_tag"/>
+									<MenuItem Name="TagMenuAdd" Header="Add Tag" Click="on_add_tag" FlowDirection="LeftToRight"/>
+									<MenuItem Name="TagMenuClear" Header="Clear Tag" Click="on_clear_tag"/>
 								</MenuItem>
 								<MenuItem Name="TypeMenu" Header="Filetype" Icon="{materialIcons:MaterialIconExt Kind=FolderQuestion}">
-									<MenuItem Header="None" Tag ="" Click="EditType"/>
-									<MenuItem Header="Drawing" Tag ="Drawing" Click="EditType"/>
-									<MenuItem Header="Document" Tag ="Document" Click="EditType"/>
-									<MenuItem Header="Handbook" Tag ="Handbook" Click="EditType"/>
-									<MenuItem Header="Standard" Tag ="Standard" Click="EditType"/>
-									<MenuItem Header="Other" Tag ="Other" Click="EditType"/>
+									<MenuItem Header="None" Tag ="" Click="edit_type"/>
+									<MenuItem Header="Drawing" Tag ="Drawing" Click="edit_type"/>
+									<MenuItem Header="Document" Tag ="Document" Click="edit_type"/>
+									<MenuItem Header="Handbook" Tag ="Handbook" Click="edit_type"/>
+									<MenuItem Header="Standard" Tag ="Standard" Click="edit_type"/>
+									<MenuItem Header="Other" Tag ="Other" Click="edit_type"/>
 								</MenuItem>
 
 								<MenuItem Name="CopyMenu" Header="Copy" Icon="{materialIcons:MaterialIconExt Kind=ContentCopy}">
@@ -237,9 +241,16 @@
 									<MenuItem Name="ListviewCopyMenu" Header="Listview" Click="on_copy_listview"/>
 								</MenuItem>
 
+								<Separator></Separator>
+
 								<MenuItem Name="ClearAllMenu" Header="Clear Tags" Click="on_clear_files" Icon="{materialIcons:MaterialIconExt Kind=TagRemove}"/>
 
-								<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="on_remove_files" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
+								<MenuItem Name="MoveFileMenu" Header="Move Files To" Icon="{materialIcons:MaterialIconExt Kind=MoveFromInbox}">
+									<TextBox Name="MoveFileToProjectName" Width="160" FlowDirection="LeftToRight"/>
+									<MenuItem Name="MoveMenu" Header="Move" Click="on_move_files"/>
+								</MenuItem>
+								
+								<MenuItem Name="RemoveFileMenu" Header="Remove File" Command="{Binding ProjectsModel.RemoveSelectedFiles}" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
 							</ContextMenu>
 						</DataGrid.ContextMenu>
 					</DataGrid>
