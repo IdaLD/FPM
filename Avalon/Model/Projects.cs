@@ -39,14 +39,30 @@ namespace FPM.Model
         public IEnumerable<FileData> FilteredFiles
         {
             get { return filteredFiles; }
-            set { filteredFiles = value; RaisePropertyChanged("FilteredFiles"); }
+            set { filteredFiles = value; RaisePropertyChanged("FilteredFiles"); RaisePropertyChanged("NrFilteredFiles"); }
+        }
+        public int NrFilteredFiles
+        {
+            get {
+                if (FilteredFiles == null) { return 0; }
+                else { return FilteredFiles.Count();}
+                }
+        }
+
+        public int NrSelectedFiles
+        {
+            get
+            {
+                if (CurrentFiles == null) { return 0; }
+                else { return CurrentFiles.Count(); }
+            }
         }
 
         private IList<FileData> currentFiles = null;
         public IList<FileData> CurrentFiles
         {
             get { return currentFiles; }
-            set { currentFiles = value; RaisePropertyChanged("CurrentFiles"); RaisePropertyChanged("CurrentFile"); }
+            set { currentFiles = value; RaisePropertyChanged("CurrentFiles"); RaisePropertyChanged("CurrentFile"); RaisePropertyChanged("NrSelectedFiles"); }
         }
 
         private FileData currentFile = null;
