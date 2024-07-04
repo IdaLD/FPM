@@ -33,13 +33,21 @@
 						<MenuItem Header="Project">
 						
 							<MenuItem Name="NewProjectMenu" Header="New" Icon="{materialIcons:MaterialIconExt Kind=FolderPlus}">
-								<TextBox Name="ProjectName" Width="110"/>
-								<MenuItem Name="AddProject" Header="Add" Click="on_add_project"/>
+								<StackPanel Orientation="Horizontal">
+									<materialIcons:MaterialIcon Grid.Column="0" Kind="Input" Width="25" Height="20" HorizontalAlignment="Left"/>
+									<TextBox Name="ProjectName" Width="160"  Margin="10 0 0 0" Text="{Binding user_tag}"/>
+								</StackPanel>
+								<MenuItem Name="AddProject" Header="Add" Click="on_add_project" Icon="{materialIcons:MaterialIconExt Kind=Plus}"/>
 							</MenuItem>
 							
 							<MenuItem Name="RenameMenu" Header="Rename" Icon="{materialIcons:MaterialIconExt Kind=Rename}">
-								<TextBox Name="NewProjectName" Width="160" FlowDirection="LeftToRight"/>
-								<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project"/>
+								<StackPanel Orientation="Horizontal">
+									<materialIcons:MaterialIcon Grid.Column="0" Kind="Input" Width="25" Height="20" HorizontalAlignment="Left"/>
+									<TextBox Name="NewProjectName" Width="160"  Margin="10 0 0 0" Text="{Binding user_tag}"/>
+								</StackPanel>
+								<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project" Icon="{materialIcons:MaterialIconExt Kind=Rename}"/>
+								
+								
 							</MenuItem>
 
 							<MenuItem Name="FetchMetadata" Header="Fetch MD" Click="on_fetch_full_meta" Icon="{materialIcons:MaterialIconExt Kind=Database}"/>
@@ -202,44 +210,48 @@
 						</DataGrid.Columns>
 						<DataGrid.ContextMenu>
 							<ContextMenu Name="Menu">
-								<MenuItem Name="OpenMenu" Header="Open" Icon="{materialIcons:MaterialIconExt Kind=File}">
-									<MenuItem Name="OpenFileMenu" Header="Open File" Click="on_open_file"/>
-									<MenuItem Name="OpenPathMenu" Header="Open Path" Click="on_open_path"/>
-									<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile"/>
-									<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg"/>
+								<MenuItem Name="OpenMenu" Header="Open" Icon="{materialIcons:MaterialIconExt Kind=OpenInNew}">
+									<MenuItem Name="OpenFileMenu" Header="Open File" Click="on_open_file" Icon="{materialIcons:MaterialIconExt Kind=FilePdfBox}"/>
+									<MenuItem Name="OpenPathMenu" Header="Open Path" Click="on_open_path" Icon="{materialIcons:MaterialIconExt Kind=FolderOpen}"/>
+									<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile" Icon="{materialIcons:MaterialIconExt Kind=FileCode}"/>
+									<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg" Icon="{materialIcons:MaterialIconExt Kind=FileCad}"/>
 								</MenuItem>
 								<MenuItem Name="MetaMenu" Header="Metadata" Icon="{materialIcons:MaterialIconExt Kind=Database}">
-									<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta"/>
-									<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding clear_meta}"/>
+									<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta" Icon="{materialIcons:MaterialIconExt Kind=DatabaseSync}"/>
+									<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding clear_meta}" Icon="{materialIcons:MaterialIconExt Kind=DatabaseOff}"/>
 								</MenuItem>
 								
 								<MenuItem Name="ColorMainMenu" Header="Color Tag" Icon="{materialIcons:MaterialIconExt Kind=PaintBucket}">
 									<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="edit_color"/>
-									<MenuItem Name="YellowMenu" Header="⬛⬛⬛⬛" Foreground="#646424" Tag ="Yellow" Click="edit_color"/>
-									<MenuItem Name="OrangeMenu" Header="⬛⬛⬛⬛" Foreground="#643e24" Tag ="Orange" Click="edit_color"/>
-									<MenuItem Name="BrownMenu" Header="⬛⬛⬛⬛" Foreground="#3e3124" Tag ="Brown" Click="edit_color"/>
-									<MenuItem Name="GreenMenu" Header="⬛⬛⬛⬛" Foreground="#244a24" Tag ="Green" Click="edit_color"/>
-									<MenuItem Name="BlueMenu" Header="⬛⬛⬛⬛" Foreground="#243e64" Tag ="Blue" Click="edit_color"/>
-									<MenuItem Name="RedMenu" Header="⬛⬛⬛⬛" Foreground="#642424" Tag ="Red" Click="edit_color"/>
-									<MenuItem Name="MagentaMenu" Header="⬛⬛⬛⬛" Foreground="#57244a" Tag ="Magenta" Click="edit_color"/>
+									<MenuItem Name="YellowMenu" Foreground="#646424" Tag ="Yellow" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
+									<MenuItem Name="OrangeMenu" Foreground="#643e24" Tag ="Orange" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
+									<MenuItem Name="BrownMenu" Foreground="#3e3124" Tag ="Brown" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
+									<MenuItem Name="GreenMenu" Foreground="#244a24" Tag ="Green" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
+									<MenuItem Name="BlueMenu" Foreground="#243e64" Tag ="Blue" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
+									<MenuItem Name="RedMenu" Foreground="#642424" Tag ="Red" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
+									<MenuItem Name="MagentaMenu" Foreground="#57244a" Tag ="Magenta" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
 								</MenuItem>
 								<MenuItem Name="TagMenu" Header="User Tag" Icon="{materialIcons:MaterialIconExt Kind=Tag}">
-									<TextBox Name="TagMenuInput" Width="160" Text="{Binding user_tag}"/>
-									<MenuItem Name="TagMenuAdd" Header="Add Tag" Click="on_add_tag" FlowDirection="LeftToRight"/>
-									<MenuItem Name="TagMenuClear" Header="Clear Tag" Click="on_clear_tag"/>
+									<StackPanel Orientation="Horizontal">
+										<materialIcons:MaterialIcon Grid.Column="0" Kind="Input" Width="25" Height="20" HorizontalAlignment="Left"/>
+										<TextBox Name="TagMenuInput" Width="160"  Margin="10 0 0 0" Text="{Binding user_tag}"/>
+									</StackPanel>
+									
+									<MenuItem Name="TagMenuAdd" Header="Add Tag" Click="on_add_tag" FlowDirection="LeftToRight" Icon="{materialIcons:MaterialIconExt Kind=TagAdd}"/>
+									<MenuItem Name="TagMenuClear" Header="Clear Tag" Click="on_clear_tag" Icon="{materialIcons:MaterialIconExt Kind=TagOff}"/>
 								</MenuItem>
 								<MenuItem Name="TypeMenu" Header="Filetype" Icon="{materialIcons:MaterialIconExt Kind=FolderQuestion}">
-									<MenuItem Header="None" Tag ="" Click="edit_type"/>
-									<MenuItem Header="Drawing" Tag ="Drawing" Click="edit_type"/>
-									<MenuItem Header="Document" Tag ="Document" Click="edit_type"/>
-									<MenuItem Header="Handbook" Tag ="Handbook" Click="edit_type"/>
-									<MenuItem Header="Standard" Tag ="Standard" Click="edit_type"/>
-									<MenuItem Header="Other" Tag ="Other" Click="edit_type"/>
+									<MenuItem Header="None" Tag ="" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
+									<MenuItem Header="Drawing" Tag ="Drawing" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FilePdfBox}"/>
+									<MenuItem Header="Document" Tag ="Document" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FileDocument}"/>
+									<MenuItem Header="Handbook" Tag ="Handbook" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=BookOpen}"/>
+									<MenuItem Header="Standard" Tag ="Standard" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FileCog}"/>
+									<MenuItem Header="Other" Tag ="Other" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FileQuestion}"/>
 								</MenuItem>
 
-								<MenuItem Name="CopyMenu" Header="Copy" Icon="{materialIcons:MaterialIconExt Kind=ContentCopy}">
-									<MenuItem Name="FilenameCopyMenu" Header="Filename" Click="on_copy_filename"/>
-									<MenuItem Name="ListviewCopyMenu" Header="Listview" Click="on_copy_listview"/>
+								<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{materialIcons:MaterialIconExt Kind=ClipboardEditOutline}">
+									<MenuItem Name="FilenameCopyMenu" Header="List" Click="on_copy_filename" Icon="{materialIcons:MaterialIconExt Kind=FormatListBulleted}"/>
+									<MenuItem Name="ListviewCopyMenu" Header="Table" Click="on_copy_listview" Icon="{materialIcons:MaterialIconExt Kind=Table}"/>
 								</MenuItem>
 
 								<Separator></Separator>
