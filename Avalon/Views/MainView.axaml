@@ -45,8 +45,6 @@
 							<MenuItem Name="FetchMetadata" Header="Fetch MD" Click="on_fetch_full_meta" Icon="{materialIcons:MaterialIconExt Kind=Database}"/>
 							
 							<Separator></Separator>
-							
-							<MenuItem Name="RemoveDuplicates" Header="Remove Duplicates" Command="{Binding remove_duplicate_files}" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
 							<MenuItem Name="RemoveProjectMenu" Header="Remove" Command="{Binding remove_project}" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
 							
 						</MenuItem>
@@ -68,7 +66,10 @@
 				<StackPanel Grid.Row="1" Grid.ColumnSpan="1" Orientation="Vertical">
 					<StackPanel Margin="8 -1 0 0" Orientation="Horizontal">
 						<materialIcons:MaterialIcon Grid.Column="0" Kind="Folder" Foreground="Gray" Width="25" Height="15"/>
-						<TextBlock Text="{Binding ProjectMessage}" Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text="Filtered: " Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text="{Binding ProjectsModel.NrFilteredFiles}" Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text=" | Selected: " Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text="{Binding ProjectsModel.NrSelectedFiles}" Foreground="Gray" FontStyle="Italic"/>
 					</StackPanel>
 					<StackPanel Margin="8 0 0 0" Orientation="Horizontal">
 						<materialIcons:MaterialIcon Grid.Column="0" Kind="File" Foreground="Gray" Width="25" Height="15"/>
