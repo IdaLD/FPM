@@ -35,7 +35,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_files);
 
-        
 
         ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
         TypeList.AddHandler(ListBox.SelectionChangedEvent, on_type_selected);
@@ -63,7 +62,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ScrollSlider.AddHandler(Slider.ValueChangedEvent, on_select_page);
 
 
-        init_columns();
+
+
         init_MetaWorker();
         init_PreviewWorker();
         setup_preview_transform();
@@ -416,31 +416,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_copy_listview(object sender, RoutedEventArgs e)
     {
-        bool?[] checkstate = new bool?[7];
-
-        checkstate =
-            [
-            Column0.IsChecked,
-            Column1.IsChecked,
-            Column2.IsChecked,
-            Column3.IsChecked,
-            Column4.IsChecked,
-            Column5.IsChecked,
-            Column6.IsChecked,
-            Column7.IsChecked,
-            Column8.IsChecked,
-            Column9.IsChecked,
-            Column10.IsChecked,
-            Column11.IsChecked,
-            Column12.IsChecked,
-            Column13.IsChecked,
-            Column14.IsChecked
-            ];
-
-        ctx.CopyListviewToClipboard(this, checkstate);
+        ctx.CopyListviewToClipboard(this);
     }
-
-
 
     private void on_project_selected(object sender, RoutedEventArgs e)
     {
@@ -663,43 +640,17 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.move_files(projectname);
     }
 
-    private void init_columns()
+    private void on_check_toggle(object sender, RoutedEventArgs e)
     {
-        int nval = FileGrid.Columns.Count();
+        //var checkbox = sender as CheckBox;
+        //int nr = Int32.Parse(checkbox.Tag.ToString());
 
-        for (int i = 0; i < nval; i++)
-        {
-            FileGrid.Columns[i].IsVisible = false;
-        }
+        //FileGrid.Columns[nr].IsVisible = !FileGrid.Columns[nr].IsVisible;
 
-        Column0.IsChecked = true;
-        Column1.IsChecked = true;
-        Column2.IsChecked = true;
-        Column3.IsChecked = true;
-
-        Column7.IsChecked = true;
-        Column8.IsChecked = true;
-        Column9.IsChecked = true;
-        Column10.IsChecked = true;
-        Column11.IsChecked = true;
+        Debug.WriteLine(FileGrid.Columns[0].IsVisible);
 
     }
 
-    private void ColumnCheck(object sender, RoutedEventArgs e)
-    {
-        var item = sender as CheckBox;
-        int column = Int32.Parse(item.Tag.ToString());
-
-        FileGrid.Columns[column].IsVisible = true;
-    }
-
-    private void ColumnUncheck(object sender, RoutedEventArgs e)
-    {
-        var item = sender as CheckBox;
-        int column = Int32.Parse(item.Tag.ToString());
-
-        FileGrid.Columns[column].IsVisible = false;
-    }
 
     private void on_update_columns()
     {
@@ -807,5 +758,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
+    private void Binding(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+    }
 }
 

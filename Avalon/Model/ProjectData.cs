@@ -37,7 +37,7 @@ namespace FPM.Model
 
         public ObservableCollection<FileData> StoredFiles = new ObservableCollection<FileData>();
 
-
+        public bool[] MetaCheckStore = new bool[15];
 
         public void AddFiles(IList<FileData> files)
         {

@@ -132,23 +132,25 @@
 							</Grid>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<ListBox Name="ColumnList" Height="450" Width="150" FlowDirection="LeftToRight" >
-										<ListBoxItem Height="30"><CheckBox Content="Name"			Tag="0"		Name="Column0"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Filtyp"			Tag="1"		Name="Column1"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Uppdrag"		Tag="2"		Name="Column2"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Tagg"			Tag="3"		Name="Column3"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Färg"			Tag="4"		Name="Column4"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Handling"		Tag="5"		Name="Column5"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Status"			Tag="6"		Name="Column6"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Datum"			Tag="7"		Name="Column7"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Ritningstyp"	Tag="8"		Name="Column8"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 1"	Tag="9"		Name="Column9"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 2"	Tag="10"	Name="Column10"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 3"  Tag="11"	Name="Column11"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 4"	Tag="12"	Name="Column12"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Revidering"		Tag="13"	Name="Column13"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Sökväg"			Tag="14"	Name="Column14"	Height="30"		Checked="ColumnCheck" Unchecked="ColumnUncheck"/></ListBoxItem>
+									<ListBox Name="ColumnList" Height="500" Width="150" FlowDirection="LeftToRight" >
+										<ListBoxItem Height="30"><CheckBox Content="Name"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_1, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Filtyp"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_2, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Uppdrag"		Height="30"	 IsChecked="{Binding ProjectsModel.Meta_3, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Tagg"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_4, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Färg"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_5, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Handling"		Height="30"	 IsChecked="{Binding ProjectsModel.Meta_6, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Status"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_7, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Datum"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_8, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Ritningstyp"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_9, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 1"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_10, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 2"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_11, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 3"  Height="30"	 IsChecked="{Binding ProjectsModel.Meta_12, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 4"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_13, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Revidering"		Height="30"	 IsChecked="{Binding ProjectsModel.Meta_14, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Sökväg"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_15, Mode=TwoWay}"/></ListBoxItem>
+										<Button Content="Set as default" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding ProjectsModel.SetAllMetaCheckState}"/>
 									</ListBox>
+									
 								</Flyout>
 							</Button.Flyout>
 						</Button>
@@ -187,26 +189,26 @@
 							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 					
 						<DataGrid.Columns>
-							<DataGridTextColumn Binding="{Binding Namn, Mode=OneWay}"				Header="Namn"           Width="Auto" MinWidth="120" FontFamily="UbuntuMono"/>
-							<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Uppdrag, Mode=OneWay}"			Header="Uppdrag"		Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Namn}"							Header="Namn"           Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_1}"  FontFamily="UbuntuMono"/>
+							<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_2}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Uppdrag, Mode=OneWay}"			Header="Uppdrag"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_3}"  FontFamily="Ubuntu"/>
 							
-							<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_4}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_5}"  FontFamily="Ubuntu"/>
 
-							<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_6}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_7}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_8}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_9}"  FontFamily="Ubuntu"/>
 						
-							<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_10}"   FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_11}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_12}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_13}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_14}"  FontFamily="Ubuntu"/>
 
 							
-							<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_15}" FontFamily="Ubuntu"/>
 						</DataGrid.Columns>
 						<DataGrid.ContextMenu>
 							<ContextMenu Name="Menu">

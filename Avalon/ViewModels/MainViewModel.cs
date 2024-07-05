@@ -25,6 +25,8 @@ using FPM.Model;
 using Newtonsoft.Json.Bson;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using System.Xml.Serialization;
+using Avalonia.Collections;
 
 
 namespace Avalon.ViewModels;
@@ -81,6 +83,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public List<string[]> metastore = new List<string[]>();
     public List<string> PathStore = new List<string>();
 
+
     public string ProjectMessage { get; set; } = "";
 
     public IDocReader docReader { get; set; } = null;
@@ -110,8 +113,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         get { return _pw_dualmode; }
         set { _pw_dualmode = value; OnPropertyChanged("pw_dualmode"); }
     }
-
-
 
     public void create_preview_file(string filepath, int fak)
     {
@@ -347,6 +348,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             ProjectsModel.SetDefaultSelection();
 
         }
+
     }
 
     public async Task SaveFile(Avalonia.Visual window)
@@ -403,6 +405,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
                 ProjectsModel.CurrentProject.Newfile(path);
             }
         }
+        ProjectsModel.SetDefaultType();
     }
 
     public void CopyFilenameToClipboard(Avalonia.Visual window)
@@ -418,26 +421,29 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     }
 
-    public void CopyListviewToClipboard(Avalonia.Visual window, bool?[] checkstate)
+    public void CopyListviewToClipboard(Avalonia.Visual window)
     {
         string store = string.Empty;
-        
+        bool[] checkstate = ProjectsModel.GetMetaCheckState();
+
+
         foreach (FileData file in ProjectsModel.CurrentFiles)
         {
             if (checkstate[0] == true) { store += file.Namn + "\t"; };
             if (checkstate[1] == true) { store += file.Filtyp + "\t"; };
-            if (checkstate[2] == true) { store += file.Tagg + "\t"; };
-            if (checkstate[3] == true) { store += file.Färg + "\t"; };
-            if (checkstate[4] == true) { store += file.Handling + "\t"; };
-            if (checkstate[5] == true) { store += file.Status + "\t"; };
-            if (checkstate[6] == true) { store += file.Datum + "\t"; };
-            if (checkstate[7] == true) { store += file.Ritningstyp + "\t"; };
-            if (checkstate[8] == true) { store += file.Beskrivning1 + "\t"; };
-            if (checkstate[9] == true) { store += file.Beskrivning2 + "\t"; };
-            if (checkstate[10] == true) { store += file.Beskrivning3 + "\t"; };
-            if (checkstate[11] == true) { store += file.Beskrivning4 + "\t"; };
-            if (checkstate[12] == true) { store += file.Revidering + "\t"; };
-            if (checkstate[13] == true) { store += file.Sökväg + "\t"; };
+            if (checkstate[2] == true) { store += file.Uppdrag + "\t"; };
+            if (checkstate[3] == true) { store += file.Tagg + "\t"; };
+            if (checkstate[4] == true) { store += file.Färg + "\t"; };
+            if (checkstate[5] == true) { store += file.Handling + "\t"; };
+            if (checkstate[6] == true) { store += file.Status + "\t"; };
+            if (checkstate[7] == true) { store += file.Datum + "\t"; };
+            if (checkstate[8] == true) { store += file.Ritningstyp + "\t"; };
+            if (checkstate[9] == true) { store += file.Beskrivning1 + "\t"; };
+            if (checkstate[10] == true) { store += file.Beskrivning2 + "\t"; };
+            if (checkstate[11] == true) { store += file.Beskrivning3 + "\t"; };
+            if (checkstate[12] == true) { store += file.Beskrivning4 + "\t"; };
+            if (checkstate[13] == true) { store += file.Revidering + "\t"; };
+            if (checkstate[14] == true) { store += file.Sökväg + "\t"; };
 
             store += Environment.NewLine;
         }

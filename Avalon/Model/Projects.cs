@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Bson;
+﻿using Avalonia.Collections;
+using Newtonsoft.Json.Bson;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,18 +22,18 @@ namespace FPM.Model
             set { projectList = value; RaisePropertyChanged("ProjectList"); }
         }
 
-        private ProjectData currentProject = null;
+        private ProjectData currentProject = new ProjectData(){ Namn = "New Project"};
         public ProjectData CurrentProject
         {
             get { return currentProject; }
-            set { currentProject = value; RaisePropertyChanged("CurrentProject"); UpdateFilter(); }
+            set { currentProject = value; RaisePropertyChanged("CurrentProject"); UpdateFilter(); UpdateMetaCheck(); }
         }
 
         private string type = null;
         public string Type
         {
             get { return type; }
-            set { type = value; RaisePropertyChanged("Type"); UpdateFilter(); }
+            set { type = value; RaisePropertyChanged("Type"); UpdateFilter(); Debug.WriteLine("TypeSetting"); }
         }
 
         private IEnumerable<FileData> filteredFiles = null;
@@ -81,20 +82,96 @@ namespace FPM.Model
             }
         }
 
-
-        public void AddProject(ProjectData project)
+        public bool Meta_1
         {
-            StoredProjects.Add(project);
+            get { return FetchMetaCheck(0); }
+            set { CurrentProject.MetaCheckStore[0] = value; RaisePropertyChanged("Meta_1"); }
         }
+        public bool Meta_2
+        {
+            get { return FetchMetaCheck(1); }
+            set { CurrentProject.MetaCheckStore[1] = value; RaisePropertyChanged("Meta_2"); }
+        }
+        public bool Meta_3
+        {
+            get { return FetchMetaCheck(2); }
+            set { CurrentProject.MetaCheckStore[2] = value; RaisePropertyChanged("Meta_3"); }
+        }
+        public bool Meta_4
+        {
+            get { return FetchMetaCheck(3); }
+            set { CurrentProject.MetaCheckStore[3] = value; RaisePropertyChanged("Meta_4"); }
+        }
+        public bool Meta_5
+        {
+            get { return FetchMetaCheck(4); }
+            set { CurrentProject.MetaCheckStore[4] = value; RaisePropertyChanged("Meta_5"); }
+        }
+        public bool Meta_6
+        {
+            get { return FetchMetaCheck(5); }
+            set { CurrentProject.MetaCheckStore[5] = value; RaisePropertyChanged("Meta_6"); }
+        }
+        public bool Meta_7
+        {
+            get { return FetchMetaCheck(6); }
+            set { CurrentProject.MetaCheckStore[6] = value; RaisePropertyChanged("Meta_7"); }
+        }
+        public bool Meta_8
+        {
+            get { return FetchMetaCheck(7); }
+            set { CurrentProject.MetaCheckStore[7] = value; RaisePropertyChanged("Meta_8"); }
+        }
+        public bool Meta_9
+        {
+            get { return FetchMetaCheck(8); }
+            set { CurrentProject.MetaCheckStore[8] = value; RaisePropertyChanged("Meta_9"); }
+        }
+        public bool Meta_10
+        {
+            get { return FetchMetaCheck(9); }
+            set { CurrentProject.MetaCheckStore[9] = value; RaisePropertyChanged("Meta_10"); }
+        }
+        public bool Meta_11
+        {
+            get { return FetchMetaCheck(10); }
+            set { CurrentProject.MetaCheckStore[10] = value; RaisePropertyChanged("Meta_11"); }
+        }
+        public bool Meta_12
+        {
+            get { return FetchMetaCheck(11); }
+            set { CurrentProject.MetaCheckStore[11] = value; RaisePropertyChanged("Meta_12"); }
+        }
+        public bool Meta_13
+        {
+            get { return FetchMetaCheck(12); }
+            set { CurrentProject.MetaCheckStore[12] = value; RaisePropertyChanged("Meta_13"); }
+        }
+        public bool Meta_14
+        {
+            get { return FetchMetaCheck(13); }
+            set { CurrentProject.MetaCheckStore[13] = value; RaisePropertyChanged("Meta_14"); }
+        }
+        public bool Meta_15
+        {
+            get { return FetchMetaCheck(14); }
+            set { CurrentProject.MetaCheckStore[14] = value; RaisePropertyChanged("Meta_15"); }
+        }
+
+        public bool[] MetaCheckDefault = { true, true, true, true, false, false, false, true, true, true, false, false, false, false, false };
 
         public void NewProject(string name)
         {
             if (!StoredProjects.Any(x => x.Namn == name))
             {
-                CurrentProject = new ProjectData{Namn = name};
-                StoredProjects.Add(CurrentProject);
+                ProjectData newProject = new ProjectData{Namn = name};
+                newProject.MetaCheckStore = MetaCheckDefault;
+
+                StoredProjects.Add(newProject);
+                CurrentProject = newProject;
 
                 SetProjectlist();
+                SetDefaultType();
             }
         }
 
@@ -125,9 +202,60 @@ namespace FPM.Model
             CurrentProject = StoredProjects.FirstOrDefault(x => x.Namn == name);
         }
 
+        public bool FetchMetaCheck(int i)
+        {
+            if (CurrentProject.MetaCheckStore[i] != null) 
+            {
+                return CurrentProject.MetaCheckStore[i];
+            }
+
+            else
+            {
+                return MetaCheckDefault[i];
+            }
+        }
+
+        public void UpdateMetaCheck()
+        {
+            RaisePropertyChanged("Meta_1");
+            RaisePropertyChanged("Meta_2");
+            RaisePropertyChanged("Meta_3");
+            RaisePropertyChanged("Meta_4");
+            RaisePropertyChanged("Meta_5");
+            RaisePropertyChanged("Meta_6");
+            RaisePropertyChanged("Meta_7");
+            RaisePropertyChanged("Meta_8");
+            RaisePropertyChanged("Meta_9");
+            RaisePropertyChanged("Meta_10");
+            RaisePropertyChanged("Meta_11");
+            RaisePropertyChanged("Meta_12");
+            RaisePropertyChanged("Meta_13");
+            RaisePropertyChanged("Meta_14");
+        }
+
+        public bool[] GetMetaCheckState()
+        {
+            return currentProject.MetaCheckStore;
+        }
+
+        public void SetAllMetaCheckState()
+        {
+            bool[] checkstate = GetMetaCheckState();
+
+            foreach (ProjectData project in StoredProjects)
+            {
+                project.MetaCheckStore = checkstate;
+            }
+        }
+
         public void SetType(string type)
         {
             Type = type;
+        }
+
+        public void SetDefaultType()
+        {
+            Type = "All Types";
         }
 
         public void SetTypeSelected(string type)
