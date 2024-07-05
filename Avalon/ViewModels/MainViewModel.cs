@@ -124,7 +124,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         try
         {
             pw_pagenr = 0;
-
             docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(fak * 1080/2, fak * 1920/2));
             pw_pagecount_view = docReader.GetPageCount();
             pw_pagenr_view = 1;
@@ -241,7 +240,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         if (docReader != null && docReader.GetPageCount()-1 >= pagenr)
         {
-            
+
             IPageReader page = docReader.GetPageReader(pagenr);
 
             byte[] rawBytes = page.GetImage();
@@ -542,6 +541,10 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         {
             metastore.Add(["", "", "", "", "", "", "", "", ""]);
         }
+
+        FileInfo file = new FileInfo("amit.txt");
+        DateTime dt = file.CreationTime;
+
     }
 
     public void clear_meta()

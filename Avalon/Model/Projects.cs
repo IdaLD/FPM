@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,7 +64,13 @@ namespace FPM.Model
         public IList<FileData> CurrentFiles
         {
             get { return currentFiles; }
-            set { currentFiles = value; RaisePropertyChanged("CurrentFiles"); RaisePropertyChanged("CurrentFile"); RaisePropertyChanged("NrSelectedFiles"); }
+            set { currentFiles = value; 
+                RaisePropertyChanged("CurrentFiles"); 
+                RaisePropertyChanged("CurrentFile"); 
+                RaisePropertyChanged("NrSelectedFiles");
+                RaisePropertyChanged("FileDate");
+                RaisePropertyChanged("FileSize");
+            }
         }
 
         private FileData currentFile = null;
@@ -81,6 +88,40 @@ namespace FPM.Model
                 }
             }
         }
+
+        public string FileDate
+        {
+            get
+            {
+                if (CurrentFile != null)
+                {
+                    FileInfo file = new FileInfo(CurrentFile.Sökväg);
+                    return file.LastWriteTime.ToShortDateString();
+                }
+                else
+                {
+                    return string.Empty;
+                }
+
+            }
+        }
+
+        public string FileSize
+        {
+            get
+            {
+                if (CurrentFile != null)
+                {
+                    FileInfo file = new FileInfo(CurrentFile.Sökväg);
+                    return Math.Round(file.Length * 0.000001, 1).ToString() + " Mb";
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+        }
+
 
         public bool Meta_1
         {
@@ -200,6 +241,11 @@ namespace FPM.Model
         public void SetProject(string name)
         {
             CurrentProject = StoredProjects.FirstOrDefault(x => x.Namn == name);
+
+            if (!CurrentProject.Filetypes.Contains(Type))
+            {
+                Type = "All Types";
+            }
         }
 
         public bool FetchMetaCheck(int i)

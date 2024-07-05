@@ -210,7 +210,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                 preview_request = file.Sökväg;
 
                 int QFak = (int)PreviewQuality.Value;
-
                 if (PreviewWorker_busy == false)
                 {
                     try

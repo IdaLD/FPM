@@ -78,6 +78,11 @@
 						<TextBlock Text="{Binding ProjectsModel.NrFilteredFiles}" Foreground="Gray" FontStyle="Italic"/>
 						<TextBlock Text=" | Selected: " Foreground="Gray" FontStyle="Italic"/>
 						<TextBlock Text="{Binding ProjectsModel.NrSelectedFiles}" Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text=" | " Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text="{Binding ProjectsModel.FileDate}" Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text=" | " Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text="{Binding ProjectsModel.FileSize}" Foreground="Gray" FontStyle="Italic"/>
+
 					</StackPanel>
 					<StackPanel Margin="8 0 0 0" Orientation="Horizontal">
 						<materialIcons:MaterialIcon Grid.Column="0" Kind="File" Foreground="Gray" Width="25" Height="15"/>
@@ -222,6 +227,20 @@
 									<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta" Icon="{materialIcons:MaterialIconExt Kind=DatabaseSync}"/>
 									<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding clear_meta}" Icon="{materialIcons:MaterialIconExt Kind=DatabaseOff}"/>
 								</MenuItem>
+
+								<MenuItem Name="TypeMenu" Header="Filetype" Icon="{materialIcons:MaterialIconExt Kind=FolderQuestion}">
+									<MenuItem Header="None" Tag ="" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
+									<MenuItem Header="Drawing" Tag ="Drawing" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FilePdfBox}"/>
+									<MenuItem Header="Document" Tag ="Document" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FileDocument}"/>
+									<MenuItem Header="Handbook" Tag ="Handbook" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=BookOpen}"/>
+									<MenuItem Header="Standard" Tag ="Standard" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FileCog}"/>
+									<MenuItem Header="Other" Tag ="Other" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FileQuestion}"/>
+								</MenuItem>
+
+								<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{materialIcons:MaterialIconExt Kind=ClipboardEditOutline}">
+									<MenuItem Name="FilenameCopyMenu" Header="List" Click="on_copy_filename" Icon="{materialIcons:MaterialIconExt Kind=FormatListBulleted}"/>
+									<MenuItem Name="ListviewCopyMenu" Header="Table" Click="on_copy_listview" Icon="{materialIcons:MaterialIconExt Kind=Table}"/>
+								</MenuItem>
 								
 								<MenuItem Name="ColorMainMenu" Header="Color Tag" Icon="{materialIcons:MaterialIconExt Kind=PaintBucket}">
 									<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="edit_color"/>
@@ -242,23 +261,11 @@
 									<MenuItem Name="TagMenuAdd" Header="Add Tag" Click="on_add_tag" FlowDirection="LeftToRight" Icon="{materialIcons:MaterialIconExt Kind=TagAdd}"/>
 									<MenuItem Name="TagMenuClear" Header="Clear Tag" Click="on_clear_tag" Icon="{materialIcons:MaterialIconExt Kind=TagOff}"/>
 								</MenuItem>
-								<MenuItem Name="TypeMenu" Header="Filetype" Icon="{materialIcons:MaterialIconExt Kind=FolderQuestion}">
-									<MenuItem Header="None" Tag ="" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
-									<MenuItem Header="Drawing" Tag ="Drawing" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FilePdfBox}"/>
-									<MenuItem Header="Document" Tag ="Document" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FileDocument}"/>
-									<MenuItem Header="Handbook" Tag ="Handbook" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=BookOpen}"/>
-									<MenuItem Header="Standard" Tag ="Standard" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FileCog}"/>
-									<MenuItem Header="Other" Tag ="Other" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FileQuestion}"/>
-								</MenuItem>
-
-								<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{materialIcons:MaterialIconExt Kind=ClipboardEditOutline}">
-									<MenuItem Name="FilenameCopyMenu" Header="List" Click="on_copy_filename" Icon="{materialIcons:MaterialIconExt Kind=FormatListBulleted}"/>
-									<MenuItem Name="ListviewCopyMenu" Header="Table" Click="on_copy_listview" Icon="{materialIcons:MaterialIconExt Kind=Table}"/>
-								</MenuItem>
-
-								<Separator></Separator>
 
 								<MenuItem Name="ClearAllMenu" Header="Clear Tags" Click="on_clear_files" Icon="{materialIcons:MaterialIconExt Kind=TagRemove}"/>
+
+
+								<Separator></Separator>
 
 								<MenuItem Name="MoveFileMenu" Header="Move Files To" Icon="{materialIcons:MaterialIconExt Kind=MoveFromInbox}">
 									<TextBox Name="MoveFileToProjectName" Width="160" FlowDirection="LeftToRight"/>
