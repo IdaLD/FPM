@@ -3,6 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Avalon.ViewModels"
+			 xmlns:model="using:Avalon.Model"
+			 xmlns:local="clr-namespace:Avalon"
 			 xmlns:extensions="clr-namespace:Material.Styles.Controls.Extensions"
              mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
              x:Class="Avalon.Views.MainView"
@@ -18,7 +20,7 @@
 
 
 	
-			<Grid Name ="MainGrid" ColumnDefinitions="*,0,0" RowDefinitions="35,30,*" Margin="5">
+			<Grid Name ="MainGrid" ColumnDefinitions="0,*,0,0" RowDefinitions="35,30,*" Margin="5">
 
 				<DockPanel Width="190" VerticalAlignment="Top" HorizontalAlignment="Left">
 					<Menu DockPanel.Dock="Top">
@@ -60,18 +62,18 @@
 					<TextBlock/>
 				</DockPanel>
 
-					<StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Vertical" Spacing="10" Margin="0">
+					<StackPanel Grid.Row="0" Grid.ColumnSpan="4" Orientation="Vertical" Spacing="10" Margin="0">
 						<Label Name="StatusLabel" Height="40" Width="250" HorizontalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Foreground="Gray" Padding="10"/>
 					</StackPanel>
 
 
 				
-					<StackPanel Grid.Row="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="210,2,0,0">
+					<StackPanel Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" Margin="210,2,0,0">
 						<ProgressBar Name="ProgressBar" Width="200" Value="{Binding Status}" VerticalAlignment="Center"/>
 						<Label Name="ProgressStatus" Width="200" Height="40" VerticalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Foreground="Gray" Padding="10"/>
 					</StackPanel>
 
-				<StackPanel Grid.Row="1" Grid.ColumnSpan="1" Orientation="Vertical">
+				<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical">
 					<StackPanel Margin="8 -1 0 0" Orientation="Horizontal">
 						<materialIcons:MaterialIcon Grid.Column="0" Kind="Folder" Foreground="Gray" Width="25" Height="15"/>
 						<TextBlock Text="Filtered: " Foreground="Gray" FontStyle="Italic"/>
@@ -93,7 +95,7 @@
 
 		
 				
-					<StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
+					<StackPanel Grid.Row="1" Grid.ColumnSpan="4" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
 						
 						<Button Name="SelectedType" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
 							<Button.Content>
@@ -188,9 +190,12 @@
 						<materialIcons:MaterialIcon Name="LockIcon" Kind="Lock" Width="20" Height="20"/>
 						<materialIcons:MaterialIcon Name="UnlockedIcon" Kind="LockOpenVariant" Width="20" Height="20" IsVisible="False"/>
 
+						<ToggleSwitch Name="TreeStatus" Margin="10,0,0,0" VerticalAlignment="Center" Checked="toggle_treeview" Unchecked="toggle_treeview"/>
+						<materialIcons:MaterialIcon Kind="Tree" Width="20" Height="20" />
+
 					</StackPanel>
 
-					<DataGrid Name="FileGrid" Grid.Row="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsModel.FilteredFiles}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
+					<DataGrid Name="FileGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsModel.FilteredFiles}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
 							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 					
 						<DataGrid.Columns>
@@ -215,6 +220,7 @@
 							
 							<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_15}" FontFamily="Ubuntu"/>
 						</DataGrid.Columns>
+						
 						<DataGrid.ContextMenu>
 							<ContextMenu Name="Menu">
 								<MenuItem Name="OpenMenu" Header="Open" Icon="{materialIcons:MaterialIconExt Kind=OpenInNew}">
@@ -277,17 +283,23 @@
 						</DataGrid.ContextMenu>
 					</DataGrid>
 			
-				<GridSplitter Grid.Column="1" Grid.Row="2" Background="Transparent" ResizeDirection="Columns"/>
+				<GridSplitter Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns"/>
 
-				<Grid ClipToBounds="True" RowDefinitions="*,40" Grid.Column="2" Grid.Row="2" >
+				<Grid ClipToBounds="True" RowDefinitions="*,40" Grid.Column="3" Grid.Row="2" >
 
-					<Viewbox Grid.Row="0" Name="Previewer" Stretch="Uniform" StretchDirection="Both" Margin="-10">						
-						<Panel Background="White" Margin="20">
-							<StackPanel Orientation="Horizontal">
-							<Image x:Name="Preview" Source="{Binding ImageFromBinding}"/>
-							<Image x:Name="Preview2" Source="{Binding ImageFromBinding2}" IsVisible="{Binding pw_dualmode}"/>
-							</StackPanel>
-						</Panel>
+					<Viewbox Grid.Row="0" Name="Previewer" Stretch="Uniform" StretchDirection="Both" Margin="-10">
+
+						<Border>
+							<Border.Effect>
+								<DropShadowDirectionEffect  BlurRadius="10" Direction="180" ShadowDepth="10" Opacity="0.20"/>
+							</Border.Effect>
+							<Panel Background="White" Margin="20">
+								<StackPanel Orientation="Horizontal">
+									<Image x:Name="Preview" Source="{Binding ImageFromBinding}"/>
+									<Image x:Name="Preview2" Source="{Binding ImageFromBinding2}" IsVisible="{Binding pw_dualmode}"/>
+								</StackPanel>
+							</Panel>
+						</Border>
 					</Viewbox>
 	
 					<StackPanel Grid.Row="1" FlowDirection="RightToLeft" Orientation="Vertical" Margin="5">
@@ -330,6 +342,23 @@
 					</StackPanel>
 				</Grid>
 
+
+				<Grid Grid.Row="2" Grid.Column="0">
+					<Border BorderBrush="Gray" BorderThickness="1" Margin="5" CornerRadius="5">
+
+						<TreeView Name="MainTree" VerticalAlignment="Top" ItemsSource="{Binding ProjectsModel.StoredProjects}" SelectionChanged="on_treeview_update" >
+				
+							<TreeView.ItemTemplate>
+								<TreeDataTemplate x:DataType="model:ProjectData" ItemsSource="{Binding Filetypes}">
+
+									<TextBlock Text="{Binding Namn}"/>
+
+								</TreeDataTemplate>
+							</TreeView.ItemTemplate>
+						</TreeView>
+
+					</Border>
+				</Grid>
 				
 			</Grid>
 </UserControl>

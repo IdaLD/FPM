@@ -10,11 +10,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FPM.Model
+namespace Avalon.Model
 {
     public class Projects : INotifyPropertyChanged
     {
-        public ObservableCollection<ProjectData> StoredProjects = new ObservableCollection<ProjectData>();
+        private ObservableCollection<ProjectData> storedProjects = new ObservableCollection<ProjectData>();
+        public ObservableCollection<ProjectData> StoredProjects
+        {
+            get { return storedProjects; }
+            set { storedProjects = value; RaisePropertyChanged("StoredProjects"); }
+        }
 
         private List<string> projectList = new List<string>();
         public List<string> ProjectList
@@ -95,8 +100,16 @@ namespace FPM.Model
             {
                 if (CurrentFile != null)
                 {
-                    FileInfo file = new FileInfo(CurrentFile.Sökväg);
-                    return file.LastWriteTime.ToShortDateString();
+                    try
+                    {
+                        FileInfo file = new FileInfo(CurrentFile.Sökväg);
+                        return file.LastWriteTime.ToShortDateString();
+                    }
+                    catch
+                    {
+                        return string.Empty;
+                    }
+
                 }
                 else
                 {
@@ -112,8 +125,16 @@ namespace FPM.Model
             {
                 if (CurrentFile != null)
                 {
-                    FileInfo file = new FileInfo(CurrentFile.Sökväg);
-                    return Math.Round(file.Length * 0.000001, 1).ToString() + " Mb";
+                    try
+                    {
+                        FileInfo file = new FileInfo(CurrentFile.Sökväg);
+                        return Math.Round(file.Length * 0.000001, 1).ToString() + " Mb";
+                    }
+                    catch 
+                    {
+                        return string.Empty;
+                    }
+
                 }
                 else
                 {

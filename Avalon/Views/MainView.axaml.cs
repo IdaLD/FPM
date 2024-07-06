@@ -12,11 +12,11 @@ using Avalonia.Input;
 using Material.Styles.Themes;
 using System.Threading;
 using System.Collections.Generic;
-using FPM.Model;
 using System.Diagnostics;
 using Newtonsoft.Json.Bson;
 using System.Xml.Serialization;
 using System.Reflection;
+using Avalon.Model;
 
 
 namespace Avalon.Views;
@@ -41,7 +41,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
         FileGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
-
 
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
 
@@ -86,6 +85,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     public string preview_current = "";
 
     public bool darkmode = true;
+    public bool treeview = false;
 
     private TransformGroup trGrp;
     private TranslateTransform trTns;
@@ -116,6 +116,26 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (e.PropertyName == "FilteredFiles") { on_update_columns(); }
     }
 
+    public void toggle_treeview(object sender, RoutedEventArgs e)
+    {
+        treeview = !treeview;
+
+        if (treeview)
+        {
+            MainGrid.ColumnDefinitions[0] = new ColumnDefinition(200, GridUnitType.Pixel);
+        }
+        else
+        {
+            MainGrid.ColumnDefinitions[0] = new ColumnDefinition(0, GridUnitType.Pixel);
+        }
+    }
+
+    public void on_treeview_update(object sender, SelectionChangedEventArgs e)
+    {
+        object item = MainTree.SelectedItem;
+
+        ctx.treeview_update(item);
+    }
 
     public void on_theme_dark(object sender, RoutedEventArgs e)
     {
@@ -171,27 +191,19 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         EyeOnIcon.IsVisible = previewMode;
         EyeOffIcon.IsVisible = !previewMode;
 
-        float a = 1;
-        float b = 0;
-        float c = 0;
+        float val1 = 0f;
+        float val2 = 0f;
 
-
-        if (previewMode == true) 
+        if (previewMode == true)
         {
-            b = 5;
-            c = 3.2f;
-
-            set_preview_request(null, null); 
+            val1 = 5f;
+            val2 = 3.2f;
         }
 
-        MainGrid.ColumnDefinitions.Clear();
-        GridLength clmn1 = new GridLength(a, GridUnitType.Star);
-        GridLength clmn2 = new GridLength(b, GridUnitType.Pixel);
-        GridLength clmn3 = new GridLength(c, GridUnitType.Star);
+        set_preview_request(null, null);         
 
-        MainGrid.ColumnDefinitions.Add(new ColumnDefinition(clmn1));
-        MainGrid.ColumnDefinitions.Add(new ColumnDefinition(clmn2));
-        MainGrid.ColumnDefinitions.Add(new ColumnDefinition(clmn3));
+        MainGrid.ColumnDefinitions[2] = new ColumnDefinition(val1, GridUnitType.Pixel);
+        MainGrid.ColumnDefinitions[3] = new ColumnDefinition(val2, GridUnitType.Star);
 
         if (previewMode == false)
         {
@@ -757,8 +769,5 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void Binding(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-    }
 }
 

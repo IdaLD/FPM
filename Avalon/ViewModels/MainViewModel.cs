@@ -21,7 +21,7 @@ using System.Runtime.InteropServices;
 using Avalonia.Media.Imaging;
 using Avalonia;
 using Avalonia.Platform;
-using FPM.Model;
+using Avalon.Model;
 using Newtonsoft.Json.Bson;
 using System.Text.Json.Serialization;
 using System.Text.Json;
@@ -659,6 +659,20 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public void remove_duplicate_files()
     {
         //ProjectsModel.CurrentProject.RemoveDuplicates();
+    }
+
+    public void treeview_update(object item)
+    {
+        try
+        {
+            ProjectData project = (ProjectData)item;
+            select_project(project.Namn);
+        }
+        catch
+        {
+            select_type(item.ToString());
+        }
+        
     }
 
     public void select_type(string name)

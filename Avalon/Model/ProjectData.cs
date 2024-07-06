@@ -9,10 +9,16 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FPM.Model
+namespace Avalon.Model
 {
     public class ProjectData : INotifyPropertyChanged
     {
+        private ObservableCollection<FileData> storedFiles = new ObservableCollection<FileData>();
+        public ObservableCollection<FileData> StoredFiles
+        {
+            get { return storedFiles; }
+            set { storedFiles = value; RaisePropertyChanged("StoredFiles"); }
+        }
 
         private string namn = string.Empty;
         public string Namn
@@ -34,8 +40,6 @@ namespace FPM.Model
             get { return filetypes; }
             set { filetypes = value; RaisePropertyChanged("Filetypes"); }
         }
-
-        public ObservableCollection<FileData> StoredFiles = new ObservableCollection<FileData>();
 
         public bool[] MetaCheckStore = new bool[15];
 
