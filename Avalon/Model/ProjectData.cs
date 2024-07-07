@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,6 +40,13 @@ namespace Avalon.Model
         {
             get { return filetypes; }
             set { filetypes = value; RaisePropertyChanged("Filetypes"); }
+        }
+
+        private ObservableCollection<string> filetypesTree = new ObservableCollection<string>();
+        public ObservableCollection<string> FiletypesTree
+        {
+            get { return filetypesTree; }
+            set { filetypesTree = value; RaisePropertyChanged("FiletypesTree"); }
         }
 
         public bool[] MetaCheckStore = new bool[15];
@@ -83,7 +91,22 @@ namespace Avalon.Model
             {
                 Filetypes.Add(filetype);
             }
+
+            SetFiletypeTree();
         }
+
+        public void SetFiletypeTree()
+        {
+            FiletypesTree.Clear();
+            foreach (string item in Filetypes)
+            {
+                if (item != "All Types")
+                {
+                    FiletypesTree.Add(item + "\t\t\t\t\t\t\t\t\t" + Namn);
+                }
+            }
+        }
+
 
         private void RaisePropertyChanged(string propName)
         {

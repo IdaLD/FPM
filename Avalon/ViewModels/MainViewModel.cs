@@ -661,20 +661,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         //ProjectsModel.CurrentProject.RemoveDuplicates();
     }
 
-    public void treeview_update(object item)
-    {
-        try
-        {
-            ProjectData project = (ProjectData)item;
-            select_project(project.Namn);
-        }
-        catch
-        {
-            select_type(item.ToString());
-        }
-        
-    }
-
     public void select_type(string name)
     {
         ProjectsModel.Type = name;

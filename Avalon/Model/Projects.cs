@@ -69,7 +69,8 @@ namespace Avalon.Model
         public IList<FileData> CurrentFiles
         {
             get { return currentFiles; }
-            set { currentFiles = value; 
+            set { currentFiles = value;
+                RaisePropertyChanged("FiletypesTree");
                 RaisePropertyChanged("CurrentFiles"); 
                 RaisePropertyChanged("CurrentFile"); 
                 RaisePropertyChanged("NrSelectedFiles");
@@ -244,6 +245,21 @@ namespace Avalon.Model
             SetDefaultSelection();
         }
 
+        public void SortProjects()
+        {
+            List<ProjectData> sortedList = StoredProjects.OrderBy(x=>x.Namn).ToList();
+
+            StoredProjects.Clear();
+
+            foreach (var project in sortedList)
+            {
+                StoredProjects.Add(project);
+            }
+
+            SetProjectlist();
+            SetDefaultSelection();
+        }
+
         public void RemoveSelectedFiles()
         {
             foreach (FileData file in CurrentFiles)
@@ -363,8 +379,6 @@ namespace Avalon.Model
             ProjectList.Clear();
 
             List<string> newList = StoredProjects.Select(x => x.Namn).Distinct().ToList();
-
-            newList.Sort();
 
             foreach(string item in newList)
             {

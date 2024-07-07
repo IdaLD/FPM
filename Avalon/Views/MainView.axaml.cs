@@ -17,6 +17,15 @@ using Newtonsoft.Json.Bson;
 using System.Xml.Serialization;
 using System.Reflection;
 using Avalon.Model;
+using Avalonia.LogicalTree;
+using Avalonia.Diagnostics;
+using System.Runtime.CompilerServices;
+using Avalonia.Controls.Utils;
+using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Controls.Templates;
+using Avalonia.VisualTree;
+using static System.Net.Mime.MediaTypeNames;
+using Avalonia.Controls.Generators;
 
 
 namespace Avalon.Views;
@@ -130,17 +139,45 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    public void on_treeview_update(object sender, SelectionChangedEventArgs e)
+    public void on_treeview_selected(object sender, SelectionChangedEventArgs e)
     {
-        object item = MainTree.SelectedItem;
+        
+        object selected = MainTree.SelectedItem;
 
-        ctx.treeview_update(item);
+        if (selected != null)
+        {
+            Type selectedtype = selected.GetType();
+
+            if (selectedtype == typeof(ProjectData))
+            {
+                ProjectData project = (ProjectData)selected;
+                ctx.select_type("All Types");
+                ctx.select_project(project.Namn);
+            }
+
+            if (selectedtype == typeof(string))
+            {
+
+                string[] split = selected.ToString().Split("\t");
+
+                ctx.select_type(split[0]);
+
+                TreeViewItem item = (TreeViewItem)MainTree.TreeContainerFromItem(MainTree.SelectedItem);
+                TreeViewItem parent = item.GetLogicalParent() as TreeViewItem;
+                ProjectData project = MainTree.ItemFromContainer(parent) as ProjectData;
+
+                ctx.select_project(project.Namn);
+
+            }
+            on_update_columns();
+        }
+
     }
 
     public void on_theme_dark(object sender, RoutedEventArgs e)
     {
         darkmode = true;
-        var MaterialThemeStyles = Application.Current!.LocateMaterialTheme<MaterialTheme>();
+        var MaterialThemeStyles = Avalonia.Application.Current!.LocateMaterialTheme<MaterialTheme>();
         MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Dark;
         MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Grey;
         
@@ -151,7 +188,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void on_theme_light(object sender, RoutedEventArgs e)
     {
         darkmode = false;
-        var MaterialThemeStyles = Application.Current!.LocateMaterialTheme<MaterialTheme>();
+        var MaterialThemeStyles = Avalonia.Application.Current!.LocateMaterialTheme<MaterialTheme>();
         MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Light;
         MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Blue;
 

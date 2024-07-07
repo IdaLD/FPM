@@ -126,6 +126,7 @@
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<StackPanel Orientation="Vertical">
 										<ListBox Name="ProjectList" ItemsSource="{Binding ProjectsModel.ProjectList}" Height="300" Width="130" FlowDirection="LeftToRight"/>
+										<Button Content="Sort by Name" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding ProjectsModel.SortProjects}" BorderThickness="0"/>									
 									</StackPanel>
 								</Flyout>
 							</Button.Flyout>
@@ -346,14 +347,15 @@
 				<Grid Grid.Row="2" Grid.Column="0">
 					<Border BorderBrush="Gray" BorderThickness="1" Margin="5" CornerRadius="5">
 
-						<TreeView Name="MainTree" VerticalAlignment="Top" ItemsSource="{Binding ProjectsModel.StoredProjects}" SelectionChanged="on_treeview_update" >
+						<TreeView Name="MainTree" ItemsSource="{Binding ProjectsModel.StoredProjects}" SelectionChanged="on_treeview_selected">
 				
 							<TreeView.ItemTemplate>
-								<TreeDataTemplate x:DataType="model:ProjectData" ItemsSource="{Binding Filetypes}">
+								<TreeDataTemplate x:DataType="model:ProjectData" ItemsSource="{Binding FiletypesTree}">
 
 									<TextBlock Text="{Binding Namn}"/>
 
 								</TreeDataTemplate>
+								
 							</TreeView.ItemTemplate>
 						</TreeView>
 

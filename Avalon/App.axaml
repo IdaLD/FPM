@@ -20,6 +20,13 @@
 			<Setter Property="MaxWidth" Value="999" />
 			<Setter Property="Padding" Value="0" />
 		</Style>
+		
+		<Style Selector="TreeViewItem">
+			<Setter Property="Margin" Value="0"/>
+			<Setter Property="Padding" Value="0 5 0 0"/>
+			<Setter Property="MaxWidth" Value="180"/>
+			
+		</Style>
 
 		<Style Selector="ToggleButton">
 			
