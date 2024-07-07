@@ -131,17 +131,20 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         if (treeview)
         {
+            TreeviewOn.IsVisible = true;
+            TreeviewOff.IsVisible = false;
             MainGrid.ColumnDefinitions[0] = new ColumnDefinition(200, GridUnitType.Pixel);
         }
         else
         {
+            TreeviewOn.IsVisible = false;
+            TreeviewOff.IsVisible = true;
             MainGrid.ColumnDefinitions[0] = new ColumnDefinition(0, GridUnitType.Pixel);
         }
     }
 
     public void on_treeview_selected(object sender, SelectionChangedEventArgs e)
-    {
-        
+    {  
         object selected = MainTree.SelectedItem;
 
         if (selected != null)

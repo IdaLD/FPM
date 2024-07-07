@@ -125,8 +125,7 @@
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<StackPanel Orientation="Vertical">
-										<ListBox Name="ProjectList" ItemsSource="{Binding ProjectsModel.ProjectList}" Height="300" Width="130" FlowDirection="LeftToRight"/>
-										<Button Content="Sort by Name" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding ProjectsModel.SortProjects}" BorderThickness="0"/>									
+										<ListBox Name="ProjectList" ItemsSource="{Binding ProjectsModel.ProjectList}" Height="300" Width="130" FlowDirection="LeftToRight"/>									
 									</StackPanel>
 								</Flyout>
 							</Button.Flyout>
@@ -187,12 +186,13 @@
 						<ToggleSwitch Name="ThemeToggle" Margin="10,0,0,0" Checked="on_theme_light" Unchecked="on_theme_dark" />
 						<materialIcons:MaterialIcon Kind="ThemeLightDark" Width="20" Height="20"/>
 
+						<ToggleSwitch Name="TreeStatus" Margin="10,0,0,0" VerticalAlignment="Center" Checked="toggle_treeview" Unchecked="toggle_treeview"/>
+						<materialIcons:MaterialIcon Name="TreeviewOn" Kind="Tree" Width="20" Height="20" IsVisible="False"/>
+						<materialIcons:MaterialIcon Name="TreeviewOff" Kind="TreeOutline" Width="20" Height="20" />
+
 						<ToggleSwitch Name="Lockedstatus" Margin="10,0,0,0" VerticalAlignment="Center"/>
 						<materialIcons:MaterialIcon Name="LockIcon" Kind="Lock" Width="20" Height="20"/>
 						<materialIcons:MaterialIcon Name="UnlockedIcon" Kind="LockOpenVariant" Width="20" Height="20" IsVisible="False"/>
-
-						<ToggleSwitch Name="TreeStatus" Margin="10,0,0,0" VerticalAlignment="Center" Checked="toggle_treeview" Unchecked="toggle_treeview"/>
-						<materialIcons:MaterialIcon Kind="Tree" Width="20" Height="20" />
 
 					</StackPanel>
 
@@ -346,19 +346,22 @@
 
 				<Grid Grid.Row="2" Grid.Column="0">
 					<Border BorderBrush="Gray" BorderThickness="1" Margin="5" CornerRadius="5">
-
-						<TreeView Name="MainTree" ItemsSource="{Binding ProjectsModel.StoredProjects}" SelectionChanged="on_treeview_selected">
+						<StackPanel Orientation="Vertical">
+							<Border BorderBrush="Gray" BorderThickness="0 0 0 1">
+								<TextBlock Text="Storage" Height="22" Margin="14 8 0 0"/>
+							</Border>
+							<TreeView Name="MainTree" ItemsSource="{Binding ProjectsModel.StoredProjects}" SelectionChanged="on_treeview_selected">
 				
-							<TreeView.ItemTemplate>
-								<TreeDataTemplate x:DataType="model:ProjectData" ItemsSource="{Binding FiletypesTree}">
+								<TreeView.ItemTemplate>
+									<TreeDataTemplate x:DataType="model:ProjectData" ItemsSource="{Binding FiletypesTree}">
 
-									<TextBlock Text="{Binding Namn}"/>
+										<TextBlock Text="{Binding Namn}"/>
 
-								</TreeDataTemplate>
+									</TreeDataTemplate>
 								
-							</TreeView.ItemTemplate>
-						</TreeView>
-
+								</TreeView.ItemTemplate>
+							</TreeView>
+						</StackPanel>
 					</Border>
 				</Grid>
 				

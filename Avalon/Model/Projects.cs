@@ -14,6 +14,17 @@ namespace Avalon.Model
 {
     public class Projects : INotifyPropertyChanged
     {
+        public Projects()
+        {
+            NewProject("New Project");
+
+            CurrentProject = StoredProjects.FirstOrDefault();
+            SetProjectlist();
+            SetProject("New Project");
+            SetType("All Types");
+
+        }
+
         private ObservableCollection<ProjectData> storedProjects = new ObservableCollection<ProjectData>();
         public ObservableCollection<ProjectData> StoredProjects
         {
@@ -28,7 +39,7 @@ namespace Avalon.Model
             set { projectList = value; RaisePropertyChanged("ProjectList"); }
         }
 
-        private ProjectData currentProject = new ProjectData(){ Namn = "New Project"};
+        private ProjectData currentProject;
         public ProjectData CurrentProject
         {
             get { return currentProject; }
@@ -39,7 +50,7 @@ namespace Avalon.Model
         public string Type
         {
             get { return type; }
-            set { type = value; RaisePropertyChanged("Type"); UpdateFilter(); Debug.WriteLine("TypeSetting"); }
+            set { type = value; RaisePropertyChanged("Type"); UpdateFilter();}
         }
 
         private IEnumerable<FileData> filteredFiles = null;
@@ -235,6 +246,7 @@ namespace Avalon.Model
 
                 SetProjectlist();
                 SetDefaultType();
+                SortProjects();
             }
         }
 
@@ -243,6 +255,7 @@ namespace Avalon.Model
             StoredProjects.Remove(CurrentProject);
             SetProjectlist();
             SetDefaultSelection();
+            SortProjects();
         }
 
         public void SortProjects()
