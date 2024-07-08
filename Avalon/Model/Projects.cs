@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -436,6 +437,69 @@ namespace Avalon.Model
                 file.Beskrivning4 = "";
                 file.Revidering = "";
             }
+        }
+
+        public void SeachFiles(string searchtext)
+        {
+            if (!StoredProjects.Any(x => x.Namn == "0. Search"))
+            {
+                NewProject("0. Search");
+            }
+                
+            CurrentProject = GetProject("0. Search");
+
+            ObservableCollection<FileData> results = new ObservableCollection<FileData>();
+
+            foreach (ProjectData project in StoredProjects)
+            {
+
+                foreach (FileData file in project.StoredFiles)
+                {
+                    string b1 = file.Beskrivning1;
+                    string b2 = file.Beskrivning2;
+                    string b3 = file.Beskrivning3;
+
+                    if (b1 != null)
+                    {
+                        if (b1.ToLower().Contains(searchtext.ToLower())){results.Add(file);}
+                    }
+
+                    if (b2 != null)
+                    {
+                        if (b2.ToLower().Contains(searchtext.ToLower())){results.Add(file);}
+                    }
+
+                    if (b3 != null)
+                    {
+                        if (b3.ToLower().Contains(searchtext.ToLower())) { results.Add(file); }
+                    }
+                }
+            }
+            CurrentProject.StoredFiles.Clear();
+            CurrentProject.StoredFiles = results;
+            CurrentProject.SetFiletypeList();
+
+
+            UpdateFilter();
+
+
+
+            Meta_1 = true;
+            Meta_2 = true;
+            Meta_3 = true;
+            Meta_4 = false;
+            Meta_5 = false;
+            Meta_6 = false;
+            Meta_7 = false;
+            Meta_8 = false;
+            Meta_9 = false;
+            Meta_10 = true;
+            Meta_11 = true;
+            Meta_12 = true;
+            Meta_13 = false;
+            Meta_14 = false;
+            Meta_15 = false;
+
         }
 
         private void RaisePropertyChanged(string propName)

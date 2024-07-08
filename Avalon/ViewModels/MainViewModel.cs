@@ -552,10 +552,16 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         ProjectsModel.ClearSelectedMetadata();
     }
 
+    public void search(string searchtext)
+    {
+        ProjectsModel.SeachFiles(searchtext);
+    }
+
     public void open_files()
     {
         try
         {
+            Debug.WriteLine(ProjectsModel.CurrentFile.Sökväg);
             foreach (FileData file in ProjectsModel.CurrentFiles)
             {
                 ProcessStartInfo psi = new ProcessStartInfo();
@@ -564,7 +570,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
                 Process.Start(psi);
             }
         }
-        catch { }
+        catch(Exception e) { Debug.WriteLine(e); }
     }
 
     public void open_meta()

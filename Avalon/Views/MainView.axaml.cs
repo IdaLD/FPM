@@ -125,6 +125,16 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (e.PropertyName == "FilteredFiles") { on_update_columns(); }
     }
 
+    public void on_search(object sender, RoutedEventArgs e)
+    {
+        string searchtext = SearchText.Text;
+
+        if (searchtext != null)
+        {
+            ctx.search(searchtext);
+        }
+    }
+
     public void toggle_treeview(object sender, RoutedEventArgs e)
     {
         treeview = !treeview;
@@ -628,7 +638,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_open_file(object sender, RoutedEventArgs e)
     {
-        
         if (StatusLabel.Content == "Ready")
         {
             StatusLabel.Content = "Opening file";
