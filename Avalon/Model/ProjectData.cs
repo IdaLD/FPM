@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Bson;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Newtonsoft.Json.Bson;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -68,6 +69,7 @@ namespace Avalon.Model
                 {
                     Namn = System.IO.Path.GetFileNameWithoutExtension(filepath),
                     Filtyp = "New",
+                    Uppdrag = Namn,
                     Sökväg = filepath
                 });
                 SetFiletypeList();
@@ -102,7 +104,8 @@ namespace Avalon.Model
             {
                 if (item != "All Types")
                 {
-                    FiletypesTree.Add(item + "\t\t\t\t\t\t\t\t\t" + Namn);
+                    int nrFiles = StoredFiles.Where(x=>x.Filtyp == item).Count();
+                    FiletypesTree.Add(item + "\t" + "(" + nrFiles + ")" + "\t\t\t\t\t\t\t\t\t" + Namn);
                 }
             }
         }

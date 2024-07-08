@@ -20,7 +20,7 @@
 
 
 	
-			<Grid Name ="MainGrid" ColumnDefinitions="0,*,0,0" RowDefinitions="40,30,*" Margin="5">
+			<Grid Name ="MainGrid" ColumnDefinitions="0,*,0,0" RowDefinitions="35,30,*" Margin="5">
 
 				<DockPanel Width="190" VerticalAlignment="Top" HorizontalAlignment="Left">
 					<Menu DockPanel.Dock="Top">
@@ -62,19 +62,6 @@
 					<TextBlock/>
 				</DockPanel>
 
-				
-				<Border Grid.Row="0" Grid.ColumnSpan="4" Width="310" HorizontalAlignment="Right" BorderBrush="Gray" BorderThickness="1" Margin="5 5 145 5" CornerRadius="5">
-					<Grid ColumnDefinitions="20,*,30,30" Height="2">
-						<TextBox Grid.Column="1" Watermark="Seach" Name="SearchText" Margin="-10" Padding="0"/>
-						<Button Grid.Column="2" MinWidth="30" Width="30" Margin="0" Click="on_search" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0">
-							<materialIcons:MaterialIcon Grid.Column="0" Kind="Search" Width="20" Height="20"/>
-						</Button>
-						<Button Grid.Column="3" MinWidth="30" Width="30" Margin="0" Command="{Binding ProjectsModel.SetDefaultSelection}" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0">
-							<materialIcons:MaterialIcon Grid.Column="0" Kind="Remove" Width="20" Height="20"/>
-						</Button>
-						
-					</Grid>
-				</Border>
 
 
 					<StackPanel Grid.Row="0" Grid.ColumnSpan="4" Orientation="Vertical" Spacing="10" Margin="0">
@@ -111,7 +98,67 @@
 		
 				
 					<StackPanel Grid.Row="1" Grid.ColumnSpan="4" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
-						
+
+						<Button Name="Columns" Width="140" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
+							<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="140">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="Database" Width="20" Height="20"/>
+								<Label Grid.Column="1" Content="Metadata" HorizontalAlignment="Center"/>
+								<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
+							</Grid>
+							<Button.Flyout>
+								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
+									<ListBox Name="ColumnList" Height="500" Width="140" FlowDirection="LeftToRight" >
+										<ListBoxItem Height="30">
+											<CheckBox Content="Name"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_1, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<ListBoxItem Height="30">
+											<CheckBox Content="Filtyp"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_2, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<ListBoxItem Height="30">
+											<CheckBox Content="Uppdrag"		Height="30"	 IsChecked="{Binding ProjectsModel.Meta_3, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<ListBoxItem Height="30">
+											<CheckBox Content="Tagg"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_4, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<ListBoxItem Height="30">
+											<CheckBox Content="Färg"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_5, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<ListBoxItem Height="30">
+											<CheckBox Content="Handling"		Height="30"	 IsChecked="{Binding ProjectsModel.Meta_6, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<ListBoxItem Height="30">
+											<CheckBox Content="Status"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_7, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<ListBoxItem Height="30">
+											<CheckBox Content="Datum"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_8, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<ListBoxItem Height="30">
+											<CheckBox Content="Ritningstyp"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_9, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<ListBoxItem Height="30">
+											<CheckBox Content="Beskrivning 1"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_10, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<ListBoxItem Height="30">
+											<CheckBox Content="Beskrivning 2"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_11, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<ListBoxItem Height="30">
+											<CheckBox Content="Beskrivning 3"  Height="30"	 IsChecked="{Binding ProjectsModel.Meta_12, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<ListBoxItem Height="30">
+											<CheckBox Content="Beskrivning 4"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_13, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<ListBoxItem Height="30">
+											<CheckBox Content="Revidering"		Height="30"	 IsChecked="{Binding ProjectsModel.Meta_14, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<ListBoxItem Height="30">
+											<CheckBox Content="Sökväg"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_15, Mode=TwoWay}"/>
+										</ListBoxItem>
+										<Button Content="Set as default" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding ProjectsModel.SetAllMetaCheckState}"/>
+									</ListBox>
+								</Flyout>
+							</Button.Flyout>
+						</Button>
+
 						<Button Name="SelectedType" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
 							<Button.Content>
 								<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="130">
@@ -128,8 +175,8 @@
 								</Flyout>
 							</Button.Flyout>
 						</Button>
-						
-						<Button Name="SelectedProject" Width="150" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed" FlowDirection="LeftToRight">
+
+						<Button Name="SelectedProject" Width="150" Margin="0 0 9 0" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed" FlowDirection="LeftToRight">
 							<Button.Content>
 								<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="150">
 									<materialIcons:MaterialIcon Grid.Column="0" Kind="Folder" Width="20" Height="20"/>
@@ -140,76 +187,69 @@
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<StackPanel Orientation="Vertical">
-										<ListBox Name="ProjectList" ItemsSource="{Binding ProjectsModel.ProjectList}" Height="300" Width="130" FlowDirection="LeftToRight"/>									
+										<ListBox Name="ProjectList" ItemsSource="{Binding ProjectsModel.ProjectList}" Height="300" Width="130" FlowDirection="LeftToRight"/>
 									</StackPanel>
 								</Flyout>
 							</Button.Flyout>
-						</Button>	
+						</Button>
 
-							
-						<Button Name="Columns" Width="150" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
-							<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="150">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="Database" Width="20" Height="20"/>
-								<Label Grid.Column="1" Content="Metadata" HorizontalAlignment="Center"/>
-								<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
-							</Grid>
+					</StackPanel>
+
+				<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="4" HorizontalAlignment="Center">
+					<Border Width="170" HorizontalAlignment="Right" FlowDirection="LeftToRight" BorderBrush="Gray" Padding="0" BorderThickness="1" Margin="0" CornerRadius="5">
+						<Grid ColumnDefinitions="20,*,30" Height="20" >
+							<TextBox Grid.Column="1" Watermark="Seach All Files" Name="SearchText" Margin="0" Padding="0"/>
+							<Button Grid.Column="2" MinWidth="30" Width="30" Margin="0" Click="on_search" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="Search" Width="20" Height="20"/>
+							</Button>
+						</Grid>
+					</Border>
+				</StackPanel>
+				
+					<StackPanel Orientation="Horizontal" Spacing="0" Height="35" HorizontalAlignment="Right" Grid.Row="0" Grid.ColumnSpan="4" Margin="0 0 155 0">
+						<ToggleButton Name="PreviewToggle" Height="25" Width="35" Margin="0,-5,0,0">
+							<StackPanel>
+								<materialIcons:MaterialIcon Name="EyeOnIcon" Kind="Eye" Width="20" Height="20" IsVisible="False"/>
+								<materialIcons:MaterialIcon Name="EyeOffIcon" Kind="EyeOff" Width="20" Height="20"/>
+							</StackPanel>
+						</ToggleButton>	
+
+						<ToggleButton Name="ThemeToggle" Height="25" Width="35" Margin="0,-5,0,0" Checked="on_theme_light" Unchecked="on_theme_dark">
+							<StackPanel>
+								<materialIcons:MaterialIcon Kind="ThemeLightDark" Width="20" Height="20"/>
+							</StackPanel>
+						</ToggleButton>
+						
+						<ToggleButton Name="TreeStatus" Height="25" Width="35" Margin="0,-5,0,0" Click="toggle_treeview">
+							<StackPanel>
+								<materialIcons:MaterialIcon Name="TreeviewOn" Kind="Tree" Width="20" Height="20" IsVisible="False"/>
+								<materialIcons:MaterialIcon Name="TreeviewOff" Kind="TreeOutline" Width="20" Height="20" />
+							</StackPanel>
+						</ToggleButton>
+						
+						<ToggleButton Name="Lockedstatus" Height="25" Width="35" Margin="0,-5,0,0" VerticalAlignment="Center">
+							<StackPanel>
+								<materialIcons:MaterialIcon Name="LockIcon" Kind="Lock" Width="20" Height="20"/>
+								<materialIcons:MaterialIcon Name="UnlockedIcon" Kind="LockOpenVariant" Width="20" Height="20" IsVisible="False"/>
+							</StackPanel>
+						</ToggleButton>
+
+						<Button Name="InfoText" Height="25" MinWidth="35" Width="35" Margin="0,-5,0,0" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0" Click="Border_PointerPressed">
+							<materialIcons:MaterialIcon Grid.Column="0" Kind="NoteText" Width="20" Height="20"/>
 							<Button.Flyout>
-								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<ListBox Name="ColumnList" Height="500" Width="150" FlowDirection="LeftToRight" >
-										<ListBoxItem Height="30"><CheckBox Content="Name"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_1, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Filtyp"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_2, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Uppdrag"		Height="30"	 IsChecked="{Binding ProjectsModel.Meta_3, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Tagg"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_4, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Färg"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_5, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Handling"		Height="30"	 IsChecked="{Binding ProjectsModel.Meta_6, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Status"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_7, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Datum"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_8, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Ritningstyp"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_9, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 1"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_10, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 2"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_11, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 3"  Height="30"	 IsChecked="{Binding ProjectsModel.Meta_12, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 4"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_13, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Revidering"		Height="30"	 IsChecked="{Binding ProjectsModel.Meta_14, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Sökväg"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_15, Mode=TwoWay}"/></ListBoxItem>
-										<Button Content="Set as default" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding ProjectsModel.SetAllMetaCheckState}"/>
-									</ListBox>
-									
+								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-110" VerticalOffset="45" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
+									<StackPanel Orientation="Vertical">
+										<Border BorderBrush="Gray" BorderThickness="0 0 0 1">
+											<Label Content="Project Notepad" Margin="5" HorizontalAlignment="Center"/>
+										</Border>
+										<TextBox Text="{Binding ProjectsModel.CurrentProject.Notes}" InnerLeftContent="   " InnerRightContent="   " AcceptsReturn="True" AcceptsTab="True"
+												 Width="560" FontSize="14" FontWeight="Medium" Height="500" FlowDirection="LeftToRight" IsEnabled="True">
+										</TextBox>
+									</StackPanel>
 								</Flyout>
 							</Button.Flyout>
 						</Button>
-
-						<Button Name="InfoText" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
-							<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="130">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="NoteText" Width="20" Height="20"/>
-								<Label Grid.Column="1" Content="Notepad" HorizontalAlignment="Center"/>
-								<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
-							</Grid>
-							<Button.Flyout>
-								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="211" VerticalOffset="10" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<TextBox Text="{Binding ProjectsModel.CurrentProject.Notes}" InnerLeftContent="   " InnerRightContent="   " AcceptsReturn="True" AcceptsTab="True"
-											 Width="560" FontSize="14" FontWeight="Medium" Height="500" FlowDirection="LeftToRight" IsEnabled="True">
-
-									</TextBox>
-									
-								</Flyout>
-							</Button.Flyout>
-						</Button>
-
-						<ToggleSwitch Name="PreviewToggle" Margin="10,0,0,0"/>
-						<materialIcons:MaterialIcon Name="EyeOnIcon" Kind="Eye" Width="20" Height="20" IsVisible="False"/>
-						<materialIcons:MaterialIcon Name="EyeOffIcon" Kind="EyeOff" Width="20" Height="20"/>
-
-						<ToggleSwitch Name="ThemeToggle" Margin="10,0,0,0" Checked="on_theme_light" Unchecked="on_theme_dark" />
-						<materialIcons:MaterialIcon Kind="ThemeLightDark" Width="20" Height="20"/>
-
-						<ToggleSwitch Name="TreeStatus" Margin="10,0,0,0" VerticalAlignment="Center" Checked="toggle_treeview" Unchecked="toggle_treeview"/>
-						<materialIcons:MaterialIcon Name="TreeviewOn" Kind="Tree" Width="20" Height="20" IsVisible="False"/>
-						<materialIcons:MaterialIcon Name="TreeviewOff" Kind="TreeOutline" Width="20" Height="20" />
-
-						<ToggleSwitch Name="Lockedstatus" Margin="10,0,0,0" VerticalAlignment="Center"/>
-						<materialIcons:MaterialIcon Name="LockIcon" Kind="Lock" Width="20" Height="20"/>
-						<materialIcons:MaterialIcon Name="UnlockedIcon" Kind="LockOpenVariant" Width="20" Height="20" IsVisible="False"/>
-
+						
 					</StackPanel>
 
 					<DataGrid Name="FileGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsModel.FilteredFiles}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
@@ -302,58 +342,62 @@
 			
 				<GridSplitter Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns"/>
 
-				<Grid ClipToBounds="True" RowDefinitions="*,40" Grid.Column="3" Grid.Row="2" >
-
-					<Viewbox Grid.Row="0" Name="Previewer" Stretch="Uniform" StretchDirection="Both" Margin="-10">
-
-						<Border>
-							<Border.Effect>
-								<DropShadowDirectionEffect  BlurRadius="10" Direction="180" ShadowDepth="10" Opacity="0.20"/>
-							</Border.Effect>
-							<Panel Background="White" Margin="20">
-								<StackPanel Orientation="Horizontal">
-									<Image x:Name="Preview" Source="{Binding ImageFromBinding}"/>
-									<Image x:Name="Preview2" Source="{Binding ImageFromBinding2}" IsVisible="{Binding pw_dualmode}"/>
-								</StackPanel>
-							</Panel>
-						</Border>
-					</Viewbox>
+				<Grid RowDefinitions="*,30" Grid.Column="3" Grid.Row="2" Margin="0 5 0 0">
+					<Grid ClipToBounds="True" Grid.Row="0" Grid.Column="0">
+						<Viewbox Grid.Row="0" Grid.Column="0" Name="Previewer" Stretch="Uniform" StretchDirection="Both" Margin="-10">
+							<Border>
+								<Border.Effect>
+									<DropShadowDirectionEffect  BlurRadius="10" Direction="180" ShadowDepth="10" Opacity="0.20"/>
+								</Border.Effect>
+								<Panel Background="White" Margin="20">
+									<StackPanel Orientation="Horizontal">
+										<Image x:Name="Preview" Source="{Binding ImageFromBinding}"/>
+										<Image x:Name="Preview2" Source="{Binding ImageFromBinding2}" IsVisible="{Binding pw_dualmode}"/>
+									</StackPanel>
+								</Panel>
+							</Border>
+						</Viewbox>
+					</Grid>
+					
 	
-					<StackPanel Grid.Row="1" FlowDirection="RightToLeft" Orientation="Vertical" Margin="5">
-						<StackPanel Width="700" Orientation="Horizontal" Background="Transparent" Spacing="5">
+					<StackPanel ClipToBounds="True" Grid.Row="1" FlowDirection="RightToLeft" Orientation="Vertical" Margin="0">
+						<StackPanel Width="700" Orientation="Horizontal" VerticalAlignment="Center" Spacing="0">
 							
-							<ToggleSwitch Name="DualMode" Command="{Binding toggle_pw_mode}" Click="on_toggle_dualmode"/>
-							<materialIcons:MaterialIcon Kind="FileDocument" Width="20" Height="20" IsVisible="{Binding !pw_dualmode}"/>
-							<materialIcons:MaterialIcon Kind="BookOpenPageVariant" Width="20" Height="20" IsVisible="{Binding pw_dualmode}"/>
 
-							<Slider Name="PreviewQuality" FlowDirection="LeftToRight" Width="90" Margin="10" Minimum="1" Maximum="8" Value="3" IsSnapToTickEnabled="True" SmallChange="1" TickFrequency="1"/>
-							<materialIcons:MaterialIcon Kind="ImageSizeSelectActual" Width="20" Height="20"/>
-							
-							<Button MinWidth="35" BorderThickness="0" Click="reset_preview_transform">
+							<Slider Name="PreviewQuality" FlowDirection="LeftToRight" Width="90" Margin="0 0 10 0" Height="30" Classes="Discrete" Minimum="1" Maximum="8" Value="3" IsSnapToTickEnabled="True" SmallChange="1" TickFrequency="1"/>
+							<materialIcons:MaterialIcon Kind="ImageSizeSelectActual" Width="35" Height="20"/>
+
+							<ToggleButton Name="DualMode" Width="35" Height="25" Command="{Binding toggle_pw_mode}" Click="on_toggle_dualmode">
+								<StackPanel>
+									<materialIcons:MaterialIcon Kind="FileDocument" Width="20" Height="20" IsVisible="{Binding !pw_dualmode}"/>
+									<materialIcons:MaterialIcon Kind="BookOpenPageVariant" Width="20" Height="20" IsVisible="{Binding pw_dualmode}"/>
+								</StackPanel>
+							</ToggleButton>
+
+							<Button MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Click="reset_preview_transform">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="StretchToPageOutline" Width="20" Height="20"/>
 							</Button>
 
-							<Button Name="ScrollMode" MinWidth="35" BorderThickness="0" Background="Orange" Click="on_scroll_mode">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="ScrollText" Width="20" Height="20"/>
+							<Button MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Click="on_scroll_mode">
+								<StackPanel>
+									<materialIcons:MaterialIcon Name="ModeIconScroll" Grid.Column="0" Kind="MouseScrollWheel" Width="20" Height="20"/>
+									<materialIcons:MaterialIcon Name="ModeIconZoom" Grid.Column="0" Kind="ZoomIn" Width="20" Height="20" IsVisible="False"/>
+								</StackPanel>
 							</Button>
 							
-							<Button Name="ZoomMode" MinWidth="35" BorderThickness="0" Click="on_zoom_mode">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="ZoomIn" Width="20" Height="20"/>
-							</Button>
-							
-							<Button  MinWidth="35" BorderThickness="0" Command="{Binding next_preview_page}">
+							<Button  MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}"  Command="{Binding next_preview_page}">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
 							</Button>
 								
-							<Button MinWidth="35" BorderThickness="0" Command="{Binding previous_preview_page}">
+							<Button MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}"  Command="{Binding previous_preview_page}">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
 							</Button>
 							
 							<Label Content="{Binding pw_pagecount_view}" VerticalAlignment="Center"/>
 							<Label Content="/" VerticalAlignment="Center"/>
 							<Label Content="{Binding pw_pagenr_view}" Width="30" VerticalAlignment="Center"/>
-							<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Width="200" Margin="10" Minimum="1" IsSnapToTickEnabled="True" TickFrequency="1" Maximum="{Binding pw_pagecount_view}" Value="{Binding pw_pagenr_view}"/>
 							
+							<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Classes="Discrete" Width="200" Height="30" Margin="10 0 0 0" Minimum="1" IsSnapToTickEnabled="True" TickFrequency="1" Maximum="{Binding pw_pagecount_view}" Value="{Binding pw_pagenr_view}"/>
 							
 						</StackPanel>
 					</StackPanel>

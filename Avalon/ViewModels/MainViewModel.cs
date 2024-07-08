@@ -271,40 +271,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         }
     }
 
-    public async Task LoadFileOld(Avalonia.Visual window)
-    {
-        var topLevel = TopLevel.GetTopLevel(window);
-
-        var jsonformat = new FilePickerFileType("Json format") { Patterns = new[] { "*.json" } };
-        List<FilePickerFileType> formatlist = new List<FilePickerFileType>();
-        formatlist.Add(jsonformat);
-        IReadOnlyList<FilePickerFileType> fileformat = formatlist;
-
-        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-        {
-            Title = "Load File",
-            AllowMultiple = false,
-            FileTypeFilter = fileformat
-        });
-
-        if (files.Count > 0)
-        {
-            await using var stream = await files[0].OpenReadAsync();
-            using var streamReader = new StreamReader(stream);
-            string fileContent = await streamReader.ReadToEndAsync();
-
-            ObservableCollection<FileData> oldfiles = JsonConvert.DeserializeObject<ObservableCollection<FileData>>(fileContent);
-
-            ProjectsModel.NewProject("Old files");
-
-            ProjectsModel.SetProject("Old files");
-
-            ProjectsModel.CurrentProject.AddFiles(oldfiles);
-
-            ProjectsModel.SetDefaultSelection();
-
-        }
-    }
 
     public async Task LoadFile(Avalonia.Visual window)
     {

@@ -88,7 +88,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     public double y_start = 0f;
 
     public double pw_scale = 1f;
-    public string pw_mode = "Scroll";
+    public bool pw_scroll_mode = true;
 
     public string preview_request = "";
     public string preview_current = "";
@@ -133,6 +133,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             ctx.search(searchtext);
         }
+
+        on_update_columns();
     }
 
     public void toggle_treeview(object sender, RoutedEventArgs e)
@@ -250,10 +252,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             val2 = 3.2f;
         }
 
-        set_preview_request(null, null);         
+        set_preview_request(null, null);
 
+        MainGrid.ColumnDefinitions[1] = new ColumnDefinition(1f, GridUnitType.Star);
         MainGrid.ColumnDefinitions[2] = new ColumnDefinition(val1, GridUnitType.Pixel);
         MainGrid.ColumnDefinitions[3] = new ColumnDefinition(val2, GridUnitType.Star);
+
 
         if (previewMode == false)
         {
@@ -341,22 +345,17 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_scroll_mode(object sender, RoutedEventArgs e)
     {
-        pw_mode = "Scroll";
-        ScrollMode.Background = Avalonia.Media.Brushes.Orange;
-        ZoomMode.Background = Avalonia.Media.Brushes.DarkGray;
-    }
+        pw_scroll_mode = !pw_scroll_mode;
 
-    private void on_zoom_mode(object sender, RoutedEventArgs e)
-    {
-        pw_mode = "Zoom";
-        ScrollMode.Background = Avalonia.Media.Brushes.DarkGray;
-        ZoomMode.Background = Avalonia.Media.Brushes.Orange;
+        ModeIconScroll.IsVisible = pw_scroll_mode;
+        ModeIconZoom.IsVisible = !pw_scroll_mode;
+
     }
 
     private void on_scroll_preview(object sender, PointerWheelEventArgs args)
     {
     
-        if (pw_mode == "Scroll")
+        if (pw_scroll_mode == true)
         {
             Vector mode = args.Delta;
 
@@ -416,9 +415,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void on_preview_zoom(object sender, PointerWheelEventArgs args)
     {
 
-        if (pw_mode == "Zoom")
+        if (pw_scroll_mode == false) 
         {
-
             Vector mode = args.Delta;
 
             if (mode.Y > 0)

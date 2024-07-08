@@ -367,7 +367,12 @@ namespace Avalon.Model
 
         public void SetDefaultSelection()
         {
-            CurrentProject = GetProject(ProjectList.FirstOrDefault());
+            string defaultProject = string.Empty;
+
+            if (ProjectList[0] != "0. Search") { defaultProject = ProjectList[0]; }
+            else { defaultProject = ProjectList[1]; }
+
+            CurrentProject = GetProject(defaultProject);
             Type = "All Types";
         }
 
@@ -450,44 +455,32 @@ namespace Avalon.Model
 
             ObservableCollection<FileData> results = new ObservableCollection<FileData>();
 
-            foreach (ProjectData project in StoredProjects)
+            foreach (ProjectData project in StoredProjects.Where(x => x.Namn != "0. Search"))
             {
-
                 foreach (FileData file in project.StoredFiles)
                 {
                     string b1 = file.Beskrivning1;
                     string b2 = file.Beskrivning2;
                     string b3 = file.Beskrivning3;
+                    string b4 = file.Tagg;
 
-                    if (b1 != null)
-                    {
-                        if (b1.ToLower().Contains(searchtext.ToLower())){results.Add(file);}
-                    }
-
-                    if (b2 != null)
-                    {
-                        if (b2.ToLower().Contains(searchtext.ToLower())){results.Add(file);}
-                    }
-
-                    if (b3 != null)
-                    {
-                        if (b3.ToLower().Contains(searchtext.ToLower())) { results.Add(file); }
-                    }
+                    if (b1 != null){if (b1.ToLower().Contains(searchtext.ToLower())) { results.Add(file); }}
+                    if (b2 != null){if (b2.ToLower().Contains(searchtext.ToLower())) { results.Add(file); }}
+                    if (b3 != null){if (b3.ToLower().Contains(searchtext.ToLower())) { results.Add(file); }}
+                    if (b3 != null) { if (b4.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
                 }
             }
+
             CurrentProject.StoredFiles.Clear();
             CurrentProject.StoredFiles = results;
             CurrentProject.SetFiletypeList();
-
-
+            SetType("All Types");
             UpdateFilter();
-
-
 
             Meta_1 = true;
             Meta_2 = true;
             Meta_3 = true;
-            Meta_4 = false;
+            Meta_4 = true;
             Meta_5 = false;
             Meta_6 = false;
             Meta_7 = false;
