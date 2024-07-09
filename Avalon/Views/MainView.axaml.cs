@@ -225,6 +225,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var MaterialThemeStyles = Avalonia.Application.Current!.LocateMaterialTheme<MaterialTheme>();
         MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Dark;
         MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Grey;
+
+        ModeDayIcon.IsVisible = false;
+        ModeNightIcon.IsVisible = true;
         
         set_theme_colors();
         update_row_color();
@@ -236,6 +239,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var MaterialThemeStyles = Avalonia.Application.Current!.LocateMaterialTheme<MaterialTheme>();
         MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Light;
         MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Blue;
+
+        ModeDayIcon.IsVisible = true;
+        ModeNightIcon.IsVisible = false;
 
         set_theme_colors();
         update_row_color();

@@ -108,51 +108,21 @@
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<ListBox Name="ColumnList" Height="500" Width="140" FlowDirection="LeftToRight" >
-										<ListBoxItem Height="30">
-											<CheckBox Content="Name"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_1, Mode=TwoWay}"/>
-										</ListBoxItem>
-										<ListBoxItem Height="30">
-											<CheckBox Content="Filtyp"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_2, Mode=TwoWay}"/>
-										</ListBoxItem>
-										<ListBoxItem Height="30">
-											<CheckBox Content="Uppdrag"		Height="30"	 IsChecked="{Binding ProjectsModel.Meta_3, Mode=TwoWay}"/>
-										</ListBoxItem>
-										<ListBoxItem Height="30">
-											<CheckBox Content="Tagg"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_4, Mode=TwoWay}"/>
-										</ListBoxItem>
-										<ListBoxItem Height="30">
-											<CheckBox Content="Färg"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_5, Mode=TwoWay}"/>
-										</ListBoxItem>
-										<ListBoxItem Height="30">
-											<CheckBox Content="Handling"		Height="30"	 IsChecked="{Binding ProjectsModel.Meta_6, Mode=TwoWay}"/>
-										</ListBoxItem>
-										<ListBoxItem Height="30">
-											<CheckBox Content="Status"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_7, Mode=TwoWay}"/>
-										</ListBoxItem>
-										<ListBoxItem Height="30">
-											<CheckBox Content="Datum"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_8, Mode=TwoWay}"/>
-										</ListBoxItem>
-										<ListBoxItem Height="30">
-											<CheckBox Content="Ritningstyp"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_9, Mode=TwoWay}"/>
-										</ListBoxItem>
-										<ListBoxItem Height="30">
-											<CheckBox Content="Beskrivning 1"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_10, Mode=TwoWay}"/>
-										</ListBoxItem>
-										<ListBoxItem Height="30">
-											<CheckBox Content="Beskrivning 2"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_11, Mode=TwoWay}"/>
-										</ListBoxItem>
-										<ListBoxItem Height="30">
-											<CheckBox Content="Beskrivning 3"  Height="30"	 IsChecked="{Binding ProjectsModel.Meta_12, Mode=TwoWay}"/>
-										</ListBoxItem>
-										<ListBoxItem Height="30">
-											<CheckBox Content="Beskrivning 4"	Height="30"	 IsChecked="{Binding ProjectsModel.Meta_13, Mode=TwoWay}"/>
-										</ListBoxItem>
-										<ListBoxItem Height="30">
-											<CheckBox Content="Revidering"		Height="30"	 IsChecked="{Binding ProjectsModel.Meta_14, Mode=TwoWay}"/>
-										</ListBoxItem>
-										<ListBoxItem Height="30">
-											<CheckBox Content="Sökväg"			Height="30"	 IsChecked="{Binding ProjectsModel.Meta_15, Mode=TwoWay}"/>
-										</ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Name" Height="30" IsChecked="{Binding ProjectsModel.Meta_1, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Filtyp" Height="30" IsChecked="{Binding ProjectsModel.Meta_2, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Uppdrag" Height="30" IsChecked="{Binding ProjectsModel.Meta_3, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Tagg" Height="30" IsChecked="{Binding ProjectsModel.Meta_4, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Färg" Height="30" IsChecked="{Binding ProjectsModel.Meta_5, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Handling" Height="30" IsChecked="{Binding ProjectsModel.Meta_6, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Status" Height="30" IsChecked="{Binding ProjectsModel.Meta_7, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Datum" Height="30" IsChecked="{Binding ProjectsModel.Meta_8, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Ritningstyp" Height="30" IsChecked="{Binding ProjectsModel.Meta_9, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 1" Height="30" IsChecked="{Binding ProjectsModel.Meta_10, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 2" Height="30" IsChecked="{Binding ProjectsModel.Meta_11, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 3" Height="30" IsChecked="{Binding ProjectsModel.Meta_12, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 4" Height="30" IsChecked="{Binding ProjectsModel.Meta_13, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Revidering" Height="30" IsChecked="{Binding ProjectsModel.Meta_14, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Sökväg" Height="30" IsChecked="{Binding ProjectsModel.Meta_15, Mode=TwoWay}"/></ListBoxItem>
 										<Button Content="Set as default" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding ProjectsModel.SetAllMetaCheckState}"/>
 									</ListBox>
 								</Flyout>
@@ -207,6 +177,14 @@
 				</StackPanel>
 				
 					<StackPanel Orientation="Horizontal" Spacing="0" Height="35" HorizontalAlignment="Right" Grid.Row="0" Grid.ColumnSpan="4" Margin="0 0 155 0">
+						
+						<ToggleButton Name="TreeStatus" ToolTip.Tip="Treeview: Ctrl + T" HotKey="Ctrl+T" Height="25" Width="35" Margin="0,-5,0,0" IsCheckedChanged="toggle_treeview">
+							<StackPanel>
+								<materialIcons:MaterialIcon Name="TreeviewOn" Kind="Tree" Width="20" Height="20" IsVisible="False"/>
+								<materialIcons:MaterialIcon Name="TreeviewOff" Kind="TreeOutline" Width="20" Height="20" />
+							</StackPanel>
+						</ToggleButton>
+
 						<ToggleButton Name="PreviewToggle" ToolTip.Tip="Preview: Ctrl + P" HotKey="Ctrl+P" Height="25" Width="35" Margin="0,-5,0,0">
 							<StackPanel>
 								<materialIcons:MaterialIcon Name="EyeOnIcon" Kind="Eye" Width="20" Height="20" IsVisible="False"/>
@@ -216,14 +194,8 @@
 
 						<ToggleButton Name="ThemeToggle" ToolTip.Tip="Mode: Ctrl + M" HotKey="Ctrl+M" Height="25" Width="35" Margin="0,-5,0,0" Checked="on_theme_light" Unchecked="on_theme_dark">
 							<StackPanel>
-								<materialIcons:MaterialIcon Kind="ThemeLightDark" Width="20" Height="20"/>
-							</StackPanel>
-						</ToggleButton>
-						
-						<ToggleButton Name="TreeStatus" ToolTip.Tip="Treeview: Ctrl + T" HotKey="Ctrl+T" Height="25" Width="35" Margin="0,-5,0,0" IsCheckedChanged="toggle_treeview">
-							<StackPanel>
-								<materialIcons:MaterialIcon Name="TreeviewOn" Kind="Tree" Width="20" Height="20" IsVisible="False"/>
-								<materialIcons:MaterialIcon Name="TreeviewOff" Kind="TreeOutline" Width="20" Height="20" />
+								<materialIcons:MaterialIcon Name="ModeNightIcon" Kind="WeatherNight" Width="20" Height="20"/>
+								<materialIcons:MaterialIcon Name="ModeDayIcon" Kind="WeatherSunny" Width="20" Height="20" IsVisible="False"/>
 							</StackPanel>
 						</ToggleButton>
 						
