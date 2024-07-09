@@ -48,11 +48,11 @@
 									<TextBox Name="NewProjectName" Width="160"  Margin="10 0 0 0" Text="{Binding user_tag}"/>
 								</StackPanel>
 								<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project" Icon="{materialIcons:MaterialIconExt Kind=Rename}"/>
-								
-								
 							</MenuItem>
-
-							<MenuItem Name="FetchMetadata" Header="Fetch MD" Click="on_fetch_full_meta" Icon="{materialIcons:MaterialIconExt Kind=Database}"/>
+							<MenuItem Header="Category" Icon="{materialIcons:MaterialIconExt Kind=Category}">
+								<MenuItem Header="Project" Click="on_set_category"/>
+								<MenuItem Header="Library" Click="on_set_category"/>
+							</MenuItem>
 							
 							<Separator></Separator>
 							<MenuItem Name="RemoveProjectMenu" Header="Remove" Command="{Binding remove_project}" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
@@ -260,6 +260,7 @@
 								</MenuItem>
 								<MenuItem Name="MetaMenu" Header="Metadata" Icon="{materialIcons:MaterialIconExt Kind=Database}">
 									<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta" Icon="{materialIcons:MaterialIconExt Kind=DatabaseSync}"/>
+									<MenuItem Name="FetchMetadata" Header="Fetch All" Click="on_fetch_full_meta" Icon="{materialIcons:MaterialIconExt Kind=Database}"/>
 									<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding clear_meta}" Icon="{materialIcons:MaterialIconExt Kind=DatabaseOff}"/>
 								</MenuItem>
 
@@ -386,9 +387,11 @@
 							 
 								<TreeView.ItemTemplate>
 									<TreeDataTemplate x:DataType="model:ProjectData" ItemsSource="{Binding FiletypesTree}">
-
-										<TextBlock Text="{Binding Namn}"/>
-
+										<StackPanel Orientation="Horizontal">
+											<TextBlock Text="{Binding Category}"/>
+											<TextBlock Text=": "/>
+											<TextBlock Text="{Binding Namn}"/>
+										</StackPanel>
 									</TreeDataTemplate>
 								
 								</TreeView.ItemTemplate>

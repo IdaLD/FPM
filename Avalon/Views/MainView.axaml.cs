@@ -167,6 +167,14 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
+    public void on_set_category(object sender, RoutedEventArgs e)
+    {
+        MenuItem menuitem = sender as MenuItem;
+        string category = menuitem.Header.ToString();
+
+        ctx.set_category(category);
+    }
+
     public void toggle_treeview(object sender, RoutedEventArgs e)
     {
         treeview = !treeview;
@@ -594,7 +602,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_rename_project(object sender, RoutedEventArgs e)
     {
-        ctx.rename_project(NewProjectName.Text.ToString());
+        if (NewProjectName.Text != null)
+        {
+            ctx.rename_project(NewProjectName.Text.ToString());
+        }
     }
 
     private void on_add_file(object sender, RoutedEventArgs e)

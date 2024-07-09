@@ -22,6 +22,13 @@ namespace Avalon.Model
             set { namn = value; RaisePropertyChanged("Namn"); }
         }
 
+        private string category = "Project";
+        public string Category
+        {
+            get { return category; }
+            set { category = value; RaisePropertyChanged("Category"); }
+        }
+
         private string notes = string.Empty;
         public string Notes
         {

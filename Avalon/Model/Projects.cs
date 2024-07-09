@@ -259,19 +259,32 @@ namespace Avalon.Model
             SortProjects();
         }
 
-        public void SortProjects()
+        public void RemoveProjects(List<ProjectData> list)
         {
-            List<ProjectData> sortedList = StoredProjects.OrderBy(x=>x.Namn).ToList();
-
-            StoredProjects.Clear();
-
-            foreach (var project in sortedList)
+            foreach(ProjectData project in list)
             {
-                StoredProjects.Add(project);
+                StoredProjects.Remove(project);
             }
 
             SetProjectlist();
             SetDefaultSelection();
+            SortProjects();
+        }
+
+        public void SortProjects()
+        {
+            List<ProjectData> search = StoredProjects.Where(x => x.Category == "Search").ToList();
+            List<ProjectData> sortedLibrary = StoredProjects.Where(x=>x.Category == "Library").OrderBy(x=>x.Namn).ToList();
+            List<ProjectData> sortedProject = StoredProjects.Where(x => x.Category == "Project").OrderBy(x => x.Namn).ToList();
+
+            StoredProjects.Clear();
+
+            foreach(var project in search){StoredProjects.Add(project);}
+            foreach(var project in sortedLibrary){StoredProjects.Add(project);}
+            foreach (var project in sortedProject){StoredProjects.Add(project);}
+
+            SetProjectlist();
+            //SetDefaultSelection();
         }
 
         public void RemoveSelectedFiles()
@@ -297,6 +310,12 @@ namespace Avalon.Model
             {
                 Type = "All Types";
             }
+        }
+
+        public void SetProjecCategory(string name)
+        {
+            CurrentProject.Category = name;
+            SortProjects();
         }
 
         public bool FetchMetaCheck(int i)
@@ -367,11 +386,7 @@ namespace Avalon.Model
 
         public void SetDefaultSelection()
         {
-            string defaultProject = string.Empty;
-
-            if (ProjectList[0] != "0. Search") { defaultProject = ProjectList[0]; }
-            else { defaultProject = ProjectList[1]; }
-
+            string defaultProject = StoredProjects.Where(x => x.Category != "Search").FirstOrDefault().Namn;
             CurrentProject = GetProject(defaultProject);
             Type = "All Types";
         }
@@ -446,16 +461,15 @@ namespace Avalon.Model
 
         public void SeachFiles(string searchtext)
         {
-            if (!StoredProjects.Any(x => x.Namn == "0. Search"))
-            {
-                NewProject("0. Search");
-            }
-                
-            CurrentProject = GetProject("0. Search");
+            RemoveProjects(StoredProjects.Where(x => x.Category == "Search").ToList());
+
+            NewProject(searchtext);
+            SetProject(searchtext);
+            SetProjecCategory("Search");
 
             ObservableCollection<FileData> results = new ObservableCollection<FileData>();
 
-            foreach (ProjectData project in StoredProjects.Where(x => x.Namn != "0. Search"))
+            foreach (ProjectData project in StoredProjects.Where(x => x.Category != "Search"))
             {
                 foreach (FileData file in project.StoredFiles)
                 {

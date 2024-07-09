@@ -3,6 +3,7 @@
         xmlns:vm="using:Avalon.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
         xmlns:views="clr-namespace:Avalon.Views"
         mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
 		MinWidth="1400"
@@ -12,7 +13,6 @@
         WindowStartupLocation="CenterScreen"
         ExtendClientAreaToDecorationsHint="True"
         Title="Avalon">
-
 
 	<Window.Styles>
 		<Style Selector="DataGridRow.YellowDark">
@@ -58,6 +58,8 @@
 		<Style Selector="DataGridRow.MagentaLight">
 			<Setter Property="Background" Value="#eb99eb"/>
 		</Style>
+
+		<dialogHostAvalonia:DialogHostStyles />
 		
 	</Window.Styles>
 	<views:MainView />

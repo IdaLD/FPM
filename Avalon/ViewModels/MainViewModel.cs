@@ -380,6 +380,11 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         ProjectsModel.SetDefaultType();
     }
 
+    public void set_category(string category)
+    {
+        ProjectsModel.SetProjecCategory(category);
+    }
+
     public void CopyFilenameToClipboard(Avalonia.Visual window)
     {
         string store = string.Empty;
