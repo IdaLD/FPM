@@ -27,6 +27,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Xml.Serialization;
 using Avalonia.Collections;
+using Avalonia.Controls.Shapes;
 
 
 namespace Avalon.ViewModels;
@@ -370,6 +371,12 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
                 ProjectsModel.CurrentProject.Newfile(path);
             }
         }
+        
+    }
+
+    public void AddFilesDrag(string path)
+    {
+        ProjectsModel.CurrentProject.Newfile(path);
         ProjectsModel.SetDefaultType();
     }
 

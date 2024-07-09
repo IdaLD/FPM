@@ -26,6 +26,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.VisualTree;
 using static System.Net.Mime.MediaTypeNames;
 using Avalonia.Controls.Generators;
+using System.IO;
 
 
 namespace Avalon.Views;
@@ -43,6 +44,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
 
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_files);
+
+        FileGrid.AddHandler(DragDrop.DropEvent, on_drop);
 
 
         ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
@@ -135,6 +138,30 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
 
         on_update_columns();
+    }
+
+    public void on_drop(object sender, DragEventArgs e)
+    {
+        var items = e.Data.GetFiles();
+
+        foreach(var item in items)
+        {
+            if (item.Path.IsFile == true)
+            {
+                string path = item.Path.LocalPath;
+
+                string type = Path.GetExtension(path);
+
+                if (type == ".pdf")
+                {
+                    ctx.AddFilesDrag(path);
+                }
+
+                Debug.WriteLine(type);
+                Debug.WriteLine(path);
+            }
+
+        }
     }
 
     public void toggle_treeview(object sender, RoutedEventArgs e)

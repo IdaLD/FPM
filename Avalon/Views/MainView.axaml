@@ -20,7 +20,7 @@
 
 
 	
-			<Grid Name ="MainGrid" ColumnDefinitions="0,*,0,0" RowDefinitions="35,30,*" Margin="5">
+			<Grid Name ="MainGrid" DragDrop.AllowDrop="True" ColumnDefinitions="0,*,0,0" RowDefinitions="35,30,*" Margin="5">
 
 				<DockPanel Width="190" VerticalAlignment="Top" HorizontalAlignment="Left">
 					<Menu DockPanel.Dock="Top">
