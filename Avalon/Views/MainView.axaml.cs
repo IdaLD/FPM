@@ -47,9 +47,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         FileGrid.AddHandler(DragDrop.DropEvent, on_drop);
 
-        MainGrid.AddHandler(Grid.KeyDownEvent, shortcuts);
-
-
         ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
         TypeList.AddHandler(ListBox.SelectionChangedEvent, on_type_selected);
 
@@ -142,6 +139,14 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         on_update_columns();
     }
 
+    public void on_start_search(object sender, KeyEventArgs e)
+    {
+        if(e.Key == Key.Enter)
+        {
+            on_search(null, null);
+        }
+    }
+
     public void on_drop(object sender, DragEventArgs e)
     {
         var items = e.Data.GetFiles();
@@ -159,26 +164,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                     ctx.AddFilesDrag(path);
                 }
             }
-        }
-    }
-
-    public void shortcuts(object sender, KeyEventArgs e)
-    {
-        Key pressed = e.Key;
-
-        if (pressed == Key.P)
-        {
-            PreviewToggle.IsChecked = !PreviewToggle.IsChecked;
-        }
-
-        if (pressed == Key.T)
-        {
-            TreeStatus.IsChecked = !TreeStatus.IsChecked;
-        }
-
-        if (pressed == Key.M)
-        {
-            ThemeToggle.IsChecked = !ThemeToggle.IsChecked;
         }
     }
 
