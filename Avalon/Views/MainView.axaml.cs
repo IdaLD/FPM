@@ -47,6 +47,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         FileGrid.AddHandler(DragDrop.DropEvent, on_drop);
 
+        MainGrid.AddHandler(Grid.KeyDownEvent, shortcuts);
+
 
         ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
         TypeList.AddHandler(ListBox.SelectionChangedEvent, on_type_selected);
@@ -156,11 +158,27 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                 {
                     ctx.AddFilesDrag(path);
                 }
-
-                Debug.WriteLine(type);
-                Debug.WriteLine(path);
             }
+        }
+    }
 
+    public void shortcuts(object sender, KeyEventArgs e)
+    {
+        Key pressed = e.Key;
+
+        if (pressed == Key.P)
+        {
+            PreviewToggle.IsChecked = !PreviewToggle.IsChecked;
+        }
+
+        if (pressed == Key.T)
+        {
+            TreeStatus.IsChecked = !TreeStatus.IsChecked;
+        }
+
+        if (pressed == Key.M)
+        {
+            ThemeToggle.IsChecked = !ThemeToggle.IsChecked;
         }
     }
 
