@@ -114,7 +114,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     public List<DataGridRowEventArgs> Args = new List<DataGridRowEventArgs>();
 
-
     public void get_datacontext()
     {
         ctx = (MainViewModel)this.DataContext;
@@ -270,6 +269,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         get_datacontext();
         Lockedstatus.IsChecked = true;
+        TreeStatus.IsChecked = true;
 
         try
         {

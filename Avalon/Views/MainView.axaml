@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:Avalon.ViewModels"
 			 xmlns:model="using:Avalon.Model"
 			 xmlns:local="clr-namespace:Avalon"
+			 xmlns:converter="clr-namespace:Avalon.Converters"
 			 xmlns:extensions="clr-namespace:Material.Styles.Controls.Extensions"
              mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
              x:Class="Avalon.Views.MainView"
@@ -17,6 +18,10 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:MainViewModel />
   </Design.DataContext>
+
+	<UserControl.Resources>
+		<converter:ShortenStringConverter x:Key="ShortenStringConverter" />
+	</UserControl.Resources>
 
 
 	
@@ -388,7 +393,7 @@
 								<TreeView.ItemTemplate>
 									<TreeDataTemplate x:DataType="model:ProjectData" ItemsSource="{Binding FiletypesTree}">
 										<StackPanel Orientation="Horizontal">
-											<TextBlock Text="{Binding Category}"/>
+											<TextBlock Text="{Binding Category, Converter={StaticResource ShortenStringConverter}}"/>
 											<TextBlock Text=": "/>
 											<TextBlock Text="{Binding Namn}"/>
 										</StackPanel>

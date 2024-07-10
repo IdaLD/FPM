@@ -314,8 +314,11 @@ namespace Avalon.Model
 
         public void SetProjecCategory(string name)
         {
-            CurrentProject.Category = name;
-            SortProjects();
+            if (currentProject.Category != "Search")
+            {
+                CurrentProject.Category = name;
+                SortProjects();
+            }
         }
 
         public bool FetchMetaCheck(int i)

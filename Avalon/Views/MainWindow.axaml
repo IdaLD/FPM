@@ -3,7 +3,6 @@
         xmlns:vm="using:Avalon.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
         xmlns:views="clr-namespace:Avalon.Views"
         mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
 		MinWidth="1400"
@@ -58,12 +57,24 @@
 		<Style Selector="DataGridRow.MagentaLight">
 			<Setter Property="Background" Value="#eb99eb"/>
 		</Style>
-
-		<dialogHostAvalonia:DialogHostStyles />
 		
 	</Window.Styles>
-	<views:MainView />
 
+	<Grid>
+		<views:MainView/>
 
-	
+		<Border Name="ConfirmLeave" Margin="0" Height="80" Width="250" Background="{DynamicResource MaterialCardBackgroundBrush}" IsVisible="False" CornerRadius="5">
+			<StackPanel Orientation="Vertical" VerticalAlignment="Center">
+				<Label Grid.Row="0" Grid.ColumnSpan="3" FontSize="18" HorizontalAlignment="Center" VerticalContentAlignment="Center" Content="Save before close?"/>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
+					<Button Theme="{DynamicResource MaterialButtonBase}" Width="70" Content="Yes" Click="on_save_before_close"/>
+					<Button Theme="{DynamicResource MaterialButtonBase}" Width="70" Content="No" Click="on_leave"/>
+					<Button Theme="{DynamicResource MaterialButtonBase}" Width="70" Content="Cancel" Click="on_cancel"/>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+	</Grid>
+
 </Window>
+
+
