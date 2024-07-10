@@ -68,7 +68,7 @@
 				<DropShadowDirectionEffect  BlurRadius="10" Direction="180" ShadowDepth="10" Opacity="0.20"/>
 			</Border.Effect>
 			<StackPanel Orientation="Vertical" VerticalAlignment="Center">
-				<Label Grid.Row="0" Grid.ColumnSpan="3" FontSize="18" HorizontalAlignment="Center" VerticalContentAlignment="Center" Content="Save before close?"/>
+				<Label Grid.Row="0" Grid.ColumnSpan="3" FontSize="18" FontFamily="Ubuntu" HorizontalAlignment="Center" VerticalContentAlignment="Center" Content="Save before close?"/>
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
 					<Button Theme="{DynamicResource MaterialButtonBase}" Width="70" Content="Yes" Click="on_save_before_close"/>
 					<Button Theme="{DynamicResource MaterialButtonBase}" Width="70" Content="No" Click="on_leave"/>

@@ -203,8 +203,8 @@
 						
 					</StackPanel>
 
-					<DataGrid Name="FileGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsModel.FilteredFiles}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
-							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
+					<DataGrid Name="FileGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsModel.FilteredFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
+							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true" >
 					
 						<DataGrid.Columns>
 							<DataGridTextColumn Binding="{Binding Namn}"							Header="Namn"           Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_1}"  FontFamily="UbuntuMono"/>

@@ -639,12 +639,22 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void select_type(string name)
     {
-        ProjectsModel.Type = name;
+        string currentType = ProjectsModel.Type;
+
+        if (currentType != name)
+        {
+            ProjectsModel.Type = name;
+        }
     }
 
     public void select_project(string name)
     {
-        ProjectsModel.SetProject(name);
+        string currentProjectName = ProjectsModel.CurrentProject.Namn;
+        if (currentProjectName != name)
+        {
+            ProjectsModel.SetProject(name);
+        }
+        
     }
 
     public void new_project(string name)

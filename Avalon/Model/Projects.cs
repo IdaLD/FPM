@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Avalonia.Controls;
+using Microsoft.CodeAnalysis.CSharp;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Avalon.Model
 {
@@ -48,12 +52,13 @@ namespace Avalon.Model
             set { type = value; RaisePropertyChanged("Type"); UpdateFilter();}
         }
 
-        private IEnumerable<FileData> filteredFiles = null;
-        public IEnumerable<FileData> FilteredFiles
+        private ObservableCollection<FileData> filteredFiles = new ObservableCollection<FileData>();
+        public ObservableCollection<FileData> FilteredFiles
         {
             get { return filteredFiles; }
-            set { filteredFiles = value; RaisePropertyChanged("FilteredFiles"); RaisePropertyChanged("NrFilteredFiles"); }
+            set { filteredFiles = value; RaisePropertyChanged("FilteredFiles"); }
         }
+
         public int NrFilteredFiles
         {
             get {
@@ -290,7 +295,7 @@ namespace Avalon.Model
             foreach (var project in sortedProject){StoredProjects.Add(project);}
 
             SetProjectlist();
-            //SetDefaultSelection();
+
         }
 
         public void RemoveSelectedFiles()
@@ -310,12 +315,19 @@ namespace Avalon.Model
 
         public void SetProject(string name)
         {
-            CurrentProject = StoredProjects.FirstOrDefault(x => x.Namn == name);
+            ProjectData project = StoredProjects.FirstOrDefault(x => x.Namn == name);
+
+            SelectProjectAsync(project);
 
             if (!CurrentProject.Filetypes.Contains(Type))
             {
                 Type = "All Types";
             }
+        }
+
+        public async Task SelectProjectAsync(ProjectData project)
+        {
+            CurrentProject = project;
         }
 
         public void SetProjecCategory(string name)
@@ -402,15 +414,26 @@ namespace Avalon.Model
 
         public void UpdateFilter()
         {
+            FilteredFiles.Clear();
+
             if (Type != "All Types")
             {
-                FilteredFiles = CurrentProject.StoredFiles.Where(x => x.Filtyp == Type);
+                foreach(FileData file in CurrentProject.StoredFiles.Where(x => x.Filtyp == Type))
+                {
+                    FilteredFiles.Add(file);
+                }
             }
+
             else
             {
-                FilteredFiles = CurrentProject.StoredFiles;
+                foreach (FileData file in CurrentProject.StoredFiles)
+                {
+                    FilteredFiles.Add(file);
+                }
             }
+            RaisePropertyChanged("NrFilteredFiles");
         }
+
 
         public ProjectData GetProject(string name)
         {
