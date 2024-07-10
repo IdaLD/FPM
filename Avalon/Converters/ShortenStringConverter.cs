@@ -11,7 +11,11 @@ namespace Avalon.Converters
         {
             string input = (string)value;
 
-            return input[0].ToString();
+            if (input != null)
+            {
+                return input[0].ToString();
+            }
+            return "N";
         }
 
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

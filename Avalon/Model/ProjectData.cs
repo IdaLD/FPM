@@ -79,6 +79,12 @@ namespace Avalon.Model
         public void RenameProject(string projectName)
         {
             Namn = projectName;
+
+            foreach(FileData file in StoredFiles)
+            {
+                file.Uppdrag = projectName;
+            }
+
             SetFiletypeList();
         }
 

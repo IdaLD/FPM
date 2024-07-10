@@ -581,8 +581,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_add_tag(object sender, RoutedEventArgs e)
     {
-        ctx.add_tag();
+        if (TagMenuInput.Text != null)
+        {
+            string tag = TagMenuInput.Text.ToString();
+            ctx.add_tag(tag);
+            ctx.add_tag(TagMenuInput.Text);
+        }
+
         deselect_items();
+        
     }
 
     private void on_clear_tag(object sender, RoutedEventArgs e)
@@ -605,6 +612,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (NewProjectName.Text != null)
         {
             ctx.rename_project(NewProjectName.Text.ToString());
+            NewProjectName.Text = null;
         }
     }
 

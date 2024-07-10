@@ -42,7 +42,7 @@
 							<MenuItem Name="NewProjectMenu" Header="New" Icon="{materialIcons:MaterialIconExt Kind=FolderPlus}">
 								<StackPanel Orientation="Horizontal">
 									<materialIcons:MaterialIcon Grid.Column="0" Kind="Input" Width="25" Height="20" HorizontalAlignment="Left"/>
-									<TextBox Name="ProjectName" Width="160"  Margin="10 0 0 0" Text="{Binding user_tag}"/>
+									<TextBox Name="ProjectName" Width="160"  Margin="10 0 0 0"/>
 								</StackPanel>
 								<MenuItem Name="AddProject" Header="Add" Click="on_add_project" Icon="{materialIcons:MaterialIconExt Kind=Plus}"/>
 							</MenuItem>
@@ -50,7 +50,7 @@
 							<MenuItem Name="RenameMenu" Header="Rename" Icon="{materialIcons:MaterialIconExt Kind=Rename}">
 								<StackPanel Orientation="Horizontal">
 									<materialIcons:MaterialIcon Grid.Column="0" Kind="Input" Width="25" Height="20" HorizontalAlignment="Left"/>
-									<TextBox Name="NewProjectName" Width="160"  Margin="10 0 0 0" Text="{Binding user_tag}"/>
+									<TextBox Name="NewProjectName" Text="{Binding ProjectsModel.CurrentProject.Namn, Mode=OneWay}" Width="160"  Margin="10 0 0 0"/>
 								</StackPanel>
 								<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project" Icon="{materialIcons:MaterialIconExt Kind=Rename}"/>
 							</MenuItem>
@@ -296,7 +296,7 @@
 								<MenuItem Name="TagMenu" Header="User Tag" Icon="{materialIcons:MaterialIconExt Kind=Tag}">
 									<StackPanel Orientation="Horizontal">
 										<materialIcons:MaterialIcon Grid.Column="0" Kind="Input" Width="25" Height="20" HorizontalAlignment="Left"/>
-										<TextBox Name="TagMenuInput" Width="160"  Margin="10 0 0 0" Text="{Binding user_tag}"/>
+										<TextBox Name="TagMenuInput" Width="160"  Margin="10 0 0 0"/>
 									</StackPanel>
 									
 									<MenuItem Name="TagMenuAdd" Header="Add Tag" Click="on_add_tag" FlowDirection="LeftToRight" Icon="{materialIcons:MaterialIconExt Kind=TagAdd}"/>

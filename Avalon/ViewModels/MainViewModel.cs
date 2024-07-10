@@ -79,8 +79,6 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         set { currentInfoFile = value; OnPropertyChanged("CurrentInfoFile"); }
     }
 
-    public string user_tag { get; set; }
-
     public List<string[]> metastore = new List<string[]>();
     public List<string> PathStore = new List<string>();
 
@@ -614,12 +612,13 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         }
     }
 
-    public void add_tag()
+    public void add_tag(string tag)
     {
         foreach (FileData file in ProjectsModel.CurrentFiles)
         {
-            file.Tagg = user_tag;
+            file.Tagg = tag;
         }
+
     }
 
     public void clear_tag()
