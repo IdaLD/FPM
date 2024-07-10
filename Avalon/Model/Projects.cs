@@ -432,6 +432,7 @@ namespace Avalon.Model
                 }
             }
             RaisePropertyChanged("NrFilteredFiles");
+            RaisePropertyChanged("UpdateColumns");
         }
 
 

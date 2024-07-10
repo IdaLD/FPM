@@ -34,9 +34,6 @@
 							<MenuItem Header="Save" Click="on_save_file_auto" Icon="{materialIcons:MaterialIconExt Kind=ContentSave}"/>
 							<MenuItem Header="Save As" Click="on_save_file" Icon="{materialIcons:MaterialIconExt Kind=ContentSaveEdit}"/>
 						</MenuItem>
-						<MenuItem Header="Add">
-							<MenuItem Header="File" Click="on_add_file" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
-						</MenuItem>
 					</Menu>
 					<TextBlock/>
 				</DockPanel>
@@ -377,7 +374,8 @@
 								
 								<TreeView.ContextMenu>
 									<ContextMenu Name="TreeMenu">
-										<MenuItem Name="NewProjectMenu" Header="New" Icon="{materialIcons:MaterialIconExt Kind=FolderPlus}">
+										<MenuItem Header="Add Files" Click="on_add_file" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
+										<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{materialIcons:MaterialIconExt Kind=FolderPlus}">
 											<StackPanel Orientation="Horizontal">
 												<materialIcons:MaterialIcon Grid.Column="0" Kind="Input" Width="25" Height="20" HorizontalAlignment="Left"/>
 												<TextBox Name="ProjectName" Width="160"  Margin="10 0 0 0"/>

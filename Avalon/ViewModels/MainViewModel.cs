@@ -360,6 +360,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             {
                 string path = file.Path.LocalPath;
                 ProjectsModel.CurrentProject.Newfile(path);
+                ProjectsModel.SetDefaultType();
             }
         }
         
@@ -524,6 +525,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public void search(string searchtext)
     {
         ProjectsModel.SeachFiles(searchtext);
+        OnPropertyChanged("UpdateColumns");
     }
 
     public void open_files()
@@ -645,6 +647,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         {
             ProjectsModel.Type = name;
         }
+        OnPropertyChanged("UpdateColumns");
     }
 
     public void select_project(string name)
@@ -654,7 +657,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         {
             ProjectsModel.SetProject(name);
         }
-        
+        OnPropertyChanged("UpdateColumns");
     }
 
     public void new_project(string name)

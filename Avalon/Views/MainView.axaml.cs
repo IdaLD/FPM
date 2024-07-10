@@ -112,6 +112,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     public void on_binding_ctx(object sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == "FilteredFiles") { on_update_columns(); }
+        if (e.PropertyName == "UpdateColumns") { on_update_columns(); }
     }
 
     public void on_search(object sender, RoutedEventArgs e)
@@ -122,7 +123,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             ctx.search(searchtext);
         }
-
         on_update_columns();
     }
 
