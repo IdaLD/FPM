@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Newtonsoft.Json;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -22,12 +21,6 @@ using Avalonia.Media.Imaging;
 using Avalonia;
 using Avalonia.Platform;
 using Avalon.Model;
-using Newtonsoft.Json.Bson;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using System.Xml.Serialization;
-using Avalonia.Collections;
-using Avalonia.Controls.Shapes;
 
 
 namespace Avalon.ViewModels;
@@ -666,7 +659,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void rename_project(string newProjectName)
     {
-        ProjectsModel.CurrentProject.RenameProject(newProjectName);
+        ProjectsModel.RenameProject(newProjectName);
         ProjectsModel.SetProjectlist();
     }
 

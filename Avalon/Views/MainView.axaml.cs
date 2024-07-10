@@ -3,7 +3,6 @@ using System;
 using Avalonia.Interactivity;
 using System.Linq;
 using Avalon.ViewModels;
-using System.Collections;
 using Avalonia;
 using System.ComponentModel;
 using Avalonia.Controls.Primitives;
@@ -13,19 +12,8 @@ using Material.Styles.Themes;
 using System.Threading;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Newtonsoft.Json.Bson;
-using System.Xml.Serialization;
-using System.Reflection;
 using Avalon.Model;
 using Avalonia.LogicalTree;
-using Avalonia.Diagnostics;
-using System.Runtime.CompilerServices;
-using Avalonia.Controls.Utils;
-using Avalonia.Markup.Xaml.Templates;
-using Avalonia.Controls.Templates;
-using Avalonia.VisualTree;
-using static System.Net.Mime.MediaTypeNames;
-using Avalonia.Controls.Generators;
 using System.IO;
 
 

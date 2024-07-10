@@ -1,11 +1,7 @@
 ﻿using Avalon.ViewModels;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using DialogHostAvalonia;
-using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace Avalon.Views;
 

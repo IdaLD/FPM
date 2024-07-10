@@ -1,15 +1,9 @@
-﻿using Avalonia.Collections;
-using Newtonsoft.Json.Bson;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Intrinsics.X86;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Avalon.Model
 {
@@ -269,6 +263,18 @@ namespace Avalon.Model
             SetProjectlist();
             SetDefaultSelection();
             SortProjects();
+        }
+
+        public void RenameProject(string projectName)
+        {
+            CurrentProject.Namn = projectName;
+
+            foreach (FileData file in CurrentProject.StoredFiles)
+            {
+                file.Uppdrag = projectName;
+            }
+            CurrentProject.SetFiletypeList();
+
         }
 
         public void SortProjects()
