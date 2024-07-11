@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Avalon.ViewModels;
 using System.ComponentModel;
 using Avalonia.Media.Imaging;
 using Docnet.Core.Readers;
@@ -12,9 +9,9 @@ using System.Runtime.InteropServices;
 
 namespace Avalon.ViewModels
 {
-	public class PwViewModel : ViewModelBase, INotifyPropertyChanged
+	public class PreviewViewModel : ViewModelBase, INotifyPropertyChanged
     {
-		public PwViewModel() { }
+		public PreviewViewModel() { }
 
         private WriteableBitmap? imageFromBinding = null;
         public WriteableBitmap? ImageFromBinding

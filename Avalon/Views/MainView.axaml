@@ -47,7 +47,7 @@
 
 				
 					<StackPanel Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" Margin="210,2,0,0">
-						<ProgressBar Name="ProgressBar" Width="200" Value="{Binding Status}" VerticalAlignment="Center"/>
+						<ProgressBar Name="ProgressBar" Width="200" VerticalAlignment="Center"/>
 						<Label Name="ProgressStatus" Width="200" Height="40" VerticalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Foreground="Gray" Padding="10"/>
 					</StackPanel>
 
@@ -292,7 +292,7 @@
 			
 				<GridSplitter Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns"/>
 
-				<Grid RowDefinitions="*,30" Grid.Column="3" Grid.Row="2" Margin="0 5 0 0" DataContext="{Binding PreviewModel}">
+				<Grid RowDefinitions="*,30" Grid.Column="3" Grid.Row="2" Margin="0 5 0 0" DataContext="{Binding PreviewVM}">
 					<Grid ClipToBounds="True" Grid.Row="0" Grid.Column="0">
 						<Viewbox Grid.Row="0" Grid.Column="0" Name="Previewer" Stretch="Uniform" StretchDirection="Both" Margin="-10">
 							<Border>

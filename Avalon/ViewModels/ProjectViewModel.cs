@@ -7,9 +7,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalon.Model;
 
-namespace FPM.ViewModels
+namespace Avalon.ViewModels
 {
-    public class ProjectViewModel : INotifyPropertyChanged
+    public class ProjectViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public ProjectViewModel()
         {
@@ -26,35 +26,35 @@ namespace FPM.ViewModels
         public ObservableCollection<ProjectData> StoredProjects
         {
             get { return storedProjects; }
-            set { storedProjects = value; RaisePropertyChanged("StoredProjects"); }
+            set { storedProjects = value; OnPropertyChanged("StoredProjects"); }
         }
 
         private List<string> projectList = new List<string>();
         public List<string> ProjectList
         {
             get { return projectList; }
-            set { projectList = value; RaisePropertyChanged("ProjectList"); }
+            set { projectList = value; OnPropertyChanged("ProjectList"); }
         }
 
         private ProjectData currentProject;
         public ProjectData CurrentProject
         {
             get { return currentProject; }
-            set { currentProject = value; RaisePropertyChanged("CurrentProject"); UpdateFilter(); UpdateMetaCheck(); }
+            set { currentProject = value; OnPropertyChanged("CurrentProject"); UpdateFilter(); UpdateMetaCheck(); }
         }
 
         private string type = null;
         public string Type
         {
             get { return type; }
-            set { type = value; RaisePropertyChanged("Type"); UpdateFilter(); }
+            set { type = value; OnPropertyChanged("Type"); UpdateFilter(); }
         }
 
         private ObservableCollection<FileData> filteredFiles = new ObservableCollection<FileData>();
         public ObservableCollection<FileData> FilteredFiles
         {
             get { return filteredFiles; }
-            set { filteredFiles = value; RaisePropertyChanged("FilteredFiles"); }
+            set { filteredFiles = value; OnPropertyChanged("FilteredFiles"); }
         }
 
         public int NrFilteredFiles
@@ -82,12 +82,12 @@ namespace FPM.ViewModels
             set
             {
                 currentFiles = value;
-                RaisePropertyChanged("FiletypesTree");
-                RaisePropertyChanged("CurrentFiles");
-                RaisePropertyChanged("CurrentFile");
-                RaisePropertyChanged("NrSelectedFiles");
-                RaisePropertyChanged("FileDate");
-                RaisePropertyChanged("FileSize");
+                OnPropertyChanged("FiletypesTree");
+                OnPropertyChanged("CurrentFiles");
+                OnPropertyChanged("CurrentFile");
+                OnPropertyChanged("NrSelectedFiles");
+                OnPropertyChanged("FileDate");
+                OnPropertyChanged("FileSize");
             }
         }
 
@@ -160,77 +160,77 @@ namespace FPM.ViewModels
         public bool Meta_1
         {
             get { return FetchMetaCheck(0); }
-            set { CurrentProject.MetaCheckStore[0] = value; RaisePropertyChanged("Meta_1"); }
+            set { CurrentProject.MetaCheckStore[0] = value; OnPropertyChanged("Meta_1"); }
         }
         public bool Meta_2
         {
             get { return FetchMetaCheck(1); }
-            set { CurrentProject.MetaCheckStore[1] = value; RaisePropertyChanged("Meta_2"); }
+            set { CurrentProject.MetaCheckStore[1] = value; OnPropertyChanged("Meta_2"); }
         }
         public bool Meta_3
         {
             get { return FetchMetaCheck(2); }
-            set { CurrentProject.MetaCheckStore[2] = value; RaisePropertyChanged("Meta_3"); }
+            set { CurrentProject.MetaCheckStore[2] = value; OnPropertyChanged("Meta_3"); }
         }
         public bool Meta_4
         {
             get { return FetchMetaCheck(3); }
-            set { CurrentProject.MetaCheckStore[3] = value; RaisePropertyChanged("Meta_4"); }
+            set { CurrentProject.MetaCheckStore[3] = value; OnPropertyChanged("Meta_4"); }
         }
         public bool Meta_5
         {
             get { return FetchMetaCheck(4); }
-            set { CurrentProject.MetaCheckStore[4] = value; RaisePropertyChanged("Meta_5"); }
+            set { CurrentProject.MetaCheckStore[4] = value; OnPropertyChanged("Meta_5"); }
         }
         public bool Meta_6
         {
             get { return FetchMetaCheck(5); }
-            set { CurrentProject.MetaCheckStore[5] = value; RaisePropertyChanged("Meta_6"); }
+            set { CurrentProject.MetaCheckStore[5] = value; OnPropertyChanged("Meta_6"); }
         }
         public bool Meta_7
         {
             get { return FetchMetaCheck(6); }
-            set { CurrentProject.MetaCheckStore[6] = value; RaisePropertyChanged("Meta_7"); }
+            set { CurrentProject.MetaCheckStore[6] = value; OnPropertyChanged("Meta_7"); }
         }
         public bool Meta_8
         {
             get { return FetchMetaCheck(7); }
-            set { CurrentProject.MetaCheckStore[7] = value; RaisePropertyChanged("Meta_8"); }
+            set { CurrentProject.MetaCheckStore[7] = value; OnPropertyChanged("Meta_8"); }
         }
         public bool Meta_9
         {
             get { return FetchMetaCheck(8); }
-            set { CurrentProject.MetaCheckStore[8] = value; RaisePropertyChanged("Meta_9"); }
+            set { CurrentProject.MetaCheckStore[8] = value; OnPropertyChanged("Meta_9"); }
         }
         public bool Meta_10
         {
             get { return FetchMetaCheck(9); }
-            set { CurrentProject.MetaCheckStore[9] = value; RaisePropertyChanged("Meta_10"); }
+            set { CurrentProject.MetaCheckStore[9] = value; OnPropertyChanged("Meta_10"); }
         }
         public bool Meta_11
         {
             get { return FetchMetaCheck(10); }
-            set { CurrentProject.MetaCheckStore[10] = value; RaisePropertyChanged("Meta_11"); }
+            set { CurrentProject.MetaCheckStore[10] = value; OnPropertyChanged("Meta_11"); }
         }
         public bool Meta_12
         {
             get { return FetchMetaCheck(11); }
-            set { CurrentProject.MetaCheckStore[11] = value; RaisePropertyChanged("Meta_12"); }
+            set { CurrentProject.MetaCheckStore[11] = value; OnPropertyChanged("Meta_12"); }
         }
         public bool Meta_13
         {
             get { return FetchMetaCheck(12); }
-            set { CurrentProject.MetaCheckStore[12] = value; RaisePropertyChanged("Meta_13"); }
+            set { CurrentProject.MetaCheckStore[12] = value; OnPropertyChanged("Meta_13"); }
         }
         public bool Meta_14
         {
             get { return FetchMetaCheck(13); }
-            set { CurrentProject.MetaCheckStore[13] = value; RaisePropertyChanged("Meta_14"); }
+            set { CurrentProject.MetaCheckStore[13] = value; OnPropertyChanged("Meta_14"); }
         }
         public bool Meta_15
         {
             get { return FetchMetaCheck(14); }
-            set { CurrentProject.MetaCheckStore[14] = value; RaisePropertyChanged("Meta_15"); }
+            set { CurrentProject.MetaCheckStore[14] = value; OnPropertyChanged("Meta_15"); }
         }
 
         public bool[] MetaCheckDefault = { true, true, true, true, false, false, false, true, true, true, false, false, false, false, false };
@@ -356,20 +356,20 @@ namespace FPM.ViewModels
 
         public void UpdateMetaCheck()
         {
-            RaisePropertyChanged("Meta_1");
-            RaisePropertyChanged("Meta_2");
-            RaisePropertyChanged("Meta_3");
-            RaisePropertyChanged("Meta_4");
-            RaisePropertyChanged("Meta_5");
-            RaisePropertyChanged("Meta_6");
-            RaisePropertyChanged("Meta_7");
-            RaisePropertyChanged("Meta_8");
-            RaisePropertyChanged("Meta_9");
-            RaisePropertyChanged("Meta_10");
-            RaisePropertyChanged("Meta_11");
-            RaisePropertyChanged("Meta_12");
-            RaisePropertyChanged("Meta_13");
-            RaisePropertyChanged("Meta_14");
+            OnPropertyChanged("Meta_1");
+            OnPropertyChanged("Meta_2");
+            OnPropertyChanged("Meta_3");
+            OnPropertyChanged("Meta_4");
+            OnPropertyChanged("Meta_5");
+            OnPropertyChanged("Meta_6");
+            OnPropertyChanged("Meta_7");
+            OnPropertyChanged("Meta_8");
+            OnPropertyChanged("Meta_9");
+            OnPropertyChanged("Meta_10");
+            OnPropertyChanged("Meta_11");
+            OnPropertyChanged("Meta_12");
+            OnPropertyChanged("Meta_13");
+            OnPropertyChanged("Meta_14");
         }
 
         public bool[] GetMetaCheckState()
@@ -433,7 +433,7 @@ namespace FPM.ViewModels
                     FilteredFiles.Add(file);
                 }
             }
-            RaisePropertyChanged("NrFilteredFiles");
+            OnPropertyChanged("NrFilteredFiles");
         }
 
 
@@ -542,12 +542,5 @@ namespace FPM.ViewModels
             Meta_15 = false;
 
         }
-
-        private void RaisePropertyChanged(string propName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propName));
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

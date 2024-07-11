@@ -11,11 +11,9 @@ using Avalonia.Input;
 using Material.Styles.Themes;
 using System.Threading;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Avalon.Model;
 using Avalonia.LogicalTree;
 using System.IO;
-using Newtonsoft.Json.Bson;
 
 
 namespace Avalon.Views;
@@ -97,7 +95,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private bool PreviewWorker_busy = false;
 
     public MainViewModel ctx = null;
-    public PwViewModel pwr = null;
+    public PreviewViewModel pwr = null;
 
     public List<DataGridRowEventArgs> Args = new List<DataGridRowEventArgs>();
 
@@ -119,7 +117,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     public void get_datacontext()
     {
         ctx = (MainViewModel)this.DataContext;
-        pwr = ctx.PreviewModel;
+        pwr = ctx.PreviewVM;
+        
 
         ctx.PropertyChanged += on_binding_ctx;
 
