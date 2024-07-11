@@ -15,6 +15,7 @@ using System.Diagnostics;
 using Avalon.Model;
 using Avalonia.LogicalTree;
 using System.IO;
+using Newtonsoft.Json.Bson;
 
 
 namespace Avalon.Views;
@@ -96,12 +97,30 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private bool PreviewWorker_busy = false;
 
     public MainViewModel ctx = null;
+    public PwViewModel pwr = null;
 
     public List<DataGridRowEventArgs> Args = new List<DataGridRowEventArgs>();
+
+    private void init_startup(object sender, RoutedEventArgs e)
+    {
+        get_datacontext();
+        Lockedstatus.IsChecked = true;
+        TreeStatus.IsChecked = true;
+
+        try
+        {
+            string path = "C:\\FIlePathManager\\Projects.json";
+            ctx.read_savefile(path);
+        }
+        catch
+        { }
+    }
 
     public void get_datacontext()
     {
         ctx = (MainViewModel)this.DataContext;
+        pwr = ctx.PreviewModel;
+
         ctx.PropertyChanged += on_binding_ctx;
 
     }
@@ -140,7 +159,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             if (item.Path.IsFile == true)
             {
                 string path = item.Path.LocalPath;
-
                 string type = Path.GetExtension(path);
 
                 if (type == ".pdf")
@@ -163,16 +181,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         treeview = !treeview;
 
+        TreeviewOn.IsVisible = !TreeviewOn.IsVisible;
+        TreeviewOff.IsVisible = !TreeviewOff.IsVisible;
+
         if (treeview)
         {
-            TreeviewOn.IsVisible = true;
-            TreeviewOff.IsVisible = false;
             MainGrid.ColumnDefinitions[0] = new ColumnDefinition(200, GridUnitType.Pixel);
         }
         else
         {
-            TreeviewOn.IsVisible = false;
-            TreeviewOff.IsVisible = true;
             MainGrid.ColumnDefinitions[0] = new ColumnDefinition(0, GridUnitType.Pixel);
         }
     }
@@ -211,34 +228,29 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     }
 
-    public void on_theme_dark(object sender, RoutedEventArgs e)
+    public void toggle_theme(object sender, RoutedEventArgs e)
     {
-        darkmode = true;
-        var MaterialThemeStyles = Avalonia.Application.Current!.LocateMaterialTheme<MaterialTheme>();
-        MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Dark;
-        MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Grey;
+        darkmode = !darkmode;
 
-        ModeDayIcon.IsVisible = false;
-        ModeNightIcon.IsVisible = true;
-        
-        set_theme_colors();
-        update_row_color();
-    }
+        ModeDayIcon.IsVisible = !ModeDayIcon.IsVisible;
+        ModeNightIcon.IsVisible = !ModeNightIcon.IsVisible;
 
-    private void on_theme_light(object sender, RoutedEventArgs e)
-    {
-        darkmode = false;
-        var MaterialThemeStyles = Avalonia.Application.Current!.LocateMaterialTheme<MaterialTheme>();
-        MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Light;
-        MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Blue;
-
-        ModeDayIcon.IsVisible = true;
-        ModeNightIcon.IsVisible = false;
+        if (darkmode)
+        {
+            var MaterialThemeStyles = Avalonia.Application.Current!.LocateMaterialTheme<MaterialTheme>();
+            MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Dark;
+            MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Grey;
+        }
+        else
+        {
+            var MaterialThemeStyles = Avalonia.Application.Current!.LocateMaterialTheme<MaterialTheme>();
+            MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Light;
+            MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Blue;
+        }
 
         set_theme_colors();
         update_row_color();
     }
-
 
 
     private void Border_PointerPressed(object sender, RoutedEventArgs args)
@@ -248,21 +260,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             FlyoutBase.ShowAttachedFlyout(ctl);
         }
-    }
-
-    private void init_startup(object sender, RoutedEventArgs e)
-    {
-        get_datacontext();
-        Lockedstatus.IsChecked = true;
-        TreeStatus.IsChecked = true;
-
-        try
-        {
-            string path = "C:\\FIlePathManager\\Projects.json";
-            ctx.read_savefile(path);
-        }
-        catch 
-        { }
     }
 
     private void on_toggle_preview(object sender, RoutedEventArgs e)
@@ -290,7 +287,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         if (previewMode == false)
         {
-            ctx.clear_preview_file();
+            pwr.clear_preview_file();
         }
     }
 
@@ -328,11 +325,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void PreviewWorker_DoWork(object sender, DoWorkEventArgs e)
     {
-        ctx.clear_preview_file();
+        pwr.clear_preview_file();
 
         int QFak = (int)e.Argument;
         string current_task = preview_request;
-        ctx.create_preview_file(current_task, QFak);
+        pwr.create_preview_file(current_task, QFak);
         preview_current = current_task;
     }
 
@@ -347,7 +344,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
         else
         {
-            ctx.start_preview_page();
+            pwr.start_preview_page();
         }
     }
 
@@ -381,11 +378,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             if (mode.Y > 0)
             {
-                ctx.previous_preview_page();
+                pwr.previous_preview_page();
             }
             if (mode.Y < 0)
             {
-                ctx.next_preview_page();
+                pwr.next_preview_page();
             }
         }
     }
@@ -394,7 +391,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         if (ScrollSlider.IsPointerOver == true)
         {
-            ctx.selected_page((int)ScrollSlider.Value - 1);
+            pwr.selected_page((int)ScrollSlider.Value - 1);
         }
     }
 
@@ -571,7 +568,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
 
         deselect_items();
-        
     }
 
     private void on_clear_tag(object sender, RoutedEventArgs e)
@@ -734,18 +730,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         string projectname = MoveFileToProjectName.Text;
         ctx.move_files(projectname);
     }
-
-    private void on_check_toggle(object sender, RoutedEventArgs e)
-    {
-        //var checkbox = sender as CheckBox;
-        //int nr = Int32.Parse(checkbox.Tag.ToString());
-
-        //FileGrid.Columns[nr].IsVisible = !FileGrid.Columns[nr].IsVisible;
-
-        Debug.WriteLine(FileGrid.Columns[0].IsVisible);
-
-    }
-
 
     private void on_update_columns()
     {

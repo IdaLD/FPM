@@ -55,18 +55,18 @@
 					<StackPanel Margin="8 -1 0 0" Orientation="Horizontal">
 						<materialIcons:MaterialIcon Grid.Column="0" Kind="Folder" Foreground="Gray" Width="25" Height="15"/>
 						<TextBlock Text="Filtered: " Foreground="Gray" FontStyle="Italic"/>
-						<TextBlock Text="{Binding ProjectsModel.NrFilteredFiles}" Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text="{Binding ProjectsVM.NrFilteredFiles}" Foreground="Gray" FontStyle="Italic"/>
 						<TextBlock Text=" | Selected: " Foreground="Gray" FontStyle="Italic"/>
-						<TextBlock Text="{Binding ProjectsModel.NrSelectedFiles}" Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text="{Binding ProjectsVM.NrSelectedFiles}" Foreground="Gray" FontStyle="Italic"/>
 						<TextBlock Text=" | " Foreground="Gray" FontStyle="Italic"/>
-						<TextBlock Text="{Binding ProjectsModel.FileDate}" Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text="{Binding ProjectsVM.FileDate}" Foreground="Gray" FontStyle="Italic"/>
 						<TextBlock Text=" | " Foreground="Gray" FontStyle="Italic"/>
-						<TextBlock Text="{Binding ProjectsModel.FileSize}" Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text="{Binding ProjectsVM.FileSize}" Foreground="Gray" FontStyle="Italic"/>
 
 					</StackPanel>
 					<StackPanel Margin="8 0 0 0" Orientation="Horizontal">
 						<materialIcons:MaterialIcon Grid.Column="0" Kind="File" Foreground="Gray" Width="25" Height="15"/>
-						<TextBlock Text="{Binding ProjectsModel.CurrentFile.Namn}" Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text="{Binding ProjectsVM.CurrentFile.Namn}" Foreground="Gray" FontStyle="Italic"/>
 					</StackPanel>
 				</StackPanel>
 				
@@ -84,22 +84,22 @@
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<ListBox Name="ColumnList" Height="500" Width="140" FlowDirection="LeftToRight" >
-										<ListBoxItem Height="30"><CheckBox Content="Name" Height="30" IsChecked="{Binding ProjectsModel.Meta_1, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Filtyp" Height="30" IsChecked="{Binding ProjectsModel.Meta_2, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Uppdrag" Height="30" IsChecked="{Binding ProjectsModel.Meta_3, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Tagg" Height="30" IsChecked="{Binding ProjectsModel.Meta_4, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Färg" Height="30" IsChecked="{Binding ProjectsModel.Meta_5, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Handling" Height="30" IsChecked="{Binding ProjectsModel.Meta_6, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Status" Height="30" IsChecked="{Binding ProjectsModel.Meta_7, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Datum" Height="30" IsChecked="{Binding ProjectsModel.Meta_8, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Ritningstyp" Height="30" IsChecked="{Binding ProjectsModel.Meta_9, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 1" Height="30" IsChecked="{Binding ProjectsModel.Meta_10, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 2" Height="30" IsChecked="{Binding ProjectsModel.Meta_11, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 3" Height="30" IsChecked="{Binding ProjectsModel.Meta_12, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 4" Height="30" IsChecked="{Binding ProjectsModel.Meta_13, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Revidering" Height="30" IsChecked="{Binding ProjectsModel.Meta_14, Mode=TwoWay}"/></ListBoxItem>
-										<ListBoxItem Height="30"><CheckBox Content="Sökväg" Height="30" IsChecked="{Binding ProjectsModel.Meta_15, Mode=TwoWay}"/></ListBoxItem>
-										<Button Content="Set as default" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding ProjectsModel.SetAllMetaCheckState}"/>
+										<ListBoxItem Height="30"><CheckBox Content="Name" Height="30" IsChecked="{Binding ProjectsVM.Meta_1, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Filtyp" Height="30" IsChecked="{Binding ProjectsVM.Meta_2, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Uppdrag" Height="30" IsChecked="{Binding ProjectsVM.Meta_3, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Tagg" Height="30" IsChecked="{Binding ProjectsVM.Meta_4, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Färg" Height="30" IsChecked="{Binding ProjectsVM.Meta_5, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Handling" Height="30" IsChecked="{Binding ProjectsVM.Meta_6, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Status" Height="30" IsChecked="{Binding ProjectsVM.Meta_7, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Datum" Height="30" IsChecked="{Binding ProjectsVM.Meta_8, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Ritningstyp" Height="30" IsChecked="{Binding ProjectsVM.Meta_9, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 1" Height="30" IsChecked="{Binding ProjectsVM.Meta_10, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 2" Height="30" IsChecked="{Binding ProjectsVM.Meta_11, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 3" Height="30" IsChecked="{Binding ProjectsVM.Meta_12, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 4" Height="30" IsChecked="{Binding ProjectsVM.Meta_13, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Revidering" Height="30" IsChecked="{Binding ProjectsVM.Meta_14, Mode=TwoWay}"/></ListBoxItem>
+										<ListBoxItem Height="30"><CheckBox Content="Sökväg" Height="30" IsChecked="{Binding ProjectsVM.Meta_15, Mode=TwoWay}"/></ListBoxItem>
+										<Button Content="Set as default" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding ProjectsVM.SetAllMetaCheckState}"/>
 									</ListBox>
 								</Flyout>
 							</Button.Flyout>
@@ -109,14 +109,14 @@
 							<Button.Content>
 								<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="130">
 									<materialIcons:MaterialIcon Grid.Column="0" Kind="FolderQuestion" Width="20" Height="20"/>
-									<Label Grid.Column="1" Content="{Binding ProjectsModel.Type}" HorizontalAlignment="Center"/>
+									<Label Grid.Column="1" Content="{Binding ProjectsVM.Type}" HorizontalAlignment="Center"/>
 									<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
 								</Grid>
 							</Button.Content>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<StackPanel>
-										<ListBox Name="TypeList" ItemsSource="{Binding ProjectsModel.CurrentProject.Filetypes}" Height="300" Width="130" FlowDirection="LeftToRight"/>
+										<ListBox Name="TypeList" ItemsSource="{Binding ProjectsVM.CurrentProject.Filetypes}" Height="300" Width="130" FlowDirection="LeftToRight"/>
 									</StackPanel>
 								</Flyout>
 							</Button.Flyout>
@@ -126,14 +126,14 @@
 							<Button.Content>
 								<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="150">
 									<materialIcons:MaterialIcon Grid.Column="0" Kind="Folder" Width="20" Height="20"/>
-									<Label Grid.Column="1" Content="{Binding ProjectsModel.CurrentProject.Namn}" HorizontalAlignment="Center"/>
+									<Label Grid.Column="1" Content="{Binding ProjectsVM.CurrentProject.Namn}" HorizontalAlignment="Center"/>
 									<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
 								</Grid>
 							</Button.Content>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<StackPanel Orientation="Vertical">
-										<ListBox Name="ProjectList" ItemsSource="{Binding ProjectsModel.ProjectList}" Height="300" Width="130" FlowDirection="LeftToRight"/>
+										<ListBox Name="ProjectList" ItemsSource="{Binding ProjectsVM.ProjectList}" Height="300" Width="130" FlowDirection="LeftToRight"/>
 									</StackPanel>
 								</Flyout>
 							</Button.Flyout>
@@ -168,7 +168,7 @@
 							</StackPanel>
 						</ToggleButton>	
 
-						<ToggleButton Name="ThemeToggle" ToolTip.Tip="Mode: Ctrl + M" HotKey="Ctrl+M" Height="25" Width="35" Margin="0,-5,0,0" Checked="on_theme_light" Unchecked="on_theme_dark">
+						<ToggleButton Name="ThemeToggle" ToolTip.Tip="Mode: Ctrl + M" HotKey="Ctrl+M" Height="25" Width="35" Margin="0,-5,0,0" IsCheckedChanged="toggle_theme">
 							<StackPanel>
 								<materialIcons:MaterialIcon Name="ModeNightIcon" Kind="WeatherNight" Width="20" Height="20"/>
 								<materialIcons:MaterialIcon Name="ModeDayIcon" Kind="WeatherSunny" Width="20" Height="20" IsVisible="False"/>
@@ -190,7 +190,7 @@
 										<Border BorderBrush="Gray" BorderThickness="0 0 0 1">
 											<Label Content="Project Notepad" Margin="5" HorizontalAlignment="Center"/>
 										</Border>
-										<TextBox Text="{Binding ProjectsModel.CurrentProject.Notes}" InnerLeftContent="   " InnerRightContent="   " AcceptsReturn="True" AcceptsTab="True"
+										<TextBox Text="{Binding ProjectsVM.CurrentProject.Notes}" InnerLeftContent="   " InnerRightContent="   " AcceptsReturn="True" AcceptsTab="True"
 												 Width="560" FontSize="14" FontWeight="Medium" Height="500" FlowDirection="LeftToRight" IsEnabled="True">
 										</TextBox>
 									</StackPanel>
@@ -200,30 +200,30 @@
 						
 					</StackPanel>
 
-					<DataGrid Name="FileGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsModel.FilteredFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
+					<DataGrid Name="FileGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
 							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true" >
 					
 						<DataGrid.Columns>
-							<DataGridTextColumn Binding="{Binding Namn}"							Header="Namn"           Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_1}"  FontFamily="UbuntuMono"/>
-							<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_2}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Uppdrag, Mode=OneWay}"			Header="Uppdrag"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_3}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Namn}"							Header="Namn"           Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_1}"  FontFamily="UbuntuMono"/>
+							<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_2}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Uppdrag, Mode=OneWay}"			Header="Uppdrag"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_3}"  FontFamily="Ubuntu"/>
 							
-							<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_4}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_5}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_4}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_5}"  FontFamily="Ubuntu"/>
 
-							<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_6}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_7}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_8}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_9}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_6}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_7}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_8}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_9}"  FontFamily="Ubuntu"/>
 						
-							<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_10}"   FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_11}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_12}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_13}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_14}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_10}"   FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_11}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_12}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_13}"  FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_14}"  FontFamily="Ubuntu"/>
 
 							
-							<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsModel.Meta_15}" FontFamily="Ubuntu"/>
+							<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_15}" FontFamily="Ubuntu"/>
 						</DataGrid.Columns>
 						
 						<DataGrid.ContextMenu>
@@ -285,14 +285,14 @@
 									<MenuItem Name="MoveMenu" Header="Move" Click="on_move_files"/>
 								</MenuItem>
 								
-								<MenuItem Name="RemoveFileMenu" Header="Remove File" Command="{Binding ProjectsModel.RemoveSelectedFiles}" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
+								<MenuItem Name="RemoveFileMenu" Header="Remove File" Command="{Binding ProjectsVM.RemoveSelectedFiles}" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
 							</ContextMenu>
 						</DataGrid.ContextMenu>
 					</DataGrid>
 			
 				<GridSplitter Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns"/>
 
-				<Grid RowDefinitions="*,30" Grid.Column="3" Grid.Row="2" Margin="0 5 0 0">
+				<Grid RowDefinitions="*,30" Grid.Column="3" Grid.Row="2" Margin="0 5 0 0" DataContext="{Binding PreviewModel}">
 					<Grid ClipToBounds="True" Grid.Row="0" Grid.Column="0">
 						<Viewbox Grid.Row="0" Grid.Column="0" Name="Previewer" Stretch="Uniform" StretchDirection="Both" Margin="-10">
 							<Border>
@@ -353,7 +353,7 @@
 							<Border BorderBrush="Gray" BorderThickness="0 0 0 1">
 								<TextBlock Text="Storage" Height="21" Margin="14 8 0 0"/>
 							</Border>
-							<TreeView Name="MainTree" ItemsSource="{Binding ProjectsModel.StoredProjects}" SelectionChanged="on_treeview_selected">
+							<TreeView Name="MainTree" ItemsSource="{Binding ProjectsVM.StoredProjects}" SelectionChanged="on_treeview_selected">
 							 
 								<TreeView.ItemTemplate>
 									<TreeDataTemplate x:DataType="model:ProjectData" ItemsSource="{Binding FiletypesTree}">
@@ -380,7 +380,7 @@
 										<MenuItem Name="RenameMenu" Header="Rename" Icon="{materialIcons:MaterialIconExt Kind=Rename}">
 											<StackPanel Orientation="Horizontal">
 												<materialIcons:MaterialIcon Grid.Column="0" Kind="Input" Width="25" Height="20" HorizontalAlignment="Left"/>
-												<TextBox Name="NewProjectName" Text="{Binding ProjectsModel.CurrentProject.Namn, Mode=OneWay}" Width="160"  Margin="10 0 0 0"/>
+												<TextBox Name="NewProjectName" Text="{Binding ProjectsVM.CurrentProject.Namn, Mode=OneWay}" Width="160"  Margin="10 0 0 0"/>
 											</StackPanel>
 											<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project" Icon="{materialIcons:MaterialIconExt Kind=Rename}"/>
 										</MenuItem>

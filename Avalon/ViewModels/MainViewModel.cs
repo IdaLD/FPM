@@ -21,6 +21,7 @@ using Avalonia.Media.Imaging;
 using Avalonia;
 using Avalonia.Platform;
 using Avalon.Model;
+using FPM.ViewModels;
 
 
 namespace Avalon.ViewModels;
@@ -34,235 +35,26 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     }
 
 
-    private Projects projectsModel = new Projects();
-    public Projects ProjectsModel
+    private ProjectViewModel projectsVM = new ProjectViewModel();
+    public ProjectViewModel ProjectsVM
     {
-        get { return projectsModel; }
-        set { projectsModel = value; OnPropertyChanged("ProjectsModel"); }
+        get { return projectsVM; }
+        set { projectsVM = value; OnPropertyChanged("ProjectsVM"); }
+    }
+
+    private PwViewModel previewModel = new PwViewModel();
+    public PwViewModel PreviewModel
+    {
+        get { return previewModel; }
+        set { previewModel = value; OnPropertyChanged("PreviewModel"); }
     }
 
     public ObservableCollection<string> Status { get; } = new();
-    public ObservableCounter<int> Progress { get; set; }
-
-    private Avalonia.Media.Imaging.Bitmap? previewFile;
-    public Avalonia.Media.Imaging.Bitmap? PreviewFile
-    {
-        get { return previewFile; }
-        set { previewFile = value; OnPropertyChanged("PreviewFile"); }
-    }
-
-    private WriteableBitmap? imageFromBinding = null;
-    public WriteableBitmap? ImageFromBinding
-    {
-        get { return imageFromBinding; }
-        set { imageFromBinding = value; OnPropertyChanged("ImageFromBinding"); }
-    }
-
-    private WriteableBitmap? imageFromBinding2 = null;
-    public WriteableBitmap? ImageFromBinding2
-    {
-        get { return imageFromBinding2; }
-        set { imageFromBinding2 = value; OnPropertyChanged("ImageFromBinding2"); }
-    }
-
-    private FileData currentInfoFile = new FileData();
-    public FileData CurrentInfoFile
-    {
-        get { return currentInfoFile; }
-        set { currentInfoFile = value; OnPropertyChanged("CurrentInfoFile"); }
-    }
 
     public List<string[]> metastore = new List<string[]>();
     public List<string> PathStore = new List<string>();
 
-
     public string ProjectMessage { get; set; } = "";
-
-    public IDocReader docReader { get; set; } = null;
-
-    public int _pw_pagenr = 0;
-    public int pw_pagenr
-    {
-        get { return _pw_pagenr; }
-        set { _pw_pagenr = value; OnPropertyChanged("pw_pagenr"); }
-    }
-    public int _pw_pagenr_view = 1;
-    public int pw_pagenr_view
-    {
-        get { return _pw_pagenr_view; }
-        set { _pw_pagenr_view = value; OnPropertyChanged("pw_pagenr_view"); }
-    }
-    public int _pw_pagecount_view = 1;
-    public int pw_pagecount_view
-    {
-        get { return _pw_pagecount_view; }
-        set { _pw_pagecount_view = value; OnPropertyChanged("pw_pagecount_view"); }
-    }
-
-    public bool _pw_dualmode = false;
-    public bool pw_dualmode
-    {
-        get { return _pw_dualmode; }
-        set { _pw_dualmode = value; OnPropertyChanged("pw_dualmode"); }
-    }
-
-    public void create_preview_file(string filepath, int fak)
-    {
-        if (docReader != null)
-        {
-            docReader.Dispose();
-        }
-
-        try
-        {
-            pw_pagenr = 0;
-            docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(fak * 1080/2, fak * 1920/2));
-            pw_pagecount_view = docReader.GetPageCount();
-            pw_pagenr_view = 1;
-
-        }
-        catch
-        {
-            return;
-        }
-    }
-
-    public void clear_preview_file()
-    {
-        docReader = null;
-        ImageFromBinding = null;
-        ImageFromBinding2 = null;
-    }
-
-    public void next_preview_page()
-    {
-        if (pw_pagenr < docReader.GetPageCount()-1)
-        {
-            if (pw_dualmode == false)
-            {
-                pw_pagenr++;
-                preview_page(pw_pagenr, 0);
-            }
-
-
-            if (pw_dualmode == true)
-            {
-                pw_pagenr = pw_pagenr + 2;
-
-                preview_page(pw_pagenr, 0);
-                preview_page(pw_pagenr+1, 1);
-            }
-
-            pw_pagenr_view = pw_pagenr + 1;
-        }
-    }
-
-    public void previous_preview_page()
-    {
-        if (pw_dualmode == false)
-        {
-            if (pw_pagenr > 0)
-            {
-                pw_pagenr--;
-                preview_page(pw_pagenr, 0);
-            }
-        }
-
-        if (pw_dualmode == true)
-        {
-            if (pw_pagenr > 1)
-            {
-                preview_page(pw_pagenr-2, 0);
-                preview_page(pw_pagenr-1, 1);
-
-                pw_pagenr = pw_pagenr - 2;
-            }
-        }
-
-        pw_pagenr_view = pw_pagenr + 1;
-
-    }
-
-    public void selected_page(int pagenr)
-    {
-        if (pagenr != pw_pagenr)
-        {
-            if (pw_dualmode == false)
-            {
-                preview_page(pagenr, 0);
-            }
-            
-            if (pw_dualmode == true)
-            {
-                preview_page(pagenr, 0);
-                preview_page(pagenr+1, 1);
-            }
-
-            pw_pagenr = pagenr;
-        }
-    }
-
-    public void toggle_pw_mode()
-    {
-        pw_dualmode = !pw_dualmode;
-        start_preview_page();
-    }
-
-    public void start_preview_page()
-    {
-        imageFromBinding = null;
-        imageFromBinding2 = null;
-
-        if (pw_dualmode == false)
-        {
-            pw_pagenr = 0;
-            preview_page(pw_pagenr, 0);
-        }
-        if (pw_dualmode == true)
-        {
-            pw_pagenr = 0;
-            preview_page(pw_pagenr, 0);
-            preview_page(pw_pagenr+1, 1);
-        }
-
-        pw_pagenr_view = pw_pagenr + 1;
-    }
-
-    public void preview_page(int pagenr, int mode)
-    {
-        if (docReader != null && docReader.GetPageCount()-1 >= pagenr)
-        {
-
-            IPageReader page = docReader.GetPageReader(pagenr);
-
-            byte[] rawBytes = page.GetImage();
-            int width = page.GetPageWidth();
-            int height = page.GetPageHeight();
-
-            Avalonia.Vector dpi = new Avalonia.Vector(96, 96);
-
-            if (mode == 0)
-            { // Bgra8888
-                ImageFromBinding = new WriteableBitmap(new PixelSize(width, height), dpi, Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
-                using (var frameBuffer = ImageFromBinding.Lock())
-                {
-                    Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
-                }
-                ImageFromBinding2 = null;
-            }
-
-            if (mode == 1)
-            {
-                ImageFromBinding2 = new WriteableBitmap(new PixelSize(width, height), dpi, Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
-                using (var frameBuffer = ImageFromBinding2.Lock())
-                {
-                    Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
-                }
-            }
-
-        }
-    }
-
 
     public async Task LoadFile(Avalonia.Visual window)
     {
@@ -286,10 +78,10 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             using var streamReader = new StreamReader(stream);
             string fileContent = await streamReader.ReadToEndAsync();
 
-            ProjectsModel = new Projects();
-            ProjectsModel.StoredProjects = JsonConvert.DeserializeObject<ObservableCollection<ProjectData>>(fileContent);
-            ProjectsModel.SetProjectlist();
-            ProjectsModel.SetDefaultSelection();
+            ProjectsVM = new ProjectViewModel();
+            ProjectsVM.StoredProjects = JsonConvert.DeserializeObject<ObservableCollection<ProjectData>>(fileContent);
+            ProjectsVM.SetProjectlist();
+            ProjectsVM.SetDefaultSelection();
 
         }
     }
@@ -299,13 +91,11 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         using (StreamReader r = new StreamReader(path))
         {
             string json = r.ReadToEnd();
-            ProjectsModel = new Projects();
-            ProjectsModel.StoredProjects = JsonConvert.DeserializeObject<ObservableCollection<ProjectData>>(json);
-            ProjectsModel.SetProjectlist();
-            ProjectsModel.SetDefaultSelection();
-
+            ProjectsVM = new ProjectViewModel();
+            ProjectsVM.StoredProjects = JsonConvert.DeserializeObject<ObservableCollection<ProjectData>>(json);
+            ProjectsVM.SetProjectlist();
+            ProjectsVM.SetDefaultSelection();
         }
-
     }
 
     public async Task SaveFile(Avalonia.Visual window)
@@ -328,7 +118,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
         {
             await using var stream = await file.OpenWriteAsync();
             using var streamWriter = new StreamWriter(stream);
-            var data = JsonConvert.SerializeObject(ProjectsModel.StoredProjects);
+            var data = JsonConvert.SerializeObject(ProjectsVM.StoredProjects);
             await streamWriter.WriteLineAsync(data);
         }
     }
@@ -337,7 +127,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         using (StreamWriter streamWriter = new StreamWriter(path))
         {
-            var data = JsonConvert.SerializeObject(ProjectsModel.StoredProjects);
+            var data = JsonConvert.SerializeObject(ProjectsVM.StoredProjects);
             await streamWriter.WriteLineAsync(data);
 
         }
@@ -345,8 +135,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public async Task AddFile(Avalonia.Visual window)
     {
-
-        if (ProjectsModel.CurrentProject != null)
+        if (ProjectsVM.CurrentProject != null)
         {
             var topLevel = TopLevel.GetTopLevel(window);
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
@@ -359,29 +148,28 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             foreach (var file in files)
             {
                 string path = file.Path.LocalPath;
-                ProjectsModel.CurrentProject.Newfile(path);
-                ProjectsModel.SetDefaultType();
+                ProjectsVM.CurrentProject.Newfile(path);
+                ProjectsVM.SetDefaultType();
             }
         }
-        
     }
 
     public void AddFilesDrag(string path)
     {
-        ProjectsModel.CurrentProject.Newfile(path);
-        ProjectsModel.SetDefaultType();
+        ProjectsVM.CurrentProject.Newfile(path);
+        ProjectsVM.SetDefaultType();
     }
 
     public void set_category(string category)
     {
-        ProjectsModel.SetProjecCategory(category);
+        ProjectsVM.SetProjecCategory(category);
     }
 
     public void CopyFilenameToClipboard(Avalonia.Visual window)
     {
         string store = string.Empty;
 
-        foreach (FileData file in ProjectsModel.CurrentFiles)
+        foreach (FileData file in ProjectsVM.CurrentFiles)
         {
             store += file.Namn + Environment.NewLine;
         }
@@ -394,7 +182,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         string store = string.Empty;
 
-        foreach (FileData file in ProjectsModel.CurrentFiles)
+        foreach (FileData file in ProjectsVM.CurrentFiles)
         {
             store += file.Sökväg + Environment.NewLine;
         }
@@ -406,10 +194,10 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public void CopyListviewToClipboard(Avalonia.Visual window)
     {
         string store = string.Empty;
-        bool[] checkstate = ProjectsModel.GetMetaCheckState();
+        bool[] checkstate = ProjectsVM.GetMetaCheckState();
 
 
-        foreach (FileData file in ProjectsModel.CurrentFiles)
+        foreach (FileData file in ProjectsVM.CurrentFiles)
         {
             if (checkstate[0] == true) { store += file.Namn + "\t"; };
             if (checkstate[1] == true) { store += file.Filtyp + "\t"; };
@@ -439,13 +227,12 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
         if (singleMode == true)
         {
-            foreach (FileData file in ProjectsModel.CurrentFiles) { PathStore.Add((file.Sökväg)); }
+            foreach (FileData file in ProjectsVM.CurrentFiles) { PathStore.Add((file.Sökväg)); }
         }
         if (singleMode == false)
         {
-            foreach (FileData file in ProjectsModel.FilteredFiles) { PathStore.Add((file.Sökväg)); }
+            foreach (FileData file in ProjectsVM.FilteredFiles) { PathStore.Add((file.Sökväg)); }
         }
-
     }
 
     public int GetNrSelectedFiles()
@@ -455,11 +242,10 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void set_meta()
     {
-
         int i = 0;
         foreach (string path in PathStore)
         {
-            FileData file = ProjectsModel.FilteredFiles.FirstOrDefault(x => x.Sökväg == path);
+            FileData file = ProjectsVM.FilteredFiles.FirstOrDefault(x => x.Sökväg == path);
 
             string[] md         = metastore[i];
 
@@ -532,12 +318,12 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void clear_meta()
     {
-        ProjectsModel.ClearSelectedMetadata();
+        ProjectsVM.ClearSelectedMetadata();
     }
 
     public void search(string searchtext)
     {
-        ProjectsModel.SeachFiles(searchtext);
+        ProjectsVM.SeachFiles(searchtext);
         OnPropertyChanged("UpdateColumns");
     }
 
@@ -545,8 +331,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         try
         {
-            Debug.WriteLine(ProjectsModel.CurrentFile.Sökväg);
-            foreach (FileData file in ProjectsModel.CurrentFiles)
+            foreach (FileData file in ProjectsVM.CurrentFiles)
             {
                 ProcessStartInfo psi = new ProcessStartInfo();
                 psi.FileName = file.Sökväg;
@@ -561,7 +346,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         try
         {
-            foreach (FileData file in ProjectsModel.CurrentFiles)
+            foreach (FileData file in ProjectsVM.CurrentFiles)
             {
                 ProcessStartInfo psi = new ProcessStartInfo();
                 psi.FileName = file.Sökväg + ".md";
@@ -570,14 +355,13 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
             }
         }
         catch { }
-
     }
 
     public void open_dwg()
     {
-        if (ProjectsModel.CurrentFile.Filtyp == "Drawing")
+        if (ProjectsVM.CurrentFile.Filtyp == "Drawing")
         {
-            string dwgPath = ProjectsModel.CurrentFile.Sökväg.Replace("Ritning", "Ritdef").Replace("pdf", "dwg");
+            string dwgPath = ProjectsVM.CurrentFile.Sökväg.Replace("Ritning", "Ritdef").Replace("pdf", "dwg");
 
             try
             {
@@ -595,7 +379,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         try
         {
-            string folderpath = System.IO.Path.GetDirectoryName(ProjectsModel.CurrentFile.Sökväg);
+            string folderpath = System.IO.Path.GetDirectoryName(ProjectsVM.CurrentFile.Sökväg);
             Process process = Process.Start("explorer.exe", "\"" + folderpath + "\"");
         }
 
@@ -605,7 +389,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void add_color(string color)
     {
-        foreach (FileData file in ProjectsModel.CurrentFiles)
+        foreach (FileData file in ProjectsVM.CurrentFiles)
         {
             file.Färg = color;
         }
@@ -613,7 +397,7 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void clear_all()
     {
-        foreach (FileData file in ProjectsModel.CurrentFiles)
+        foreach (FileData file in ProjectsVM.CurrentFiles)
         {
             file.Färg = "";
             file.Tagg = "";
@@ -622,16 +406,15 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void add_tag(string tag)
     {
-        foreach (FileData file in ProjectsModel.CurrentFiles)
+        foreach (FileData file in ProjectsVM.CurrentFiles)
         {
             file.Tagg = tag;
         }
-
     }
 
     public void clear_tag()
     {
-        foreach (FileData file in ProjectsModel.CurrentFiles)
+        foreach (FileData file in ProjectsVM.CurrentFiles)
         {
             file.Tagg = "";
         }
@@ -639,64 +422,59 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     public void edit_type(string type)
     {
-        ProjectsModel.SetTypeSelected(type);
+        ProjectsVM.SetTypeSelected(type);
     }
 
     public void select_files(IList<FileData> files)
     {
-        ProjectsModel.CurrentFiles = files;
-    }
-
-    public void remove_duplicate_files()
-    {
-        //ProjectsModel.CurrentProject.RemoveDuplicates();
+        ProjectsVM.CurrentFiles = files;
     }
 
     public void select_type(string name)
     {
-        string currentType = ProjectsModel.Type;
+        string currentType = ProjectsVM.Type;
 
         if (currentType != name)
         {
-            ProjectsModel.Type = name;
+            ProjectsVM.Type = name;
         }
         OnPropertyChanged("UpdateColumns");
     }
 
     public void select_project(string name)
     {
-        string currentProjectName = ProjectsModel.CurrentProject.Namn;
+        string currentProjectName = ProjectsVM.CurrentProject.Namn;
         if (currentProjectName != name)
         {
-            ProjectsModel.SetProject(name);
+            ProjectsVM.SetProject(name);
         }
         OnPropertyChanged("UpdateColumns");
     }
 
     public void new_project(string name)
     {
-        ProjectsModel.NewProject(name);
+        ProjectsVM.NewProject(name);
     }
 
     public void remove_project()
     {
-        ProjectsModel.RemoveProject();
+        ProjectsVM.RemoveProject();
     }
 
     public void rename_project(string newProjectName)
     {
-        ProjectsModel.RenameProject(newProjectName);
-        ProjectsModel.SetProjectlist();
+        ProjectsVM.RenameProject(newProjectName);
+        ProjectsVM.SetProjectlist();
     }
 
     public void move_files(string projectname)
     {
-        ProjectsModel.TransferFiles(projectname);
+        ProjectsVM.TransferFiles(projectname);
     }
 
     public void UpdateLists(string selectedProject, string selectedType)
     {
-        int fileCount = ProjectsModel.FilteredFiles.Count();
+        int fileCount = ProjectsVM.FilteredFiles.Count();
         ProjectMessage = string.Format("Project {0}/ Type {1}: {2} Files", selectedProject, selectedType, fileCount);
         OnPropertyChanged("ProjectMessage");
 

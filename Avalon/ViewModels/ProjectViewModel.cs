@@ -1,19 +1,17 @@
-﻿using Avalonia.Controls;
-using Microsoft.CodeAnalysis.CSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalon.Model;
 
-namespace Avalon.Model
+namespace FPM.ViewModels
 {
-    public class Projects : INotifyPropertyChanged
+    public class ProjectViewModel : INotifyPropertyChanged
     {
-        public Projects()
+        public ProjectViewModel()
         {
             NewProject("New Project");
 
@@ -49,7 +47,7 @@ namespace Avalon.Model
         public string Type
         {
             get { return type; }
-            set { type = value; RaisePropertyChanged("Type"); UpdateFilter();}
+            set { type = value; RaisePropertyChanged("Type"); UpdateFilter(); }
         }
 
         private ObservableCollection<FileData> filteredFiles = new ObservableCollection<FileData>();
@@ -61,10 +59,11 @@ namespace Avalon.Model
 
         public int NrFilteredFiles
         {
-            get {
+            get
+            {
                 if (FilteredFiles == null) { return 0; }
-                else { return FilteredFiles.Count();}
-                }
+                else { return FilteredFiles.Count(); }
+            }
         }
 
         public int NrSelectedFiles
@@ -80,10 +79,12 @@ namespace Avalon.Model
         public IList<FileData> CurrentFiles
         {
             get { return currentFiles; }
-            set { currentFiles = value;
+            set
+            {
+                currentFiles = value;
                 RaisePropertyChanged("FiletypesTree");
-                RaisePropertyChanged("CurrentFiles"); 
-                RaisePropertyChanged("CurrentFile"); 
+                RaisePropertyChanged("CurrentFiles");
+                RaisePropertyChanged("CurrentFile");
                 RaisePropertyChanged("NrSelectedFiles");
                 RaisePropertyChanged("FileDate");
                 RaisePropertyChanged("FileSize");
@@ -142,7 +143,7 @@ namespace Avalon.Model
                         FileInfo file = new FileInfo(CurrentFile.Sökväg);
                         return Math.Round(file.Length * 0.000001, 1).ToString() + " Mb";
                     }
-                    catch 
+                    catch
                     {
                         return string.Empty;
                     }
@@ -238,7 +239,7 @@ namespace Avalon.Model
         {
             if (!StoredProjects.Any(x => x.Namn == name))
             {
-                ProjectData newProject = new ProjectData{Namn = name};
+                ProjectData newProject = new ProjectData { Namn = name };
                 newProject.MetaCheckStore = MetaCheckDefault;
 
                 StoredProjects.Add(newProject);
@@ -260,7 +261,7 @@ namespace Avalon.Model
 
         public void RemoveProjects(List<ProjectData> list)
         {
-            foreach(ProjectData project in list)
+            foreach (ProjectData project in list)
             {
                 StoredProjects.Remove(project);
             }
@@ -287,14 +288,14 @@ namespace Avalon.Model
         public void SortProjects()
         {
             List<ProjectData> search = StoredProjects.Where(x => x.Category == "Search").ToList();
-            List<ProjectData> sortedLibrary = StoredProjects.Where(x=>x.Category == "Library").OrderBy(x=>x.Namn).ToList();
+            List<ProjectData> sortedLibrary = StoredProjects.Where(x => x.Category == "Library").OrderBy(x => x.Namn).ToList();
             List<ProjectData> sortedProject = StoredProjects.Where(x => x.Category == "Project").OrderBy(x => x.Namn).ToList();
 
             StoredProjects.Clear();
 
-            foreach(var project in search){StoredProjects.Add(project);}
-            foreach(var project in sortedLibrary){StoredProjects.Add(project);}
-            foreach (var project in sortedProject){StoredProjects.Add(project);}
+            foreach (var project in search) { StoredProjects.Add(project); }
+            foreach (var project in sortedLibrary) { StoredProjects.Add(project); }
+            foreach (var project in sortedProject) { StoredProjects.Add(project); }
 
             SetProjectlist();
         }
@@ -305,7 +306,7 @@ namespace Avalon.Model
             {
                 CurrentProject.RemoveFile(file);
             }
-            
+
             CurrentProject.SetFiletypeList();
 
             if (FilteredFiles == null)
@@ -342,7 +343,7 @@ namespace Avalon.Model
 
         public bool FetchMetaCheck(int i)
         {
-            if (CurrentProject.MetaCheckStore[i] != null) 
+            if (CurrentProject.MetaCheckStore[i] != null)
             {
                 return CurrentProject.MetaCheckStore[i];
             }
@@ -398,7 +399,7 @@ namespace Avalon.Model
 
         public void SetTypeSelected(string type)
         {
-            foreach(FileData file in CurrentFiles)
+            foreach (FileData file in CurrentFiles)
             {
                 file.Filtyp = type;
             }
@@ -419,7 +420,7 @@ namespace Avalon.Model
 
             if (Type != "All Types")
             {
-                foreach(FileData file in CurrentProject.StoredFiles.Where(x => x.Filtyp == Type).OrderBy(x=>x.Namn))
+                foreach (FileData file in CurrentProject.StoredFiles.Where(x => x.Filtyp == Type).OrderBy(x => x.Namn))
                 {
                     FilteredFiles.Add(file);
                 }
@@ -447,7 +448,7 @@ namespace Avalon.Model
 
             List<string> newList = StoredProjects.Select(x => x.Namn).Distinct().ToList();
 
-            foreach(string item in newList)
+            foreach (string item in newList)
             {
                 ProjectList.Add(item);
             }
@@ -511,9 +512,9 @@ namespace Avalon.Model
                     string b3 = file.Beskrivning3;
                     string b4 = file.Tagg;
 
-                    if (b1 != null){if (b1.ToLower().Contains(searchtext.ToLower())) { results.Add(file); }}
-                    if (b2 != null){if (b2.ToLower().Contains(searchtext.ToLower())) { results.Add(file); }}
-                    if (b3 != null){if (b3.ToLower().Contains(searchtext.ToLower())) { results.Add(file); }}
+                    if (b1 != null) { if (b1.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
+                    if (b2 != null) { if (b2.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
+                    if (b3 != null) { if (b3.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
                     if (b3 != null) { if (b4.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
                 }
             }
