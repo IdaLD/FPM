@@ -274,12 +274,14 @@ namespace Avalon.Model
         {
             CurrentProject.Namn = projectName;
 
-            foreach (FileData file in CurrentProject.StoredFiles)
+            if (CurrentProject.Category != "Search")
             {
-                file.Uppdrag = projectName;
+                foreach (FileData file in CurrentProject.StoredFiles)
+                {
+                    file.Uppdrag = projectName;
+                }
+                CurrentProject.SetFiletypeList();
             }
-            CurrentProject.SetFiletypeList();
-
         }
 
         public void SortProjects()
@@ -295,19 +297,18 @@ namespace Avalon.Model
             foreach (var project in sortedProject){StoredProjects.Add(project);}
 
             SetProjectlist();
-
         }
 
         public void RemoveSelectedFiles()
         {
             foreach (FileData file in CurrentFiles)
             {
-                CurrentProject.StoredFiles.Remove(file);
+                CurrentProject.RemoveFile(file);
             }
             
             CurrentProject.SetFiletypeList();
 
-            if (FilteredFiles != null)
+            if (FilteredFiles == null)
             {
                 SetDefaultSelection();
             }
@@ -418,7 +419,7 @@ namespace Avalon.Model
 
             if (Type != "All Types")
             {
-                foreach(FileData file in CurrentProject.StoredFiles.Where(x => x.Filtyp == Type))
+                foreach(FileData file in CurrentProject.StoredFiles.Where(x => x.Filtyp == Type).OrderBy(x=>x.Namn))
                 {
                     FilteredFiles.Add(file);
                 }
@@ -426,13 +427,12 @@ namespace Avalon.Model
 
             else
             {
-                foreach (FileData file in CurrentProject.StoredFiles)
+                foreach (FileData file in CurrentProject.StoredFiles.OrderBy(x => x.Namn).OrderByDescending(x => x.Filtyp))
                 {
                     FilteredFiles.Add(file);
                 }
             }
             RaisePropertyChanged("NrFilteredFiles");
-            RaisePropertyChanged("UpdateColumns");
         }
 
 

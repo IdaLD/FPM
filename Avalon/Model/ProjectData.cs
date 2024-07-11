@@ -76,6 +76,11 @@ namespace Avalon.Model
             }
         }
 
+        public void RemoveFile(FileData file)
+        {
+            StoredFiles.Remove(file);
+        }
+
         public void SetFiletypeList()
         {
             Filetypes.Clear();

@@ -390,6 +390,19 @@ public class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     }
 
+    public void CopyFilepathToClipboard(Avalonia.Visual window)
+    {
+        string store = string.Empty;
+
+        foreach (FileData file in ProjectsModel.CurrentFiles)
+        {
+            store += file.Sökväg + Environment.NewLine;
+        }
+
+        TopLevel.GetTopLevel(window).Clipboard.SetTextAsync(store);
+
+    }
+
     public void CopyListviewToClipboard(Avalonia.Visual window)
     {
         string store = string.Empty;

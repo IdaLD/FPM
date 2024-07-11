@@ -250,7 +250,8 @@
 								</MenuItem>
 
 								<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{materialIcons:MaterialIconExt Kind=ClipboardEditOutline}">
-									<MenuItem Name="FilenameCopyMenu" Header="List" Click="on_copy_filename" Icon="{materialIcons:MaterialIconExt Kind=FormatListBulleted}"/>
+									<MenuItem Name="FilenameCopyMenu" Header="List" Click="on_copy_filename" Icon="{materialIcons:MaterialIconExt Kind=FormatListBulletedSquare}"/>
+									<MenuItem Name="FilepathCopyMenu" Header="Path" Click="on_copy_filepath" Icon="{materialIcons:MaterialIconExt Kind=FormatListBulleted}"/>
 									<MenuItem Name="ListviewCopyMenu" Header="Table" Click="on_copy_listview" Icon="{materialIcons:MaterialIconExt Kind=Table}"/>
 								</MenuItem>
 								
@@ -325,13 +326,6 @@
 
 							<Button MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Click="reset_preview_transform">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="StretchToPageOutline" Width="20" Height="20"/>
-							</Button>
-
-							<Button MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Click="on_scroll_mode">
-								<StackPanel>
-									<materialIcons:MaterialIcon Name="ModeIconScroll" Grid.Column="0" Kind="MouseScrollWheel" Width="20" Height="20"/>
-									<materialIcons:MaterialIcon Name="ModeIconZoom" Grid.Column="0" Kind="ZoomIn" Width="20" Height="20" IsVisible="False"/>
-								</StackPanel>
 							</Button>
 							
 							<Button  MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}"  Command="{Binding next_preview_page}">

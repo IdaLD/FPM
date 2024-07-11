@@ -43,6 +43,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
 
+
         Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
         Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
 
@@ -58,9 +59,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         Preview2.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
 
         ScrollSlider.AddHandler(Slider.ValueChangedEvent, on_select_page);
-
-
-
 
         init_MetaWorker();
         init_PreviewWorker();
@@ -78,7 +76,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     public double y_start = 0f;
 
     public double pw_scale = 1f;
-    public bool pw_scroll_mode = true;
 
     public string preview_request = "";
     public string preview_current = "";
@@ -375,19 +372,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         Previewer.RenderTransform = trGrp;
     }
 
-    private void on_scroll_mode(object sender, RoutedEventArgs e)
-    {
-        pw_scroll_mode = !pw_scroll_mode;
-
-        ModeIconScroll.IsVisible = pw_scroll_mode;
-        ModeIconZoom.IsVisible = !pw_scroll_mode;
-
-    }
-
     private void on_scroll_preview(object sender, PointerWheelEventArgs args)
     {
-    
-        if (pw_scroll_mode == true)
+
+        if (!args.KeyModifiers.HasFlag(KeyModifiers.Control))
         {
             Vector mode = args.Delta;
 
@@ -447,7 +435,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void on_preview_zoom(object sender, PointerWheelEventArgs args)
     {
 
-        if (pw_scroll_mode == false) 
+        if (args.KeyModifiers.HasFlag(KeyModifiers.Control)) 
+
         {
             Vector mode = args.Delta;
 
@@ -498,6 +487,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             LockIcon.IsVisible = false;
             UnlockedIcon.IsVisible = true;
         }
+    }
+
+    private void on_copy_filepath(object sender, RoutedEventArgs e)
+    {
+        ctx.CopyFilepathToClipboard(this);
     }
 
     private void on_copy_filename(object sender, RoutedEventArgs e)
