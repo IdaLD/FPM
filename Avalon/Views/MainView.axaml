@@ -314,27 +314,35 @@
 						<StackPanel Width="700" Orientation="Horizontal" VerticalAlignment="Center" Spacing="0">
 							
 
-							<Slider Name="PreviewQuality" FlowDirection="LeftToRight" Width="90" Margin="0 0 10 0" Height="30" Classes="Discrete" Minimum="1" Maximum="8" Value="3" IsSnapToTickEnabled="True" SmallChange="1" TickFrequency="1"/>
+							<Slider Name="PreviewQuality" ToolTip.Tip="Preview resolution" FlowDirection="LeftToRight" Width="90" Margin="0 0 10 0" Height="30" Classes="Discrete" Minimum="1" Maximum="8" Value="3" IsSnapToTickEnabled="True" SmallChange="1" TickFrequency="1"/>
 							<materialIcons:MaterialIcon Kind="ImageSizeSelectActual" Width="35" Height="20"/>
 
-							<ToggleButton Name="DualMode" Width="35" Height="25" Command="{Binding toggle_pw_mode}" Click="on_toggle_dualmode">
+							<ToggleButton ToolTip.Tip="Toggle two page mode" Name="DualMode" Width="35" Height="25" Command="{Binding toggle_pw_mode}" Click="on_toggle_dualmode">
 								<StackPanel>
 									<materialIcons:MaterialIcon Kind="FileDocument" Width="20" Height="20" IsVisible="{Binding !pw_dualmode}"/>
 									<materialIcons:MaterialIcon Kind="BookOpenPageVariant" Width="20" Height="20" IsVisible="{Binding pw_dualmode}"/>
 								</StackPanel>
 							</ToggleButton>
 
-							<Button MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Click="reset_preview_transform">
+							<Button ToolTip.Tip="Zoom all" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Click="reset_preview_transform">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="StretchToPageOutline" Width="20" Height="20"/>
 							</Button>
-							
-							<Button  MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}"  Command="{Binding next_preview_page}">
+
+							<ToggleButton Name="SourceMode" ToolTip.Tip="Toggle readonly" Width="35" Height="25" Click="set_preview_request" Command="{Binding on_toggle_sourcemode}">
+								<StackPanel>
+									<materialIcons:MaterialIcon Kind="ContentCopy" Width="20" Height="20" IsVisible="{Binding !sourcemode}"/>
+									<materialIcons:MaterialIcon Kind="Read" Width="20" Height="20" IsVisible="{Binding sourcemode}"/>
+								</StackPanel>
+							</ToggleButton>
+
+							<Button ToolTip.Tip="Next page" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}"  Command="{Binding next_preview_page}">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
 							</Button>
-								
-							<Button MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}"  Command="{Binding previous_preview_page}">
+
+							<Button ToolTip.Tip="Previous page" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}"  Command="{Binding previous_preview_page}">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
 							</Button>
+							
 							
 							<Label Content="{Binding pw_pagecount_view}" VerticalAlignment="Center"/>
 							<Label Content="/" VerticalAlignment="Center"/>

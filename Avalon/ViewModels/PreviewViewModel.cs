@@ -6,6 +6,11 @@ using Avalonia;
 using Docnet.Core.Models;
 using Docnet.Core;
 using System.Runtime.InteropServices;
+using System.IO;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using Avalonia.Markup.Xaml.MarkupExtensions;
+using System.Linq.Expressions;
 
 namespace Avalon.ViewModels
 {
@@ -56,18 +61,31 @@ namespace Avalon.ViewModels
             set { _pw_dualmode = value; OnPropertyChanged("pw_dualmode"); }
         }
 
+        public bool _sourcemode = false;
+        public bool sourcemode
+        {
+            get { return _sourcemode; }
+            set { _sourcemode = value; OnPropertyChanged("sourcemode"); }
+        }
+
 
         public void create_preview_file(string filepath, int fak)
         {
-            if (docReader != null)
-            {
-                docReader.Dispose();
-            }
-
             try
             {
+                
                 pw_pagenr = 0;
-                docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(fak * 1080 / 2, fak * 1920 / 2));
+                
+                if (sourcemode)
+                {
+                    docReader = DocLib.Instance.GetDocReader(filepath, new PageDimensions(fak * 1080 / 2, fak * 1920 / 2));
+                }
+                else
+                {
+                    byte[] bytes = File.ReadAllBytes(filepath);
+                    docReader = DocLib.Instance.GetDocReader(bytes, new PageDimensions(fak * 1080 / 2, fak * 1920 / 2));
+                }
+
                 pw_pagecount_view = docReader.GetPageCount();
                 pw_pagenr_view = 1;
 
@@ -75,9 +93,23 @@ namespace Avalon.ViewModels
             catch { return; }
         }
 
+        public void on_toggle_sourcemode()
+        {
+            sourcemode = !sourcemode;
+
+        }
+
         public void clear_preview_file()
         {
-            docReader = null;
+            if (docReader != null)
+            {
+                docReader.Dispose();
+            }
+            else
+            {
+                docReader = null;
+            }
+
             ImageFromBinding = null;
             ImageFromBinding2 = null;
         }
@@ -178,37 +210,43 @@ namespace Avalon.ViewModels
 
         public void preview_page(int pagenr, int mode)
         {
-            if (docReader != null && docReader.GetPageCount() - 1 >= pagenr)
+            try
             {
-
-                IPageReader page = docReader.GetPageReader(pagenr);
-
-                byte[] rawBytes = page.GetImage();
-                int width = page.GetPageWidth();
-                int height = page.GetPageHeight();
-
-                Avalonia.Vector dpi = new Avalonia.Vector(96, 96);
-
-                if (mode == 0)
+                if (docReader != null && docReader.GetPageCount() - 1 >= pagenr)
                 {
-                    ImageFromBinding = new WriteableBitmap(new PixelSize(width, height), dpi, Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
-                    using (var frameBuffer = ImageFromBinding.Lock())
-                    {
-                        Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
-                    }
-                    ImageFromBinding2 = null;
-                }
 
-                if (mode == 1)
-                {
-                    ImageFromBinding2 = new WriteableBitmap(new PixelSize(width, height), dpi, Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
-                    using (var frameBuffer = ImageFromBinding2.Lock())
-                    {
-                        Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
-                    }
-                }
+                    IPageReader page = docReader.GetPageReader(pagenr);
 
+                    byte[] rawBytes = page.GetImage();
+                    int width = page.GetPageWidth();
+                    int height = page.GetPageHeight();
+
+                    Avalonia.Vector dpi = new Avalonia.Vector(96, 96);
+
+                    if (mode == 0)
+                    {
+                        ImageFromBinding = new WriteableBitmap(new PixelSize(width, height), dpi, Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
+                        using (var frameBuffer = ImageFromBinding.Lock())
+                        {
+                            Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
+                        }
+                        ImageFromBinding2 = null;
+                    }
+
+                    if (mode == 1)
+                    {
+                        ImageFromBinding2 = new WriteableBitmap(new PixelSize(width, height), dpi, Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
+                        using (var frameBuffer = ImageFromBinding2.Lock())
+                        {
+                            Marshal.Copy(rawBytes, 0, frameBuffer.Address, rawBytes.Length);
+                        }
+                    }
+
+                }
+                
             }
+            catch
+            { }
         }
 
     }

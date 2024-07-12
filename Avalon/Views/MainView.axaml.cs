@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using Avalon.Model;
 using Avalonia.LogicalTree;
 using System.IO;
+using Newtonsoft.Json.Bson;
 
 
 namespace Avalon.Views;
@@ -123,6 +124,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.PropertyChanged += on_binding_ctx;
 
     }
+
 
     public void on_binding_ctx(object sender, PropertyChangedEventArgs e)
     {
