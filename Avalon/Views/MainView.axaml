@@ -296,12 +296,14 @@
 								<Border.Effect>
 									<DropShadowDirectionEffect  BlurRadius="10" Direction="180" ShadowDepth="10" Opacity="0.20"/>
 								</Border.Effect>
-								<Panel Background="White" Margin="20">
-									<StackPanel Orientation="Horizontal">
+								<StackPanel Orientation="Horizontal">
+									<Panel Background="White" Margin="5,20,5,20">
 										<Image x:Name="Preview" Source="{Binding ImageFromBinding}"/>
+									</Panel>
+									<Panel Background="White" Margin="5,20,5,20">
 										<Image x:Name="Preview2" Source="{Binding ImageFromBinding2}" IsVisible="{Binding TwopageMode}"/>
-									</StackPanel>
-								</Panel>
+									</Panel>
+								</StackPanel>
 							</Border>
 						</Viewbox>
 					</Grid>
@@ -310,29 +312,21 @@
 					<StackPanel ClipToBounds="True" Grid.Row="1" FlowDirection="LeftToRight" Orientation="Vertical" Margin="0">
 						<StackPanel Width="700" Orientation="Horizontal" VerticalAlignment="Center" Spacing="0">
 
-							<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Classes="Discrete" Width="200" Height="30" Margin="0 0 30 0" Minimum="1" IsSnapToTickEnabled="True" TickFrequency="1" Maximum="{Binding Pagecount}" Value="{Binding RequestPage, Converter={StaticResource AddOneConverter}}"/>
+							<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Width="200" Height="30" Margin="0 0 10 0" Minimum="1" IsSnapToTickEnabled="True" TickFrequency="1" Maximum="{Binding Pagecount}" Value="{Binding RequestPage1, Converter={StaticResource AddOneConverter}}"/>
 							
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-								<Label Content="{Binding CurrentPage, Converter={StaticResource AddOneConverter}}" Width="30" VerticalAlignment="Center"/>
+								<Label Content="{Binding CurrentPage1, Converter={StaticResource AddOneConverter}}" Width="40" HorizontalContentAlignment="Right" VerticalAlignment="Center"/>
 								<Label Content="/" VerticalAlignment="Center"/>
 								<Label Content="{Binding Pagecount}" VerticalAlignment="Center"/>
-								
 							</StackPanel>
 							
-							<Button ToolTip.Tip="Previous Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevPage}">
+							<Button ToolTip.Tip="Previous Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevPage}" CommandParameter="false">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
 							</Button>
 
-							<Button ToolTip.Tip="Next Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextPage}">
+							<Button ToolTip.Tip="Next Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextPage}"  CommandParameter="false">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
 							</Button>
-
-							<ToggleButton Name="SourceMode" ToolTip.Tip="Toggle ReadOnly" ToolTip.Placement="Right" Width="35" Height="25" Click="set_preview_request" Command="{Binding on_toggle_sourcemode}">
-								<StackPanel>
-									<materialIcons:MaterialIcon Kind="ContentCopy" Width="20" Height="20" IsVisible="{Binding !SourceMode}"/>
-									<materialIcons:MaterialIcon Kind="Read" Width="20" Height="20" IsVisible="{Binding SourceMode}"/>
-								</StackPanel>
-							</ToggleButton>
 
 							<Button ToolTip.Tip="Reset View" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Click="reset_preview_transform">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="StretchToPageOutline" Width="20" Height="20"/>
@@ -345,9 +339,26 @@
 								</StackPanel>
 							</ToggleButton>
 
-							<materialIcons:MaterialIcon Kind="Download" Width="35" Height="20" IsVisible="{Binding !BitmapsStored}"/>
-							<materialIcons:MaterialIcon Kind="CheckCircleOutline" Width="35" Height="20" IsVisible="{Binding BitmapsStored}"/>
-							
+							<ToggleButton ToolTip.Tip="Toggle linked pagemode" IsChecked="{Binding LinkedPageMode}" ToolTip.Placement="Right" Name="LinkMode" Width="35" Height="25" Command="{Binding ToggleLinkedMode}">
+								<StackPanel>
+									<materialIcons:MaterialIcon Kind="Link" Width="20" Height="20" IsVisible="{Binding LinkedPageMode}"/>
+									<materialIcons:MaterialIcon Kind="LinkOff" Width="20" Height="20" IsVisible="{Binding !LinkedPageMode}"/>
+								</StackPanel>
+							</ToggleButton>
+
+							<Button ToolTip.Tip="Previous Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevPage}" CommandParameter="true" IsVisible="{Binding !LinkedPageMode}">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
+							</Button>
+
+							<Button ToolTip.Tip="Next Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextPage}"  CommandParameter="true" IsVisible="{Binding !LinkedPageMode}">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
+							</Button>
+
+							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" IsVisible="{Binding !LinkedPageMode}">
+								<Label Content="{Binding CurrentPage2, Converter={StaticResource AddOneConverter}}" VerticalAlignment="Center"/>
+								<Label Content="/" VerticalAlignment="Center"/>
+								<Label Content="{Binding Pagecount}" VerticalAlignment="Center"/>
+							</StackPanel>
 							
 						</StackPanel>
 					</StackPanel>

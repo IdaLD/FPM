@@ -20,6 +20,7 @@ using Avalonia.Media;
 using Avalonia.Controls.Shapes;
 using Newtonsoft.Json.Bson;
 using System.Data;
+using Material.Styles.Converters;
 
 namespace Avalon.ViewModels
 {
@@ -49,20 +50,18 @@ namespace Avalon.ViewModels
         }
 
 
-
-
-        public bool twopageMode = false;
+        public bool twopageMode = true;
         public bool TwopageMode
         {
             get { return twopageMode; }
             set { twopageMode = value; OnPropertyChanged("TwopageMode"); }
         }
 
-        public bool sourcMode = false;
-        public bool SourceMode
+        public bool linkedPageMode = true;
+        public bool LinkedPageMode
         {
-            get { return sourcMode; }
-            set { sourcMode = value; OnPropertyChanged("SourceMode"); }
+            get { return linkedPageMode; }
+            set { linkedPageMode = value; OnPropertyChanged("LinkedPageMode"); }
         }
 
         public FileData currentFile = null;
@@ -79,18 +78,48 @@ namespace Avalon.ViewModels
             set { requestFile = value; OnPropertyChanged("RequestFile"); InitFile(); }
         }
 
-        public int requestPage = 0;
-        public int RequestPage
+        public int requestPage1 = 0;
+        public int RequestPage1
         {
-            get { return requestPage; }
-            set { requestPage = value; OnPropertyChanged("RequestPage"); SetPage(); }
+            get { return requestPage1; }
+            set
+            {
+                if (PageInRange(value))
+                {
+                    requestPage1 = value;
+                    OnPropertyChanged("RequestPage1");
+                    SetPage();
+                }
+            }
         }
 
-        public int currentPage = 0;
-        public int CurrentPage
+        public int requestPage2 = 0;
+        public int RequestPage2
         {
-            get { return currentPage; }
-            set { currentPage = value; OnPropertyChanged("CurrentPage"); }
+            get { return requestPage2; }
+            set
+            {
+                if (PageInRange(value))
+                {
+                    requestPage2 = value;
+                    OnPropertyChanged("RequestPage2");
+                    SetPage(true);
+                }
+            }
+        }
+
+        public int currentPage1 = 0;
+        public int CurrentPage1
+        {
+            get { return currentPage1; }
+            set { currentPage1 = value; OnPropertyChanged("CurrentPage1"); }
+        }
+
+        public int currentPage2 = 0;
+        public int CurrentPage2
+        {
+            get { return currentPage2; }
+            set { currentPage2 = value; OnPropertyChanged("CurrentPage2"); }
         }
 
 
@@ -98,7 +127,7 @@ namespace Avalon.ViewModels
         public int Pagecount
         {
             get { return pagecount; }
-            set { pagecount = value; OnPropertyChanged("Pagecount"); }
+            set { pagecount = value; OnPropertyChanged("Pagecount"); BitmapContainer = new WriteableBitmap[pagecount]; }
         }
 
         private WriteableBitmap[] BitmapContainer = new WriteableBitmap[1];
@@ -136,21 +165,21 @@ namespace Avalon.ViewModels
         private bool FileWorkerBusy = false;
         private bool BitmapWorkerBusy = false;
 
-        public DateTime totaltime;
+        private MuPDFContext Context = new MuPDFContext();
 
         private async void InitFile()
         {
             if (!FileWorkerBusy)
             {
-
                 Debug.WriteLine("Initializing new file: " + RequestFile.Namn);
+                LinkedPageMode = true;
                 FileWorkerBusy = true;
 
                 ClearBitmaps();
 
                 string filepath = RequestFile.Sökväg;
 
-                FileTask = Task.Run(() => GetFile3(filepath));
+                FileTask = Task.Run(() => GetFile(filepath));
                 FileTask.ContinueWith(delegate { CheckFile(filepath); });
 
             }
@@ -169,7 +198,6 @@ namespace Avalon.ViewModels
                 while (BitmapWorkerBusy) { Debug.WriteLine("Waiting to dispose of file..."); }
                 PreviewFile.Dispose();
                 Debug.WriteLine("File Disposed");
-
             }
         }
 
@@ -178,55 +206,20 @@ namespace Avalon.ViewModels
             FileBytes = await Task.Run(() => File.ReadAllBytesAsync(filepath));
         }
 
-        private async Task GetFile2(string filepath)
-        {
-            BinaryReader binReader = new BinaryReader(File.Open(filepath, FileMode.Open, FileAccess.Read));
-            binReader.BaseStream.Position = 0;
-            FileBytes = binReader.ReadBytes(Convert.ToInt32(binReader.BaseStream.Length));
-            binReader.Close();
-        }
-
-        private async Task GetFile3(string filepath)
-        {
-            await SafeDispose();
-            int approach = 1;
-            MuPDFContext Context = new MuPDFContext();
-
-
-            DateTime t0 = DateTime.Now;
-            if (approach == 0)
-            {
-                PreviewFile = new MuPDFDocument(new MuPDFContext(), filepath);
-            }
-            if (approach == 1)
-            {
-                byte[] bytes = File.ReadAllBytes(filepath);
-                PreviewFile = new MuPDFDocument(Context, bytes, InputFileTypes.PDF);
-            }
-            if (approach == 2)
-            {
-                FileStream fs = File.Open(filepath, FileMode.Open, FileAccess.Read);
-                MemoryStream ms = new MemoryStream();
-                fs.CopyTo(ms);
-                PreviewFile = new MuPDFDocument(new MuPDFContext(), ref ms, InputFileTypes.PDF);
-            }
-            PreviewFile.ClipToPageBounds = true;
-            
-
-            DateTime t1 = DateTime.Now;
-
-            totaltime = totaltime + (t1 - t0);
-            Debug.WriteLine(PreviewFile.Pages.Count);
-
-        }
-
 
         private async void CheckFile(string filepath)
         {
             if (RequestFile.Sökväg == filepath)
             {
-                //await SafeDispose();
-                ConstructFile(FileBytes);
+                await SafeDispose();
+
+                PreviewFile = new MuPDFDocument(Context, FileBytes, InputFileTypes.PDF);
+
+                Pagecount = PreviewFile.Pages.Count;
+                CurrentFile = RequestFile;
+                FileWorkerBusy = false;
+
+                RequestPage1 = 0;
 
                 Debug.WriteLine("Done");
             }
@@ -238,130 +231,191 @@ namespace Avalon.ViewModels
             }
         }
 
-        private void ConstructFile(byte[] FileBytes)
+        private void SetPage(bool SecondPage = false)
         {
-            //PreviewFile = new MuPDFDocument(new MuPDFContext(), FileBytes, InputFileTypes.PDF);
+            if (!TwopageMode)
+            {
+                SetSinglePage1();
+            }
+            else
+            {
+                if (LinkedPageMode)
+                {
+                    SetDualPage();
+                }
+                else
+                {
+                    if (!SecondPage)
+                    {
+                        SetSinglePage1();
+                    }
+                    else
+                    {
+                        SetSinglePage2();
+                    }
+                }
 
-            Pagecount = PreviewFile.Pages.Count;
-            CurrentFile = RequestFile;
-            FileWorkerBusy = false;
-            RequestPage = 0;
+            }
+            
         }
 
-
-
-        private void SetPage()
+        private async void SetSinglePage1()
         {
-            Debug.WriteLine("SETPAGE: " + RequestPage);
-            Debug.WriteLine("Checking page");
+            int pagenr = RequestPage1;
+
             if (!BitmapWorkerBusy && !FileWorkerBusy)
             {
                 BitmapWorkerBusy = true;
-                PageFromFile(RequestPage);
-            }
-        }
-
-
-        private async void PageFromFile(int pagenr)
-        {
-            
-            BitmapTask = Task.Run(() => GetPage(pagenr, Scale));
-
-            ImageFromBinding = await BitmapTask;
-
-            if (TwopageMode == true)
-            {
-                ImageFromBinding2 = null;
-                if (PageInRange(pagenr + 1))
-                {
-                    BitmapTask = Task.Run(() => GetPage(pagenr + 1, Scale));
-                    ImageFromBinding2 = await BitmapTask;
-                }
-            }
-
-            OnPropertyChanged("ImageFromBinding");
-            if (TwopageMode == true)
-            {
-                OnPropertyChanged("ImageFromBinding2");
-            }
-
-            BitmapTask.ContinueWith(delegate { CheckPage(pagenr);});
-            
-        }
-
-        private void PageFromStorage(int pagenr)
-        {
-
-        }
-
-        private void CheckPage(int pagenr)
-        {
-            if (RequestPage != pagenr)
-            {
-                PageFromFile(RequestPage);
-            }
-            else
-            {
-                CurrentPage = pagenr;
+                ImageFromBinding = await Task.Run(() => GetPage(PreviewFile, pagenr, Scale));
+                OnPropertyChanged("ImageFromBinding");
                 BitmapWorkerBusy = false;
-            }
 
-        }
-
-        private async Task<WriteableBitmap> GetPage(int pagenr, double zoom)
-        {
-            Debug.WriteLine("Fetching page");
-            DateTime t0 = DateTime.Now;
-            MuPDFCore.Rectangle bounds = PreviewFile.Pages[pagenr].Bounds;
-            RoundedRectangle roundedBounds = bounds.Round(zoom);
-            WriteableBitmap bitmap = new WriteableBitmap(new PixelSize(roundedBounds.Width, roundedBounds.Height), new Vector(96, 96), PixelFormat.Rgba8888, AlphaFormat.Premul);
-
-            using (ILockedFramebuffer fb = bitmap.Lock())
-            {
-                PreviewFile.Render(pagenr, bounds, zoom, MuPDFCore.PixelFormats.RGBA, fb.Address);
-            }
-            DateTime t1 = DateTime.Now;
-            totaltime = totaltime + (t1-t0);
-            Debug.WriteLine(totaltime);
-            return bitmap;
-        }
-
-
-        public void NextPage()
-        {
-            if (!TwopageMode)
-            {
-                if (PageInRange(RequestPage + 1))
+                if (RequestPage1 == pagenr)
                 {
-                    RequestPage = RequestPage + 1;
+                    CurrentPage1 = pagenr;
+                }
+                else
+                {
+                    SetSinglePage1();
+                }
+            }
+        }
+
+        private async void SetSinglePage2()
+        {
+            int pagenr = RequestPage2;
+
+            if (!BitmapWorkerBusy && !FileWorkerBusy)
+            {
+                BitmapWorkerBusy = true;
+                ImageFromBinding2 = await Task.Run(() => GetPage(PreviewFile, pagenr, Scale));
+                OnPropertyChanged("ImageFromBinding2");
+                BitmapWorkerBusy = false;
+
+                if (RequestPage2 == pagenr)
+                {
+                    CurrentPage2 = pagenr;
+                }
+                else
+                {
+                    SetSinglePage2();
+                }
+            }
+        }
+
+        private async void SetDualPage()
+        {
+            int pagenr = RequestPage1;
+
+            if (!BitmapWorkerBusy && !FileWorkerBusy)
+            {
+                BitmapWorkerBusy = true;
+
+                ImageFromBinding = await Task.Run(() => GetPage(PreviewFile, pagenr, Scale));
+                ImageFromBinding2 = await Task.Run(() => GetPage(PreviewFile, pagenr + 1, Scale));
+
+                OnPropertyChanged("ImageFromBinding");
+                OnPropertyChanged("ImageFromBinding2");
+                
+                BitmapWorkerBusy = false;
+
+                if (RequestPage1 == pagenr)
+                {
+                    CurrentPage1 = pagenr;
+                }
+                else
+                {
+                    SetDualPage();
+                }
+            }
+        }
+
+
+
+        private async Task<WriteableBitmap> GetPage(MuPDFDocument file, int pagenr, double zoom)
+        {
+            if (PageInRange(pagenr))
+            {
+                if (BitmapContainer[pagenr] != null)
+                {
+                    return BitmapContainer[pagenr];
+                }
+                else
+                {
+                    MuPDFCore.Rectangle bounds = file.Pages[pagenr].Bounds;
+                    RoundedRectangle roundedBounds = bounds.Round(zoom);
+                    WriteableBitmap bitmap = new WriteableBitmap(new PixelSize(roundedBounds.Width, roundedBounds.Height), new Vector(96, 96), PixelFormat.Rgba8888, AlphaFormat.Premul);
+
+                    using (ILockedFramebuffer fb = bitmap.Lock())
+                    {
+                        file.Render(pagenr, bounds, zoom, MuPDFCore.PixelFormats.RGBA, fb.Address);
+                    }
+                    BitmapContainer[pagenr] = bitmap;
+                    return bitmap;
                 }
             }
             else
             {
-                if (PageInRange(RequestPage + 2))
-                {
-                    RequestPage = RequestPage + 2;
-                }
+                return null;
             }
         }
 
-        public void PrevPage()
+
+        public void NextPage(bool SecondPage = false)
         {
             if (!TwopageMode)
             {
-                if (PageInRange(RequestPage - 1))
-                {
-                    RequestPage = RequestPage - 1;
-                }
+                RequestPage1 = RequestPage1 + 1;
             }
-            else
+
+
+            if (TwopageMode)
             {
-                if (PageInRange(RequestPage - 2))
+                if (LinkedPageMode)
                 {
-                    RequestPage = RequestPage - 2;
+                    RequestPage1 = RequestPage1 + 2;
+                }
+                else
+                {
+                    if (!SecondPage)
+                    {
+                        RequestPage1 = RequestPage1 + 1;
+                    }
+                    else
+                    {
+                        RequestPage2 = RequestPage2 + 1;
+                    }
                 }
             }
 
+
+        }
+
+        public void PrevPage(bool SecondPage = false)
+        {
+            if (!TwopageMode)
+            {
+                RequestPage1 = RequestPage1 - 1;
+            }
+
+            if (TwopageMode)
+            {
+                if (LinkedPageMode)
+                {
+                    RequestPage1 = RequestPage1 - 2;
+                }
+                else
+                {
+                    if (!SecondPage)
+                    {
+                        RequestPage1 = RequestPage1 - 1;
+                    }
+                    else
+                    {
+                        RequestPage2 = RequestPage2 - 1;
+                    }
+                }
+            }
         }
 
         private bool PageInRange(int pagenr)
@@ -376,29 +430,42 @@ namespace Avalon.ViewModels
             }
         }
 
-        public void on_toggle_sourcemode()
-        {
-
-        }
-
-
         public void toggle_pw_mode()
         {
             TwopageMode = !TwopageMode;
 
             if (TwopageMode)
             {
-                if (CurrentPage %2 == 0)
+                if (CurrentPage1 %2 == 0)
                 {
-                    RequestPage = CurrentPage;
+                    RequestPage1 = CurrentPage1;
                 }
                 else
                 {
-                    RequestPage = CurrentPage - 1;
+                    RequestPage1 = CurrentPage1 - 1;
                 }
-                Debug.WriteLine(RequestPage);
+                Debug.WriteLine(RequestPage1);
             }
 
+        }
+
+        public void ToggleLinkedMode()
+        {
+            if (LinkedPageMode)
+            {
+                if (CurrentPage1 % 2 == 0)
+                {
+                    RequestPage1 = CurrentPage1;
+                }
+                else
+                {
+                    RequestPage1 = CurrentPage1 - 1;
+                }
+            }
+            else
+            {
+                RequestPage2 = RequestPage1 + 1;
+            }
         }
 
     }

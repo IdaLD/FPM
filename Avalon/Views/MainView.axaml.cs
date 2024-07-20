@@ -47,10 +47,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
 
         Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
-        Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
+        Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview1);
 
         Preview2.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
-        Preview2.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
+        Preview2.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview2);
 
         Preview.AddHandler(Viewbox.PointerPressedEvent, on_pan_start);
         Preview.AddHandler(Viewbox.PointerMovedEvent, on_preview_pan);
@@ -286,11 +286,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             FileData file = (FileData)FileGrid.SelectedItem;
 
-            if (file != null)
+            if (file != null && Path.Exists(file.Sökväg)) 
             {
                 pwr.RequestFile = file;
                 ScrollSlider.Value = 1;
                 
+            }
+            else
+            {
+                StatusLabel.Content = "File not found";
             }
 
         }
@@ -317,7 +321,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         Previewer.RenderTransform = trGrp;
     }
 
-    private void on_scroll_preview(object sender, PointerWheelEventArgs args)
+    private void on_scroll_preview1(object sender, PointerWheelEventArgs args)
     {
 
         if (!args.KeyModifiers.HasFlag(KeyModifiers.Control))
@@ -332,6 +336,25 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             if (mode.Y < 0)
             {
                 pwr.NextPage();
+            }
+        }
+    }
+
+    private void on_scroll_preview2(object sender, PointerWheelEventArgs args)
+    {
+
+        if (!args.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            Vector mode = args.Delta;
+
+            if (mode.Y > 0)
+            {
+                pwr.PrevPage(true);
+            }
+
+            if (mode.Y < 0)
+            {
+                pwr.NextPage(true);
             }
         }
     }
@@ -599,49 +622,30 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_open_path(object sender, RoutedEventArgs e)
     {
-        if (StatusLabel.Content == "Ready")
-        {
-            StatusLabel.Content = "Opening path";
-            ctx.open_path();
-            StatusLabel.Content = "Ready";
-        }
-
+        StatusLabel.Content = "Opening path";
+        ctx.open_path();
+        StatusLabel.Content = "Ready";
     }
 
     private void on_open_file(object sender, RoutedEventArgs e)
     {
-        if (StatusLabel.Content == "Ready")
-        {
-            StatusLabel.Content = "Opening file";
-
-            ctx.open_files();
-
-            StatusLabel.Content = "Ready";
-        }
+        StatusLabel.Content = "Opening file";
+        ctx.open_files();
+        StatusLabel.Content = "Ready";   
     }
 
     private void on_open_metafile(object sender, RoutedEventArgs e)
     {
-        if (StatusLabel.Content == "Ready")
-        {
-            StatusLabel.Content = "Opening metafile";
-
-            ctx.open_meta();
-
-            StatusLabel.Content = "Ready";
-        }
+        StatusLabel.Content = "Opening metafile";
+        ctx.open_meta();
+        StatusLabel.Content = "Ready";   
     }
 
     private void on_open_dwg(object sender, RoutedEventArgs e)
     {
-        if (StatusLabel.Content == "Ready")
-        {
-
-            StatusLabel.Content = "Opening Drawing";
-            ctx.open_dwg();
-            StatusLabel.Content = "Ready";
-            
-        }
+        StatusLabel.Content = "Opening Drawing";
+        ctx.open_dwg();
+        StatusLabel.Content = "Ready";       
     }
 
     private async void on_load_file(object sender, RoutedEventArgs e)
