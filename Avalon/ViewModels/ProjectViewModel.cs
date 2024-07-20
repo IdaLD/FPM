@@ -86,8 +86,6 @@ namespace Avalon.ViewModels
                 OnPropertyChanged("CurrentFiles");
                 OnPropertyChanged("CurrentFile");
                 OnPropertyChanged("NrSelectedFiles");
-                OnPropertyChanged("FileDate");
-                OnPropertyChanged("FileSize");
             }
         }
 
@@ -106,56 +104,6 @@ namespace Avalon.ViewModels
                 }
             }
         }
-
-        public string FileDate
-        {
-            get
-            {
-                if (CurrentFile != null)
-                {
-                    try
-                    {
-                        FileInfo file = new FileInfo(CurrentFile.Sökväg);
-                        return file.LastWriteTime.ToShortDateString();
-                    }
-                    catch
-                    {
-                        return string.Empty;
-                    }
-
-                }
-                else
-                {
-                    return string.Empty;
-                }
-
-            }
-        }
-
-        public string FileSize
-        {
-            get
-            {
-                if (CurrentFile != null)
-                {
-                    try
-                    {
-                        FileInfo file = new FileInfo(CurrentFile.Sökväg);
-                        return Math.Round(file.Length * 0.000001, 1).ToString() + " Mb";
-                    }
-                    catch
-                    {
-                        return string.Empty;
-                    }
-
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
-        }
-
 
         public bool Meta_1
         {

@@ -15,6 +15,8 @@ using Avalon.Model;
 using Avalonia.LogicalTree;
 using System.IO;
 using Newtonsoft.Json.Bson;
+using System.Net;
+using System.Diagnostics;
 
 
 namespace Avalon.Views;
@@ -58,10 +60,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         Preview2.AddHandler(Viewbox.PointerMovedEvent, on_preview_pan);
         Preview2.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
 
-        ScrollSlider.AddHandler(Slider.ValueChangedEvent, on_select_page);
-
         init_MetaWorker();
-        init_PreviewWorker();
         setup_preview_transform();
 
         StatusLabel.Content = "Ready";
@@ -77,9 +76,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     public double pw_scale = 1f;
 
-    public string preview_request = "";
-    public string preview_current = "";
-
     public bool darkmode = true;
     public bool treeview = false;
 
@@ -89,11 +85,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     public TransformGroup transform = new TransformGroup();
 
     private BackgroundWorker MetaWorker = new BackgroundWorker();
-    private BackgroundWorker PreviewWorker = new BackgroundWorker();
 
     private Thread taskThread = null;
 
-    private bool PreviewWorker_busy = false;
 
     public MainViewModel ctx = null;
     public PreviewViewModel pwr = null;
@@ -279,17 +273,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             val2 = 3.2f;
         }
 
-        set_preview_request(null, null);
 
         MainGrid.ColumnDefinitions[1] = new ColumnDefinition(1f, GridUnitType.Star);
         MainGrid.ColumnDefinitions[2] = new ColumnDefinition(val1, GridUnitType.Pixel);
         MainGrid.ColumnDefinitions[3] = new ColumnDefinition(val2, GridUnitType.Star);
 
-
-        if (previewMode == false)
-        {
-            pwr.clear_preview_file();
-        }
     }
 
     private void set_preview_request(object sender, RoutedEventArgs r)
@@ -300,52 +288,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             if (file != null)
             {
-                preview_request = file.Sökväg;
-
-                int QFak = (int)PreviewQuality.Value;
-                if (PreviewWorker_busy == false)
-                {
-                    try
-                    {
-                        PreviewWorker_busy = true;
-                        PreviewWorker.RunWorkerAsync(QFak);
-                    }
-                    catch (Exception e) { }
-                }
+                pwr.RequestFile = file;
+                ScrollSlider.Value = 1;
+                
             }
 
-        }
-    }
-
-    private void init_PreviewWorker()
-    {
-        PreviewWorker.DoWork += PreviewWorker_DoWork;
-        PreviewWorker.RunWorkerCompleted += PreviewWorker_RunWorkerCompleted;
-        PreviewWorker.WorkerSupportsCancellation = true;
-    }
-
-    private void PreviewWorker_DoWork(object sender, DoWorkEventArgs e)
-    {
-        pwr.clear_preview_file();
-
-        int QFak = (int)e.Argument;
-        string current_task = preview_request;
-        pwr.create_preview_file(current_task, QFak);
-        preview_current = current_task;
-    }
-
-    private void PreviewWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        PreviewWorker_busy = false;
-
-        if (preview_current != preview_request)
-        {
-            PreviewWorker_busy = true;
-            PreviewWorker.RunWorkerAsync(4);
-        }
-        else
-        {
-            pwr.start_preview_page();
         }
     }
 
@@ -379,20 +326,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             if (mode.Y > 0)
             {
-                pwr.previous_preview_page();
+                pwr.PrevPage();
             }
+
             if (mode.Y < 0)
             {
-                pwr.next_preview_page();
+                pwr.NextPage();
             }
-        }
-    }
-
-    private void on_select_page(object sender, RoutedEventArgs e)
-    {
-        if (ScrollSlider.IsPointerOver == true)
-        {
-            pwr.selected_page((int)ScrollSlider.Value - 1);
         }
     }
 
@@ -706,9 +646,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private async void on_load_file(object sender, RoutedEventArgs e)
     {
-        StatusLabel.Content = "Loading file";
         await ctx.LoadFile(this);
-        StatusLabel.Content = "Ready";
     }
 
     private async void on_save_file(object sender, RoutedEventArgs e)
