@@ -139,6 +139,13 @@ namespace Avalon.ViewModels
             set { bitmapsStored = value; OnPropertyChanged("BitmapsStored"); }
         }
 
+        private bool dimmedBackground = false;
+        public bool DimmedBackground
+        {
+            get { return dimmedBackground; }
+            set { dimmedBackground = value; OnPropertyChanged("DimmedBackground"); }
+        }
+
         private double Scale
         {
             get
@@ -344,13 +351,14 @@ namespace Avalon.ViewModels
                 {
                     MuPDFCore.Rectangle bounds = file.Pages[pagenr].Bounds;
                     RoundedRectangle roundedBounds = bounds.Round(zoom);
-                    WriteableBitmap bitmap = new WriteableBitmap(new PixelSize(roundedBounds.Width, roundedBounds.Height), new Vector(96, 96), PixelFormat.Rgba8888, AlphaFormat.Premul);
+                    WriteableBitmap bitmap = new WriteableBitmap(new PixelSize(roundedBounds.Width, roundedBounds.Height), new Vector(96, 96), PixelFormat.Rgba8888, AlphaFormat.Opaque);
 
                     using (ILockedFramebuffer fb = bitmap.Lock())
                     {
                         file.Render(pagenr, bounds, zoom, MuPDFCore.PixelFormats.RGBA, fb.Address);
                     }
                     BitmapContainer[pagenr] = bitmap;
+                    
                     return bitmap;
                 }
             }

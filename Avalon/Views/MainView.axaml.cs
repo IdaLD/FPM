@@ -674,6 +674,18 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.move_files(projectname);
     }
 
+    private void ToggleDimmedBackground(object sender, RoutedEventArgs e)
+    {
+        if (pwr.DimmedBackground)
+        {
+            Panel1.Background = Panel2.Background = Brushes.AntiqueWhite;
+        }
+        else
+        {
+            Panel1.Background = Panel2.Background = Brushes.White;
+        }
+    }
+
     private void on_update_columns()
     {
         FileGrid.Columns[0].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
