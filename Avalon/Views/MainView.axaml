@@ -5,6 +5,8 @@
              xmlns:vm="clr-namespace:Avalon.ViewModels"
 			 xmlns:model="using:Avalon.Model"
 			 xmlns:local="clr-namespace:Avalon"
+			 xmlns:mupdf="clr-namespace:MuPDFCore.MuPDFRenderer;assembly=MuPDFCore.MuPDFRenderer"
+			 xmlns:anim="clr-namespace:Avalonia.Animation;assembly=MuPDFCore.MuPDFRenderer"
 			 xmlns:converter="clr-namespace:Avalon.Converters"
 			 xmlns:extensions="clr-namespace:Material.Styles.Controls.Extensions"
              mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
@@ -290,22 +292,15 @@
 				<GridSplitter Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns"/>
 
 				<Grid RowDefinitions="*,30" Grid.Column="3" Grid.Row="2" Margin="0 5 0 0" DataContext="{Binding PreviewVM}">
-					<Grid ClipToBounds="True" Grid.Row="0" Grid.Column="0">
-						<Viewbox Grid.Row="0" Grid.Column="0" Name="Previewer" Stretch="Uniform" StretchDirection="Both" Margin="-10">
-							<Border>
-								<Border.Effect>
-									<DropShadowDirectionEffect  BlurRadius="10" Direction="180" ShadowDepth="10" Opacity="0.20"/>
-								</Border.Effect>
-								<StackPanel Orientation="Horizontal">
-									<Panel Name="Panel1" Background="White" Margin="5,20,5,20">
-										<Image x:Name="Preview" Source="{Binding ImageFromBinding}"/>
-									</Panel>
-									<Panel Name="Panel2" Background="White" Margin="5,20,5,20">
-										<Image x:Name="Preview2" Source="{Binding ImageFromBinding2}" IsVisible="{Binding TwopageMode}"/>
-									</Panel>
-								</StackPanel>
-							</Border>
-						</Viewbox>
+					<Grid ClipToBounds="True" ColumnDefinitions="*,*" Grid.Row="0" Grid.Column="0">
+	
+						<mupdf:PDFRenderer Name="MuPDFRenderer" Grid.Column="0" Background="Transparent" PageBackground="White" ZoomEnabled="False" PointerWheelChanged="ModifiedControlPointerWheelChanged" 
+										   ZoomIncrement="1.2" ClipToBounds="True">
+						</mupdf:PDFRenderer>
+						<mupdf:PDFRenderer Name="MuPDFRenderer2" Grid.Column="1" Background="Transparent" PageBackground="White" ZoomEnabled="False" PointerWheelChanged="ModifiedControlPointerWheelChanged"
+										ZoomIncrement="1.2" ClipToBounds="True">
+						</mupdf:PDFRenderer>
+	
 					</Grid>
 					
 	
@@ -319,12 +314,12 @@
 								<Label Content="/" VerticalAlignment="Center"/>
 								<Label Content="{Binding Pagecount}" VerticalAlignment="Center"/>
 							</StackPanel>
-							
-							<Button ToolTip.Tip="Previous Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevPage}" CommandParameter="false">
+
+							<Button ToolTip.Tip="Previous Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevPage}">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
 							</Button>
 
-							<Button ToolTip.Tip="Next Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextPage}"  CommandParameter="false">
+							<Button ToolTip.Tip="Next Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextPage}">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
 							</Button>
 

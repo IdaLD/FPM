@@ -8,39 +8,13 @@ using System.IO;
 using Avalonia.Layout;
 using Avalonia.Platform;
 using Avalonia;
-using MuPDFCore.MuPDFRenderer;
-using System.Reflection.Metadata;
-using System;
 using Avalon.Model;
-using static MuPDFCore.MuPDFStructuredTextBlock;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using Avalonia.Media;
-using Avalonia.Controls.Shapes;
-using Newtonsoft.Json.Bson;
-using System.Data;
-using Material.Styles.Converters;
 
 namespace Avalon.ViewModels
 {
     public class PreviewViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public PreviewViewModel() { }
-
-        private WriteableBitmap? imageFromBinding = null;
-        public WriteableBitmap? ImageFromBinding
-        {
-            get { return imageFromBinding; }
-            set { imageFromBinding = value; }
-        }
-
-        private WriteableBitmap? imageFromBinding2 = null;
-        public WriteableBitmap? ImageFromBinding2
-        {
-            get { return imageFromBinding2; }
-            set { imageFromBinding2 = value; }
-        }
 
         public MuPDFDocument previewFile = null;
         public MuPDFDocument PreviewFile
@@ -75,7 +49,7 @@ namespace Avalon.ViewModels
         public FileData RequestFile
         {
             get { return requestFile; }
-            set { requestFile = value; OnPropertyChanged("RequestFile"); InitFile(); }
+            set { requestFile = value; SetFile(); OnPropertyChanged("RequestFile"); }
         }
 
         public int requestPage1 = 0;
@@ -88,7 +62,6 @@ namespace Avalon.ViewModels
                 {
                     requestPage1 = value;
                     OnPropertyChanged("RequestPage1");
-                    SetPage();
                 }
             }
         }
@@ -103,7 +76,6 @@ namespace Avalon.ViewModels
                 {
                     requestPage2 = value;
                     OnPropertyChanged("RequestPage2");
-                    SetPage(true);
                 }
             }
         }
@@ -127,16 +99,7 @@ namespace Avalon.ViewModels
         public int Pagecount
         {
             get { return pagecount; }
-            set { pagecount = value; OnPropertyChanged("Pagecount"); BitmapContainer = new WriteableBitmap[pagecount]; }
-        }
-
-        private WriteableBitmap[] BitmapContainer = new WriteableBitmap[1];
-
-        private bool bitmapsStored = false;
-        public bool BitmapsStored
-        {
-            get { return bitmapsStored; }
-            set { bitmapsStored = value; OnPropertyChanged("BitmapsStored"); }
+            set { pagecount = value; OnPropertyChanged("Pagecount"); }
         }
 
         private bool dimmedBackground = false;
@@ -146,231 +109,37 @@ namespace Avalon.ViewModels
             set { dimmedBackground = value; OnPropertyChanged("DimmedBackground"); }
         }
 
-        private double Scale
-        {
-            get
-            {
-                if (RequestFile.Filtyp == "Drawing")
-                {
-                    return 0.75;
-                }
-                else
-                {
-                    return 1.50;
-                }
 
-            }
+        private void SetFile()
+        {
+            SafeDispose();
+            byte[] bytes = File.ReadAllBytes(RequestFile.Sökväg);
+            PreviewFile = new MuPDFDocument(new MuPDFContext(), bytes, InputFileTypes.PDF);
+
+            Pagecount = PreviewFile.Pages.Count;
         }
 
-
-        Task<WriteableBitmap> BitmapTask = null;
-
-        Task FileTask = null;
-
-        private byte[] FileBytes = null;
-
-        private bool FileWorkerBusy = false;
-        private bool BitmapWorkerBusy = false;
-
-        private MuPDFContext Context = new MuPDFContext();
-
-        private async void InitFile()
-        {
-            if (!FileWorkerBusy)
-            {
-                Debug.WriteLine("Initializing new file: " + RequestFile.Namn);
-                LinkedPageMode = true;
-                FileWorkerBusy = true;
-
-                ClearBitmaps();
-
-                string filepath = RequestFile.Sökväg;
-
-                FileTask = Task.Run(() => GetFile(filepath));
-                FileTask.ContinueWith(delegate { CheckFile(filepath); });
-
-            }
-        }
-
-        private void ClearBitmaps()
-        {
-            ImageFromBinding = null; OnPropertyChanged("ImageFromBinding");
-            ImageFromBinding2 = null; OnPropertyChanged("ImageFromBinding2");
-        }
-
-        private async Task SafeDispose()
+        private void SafeDispose()
         {
             if (PreviewFile != null)
             {
-                while (BitmapWorkerBusy) { Debug.WriteLine("Waiting to dispose of file..."); }
                 PreviewFile.Dispose();
-                Debug.WriteLine("File Disposed");
             }
         }
 
-        private async Task GetFile(string filepath)
+        public void NextPage()
         {
-            FileBytes = await Task.Run(() => File.ReadAllBytesAsync(filepath));
+            RequestPage1++;
         }
 
-
-        private async void CheckFile(string filepath)
+        public void PrevPage()
         {
-            if (RequestFile.Sökväg == filepath)
-            {
-                await SafeDispose();
-
-                PreviewFile = new MuPDFDocument(Context, FileBytes, InputFileTypes.PDF);
-
-                Pagecount = PreviewFile.Pages.Count;
-                CurrentFile = RequestFile;
-                FileWorkerBusy = false;
-
-                RequestPage1 = 0;
-
-                Debug.WriteLine("Done");
-            }
-            else
-            {
-                Debug.WriteLine("Rerunning");
-                FileWorkerBusy = false;
-                InitFile();
-            }
+            RequestPage1--;
         }
 
-        private void SetPage(bool SecondPage = false)
+        public void NextPage_OLD(bool SecondPage = false)
         {
-            if (!TwopageMode)
-            {
-                SetSinglePage1();
-            }
-            else
-            {
-                if (LinkedPageMode)
-                {
-                    SetDualPage();
-                }
-                else
-                {
-                    if (!SecondPage)
-                    {
-                        SetSinglePage1();
-                    }
-                    else
-                    {
-                        SetSinglePage2();
-                    }
-                }
-
-            }
-            
-        }
-
-        private async void SetSinglePage1()
-        {
-            int pagenr = RequestPage1;
-
-            if (!BitmapWorkerBusy && !FileWorkerBusy)
-            {
-                BitmapWorkerBusy = true;
-                ImageFromBinding = await Task.Run(() => GetPage(PreviewFile, pagenr, Scale));
-                OnPropertyChanged("ImageFromBinding");
-                BitmapWorkerBusy = false;
-
-                if (RequestPage1 == pagenr)
-                {
-                    CurrentPage1 = pagenr;
-                }
-                else
-                {
-                    SetSinglePage1();
-                }
-            }
-        }
-
-        private async void SetSinglePage2()
-        {
-            int pagenr = RequestPage2;
-
-            if (!BitmapWorkerBusy && !FileWorkerBusy)
-            {
-                BitmapWorkerBusy = true;
-                ImageFromBinding2 = await Task.Run(() => GetPage(PreviewFile, pagenr, Scale));
-                OnPropertyChanged("ImageFromBinding2");
-                BitmapWorkerBusy = false;
-
-                if (RequestPage2 == pagenr)
-                {
-                    CurrentPage2 = pagenr;
-                }
-                else
-                {
-                    SetSinglePage2();
-                }
-            }
-        }
-
-        private async void SetDualPage()
-        {
-            int pagenr = RequestPage1;
-
-            if (!BitmapWorkerBusy && !FileWorkerBusy)
-            {
-                BitmapWorkerBusy = true;
-
-                ImageFromBinding = await Task.Run(() => GetPage(PreviewFile, pagenr, Scale));
-                ImageFromBinding2 = await Task.Run(() => GetPage(PreviewFile, pagenr + 1, Scale));
-
-                OnPropertyChanged("ImageFromBinding");
-                OnPropertyChanged("ImageFromBinding2");
-                
-                BitmapWorkerBusy = false;
-
-                if (RequestPage1 == pagenr)
-                {
-                    CurrentPage1 = pagenr;
-                }
-                else
-                {
-                    SetDualPage();
-                }
-            }
-        }
-
-
-
-        private async Task<WriteableBitmap> GetPage(MuPDFDocument file, int pagenr, double zoom)
-        {
-            if (PageInRange(pagenr))
-            {
-                if (BitmapContainer[pagenr] != null)
-                {
-                    return BitmapContainer[pagenr];
-                }
-                else
-                {
-                    MuPDFCore.Rectangle bounds = file.Pages[pagenr].Bounds;
-                    RoundedRectangle roundedBounds = bounds.Round(zoom);
-                    WriteableBitmap bitmap = new WriteableBitmap(new PixelSize(roundedBounds.Width, roundedBounds.Height), new Vector(96, 96), PixelFormat.Rgba8888, AlphaFormat.Opaque);
-
-                    using (ILockedFramebuffer fb = bitmap.Lock())
-                    {
-                        file.Render(pagenr, bounds, zoom, MuPDFCore.PixelFormats.RGBA, fb.Address);
-                    }
-                    BitmapContainer[pagenr] = bitmap;
-                    
-                    return bitmap;
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-
-        public void NextPage(bool SecondPage = false)
-        {
+            Debug.WriteLine("NEXT PAGE");
             if (!TwopageMode)
             {
                 RequestPage1 = RequestPage1 + 1;
@@ -399,8 +168,9 @@ namespace Avalon.ViewModels
 
         }
 
-        public void PrevPage(bool SecondPage = false)
+        public void PrevPage_OLD(bool SecondPage = false)
         {
+            Debug.WriteLine("PREV PAGE");
             if (!TwopageMode)
             {
                 RequestPage1 = RequestPage1 - 1;

@@ -17,6 +17,13 @@ using System.IO;
 using Newtonsoft.Json.Bson;
 using System.Net;
 using System.Diagnostics;
+using MuPDFCore;
+using Avalonia.Media.Imaging;
+using System.Xml.Serialization;
+using System.Threading.Tasks;
+using Avalonia.Data;
+using System.Drawing.Printing;
+using MuPDFCore.MuPDFRenderer;
 
 
 namespace Avalon.Views;
@@ -46,19 +53,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
 
 
-        Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
-        Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview1);
-
-        Preview2.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
-        Preview2.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview2);
-
-        Preview.AddHandler(Viewbox.PointerPressedEvent, on_pan_start);
-        Preview.AddHandler(Viewbox.PointerMovedEvent, on_preview_pan);
-        Preview.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
-
-        Preview2.AddHandler(Viewbox.PointerPressedEvent, on_pan_start);
-        Preview2.AddHandler(Viewbox.PointerMovedEvent, on_preview_pan);
-        Preview2.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
 
         init_MetaWorker();
         setup_preview_transform();
@@ -94,6 +88,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     public List<DataGridRowEventArgs> Args = new List<DataGridRowEventArgs>();
 
+    private bool PreviewTaskBusy = false;
+
+    private CancellationTokenSource cts = new CancellationTokenSource();
+
+    private DateTime t0;
+
     private void init_startup(object sender, RoutedEventArgs e)
     {
         get_datacontext();
@@ -116,6 +116,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         
 
         ctx.PropertyChanged += on_binding_ctx;
+        pwr.PropertyChanged += on_binding_pwr;
 
     }
 
@@ -124,6 +125,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         if (e.PropertyName == "FilteredFiles") { on_update_columns(); }
         if (e.PropertyName == "UpdateColumns") { on_update_columns(); }
+    }
+
+    private void on_binding_pwr(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == "PreviewFile") { UpdatePreviewFile(); }
+        if (e.PropertyName == "RequestPage1") { TrySetPage(); }
     }
 
     public void on_search(object sender, RoutedEventArgs e)
@@ -288,7 +295,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             if (file != null && Path.Exists(file.Sökväg)) 
             {
-                pwr.RequestFile = file;
+                pwr.RequestFile = file;                
+
                 ScrollSlider.Value = 1;
                 
             }
@@ -298,6 +306,58 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             }
 
         }
+    }
+
+    private void UpdatePreviewFile()
+    {
+        Debug.WriteLine("PREVIEW INIT");
+        MuPDFRenderer.Initialize(pwr.PreviewFile);
+    }
+
+    private void CtrlPressed(object sender ,KeyEventArgs e)
+    {
+        Debug.WriteLine("PRESSED");
+        while (e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            MuPDFRenderer.ZoomEnabled = true;
+        }
+
+        MuPDFRenderer.ZoomEnabled = false;
+    }
+
+    private void CtrlDepressed(object sender, KeyEventArgs e)
+    {
+        if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            MuPDFRenderer.ZoomEnabled = false;
+        }
+    }
+
+    private void ModifiedControlPointerWheelChanged(object sender, PointerWheelEventArgs e)
+    {
+        Debug.WriteLine("MODIFIED");
+        if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            //MuPDFRenderer.ZoomStep(e.Delta.Y, e.GetPosition(this));
+            //MuPDFRenderer.ZoomEnabled = true;
+        }
+
+        if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))  
+        {
+            Vector mode = e.Delta;
+
+            if (mode.Y > 0)
+            {
+                pwr.RequestPage1--;
+            }
+
+            if (mode.Y < 0)
+            {
+                pwr.RequestPage1++; t0 = DateTime.Now;
+
+            }
+        }
+
     }
 
     private void setup_preview_transform()
@@ -318,104 +378,46 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         trTns.Y = 0;
         pw_scale = 1f;
 
-        Previewer.RenderTransform = trGrp;
+        //Previewer.RenderTransform = trGrp;
     }
 
-    private void on_scroll_preview1(object sender, PointerWheelEventArgs args)
+    private void TrySetPage()
     {
-
-        if (!args.KeyModifiers.HasFlag(KeyModifiers.Control))
+        if(!PreviewTaskBusy)
         {
-            Vector mode = args.Delta;
-
-            if (mode.Y > 0)
-            {
-                pwr.PrevPage();
-            }
-
-            if (mode.Y < 0)
-            {
-                pwr.NextPage();
-            }
+            Debug.WriteLine("TRY");
+            SetPage(pwr.RequestPage1);
         }
-    }
-
-    private void on_scroll_preview2(object sender, PointerWheelEventArgs args)
-    {
-
-        if (!args.KeyModifiers.HasFlag(KeyModifiers.Control))
+        else
         {
-            Vector mode = args.Delta;
-
-            if (mode.Y > 0)
-            {
-                pwr.PrevPage(true);
-            }
-
-            if (mode.Y < 0)
-            {
-                pwr.NextPage(true);
-            }
-        }
-    }
-
-    private void on_pan_start(object sender, PointerEventArgs args)
-    {
-        preview_pan = true;
-
-        double dx = 0;
-        double dy = 0;
-
-        if (Previewer.RenderTransform != null)
-        {
-            dx = trTns.X;
-            dy = trTns.Y;
+            Debug.WriteLine("BUSY");
         }
 
-        x_start = args.GetPosition(null).X - dx;
-        y_start = args.GetPosition(null).Y - dy;
-
     }
 
-    private void on_pan_end(object sender, PointerEventArgs args)
+    private async Task SetPage(int pagenr)
     {
-        preview_pan = false;
-    }
+        PreviewTaskBusy = true;
+        
+        Debug.WriteLine("Setting page: " + pagenr);
 
-    private void on_preview_pan(object sender, PointerEventArgs args)
-    {
-        if (preview_pan == true)
+        cts.Cancel();
+        cts = new CancellationTokenSource();
+
+        await MuPDFRenderer.InitializeAsync(pwr.PreviewFile, 4, pagenr, 1, false, null, cts.Token);
+
+        if (pwr.RequestPage1 == pagenr)
         {
-            trTns.X = args.GetPosition(null).X - x_start;
-            trTns.Y = args.GetPosition(null).Y - y_start;
-
-            Previewer.RenderTransform = trGrp;
+            pwr.CurrentPage1 = pagenr;
+            PreviewTaskBusy = false;
         }
-    }
-
-    private void on_preview_zoom(object sender, PointerWheelEventArgs args)
-    {
-
-        if (args.KeyModifiers.HasFlag(KeyModifiers.Control)) 
-
+        else
         {
-            Vector mode = args.Delta;
-
-            if (mode.Y > 0)
-            {
-                pw_scale = pw_scale * 1.05;
-                trScl.ScaleX = trScl.ScaleY = pw_scale;
-                Previewer.RenderTransform = trGrp;
-            }
-
-            else if (mode.Y < 0 && pw_scale > 1)
-            {
-                pw_scale = pw_scale * 0.95;
-                trScl.ScaleX = trScl.ScaleY = pw_scale;
-                Previewer.RenderTransform = trGrp;
-            }
+            SetPage(pwr.RequestPage1);
         }
+        
     }
+
 
     private void on_toggle_dualmode(object sender, RoutedEventArgs e)
     {
@@ -676,14 +678,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void ToggleDimmedBackground(object sender, RoutedEventArgs e)
     {
-        if (pwr.DimmedBackground)
-        {
-            Panel1.Background = Panel2.Background = Brushes.AntiqueWhite;
-        }
-        else
-        {
-            Panel1.Background = Panel2.Background = Brushes.White;
-        }
+
     }
 
     private void on_update_columns()
@@ -791,6 +786,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             }
         }
     }
+
+    private void RaisePropertyChanged(string propName)
+    {
+        if (PropertyChanged != null)
+            PropertyChanged(this, new PropertyChangedEventArgs(propName));
+    }
+    public event PropertyChangedEventHandler PropertyChanged;
 
 }
 
