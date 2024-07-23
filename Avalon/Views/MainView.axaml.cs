@@ -55,7 +55,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
 
         init_MetaWorker();
-        setup_preview_transform();
 
         StatusLabel.Content = "Ready";
     }
@@ -82,6 +81,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private Thread taskThread = null;
 
+    private CancellationTokenSource cts = new CancellationTokenSource();
+
 
     public MainViewModel ctx = null;
     public PreviewViewModel pwr = null;
@@ -90,9 +91,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private bool PreviewTaskBusy = false;
 
-    private CancellationTokenSource cts = new CancellationTokenSource();
+    private bool PreviewReady = false;
 
-    private DateTime t0;
+    private double BitmapRes = 1;
+
 
     private void init_startup(object sender, RoutedEventArgs e)
     {
@@ -129,8 +131,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_binding_pwr(object sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == "PreviewFile") { UpdatePreviewFile(); }
-        if (e.PropertyName == "RequestPage1") { TrySetPage(); }
+        if (e.PropertyName == "CurrentFile") { InitPreview(); }
+        if (e.PropertyName == "RequestPage1") { TryUpdatePreview(); }
     }
 
     public void on_search(object sender, RoutedEventArgs e)
@@ -295,10 +297,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             if (file != null && Path.Exists(file.Sökväg)) 
             {
-                pwr.RequestFile = file;                
-
-                ScrollSlider.Value = 1;
-                
+                PreviewReady = false;
+                MuPDFRenderer.ReleaseResources();
+                MuPDFRenderer2.ReleaseResources();
+                pwr.RequestFile = file;
             }
             else
             {
@@ -308,38 +310,126 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void UpdatePreviewFile()
+    private void InitPreview()
     {
-        Debug.WriteLine("PREVIEW INIT");
-        MuPDFRenderer.Initialize(pwr.PreviewFile);
-    }
+        MuPDFRenderer.ReleaseResources();
+        MuPDFRenderer2.ReleaseResources();
 
-    private void CtrlPressed(object sender ,KeyEventArgs e)
-    {
-        Debug.WriteLine("PRESSED");
-        while (e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        Debug.WriteLine(pwr.Pagecount);
+
+        if (pwr.Pagecount > 1)
         {
-            MuPDFRenderer.ZoomEnabled = true;
+            DualModeOn(null, null);
+            Debug.WriteLine("Dualmode prepared");
+            MuPDFRenderer.Initialize(pwr.PreviewFile, 4, 0, BitmapRes);
+            MuPDFRenderer2.Initialize(pwr.PreviewFile, 4, 1, BitmapRes);
+        }
+        else
+        {
+            DualModeOff(null, null);
+
+            MuPDFRenderer.Initialize(pwr.PreviewFile, 4, 0, BitmapRes);
         }
 
+        PreviewReady = true;
+
+
+    }
+
+    private void TryUpdatePreview()
+    {
+        if(!PreviewTaskBusy && PreviewReady)
+        {
+            UpdatePreview(pwr.RequestPage1);
+        }
+
+    }
+
+    private void UpdatePreview(int pagenr)
+    {
+        PreviewTaskBusy = true;
+        
+        if (pwr.TwopageMode)
+        {
+            MuPDFRenderer.Initialize(pwr.PreviewFile, 4, pagenr, BitmapRes);
+            MuPDFRenderer2.Initialize(pwr.PreviewFile, 4, pagenr + 1, BitmapRes);
+        }
+        else
+        {
+            MuPDFRenderer.Initialize(pwr.PreviewFile, 4, pagenr, BitmapRes);
+            MuPDFRenderer2.ReleaseResources();
+        }
+
+        if (pwr.RequestPage1 == pagenr)
+        {
+            pwr.CurrentPage1 = pwr.RequestPage1;
+            pwr.CurrentPage2 = pwr.CurrentPage2;
+            PreviewTaskBusy = false;
+        }
+        else
+        {
+            UpdatePreview(pwr.RequestPage1);
+        }
+    }
+
+    private void DualModeOn(object sender, RoutedEventArgs e)
+    {
+        Debug.WriteLine("DUAL MODE");
         MuPDFRenderer.ZoomEnabled = false;
+        ScrollSlider.TickFrequency = 1;
+        pwr.TwopageMode = true;
+        BitmapRes = 0.1;
+
+        MuPDFRenderer.PointerEventHandlersType = PDFRenderer.PointerEventHandlers.Custom;
+        MuPDFRenderer2.PointerEventHandlersType = PDFRenderer.PointerEventHandlers.Custom;
+
+        PreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
+        PreviewGrid.ColumnDefinitions[1] = new ColumnDefinition(1f, GridUnitType.Star);
+        //UpdateLayouts();
+        //TryUpdatePreview();
+
+        MuPDFRenderer.UpdateLayout();
+        MuPDFRenderer.UpdateLayout();
+
+        TryUpdatePreview();
     }
 
-    private void CtrlDepressed(object sender, KeyEventArgs e)
+    private void DualModeOff(object sender, RoutedEventArgs e)
     {
-        if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        Debug.WriteLine("SINGLE MODE");
+        MuPDFRenderer.ZoomEnabled = true;
+        ScrollSlider.TickFrequency = 2;
+        pwr.TwopageMode = false;
+        BitmapRes = 0.2;
+
+        MuPDFRenderer.PointerEventHandlersType = PDFRenderer.PointerEventHandlers.Pan;
+        MuPDFRenderer2.PointerEventHandlersType = PDFRenderer.PointerEventHandlers.Pan;
+
+        PreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
+        PreviewGrid.ColumnDefinitions[1] = new ColumnDefinition(0f, GridUnitType.Pixel);
+        TryUpdatePreview();
+
+        MuPDFRenderer.UpdateLayout();
+    }
+
+    private void UpdateLayouts()
+    {
+        MuPDFRenderer.UpdateLayout();
+        if(pwr.TwopageMode)
         {
-            MuPDFRenderer.ZoomEnabled = false;
+            MuPDFRenderer.UpdateLayout();
         }
+        
+
+        Debug.WriteLine("Layout updated");
     }
 
     private void ModifiedControlPointerWheelChanged(object sender, PointerWheelEventArgs e)
     {
-        Debug.WriteLine("MODIFIED");
+  
         if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
         {
-            //MuPDFRenderer.ZoomStep(e.Delta.Y, e.GetPosition(this));
-            //MuPDFRenderer.ZoomEnabled = true;
+
         }
 
         if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))  
@@ -348,89 +438,16 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             if (mode.Y > 0)
             {
-                pwr.RequestPage1--;
+                pwr.PrevPage();
             }
 
             if (mode.Y < 0)
             {
-                pwr.RequestPage1++; t0 = DateTime.Now;
-
+                pwr.NextPage();
             }
         }
-
     }
 
-    private void setup_preview_transform()
-    {
-        trTns = new TranslateTransform(0, 0);
-        trScl = new ScaleTransform(1, 1);
-
-        trGrp = new TransformGroup();
-        trGrp.Children.Add(trTns);
-        trGrp.Children.Add(trScl);
-    }
-
-    private void reset_preview_transform(object sender, RoutedEventArgs e)
-    {
-        trScl.ScaleX = 1;
-        trScl.ScaleY = 1;
-        trTns.X = 0;
-        trTns.Y = 0;
-        pw_scale = 1f;
-
-        //Previewer.RenderTransform = trGrp;
-    }
-
-    private void TrySetPage()
-    {
-        if(!PreviewTaskBusy)
-        {
-            Debug.WriteLine("TRY");
-            SetPage(pwr.RequestPage1);
-        }
-        else
-        {
-            Debug.WriteLine("BUSY");
-        }
-
-    }
-
-    private async Task SetPage(int pagenr)
-    {
-        PreviewTaskBusy = true;
-        
-        Debug.WriteLine("Setting page: " + pagenr);
-
-        cts.Cancel();
-        cts = new CancellationTokenSource();
-
-        await MuPDFRenderer.InitializeAsync(pwr.PreviewFile, 4, pagenr, 1, false, null, cts.Token);
-
-        if (pwr.RequestPage1 == pagenr)
-        {
-            pwr.CurrentPage1 = pagenr;
-            PreviewTaskBusy = false;
-        }
-        else
-        {
-            SetPage(pwr.RequestPage1);
-        }
-        
-    }
-
-
-    private void on_toggle_dualmode(object sender, RoutedEventArgs e)
-    {
-        if (DualMode.IsChecked == true)
-        {
-            ScrollSlider.TickFrequency = 2;
-        }
-        if (DualMode.IsChecked == false)
-        {
-            ScrollSlider.TickFrequency = 1;
-        }
-
-    }
 
     private void on_lock(object sender, EventArgs e)
     {
@@ -678,6 +695,23 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void ToggleDimmedBackground(object sender, RoutedEventArgs e)
     {
+        if (pwr.DimmedBackground)
+        {
+            MuPDFRenderer.PageBackground = Brushes.LightGoldenrodYellow;
+            MuPDFRenderer2.PageBackground = Brushes.LightGoldenrodYellow;
+
+            TryUpdatePreview();
+            //UpdateLayouts();
+
+        }
+        else
+        {
+            MuPDFRenderer.PageBackground = Brushes.White;
+            MuPDFRenderer2.PageBackground = Brushes.White;
+
+            TryUpdatePreview();
+            //UpdateLayouts();
+        }
 
     }
 

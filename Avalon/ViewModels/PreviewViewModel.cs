@@ -9,6 +9,7 @@ using Avalonia.Layout;
 using Avalonia.Platform;
 using Avalonia;
 using Avalon.Model;
+using Avalonia.Controls.Shapes;
 
 namespace Avalon.ViewModels
 {
@@ -69,7 +70,18 @@ namespace Avalon.ViewModels
         public int requestPage2 = 0;
         public int RequestPage2
         {
-            get { return requestPage2; }
+            get 
+            { 
+                if (TwopageMode)
+                {
+                    return RequestPage1 + 1;
+                }
+                else
+                {
+                    return requestPage2;
+                }
+                
+            }
             set
             {
                 if (PageInRange(value))
@@ -109,14 +121,67 @@ namespace Avalon.ViewModels
             set { dimmedBackground = value; OnPropertyChanged("DimmedBackground"); }
         }
 
+        private bool FileWorkerBusy = false;
+
 
         private void SetFile()
         {
-            SafeDispose();
-            byte[] bytes = File.ReadAllBytes(RequestFile.Sökväg);
-            PreviewFile = new MuPDFDocument(new MuPDFContext(), bytes, InputFileTypes.PDF);
+            if (!FileWorkerBusy)
+            {
+                string path = RequestFile.Sökväg;
+                SetFileTask(path);
+            }
+        }
 
-            Pagecount = PreviewFile.Pages.Count;
+        private async void SetFileTask(string path)
+        {
+            FileWorkerBusy = true;
+            SafeDispose();
+            if (false)
+            {
+                //byte[] bytes = await File.ReadAllBytesAsync(path);
+                //PreviewFile = new MuPDFDocument(new MuPDFContext(), bytes, InputFileTypes.PDF);
+            }
+            else
+            {
+                PreviewFile = new MuPDFDocument(new MuPDFContext(), path);
+            }
+            
+            if (RequestFile.Sökväg == path)
+            {
+                Pagecount = PreviewFile.Pages.Count;
+                CurrentFile = RequestFile;
+                requestPage1 = 0;
+                requestPage2 = 1;
+                FileWorkerBusy = false;
+            }
+            else
+            {
+                SetFileTask(path);
+            }
+
+        }
+
+        private async Task SetFileTask_OLD(string path)
+        {
+            FileWorkerBusy = true;
+            SafeDispose();
+            //byte[] bytes = await File.ReadAllBytesAsync(path);
+            //PreviewFile = new MuPDFDocument(new MuPDFContext(), bytes, InputFileTypes.PDF);
+            PreviewFile = new MuPDFDocument(new MuPDFContext(), path);
+
+            if (RequestFile.Sökväg == path)
+            {
+                Pagecount = PreviewFile.Pages.Count;
+                RequestPage1 = 0;
+                RequestPage2 = 1;
+                CurrentFile = RequestFile;
+                FileWorkerBusy = false;
+            }
+            else
+            {
+                SetFileTask(path);
+            }
         }
 
         private void SafeDispose()
@@ -127,17 +192,7 @@ namespace Avalon.ViewModels
             }
         }
 
-        public void NextPage()
-        {
-            RequestPage1++;
-        }
-
-        public void PrevPage()
-        {
-            RequestPage1--;
-        }
-
-        public void NextPage_OLD(bool SecondPage = false)
+        public void NextPage(bool SecondPage = false)
         {
             Debug.WriteLine("NEXT PAGE");
             if (!TwopageMode)
@@ -151,6 +206,7 @@ namespace Avalon.ViewModels
                 if (LinkedPageMode)
                 {
                     RequestPage1 = RequestPage1 + 2;
+                    RequestPage2 = RequestPage1 + 1;
                 }
                 else
                 {
@@ -168,7 +224,7 @@ namespace Avalon.ViewModels
 
         }
 
-        public void PrevPage_OLD(bool SecondPage = false)
+        public void PrevPage(bool SecondPage = false)
         {
             Debug.WriteLine("PREV PAGE");
             if (!TwopageMode)
@@ -181,6 +237,7 @@ namespace Avalon.ViewModels
                 if (LinkedPageMode)
                 {
                     RequestPage1 = RequestPage1 - 2;
+                    RequestPage2 = RequestPage1 + 1;
                 }
                 else
                 {
@@ -196,7 +253,7 @@ namespace Avalon.ViewModels
             }
         }
 
-        private bool PageInRange(int pagenr)
+        public bool PageInRange(int pagenr)
         {
             if (pagenr >= 0 && pagenr < Pagecount)
             {

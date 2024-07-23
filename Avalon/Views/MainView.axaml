@@ -291,20 +291,31 @@
 			
 				<GridSplitter Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns"/>
 
-				<Grid RowDefinitions="*,30" Grid.Column="3" Grid.Row="2" Margin="0 5 0 0" DataContext="{Binding PreviewVM}">
-					<Grid ClipToBounds="True" ColumnDefinitions="*,*" Grid.Row="0" Grid.Column="0">
-	
-						<mupdf:PDFRenderer Name="MuPDFRenderer" Grid.Column="0" Background="Transparent" PageBackground="White" ZoomEnabled="False" PointerWheelChanged="ModifiedControlPointerWheelChanged" 
-										   ZoomIncrement="1.2" ClipToBounds="True">
-						</mupdf:PDFRenderer>
-						<mupdf:PDFRenderer Name="MuPDFRenderer2" Grid.Column="1" Background="Transparent" PageBackground="White" ZoomEnabled="False" PointerWheelChanged="ModifiedControlPointerWheelChanged"
-										ZoomIncrement="1.2" ClipToBounds="True">
-						</mupdf:PDFRenderer>
+				<Grid RowDefinitions="*,30" Grid.Column="3" Grid.Row="2" Margin="0 5 0 0">
+					<Grid Name="PreviewGrid" ClipToBounds="True" ColumnDefinitions="*,*" Grid.Row="0" Grid.Column="0">
+						
+							<mupdf:PDFRenderer Name="MuPDFRenderer" Grid.Column="0" Background="Transparent" PageBackground="White" ZoomEnabled="False" PointerWheelChanged="ModifiedControlPointerWheelChanged" 
+											   ZoomIncrement="1.5" ClipToBounds="True" PointerEventHandlersType="Custom">
+								<mupdf:PDFRenderer.Transitions>
+									<Transitions>
+										<anim:RectTransition Property="DisplayArea" Duration="0:0:0:0.1" />
+									</Transitions>
+								</mupdf:PDFRenderer.Transitions>
+							</mupdf:PDFRenderer>
+						
+							<mupdf:PDFRenderer Name="MuPDFRenderer2" Grid.Column="1" Background="Transparent" PageBackground="White" ZoomEnabled="False" PointerWheelChanged="ModifiedControlPointerWheelChanged"
+											ZoomIncrement="1.5" ClipToBounds="True" PointerEventHandlersType="Custom">
+								<mupdf:PDFRenderer.Transitions>
+									<Transitions>
+										<anim:RectTransition Property="DisplayArea" Duration="0:0:0:0.1" />
+									</Transitions>
+								</mupdf:PDFRenderer.Transitions>
+							</mupdf:PDFRenderer>
 	
 					</Grid>
 					
 	
-					<StackPanel ClipToBounds="True" Grid.Row="1" FlowDirection="LeftToRight" Orientation="Vertical" Margin="0">
+					<StackPanel ClipToBounds="True" Grid.Row="1" FlowDirection="LeftToRight" Orientation="Vertical" Margin="0" DataContext="{Binding PreviewVM}">
 						<StackPanel Width="700" Orientation="Horizontal" VerticalAlignment="Center" Spacing="0">
 
 							<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Width="200" Height="30" Margin="0 0 10 0" Minimum="1" IsSnapToTickEnabled="True" TickFrequency="1" Maximum="{Binding Pagecount}" Value="{Binding RequestPage1, Converter={StaticResource AddOneConverter}}"/>
@@ -315,15 +326,15 @@
 								<Label Content="{Binding Pagecount}" VerticalAlignment="Center"/>
 							</StackPanel>
 
-							<Button ToolTip.Tip="Previous Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevPage}">
+							<Button ToolTip.Tip="Previous Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevPage}" CommandParameter="false">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
 							</Button>
 
-							<Button ToolTip.Tip="Next Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextPage}">
+							<Button ToolTip.Tip="Next Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextPage}" CommandParameter="false">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
 							</Button>
 
-							<Button ToolTip.Tip="Reset View" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Click="reset_preview_transform">
+							<Button ToolTip.Tip="Reset View" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="StretchToPageOutline" Width="20" Height="20"/>
 							</Button>
 
@@ -334,7 +345,7 @@
 								</StackPanel>
 							</ToggleButton>
 
-							<ToggleButton ToolTip.Tip="Toggle two page mode" ToolTip.Placement="Right" Name="DualMode" Width="35" Height="25" Command="{Binding toggle_pw_mode}" Click="on_toggle_dualmode">
+							<ToggleButton ToolTip.Tip="Toggle two page mode" ToolTip.Placement="Right" Name="DualMode" Width="35" Height="25" Checked="DualModeOff" Unchecked="DualModeOn">
 								<StackPanel>
 									<materialIcons:MaterialIcon Kind="FileDocument" Width="20" Height="20" IsVisible="{Binding !TwopageMode}"/>
 									<materialIcons:MaterialIcon Kind="BookOpenPageVariant" Width="20" Height="20" IsVisible="{Binding TwopageMode}"/>
