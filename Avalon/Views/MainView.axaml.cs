@@ -348,11 +348,21 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void UpdatePreview(int pagenr)
     {
         PreviewTaskBusy = true;
-        
+
         if (pwr.TwopageMode)
         {
             MuPDFRenderer.Initialize(pwr.PreviewFile, 4, pagenr, BitmapRes);
-            MuPDFRenderer2.Initialize(pwr.PreviewFile, 4, pagenr + 1, BitmapRes);
+            if (pwr.PageInRange(pagenr + 1))
+            {
+                MuPDFRenderer2.Initialize(pwr.PreviewFile, 4, pagenr + 1, BitmapRes);
+            }
+            else
+            {
+                Debug.WriteLine("RELEASE");
+                MuPDFRenderer2.ReleaseResources();
+                MuPDFRenderer2.UpdateLayout();
+            }
+            
         }
         else
         {
@@ -389,7 +399,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         //TryUpdatePreview();
 
         MuPDFRenderer.UpdateLayout();
-        MuPDFRenderer.UpdateLayout();
+        MuPDFRenderer2.UpdateLayout();
 
         TryUpdatePreview();
     }
@@ -400,7 +410,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         MuPDFRenderer.ZoomEnabled = true;
         ScrollSlider.TickFrequency = 2;
         pwr.TwopageMode = false;
-        BitmapRes = 0.2;
+        BitmapRes = 0.5;
 
         MuPDFRenderer.PointerEventHandlersType = PDFRenderer.PointerEventHandlers.Pan;
         MuPDFRenderer2.PointerEventHandlersType = PDFRenderer.PointerEventHandlers.Pan;
@@ -697,8 +707,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         if (pwr.DimmedBackground)
         {
-            MuPDFRenderer.PageBackground = Brushes.LightGoldenrodYellow;
-            MuPDFRenderer2.PageBackground = Brushes.LightGoldenrodYellow;
+            MuPDFRenderer.PageBackground = Brushes.AntiqueWhite;
+            MuPDFRenderer2.PageBackground = Brushes.AntiqueWhite;
 
             TryUpdatePreview();
             //UpdateLayouts();
