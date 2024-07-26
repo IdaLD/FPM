@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using Avalonia.Data;
 using System.Drawing.Printing;
 using MuPDFCore.MuPDFRenderer;
+using Avalonia.Threading;
 
 
 namespace Avalon.Views;
@@ -53,8 +54,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
 
         PreviewGrid.AddHandler(Grid.SizeChangedEvent, ResetView);
-
-
 
         init_MetaWorker();
 
@@ -98,9 +97,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private double BitmapRes = 0.5;
 
 
+
     private void init_startup(object sender, RoutedEventArgs e)
     {
         get_datacontext();
+        pwr.GetRenderControl(MuPDFRenderer);
         Lockedstatus.IsChecked = true;
         TreeStatus.IsChecked = true;
 
@@ -133,8 +134,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_binding_pwr(object sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == "CurrentFile") { InitPreview(); }
-        if (e.PropertyName == "RequestPage1") { TryUpdatePreview(); }
+
     }
 
     public void on_search(object sender, RoutedEventArgs e)
@@ -283,6 +283,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             val1 = 5f;
             val2 = 3.2f;
         }
+        if (previewMode == false)
+        {
+            pwr.SafeDispose();
+        }
 
 
         MainGrid.ColumnDefinitions[1] = new ColumnDefinition(1f, GridUnitType.Star);
@@ -299,8 +303,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             if (file != null && Path.Exists(file.Sökväg)) 
             {
-                PreviewReady = false;
-                MuPDFRenderer.ReleaseResources();
                 pwr.RequestFile = file;
             }
             else
@@ -311,83 +313,27 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
+
     private void InitPreview()
     {
-
-        MuPDFRenderer.Initialize(pwr.PreviewFile, 0, 0, BitmapRes);
-        PreviewReady = true;
-    }
-
-
-    private void TryUpdatePreview()
-    {
-        if(!PreviewTaskBusy && PreviewReady)
-        {
-            UpdatePreview(pwr.RequestPage1);
-        }
+        pwr.GetRenderControl(MuPDFRenderer);
 
     }
 
-    private void UpdatePreview(int pagenr)
-    {
-        if (pwr.TwopageMode)
-        {
-            MuPDFRenderer.Initialize(pwr.PreviewFileDual, 0, pagenr/2, BitmapRes);
-        }
-        else
-        {
-            MuPDFRenderer.Initialize(pwr.PreviewFile, 0, pagenr, BitmapRes);
-        }
-        
-        pwr.CurrentPage1 = pagenr;
-    }
 
-
-
-    private void ToggleDualMode(object sender, RoutedEventArgs e)
-    {
-        if(pwr.TwopageMode)
-        {
-            Debug.WriteLine("DUAL MODE");
-            ScrollSlider.TickFrequency = 1;
-            pwr.TwopageMode = true;
-            BitmapRes = 0.5;
-        }
-
-        else
-        {
-            Debug.WriteLine("SINGLE MODE");
-            ScrollSlider.TickFrequency = 2;
-            pwr.TwopageMode = false;
-            BitmapRes = 0.5;
-        }
-
-
-        TryUpdatePreview();
-    }
-
-    private void UpdateLayouts()
-    {
-        MuPDFRenderer.UpdateLayout();
-        if(pwr.TwopageMode)
-        {
-            MuPDFRenderer.UpdateLayout();
-        }
-        
-
-        Debug.WriteLine("Layout updated");
-    }
 
     private void ModifiedControlPointerWheelChanged(object sender, PointerWheelEventArgs e)
     {
-  
+        Debug.WriteLine("SCROLLING");
         if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
         {
-
+            MuPDFRenderer.ZoomEnabled = true; 
         }
 
         if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))  
         {
+            MuPDFRenderer.ZoomEnabled = false;
+
             Vector mode = e.Delta;
 
             if (mode.Y > 0)
@@ -401,7 +347,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             }
         }
     }
-
     
 
     private void ResetView(object sender, RoutedEventArgs e)
@@ -654,20 +599,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.move_files(projectname);
     }
 
-    private void ToggleDimmedBackground(object sender, RoutedEventArgs e)
-    {
-        if (pwr.DimmedBackground)
-        {
-            MuPDFRenderer.PageBackground = Brushes.AntiqueWhite;
-            TryUpdatePreview();
-        }
-
-        else
-        {
-            MuPDFRenderer.PageBackground = Brushes.White;
-            TryUpdatePreview();
-        }
-    }
 
     private void on_update_columns()
     {

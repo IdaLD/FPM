@@ -295,12 +295,7 @@
 					<Grid Name="PreviewGrid" ClipToBounds="True" ColumnDefinitions="*" Grid.Row="0" Grid.Column="0">
 						
 							<mupdf:PDFRenderer Name="MuPDFRenderer" Grid.Column="0" Background="Transparent" PageBackground="White" ZoomEnabled="True" PointerWheelChanged="ModifiedControlPointerWheelChanged" 
-											   ZoomIncrement="1.5" ClipToBounds="True" PointerEventHandlersType="PanHighlight">
-								<mupdf:PDFRenderer.Transitions>
-									<Transitions>
-										<anim:RectTransition Property="DisplayArea" Duration="0:0:0:0.1" />
-									</Transitions>
-								</mupdf:PDFRenderer.Transitions>
+											   ZoomIncrement="1.75" ClipToBounds="True" PointerEventHandlersType="PanHighlight" >
 							</mupdf:PDFRenderer>
 						
 					</Grid>
@@ -310,6 +305,7 @@
 						<StackPanel Width="700" Orientation="Horizontal" VerticalAlignment="Center" Spacing="0">
 
 							<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Width="200" Height="30" Margin="0 0 10 0" Minimum="1" IsSnapToTickEnabled="True" TickFrequency="1" Maximum="{Binding Pagecount}" Value="{Binding RequestPage1, Converter={StaticResource AddOneConverter}}"/>
+
 							
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 								<Label Content="{Binding CurrentPage1, Converter={StaticResource AddOneConverter}}" Width="40" HorizontalContentAlignment="Right" VerticalAlignment="Center"/>
@@ -329,19 +325,24 @@
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="StretchToPageOutline" Width="20" Height="20"/>
 							</Button>
 
-							<ToggleButton ToolTip.Tip="Toggle Dimmed Background" ToolTip.Placement="Right" IsChecked="{Binding DimmedBackground}" Width="35" Height="25" Click="ToggleDimmedBackground">
+							<ToggleButton ToolTip.Tip="Toggle Dimmed Background" ToolTip.Placement="Right" IsChecked="{Binding DimmedBackground}" Width="35" Height="25">
 								<StackPanel>
 									<materialIcons:MaterialIcon Grid.Column="0" Kind="CarLightHigh" Width="20" Height="20" IsVisible="{Binding !DimmedBackground}"/>
 									<materialIcons:MaterialIcon Grid.Column="0" Kind="CarLightDimmed" Width="20" Height="20" IsVisible="{Binding DimmedBackground}"/>
 								</StackPanel>
 							</ToggleButton>
 
-							<ToggleButton ToolTip.Tip="Toggle two page mode" ToolTip.Placement="Right" Name="DualMode" Width="35" Height="25" IsChecked="{Binding TwopageMode}" Click="ToggleDualMode" IsVisible="{Binding TwopageModeAvail}">
+							<ToggleButton ToolTip.Tip="Toggle two page mode" ToolTip.Placement="Right" Name="DualMode" Width="35" Height="25" IsChecked="{Binding TwopageMode}" IsVisible="{Binding TwopageModeAvail}">
 								<StackPanel>
 									<materialIcons:MaterialIcon Kind="FileDocument" Width="20" Height="20" IsVisible="{Binding !TwopageMode}"/>
 									<materialIcons:MaterialIcon Kind="BookOpenPageVariant" Width="20" Height="20" IsVisible="{Binding TwopageMode}"/>
 								</StackPanel>
 							</ToggleButton>
+
+							<StackPanel Width="25" Height="25" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10 5 5 0">
+								<materialIcons:MaterialIcon Kind="Check" Width="20" Height="20" IsVisible="{Binding !FileWorkerBusy}"/>
+								<materialIcons:MaterialIcon Kind="Reload" Width="20" Height="20" IsVisible="{Binding FileWorkerBusy}"/>
+							</StackPanel>
 
 							<ToggleButton ToolTip.Tip="Toggle linked pagemode" IsChecked="{Binding LinkedPageMode}" ToolTip.Placement="Right" Name="LinkMode" Width="35" Height="25" Command="{Binding ToggleLinkedMode}">
 								<StackPanel>

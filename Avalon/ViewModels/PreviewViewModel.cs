@@ -20,6 +20,12 @@ using iText.Layout.Properties;
 using iText.Kernel.Pdf.Xobject;
 using iText.Kernel.Pdf.Canvas;
 using Org.BouncyCastle.Asn1.BC;
+using Avalonia.Controls;
+using Avalonia.Threading;
+using MuPDFCore.MuPDFRenderer;
+using System.Drawing;
+using Avalonia.Media;
+using Avalonia.Interactivity;
 
 namespace Avalon.ViewModels
 {
@@ -46,7 +52,7 @@ namespace Avalon.ViewModels
         public bool TwopageMode
         {
             get { return twopageMode; }
-            set { twopageMode = value; OnPropertyChanged("TwopageMode"); }
+            set { twopageMode = value;  OnPropertyChanged("TwopageMode"); if (!FileWorkerBusy) { SetPage(); }}
         }
 
         public bool twopageModeAvail = false;
@@ -86,6 +92,7 @@ namespace Avalon.ViewModels
                 if (PageInRange(value))
                 {
                     requestPage1 = value;
+                    SetPage();
                     OnPropertyChanged("RequestPage1");
                 }
             }
@@ -142,92 +149,163 @@ namespace Avalon.ViewModels
         public bool DimmedBackground
         {
             get { return dimmedBackground; }
-            set { dimmedBackground = value; OnPropertyChanged("DimmedBackground"); }
+            set { dimmedBackground = value; SetDimmedMode(); OnPropertyChanged("DimmedBackground"); }
         }
 
-        private bool FileWorkerBusy = false;
+        private bool fileWorkerBusy = false;
+        public bool FileWorkerBusy
+        {
+            get { return fileWorkerBusy; }
+            set { fileWorkerBusy = value; OnPropertyChanged("FileWorkerBusy"); }
+        }
+
+
+        private bool RenderWorkerBusy = false;
 
         private byte[] bytes;
 
         private byte[] tempbytes;
 
-        private void SetFile()
-        {
-            if (!FileWorkerBusy)
-            {
-                string path = RequestFile.Sökväg;
-                SetFileTask(path);
-            }
-        }
+        private Task MainFileTask;
 
         private PdfDocument pdfSource;
 
-        private async void SetFileTask(string path)
+        private PDFRenderer Renderer;
+
+        MuPDFContext Context = null;
+
+        MuPDFContext ContextDual = null;
+
+        DateTime t0;
+
+        public void GetRenderControl(PDFRenderer renderer)
         {
-            //FileWorkerBusy = true;
-            TwopageMode = false;
-            SafeDispose();
-            TwopageModeAvail = false;
-            bytes = File.ReadAllBytes(path);
+            Renderer = renderer;
+        }
 
-            IntPtr ptr = Marshal.AllocHGlobal(bytes.Length);
-
-            Marshal.Copy(bytes, 0, ptr, bytes.Length);
-            IDisposable dispIntPtr = new DisposableIntPtr(ptr);
-            PreviewFile = new MuPDFDocument(new MuPDFContext(), ptr, bytes.Length, InputFileTypes.PDF, ref dispIntPtr);
-
-            RequestPage1 = 0;
-            Pagecount = PreviewFile.Pages.Count;
-            CurrentFile = RequestFile;
-
-            if (PreviewFile.Pages.Count > 1)
+        private void SetFile()
+        {
+            Debug.WriteLine(FileWorkerBusy);
+            if (!FileWorkerBusy)
             {
-                GetDualPageFile();
-                GetDualPage();
-                TwopageModeAvail = true;
+                FileWorkerBusy = true;
+                SetMainFile();
+            }
+        }
+
+        private void SetMainFile()
+        {
+            
+            TwopageModeAvail = false;
+
+            if(Renderer.IsEffectivelyVisible)
+            {
+                Renderer.IsVisible = false;
             }
 
+            string path = RequestFile.Sökväg;
 
+            MainFileTask = Task.Run(() => GetMainFile(path));
+            MainFileTask.ContinueWith(delegate { CheckMainFile(path); });
         }
 
-        private void GetDualPageFile()
+
+
+        private async Task GetMainFile(string path)
+        {
+            bytes = await Task.Run(() => File.ReadAllBytesAsync(path));
+        }
+
+        private async Task CheckMainFile(string path)
+        {
+            if (RequestFile.Sökväg == path)
+            {
+                await SafeDispose();
+                await SetupMainFile();
+
+                FileWorkerBusy = false;
+
+                if (Pagecount > 1)
+                {
+                    SetDualFile();
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Rerunning");
+                FileWorkerBusy = false;
+                SetFile();
+            }
+        }
+
+        private async Task SetupMainFile()
+        {
+            Context = new MuPDFContext();
+            PreviewFile = new MuPDFDocument(Context, bytes, InputFileTypes.PDF);
+
+            Pagecount = PreviewFile.Pages.Count;
+            CurrentFile = RequestFile;
+            RequestPage1 = 0;
+            CurrentPage1 = 0;
+            TwopageMode = false;
+
+            Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 1, 0, 0.5); });
+            Dispatcher.UIThread.Invoke(() => { Renderer.IsVisible = true; });
+        }
+
+        private async void SetDualFile()
+        {
+            await Task.Run(() => GetDualPageFile());
+            await Task.Run(() => GetDualPage());
+            TwopageModeAvail = true;
+        }
+
+
+        private async Task GetDualPageFile()
         {
             Debug.WriteLine("DUAL PAGE FETCH");
-            DateTime t0 = DateTime.Now;
-
             MemoryStream stream = new MemoryStream(bytes);
-
             pdfSource = new PdfDocument(new PdfReader(stream));
-
-            Pagecount = pdfSource.GetNumberOfPages();
-
-            Debug.WriteLine(Pagecount);
-
-            Debug.WriteLine(DateTime.Now - t0);
         }
 
 
-        private void GetDualPage()
+        private async Task GetDualPage()
         {
-            DateTime t0 = DateTime.Now;
-
             using (MemoryStream ms = new MemoryStream())
             {
                 PdfDocument pdf = new PdfDocument(new PdfWriter(ms));
 
-                for (int i = 1; i < pdfSource.GetNumberOfPages(); i = i + 2) 
+                Debug.WriteLine(Pagecount);
+                for (int i = 1; i < Pagecount + 1; i = i + 2) 
                 {
-                    PdfPage page1 = pdfSource.GetPage(i);
-                    PdfPage page2 = pdfSource.GetPage(i+1);
+                    
+                    float width1 = 0;
+                    float height1 = 0;
+                    float width2 = 0;
+                    float height2 = 0;
 
+                    PdfPage page1 = null;
+                    PdfPage page2 = null;
+
+
+                    if (FileWorkerBusy)
+                    {
+                        Debug.WriteLine("ABORT!");
+                        return;
+                    }
+
+                    page1 = pdfSource.GetPage(i);
                     iText.Kernel.Geom.Rectangle size1 = page1.GetPageSize();
-                    iText.Kernel.Geom.Rectangle size2 = page2.GetPageSize();
+                    height1 = size1.GetHeight();
+                    width1 = size1.GetWidth();
 
-                    float height1 = size1.GetHeight();
-                    float width1 = size1.GetWidth();
-
-                    float height2 = size2.GetHeight();
-                    float width2 = size2.GetWidth();
+                    if (i+1 <= pdfSource.GetNumberOfPages())
+                    {
+                        page2 = pdfSource.GetPage(i + 1);
+                        iText.Kernel.Geom.Rectangle size2 = page2.GetPageSize();
+                        height2 = size2.GetHeight();
+                        width2 = size2.GetWidth();
+                    }
 
                     float newWidth = width1 + width2;
                     float newHeight = Math.Max(height1, height2);
@@ -236,15 +314,18 @@ namespace Avalon.ViewModels
 
                     PageSize nUpPageSize = new PageSize(bounds);
 
-                    
                     PdfPage targetPage = pdf.AddNewPage(nUpPageSize);
                     PdfCanvas canvas = new PdfCanvas(targetPage);
 
                     PdfFormXObject pageCopy1 = page1.CopyAsFormXObject(pdf);
-                    PdfFormXObject pageCopy2 = page2.CopyAsFormXObject(pdf);
 
                     canvas.AddXObjectAt(pageCopy1, 0, 0);
-                    canvas.AddXObjectAt(pageCopy2, width1, 0);
+
+                    if (i+1 <= pdfSource.GetNumberOfPages())
+                    {
+                        PdfFormXObject pageCopy2 = page2.CopyAsFormXObject(pdf);
+                        canvas.AddXObjectAt(pageCopy2, width1, 0);
+                    }
                 }
 
 
@@ -252,53 +333,105 @@ namespace Avalon.ViewModels
 
                 tempbytes = ms.ToArray();
             }
+            await SafeDualDispose();
+            ContextDual = new MuPDFContext();
+            PreviewFileDual = new MuPDFDocument(ContextDual, tempbytes, InputFileTypes.PDF);
 
-            PreviewFileDual = new MuPDFDocument(new MuPDFContext(), tempbytes, InputFileTypes.PDF);
 
-
-            Debug.WriteLine(DateTime.Now - t0);
             Debug.WriteLine("DUAL PAGE SET");
 
         }
 
-
-        private async Task SetFileTask_OLD(string path)
+        public async Task SafeDispose()
         {
-            FileWorkerBusy = true;
-            SafeDispose();
-            //byte[] bytes = await File.ReadAllBytesAsync(path);
-            //PreviewFile = new MuPDFDocument(new MuPDFContext(), bytes, InputFileTypes.PDF);
-            PreviewFile = new MuPDFDocument(new MuPDFContext(), path);
 
-            if (RequestFile.Sökväg == path)
+            while (RenderWorkerBusy)
             {
-                Pagecount = PreviewFile.Pages.Count;
-                RequestPage1 = 0;
-                RequestPage2 = 1;
-                CurrentFile = RequestFile;
-                FileWorkerBusy = false;
+                Debug.WriteLine("Waiting");
+            }
+
+            if (PreviewFile != null)
+            {
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    Renderer.ReleaseResources();
+                    PreviewFile?.Dispose();
+                    Context?.Dispose();
+                });
+            }
+        }
+
+        public async Task SafeDualDispose()
+        {
+            if (PreviewFileDual != null)
+            {
+                PreviewFileDual?.Dispose();
+                ContextDual?.Dispose();
+            }
+        }
+
+        private async void SetPage()
+        {
+            if (FileWorkerBusy)
+            {
+                return;
+            }
+
+            if (!RenderWorkerBusy)
+            {
+                RenderPage(RequestPage1);
+            }
+        }
+
+        private void RenderPage(int pagenr)
+        {
+            Renderer.IsVisible = false;
+
+            if (TwopageMode)
+            {
+                Renderer.Initialize(PreviewFileDual, 1, pagenr / 2, 0.5);
             }
             else
             {
-                SetFileTask(path);
+                Renderer.Initialize(PreviewFile, 1, pagenr, 0.5);
             }
+
+            CurrentPage1 = RequestPage1;
+            Renderer.IsVisible = true;
         }
 
-        private void SafeDispose()
+        private async Task RenderPage2(int pagenr)
         {
-            if (PreviewFile != null)
+            RenderWorkerBusy = true;
+            //Renderer.IsVisible = false;
+            t0 = DateTime.Now;
+            if (TwopageMode)
             {
-                PreviewFile.Dispose();
+                await Renderer.InitializeAsync(PreviewFileDual, 1, pagenr/2, 0.5);
+            }
+            else
+            {
+                await Renderer.InitializeAsync(PreviewFile, 1, pagenr, 0.5);
             }
 
-            if (PreviewFileDual != null)
+
+            if (RequestPage1 == pagenr)
             {
-                PreviewFileDual.Dispose();
+                CurrentPage1 = RequestPage1;
+                //Renderer.IsVisible = true;
+                RenderWorkerBusy = false;
             }
+            else
+            {
+                RenderPage(RequestPage1);
+            }
+            Debug.WriteLine(DateTime.Now - t0);
         }
+
 
         public void NextPage(bool SecondPage = false)
         {
+            t0 = DateTime.Now;
             Debug.WriteLine("NEXT PAGE");
             if (!TwopageMode)
             {
@@ -325,8 +458,20 @@ namespace Avalon.ViewModels
                     }
                 }
             }
+        }
 
+        public void SetDimmedMode()
+        {
+            if (DimmedBackground)
+            {
+                Renderer.PageBackground = new SolidColorBrush(Colors.AntiqueWhite);
+            }
+            else
+            {
+                Renderer.PageBackground = new SolidColorBrush(Colors.White);
+            }
 
+            SetPage();
         }
 
         public void PrevPage(bool SecondPage = false)
