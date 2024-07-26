@@ -26,6 +26,10 @@ using MuPDFCore.MuPDFRenderer;
 using System.Drawing;
 using Avalonia.Media;
 using Avalonia.Interactivity;
+using System.Text.RegularExpressions;
+using System.Collections;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Avalon.ViewModels
 {
@@ -176,7 +180,12 @@ namespace Avalon.ViewModels
 
         MuPDFContext ContextDual = null;
 
-        DateTime t0;
+        private List<int> SearchPages = null;
+
+        private int SearchPageIndex = 0;
+
+        private Regex Regex = null;
+
 
         public void GetRenderControl(PDFRenderer renderer)
         {
@@ -249,7 +258,7 @@ namespace Avalon.ViewModels
             CurrentPage1 = 0;
             TwopageMode = false;
 
-            Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 1, 0, 0.5); });
+            Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 4, 0, 0.5); });
             Dispatcher.UIThread.Invoke(() => { Renderer.IsVisible = true; });
         }
 
@@ -344,7 +353,6 @@ namespace Avalon.ViewModels
 
         public async Task SafeDispose()
         {
-
             while (RenderWorkerBusy)
             {
                 Debug.WriteLine("Waiting");
@@ -354,6 +362,7 @@ namespace Avalon.ViewModels
             {
                 Dispatcher.UIThread.Invoke(() =>
                 {
+                    DisposeSelected();
                     Renderer.ReleaseResources();
                     PreviewFile?.Dispose();
                     Context?.Dispose();
@@ -365,6 +374,7 @@ namespace Avalon.ViewModels
         {
             if (PreviewFileDual != null)
             {
+                DisposeSelected();
                 PreviewFileDual?.Dispose();
                 ContextDual?.Dispose();
             }
@@ -384,7 +394,12 @@ namespace Avalon.ViewModels
         }
 
         private void RenderPage(int pagenr)
-        {
+        {            
+            if (Renderer.HighlightedRegions != null)
+            {
+                DisposeSelected();
+            }
+            
             Renderer.IsVisible = false;
 
             if (TwopageMode)
@@ -404,7 +419,7 @@ namespace Avalon.ViewModels
         {
             RenderWorkerBusy = true;
             //Renderer.IsVisible = false;
-            t0 = DateTime.Now;
+
             if (TwopageMode)
             {
                 await Renderer.InitializeAsync(PreviewFileDual, 1, pagenr/2, 0.5);
@@ -425,13 +440,12 @@ namespace Avalon.ViewModels
             {
                 RenderPage(RequestPage1);
             }
-            Debug.WriteLine(DateTime.Now - t0);
         }
 
 
         public void NextPage(bool SecondPage = false)
         {
-            t0 = DateTime.Now;
+
             Debug.WriteLine("NEXT PAGE");
             if (!TwopageMode)
             {
@@ -550,6 +564,60 @@ namespace Avalon.ViewModels
             else
             {
                 RequestPage2 = RequestPage1 + 1;
+            }
+        }
+
+        public void Search(string text)
+        {
+            Regex = new Regex(text, RegexOptions.IgnoreCase);
+
+            SearchPages = new List<int>();
+
+            for (int i = 0; i < Pagecount; i++)
+            {
+                if (PreviewFile.GetStructuredTextPage(i).Search(Regex).Count() != 0)
+                {
+                    SearchPages.Add(i);
+                }
+            }
+
+            SearchPageIndex = 0;
+            RequestPage1 = SearchPages[SearchPageIndex];
+
+            Renderer.Search(Regex);
+        }
+
+        public void NextSearchPage()
+        {
+            if (Regex != null)
+            {
+                if (SearchPageIndex < SearchPages.Count - 1)
+                {
+                    SearchPageIndex++;
+                    RequestPage1 = SearchPages[SearchPageIndex];
+                    Renderer.Search(Regex);
+                }
+            }
+        }
+
+        public void PrevSearchPage()
+        {
+            if (Regex != null)
+            {
+                if (SearchPageIndex > 0)
+                {
+                    SearchPageIndex--;
+                    RequestPage1 = SearchPages[SearchPageIndex];
+                    Renderer.Search(Regex);
+                }
+            }
+        }
+
+        private void DisposeSelected()
+        {
+            if (Renderer.HighlightedRegions != null)
+            {
+                Renderer.HighlightedRegions = null;
             }
         }
 

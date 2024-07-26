@@ -25,6 +25,9 @@ using Avalonia.Data;
 using System.Drawing.Printing;
 using MuPDFCore.MuPDFRenderer;
 using Avalonia.Threading;
+using Avalonia.Animation;
+using Avalonia.Input.Raw;
+using System.Linq.Expressions;
 
 
 namespace Avalon.Views;
@@ -54,6 +57,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
 
         PreviewGrid.AddHandler(Grid.SizeChangedEvent, ResetView);
+
+        this.AddHandler(KeyDownEvent, OnKeyDown);
+        this.AddHandler(KeyUpEvent, OnKeyUp);
 
         init_MetaWorker();
 
@@ -96,12 +102,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private double BitmapRes = 0.5;
 
-
+    
 
     private void init_startup(object sender, RoutedEventArgs e)
     {
         get_datacontext();
         pwr.GetRenderControl(MuPDFRenderer);
+        
         Lockedstatus.IsChecked = true;
         TreeStatus.IsChecked = true;
 
@@ -304,6 +311,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             if (file != null && Path.Exists(file.Sökväg)) 
             {
                 pwr.RequestFile = file;
+                //ITransition transition = MuPDFRenderer.Transitions.FirstOrDefault();
             }
             else
             {
@@ -314,44 +322,61 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     }
 
 
-    private void InitPreview()
-    {
-        pwr.GetRenderControl(MuPDFRenderer);
-
-    }
-
 
 
     private void ModifiedControlPointerWheelChanged(object sender, PointerWheelEventArgs e)
     {
-        Debug.WriteLine("SCROLLING");
-        if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        if (!MuPDFRenderer.ZoomEnabled && pwr.Pagecount >  0)
         {
-            MuPDFRenderer.ZoomEnabled = true; 
-        }
-
-        if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))  
-        {
-            MuPDFRenderer.ZoomEnabled = false;
-
-            Vector mode = e.Delta;
-
-            if (mode.Y > 0)
+            if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))
             {
-                pwr.PrevPage();
-            }
+                Vector mode = e.Delta;
 
-            if (mode.Y < 0)
-            {
-                pwr.NextPage();
+                if (mode.Y > 0)
+                {
+                    pwr.PrevPage();
+                }
+
+                if (mode.Y < 0)
+                {
+                    pwr.NextPage();
+                }
             }
         }
     }
-    
+
+    private void OnKeyDown(object sender, KeyEventArgs e)
+    {
+        if (!MuPDFRenderer.ZoomEnabled)
+        {
+            if (e.KeyModifiers == KeyModifiers.Control)
+            {
+                Debug.WriteLine("Zoom enabled");
+                MuPDFRenderer.ZoomEnabled = true;
+            }
+        }
+    }
+
+    private void OnKeyUp(object sender, KeyEventArgs e)
+    {
+        if(MuPDFRenderer.ZoomEnabled)
+        {
+            Debug.WriteLine("Zoom Disabled");
+            MuPDFRenderer.ZoomEnabled = false;
+        }
+    }
+
 
     private void ResetView(object sender, RoutedEventArgs e)
     {
+        Debug.WriteLine("reset view");
         MuPDFRenderer.Contain();
+    }
+
+    private void OnSeachRegex(object sender, RoutedEventArgs e)
+    {
+        string text = SearchRegex.Text;
+        pwr.Search(text);
     }
 
 

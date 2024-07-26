@@ -294,8 +294,13 @@
 				<Grid RowDefinitions="*,30" Grid.Column="3" Grid.Row="2" Margin="0 5 0 0">
 					<Grid Name="PreviewGrid" ClipToBounds="True" ColumnDefinitions="*" Grid.Row="0" Grid.Column="0">
 						
-							<mupdf:PDFRenderer Name="MuPDFRenderer" Grid.Column="0" Background="Transparent" PageBackground="White" ZoomEnabled="True" PointerWheelChanged="ModifiedControlPointerWheelChanged" 
-											   ZoomIncrement="1.75" ClipToBounds="True" PointerEventHandlersType="PanHighlight" >
+							<mupdf:PDFRenderer Name="MuPDFRenderer" Grid.Column="0" Background="Transparent" PageBackground="White" ZoomEnabled="False" PointerWheelChanged="ModifiedControlPointerWheelChanged" 
+											   ZoomIncrement="1.75" ClipToBounds="True" PointerEventHandlersType="PanHighlight">
+								<mupdf:PDFRenderer.Transitions>
+									<Transitions>
+										<anim:RectTransition Property="DisplayArea" Duration="0:0:0:0.1" />
+									</Transitions>
+								</mupdf:PDFRenderer.Transitions>
 							</mupdf:PDFRenderer>
 						
 					</Grid>
@@ -321,18 +326,18 @@
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
 							</Button>
 
-							<Button ToolTip.Tip="Reset View" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Click="ResetView">
+							<Button ToolTip.Tip="Reset And Center, Ctrl+C" HotKey="Ctrl+C" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Click="ResetView">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="StretchToPageOutline" Width="20" Height="20"/>
 							</Button>
 
-							<ToggleButton ToolTip.Tip="Toggle Dimmed Background" ToolTip.Placement="Right" IsChecked="{Binding DimmedBackground}" Width="35" Height="25">
+							<ToggleButton ToolTip.Tip="Toggle Dimmed Background, Ctrl+G" HotKey="Ctrl+G"  ToolTip.Placement="Right" IsChecked="{Binding DimmedBackground}" Width="35" Height="25">
 								<StackPanel>
 									<materialIcons:MaterialIcon Grid.Column="0" Kind="CarLightHigh" Width="20" Height="20" IsVisible="{Binding !DimmedBackground}"/>
 									<materialIcons:MaterialIcon Grid.Column="0" Kind="CarLightDimmed" Width="20" Height="20" IsVisible="{Binding DimmedBackground}"/>
 								</StackPanel>
 							</ToggleButton>
 
-							<ToggleButton ToolTip.Tip="Toggle two page mode" ToolTip.Placement="Right" Name="DualMode" Width="35" Height="25" IsChecked="{Binding TwopageMode}" IsVisible="{Binding TwopageModeAvail}">
+							<ToggleButton ToolTip.Tip="Duak Page Mode, Ctrl+D" HotKey="Ctrl+D" ToolTip.Placement="Right" Name="DualMode" Width="35" Height="25" IsChecked="{Binding TwopageMode}" IsEnabled="{Binding TwopageModeAvail}" IsVisible="{Binding TwopageModeAvail}">
 								<StackPanel>
 									<materialIcons:MaterialIcon Kind="FileDocument" Width="20" Height="20" IsVisible="{Binding !TwopageMode}"/>
 									<materialIcons:MaterialIcon Kind="BookOpenPageVariant" Width="20" Height="20" IsVisible="{Binding TwopageMode}"/>
@@ -364,6 +369,27 @@
 								<Label Content="/" VerticalAlignment="Center"/>
 								<Label Content="{Binding Pagecount}" VerticalAlignment="Center"/>
 							</StackPanel>
+
+
+							<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="4" HorizontalAlignment="Center">
+								<Border Width="170" HorizontalAlignment="Right" FlowDirection="LeftToRight" BorderBrush="Gray" Padding="0" BorderThickness="1" Margin="0" CornerRadius="5">
+									<Grid ColumnDefinitions="10,*,30" Height="25" >
+										<TextBox Grid.Column="1" MinHeight="20" Height="20" FontSize="12" Watermark="Seach String" Name="SearchRegex" Margin="0" Padding="0"/>
+										<Button Grid.Column="2" MinWidth="30" Width="30" Margin="0" Click="OnSeachRegex" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0">
+											<materialIcons:MaterialIcon Grid.Column="0" Kind="Search" Width="20" Height="20"/>
+										</Button>
+									</Grid>
+								</Border>
+							</StackPanel>
+
+
+							<Button ToolTip.Tip="Prev Search" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevSearchPage}">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
+							</Button>
+
+							<Button ToolTip.Tip="Next Search" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextSearchPage}">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
+							</Button>
 							
 						</StackPanel>
 					</StackPanel>
