@@ -344,52 +344,49 @@
 								</StackPanel>
 							</ToggleButton>
 
+							<Button ToolTip.Tip="Open Search, Ctrl+F" HotKey="Ctrl+F" ToolTip.Placement="Right" Name="SearchMode" MinWidth="35" Width="35" Height="25" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0">
+								<materialIcons:MaterialIcon Kind="Search" Width="20" Height="20"/>
+								<Button.Flyout>
+									<Flyout FlyoutPresenterClasses="mySpecialClass" Placement="Top" ShowMode="Transient">
+										<StackPanel Orientation="Vertical" Margin="5">
+											<Border Width="170" HorizontalAlignment="Right" FlowDirection="LeftToRight" BorderBrush="Gray" BorderThickness="1" CornerRadius="5">
+												<Grid ColumnDefinitions="10,*,30,30" Height="25" >
+													<TextBox Grid.Column="1" Watermark="Seach String" Name="SearchRegex" KeyDown="OnStartSearhRegex"/>
+													<Button Grid.Column="2" MinWidth="30" Width="30" Margin="0" Click="OnSeachRegex" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0">
+														<materialIcons:MaterialIcon Grid.Column="0" Kind="Search" Width="20" Height="20"/>
+													</Button>
+													<Button Grid.Column="3" MinWidth="30" Width="30" Margin="0" Click="OnClearSearch" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0">
+														<materialIcons:MaterialIcon Grid.Column="0" Kind="Close" Width="20" Height="20"/>
+													</Button>
+												</Grid>
+											</Border>
+											<StackPanel Orientation="Horizontal">
+												<Button ToolTip.Tip="Prev Search" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevSearchPage}">
+													<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
+												</Button>
+
+												<Button ToolTip.Tip="Next Search" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextSearchPage}">
+													<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
+												</Button>
+
+												<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+													<Label Content="{Binding SearchPageIndex, Converter={StaticResource AddOneConverter}}" VerticalAlignment="Center"/>
+													<Label Content="/" VerticalAlignment="Center"/>
+													<Label Content="{Binding SearchItems, Converter={StaticResource AddOneConverter}}" VerticalAlignment="Center"/>
+												</StackPanel>
+											</StackPanel>
+										</StackPanel>
+									</Flyout>
+								</Button.Flyout>
+							</Button>
+
 							<StackPanel Width="25" Height="25" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10 5 5 0">
 								<materialIcons:MaterialIcon Kind="Check" Width="20" Height="20" IsVisible="{Binding !FileWorkerBusy}"/>
 								<materialIcons:MaterialIcon Kind="Reload" Width="20" Height="20" IsVisible="{Binding FileWorkerBusy}"/>
 							</StackPanel>
 
-							<ToggleButton ToolTip.Tip="Toggle linked pagemode" IsChecked="{Binding LinkedPageMode}" ToolTip.Placement="Right" Name="LinkMode" Width="35" Height="25" Command="{Binding ToggleLinkedMode}">
-								<StackPanel>
-									<materialIcons:MaterialIcon Kind="Link" Width="20" Height="20" IsVisible="{Binding LinkedPageMode}"/>
-									<materialIcons:MaterialIcon Kind="LinkOff" Width="20" Height="20" IsVisible="{Binding !LinkedPageMode}"/>
-								</StackPanel>
-							</ToggleButton>
-
-							<Button ToolTip.Tip="Previous Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevPage}" CommandParameter="true" IsVisible="{Binding !LinkedPageMode}">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
-							</Button>
-
-							<Button ToolTip.Tip="Next Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextPage}"  CommandParameter="true" IsVisible="{Binding !LinkedPageMode}">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
-							</Button>
-
-							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" IsVisible="{Binding !LinkedPageMode}">
-								<Label Content="{Binding CurrentPage2, Converter={StaticResource AddOneConverter}}" VerticalAlignment="Center"/>
-								<Label Content="/" VerticalAlignment="Center"/>
-								<Label Content="{Binding Pagecount}" VerticalAlignment="Center"/>
-							</StackPanel>
 
 
-							<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="4" HorizontalAlignment="Center">
-								<Border Width="170" HorizontalAlignment="Right" FlowDirection="LeftToRight" BorderBrush="Gray" Padding="0" BorderThickness="1" Margin="0" CornerRadius="5">
-									<Grid ColumnDefinitions="10,*,30" Height="25" >
-										<TextBox Grid.Column="1" MinHeight="20" Height="20" FontSize="12" Watermark="Seach String" Name="SearchRegex" Margin="0" Padding="0"/>
-										<Button Grid.Column="2" MinWidth="30" Width="30" Margin="0" Click="OnSeachRegex" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0">
-											<materialIcons:MaterialIcon Grid.Column="0" Kind="Search" Width="20" Height="20"/>
-										</Button>
-									</Grid>
-								</Border>
-							</StackPanel>
-
-
-							<Button ToolTip.Tip="Prev Search" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevSearchPage}">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
-							</Button>
-
-							<Button ToolTip.Tip="Next Search" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextSearchPage}">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
-							</Button>
 							
 						</StackPanel>
 					</StackPanel>

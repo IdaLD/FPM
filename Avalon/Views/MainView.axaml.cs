@@ -28,6 +28,7 @@ using Avalonia.Threading;
 using Avalonia.Animation;
 using Avalonia.Input.Raw;
 using System.Linq.Expressions;
+using System.Security.Cryptography;
 
 
 namespace Avalon.Views;
@@ -377,6 +378,24 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         string text = SearchRegex.Text;
         pwr.Search(text);
+    }
+
+    private void OnClearSearch(object sender, RoutedEventArgs e)
+    {
+        if(pwr.CurrentFile != null)
+        {
+            SearchRegex.Clear();
+            pwr.ClearSearch();
+            pwr.RenderPage(pwr.CurrentPage1);
+        }
+    }
+
+    private void OnStartSearhRegex(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            OnSeachRegex(null, null);
+        }
     }
 
 
