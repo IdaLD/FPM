@@ -374,6 +374,20 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         MuPDFRenderer.Contain();
     }
 
+    private void ToggleSearchMode(object sender, RoutedEventArgs e)
+    {
+        if (pwr.SearchMode)
+        {
+            MainPreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
+            MainPreviewGrid.ColumnDefinitions[1] = new ColumnDefinition(200f, GridUnitType.Pixel);
+        }
+        else
+        {
+            MainPreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
+            MainPreviewGrid.ColumnDefinitions[1] = new ColumnDefinition(0f, GridUnitType.Pixel);
+        }
+    }
+
     private void OnSeachRegex(object sender, RoutedEventArgs e)
     {
         string text = SearchRegex.Text;

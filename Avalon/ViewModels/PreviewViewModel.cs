@@ -30,6 +30,7 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
+using Avalonia.Collections;
 
 namespace Avalon.ViewModels
 {
@@ -181,15 +182,20 @@ namespace Avalon.ViewModels
 
         MuPDFContext ContextDual = null;
 
-        private List<int> SearchPages = null;
-
         private Regex Regex = null;
+
+        private AvaloniaList<int> searchPages = new AvaloniaList<int>() { };
+        public AvaloniaList<int> SearchPages
+        {
+            get { return searchPages; }
+            set { searchPages = value; OnPropertyChanged("SearchPages"); }
+        }
 
         private int searchPageIndex = 0;
         public int SearchPageIndex
         {
             get { return searchPageIndex; }
-            set { searchPageIndex = value; OnPropertyChanged("SearchPageIndex"); }
+            set { searchPageIndex = value; SetSearchPage(); OnPropertyChanged("SearchPageIndex"); }
         }
 
         private int searchItems = 0;
@@ -197,6 +203,13 @@ namespace Avalon.ViewModels
         {
             get { return searchItems; }
             set { searchItems = value; OnPropertyChanged("SearchItems"); }
+        }
+
+        private bool searchMode = false;
+        public bool SearchMode
+        {
+            get { return searchMode; }
+            set { searchMode = value; OnPropertyChanged("SearchMode"); }
         }
 
 
@@ -437,6 +450,8 @@ namespace Avalon.ViewModels
                 if (SearchPages.Contains(pagenr))
                 {
                     Renderer.Search(Regex);
+                    searchPageIndex = SearchPages.IndexOf(pagenr);
+                    OnPropertyChanged("SearchPageIndex");
                 }
             }
 
@@ -602,7 +617,10 @@ namespace Avalon.ViewModels
 
                 Regex = new Regex(text, RegexOptions.IgnoreCase);
 
-                SearchPages = new List<int>();
+                if (SearchPages.Count > 0)
+                {
+                    SearchPages.Clear();
+                }
 
                 for (int i = 0; i < Pagecount; i++)
                 {
@@ -636,7 +654,6 @@ namespace Avalon.ViewModels
                 if (SearchPageIndex < SearchPages.Count - 1)
                 {
                     SearchPageIndex++;
-                    RequestPage1 = SearchPages[SearchPageIndex];
                 }
             }
         }
@@ -648,8 +665,15 @@ namespace Avalon.ViewModels
                 if (SearchPageIndex > 0)
                 {
                     SearchPageIndex--;
-                    RequestPage1 = SearchPages[SearchPageIndex];
                 }
+            }
+        }
+        
+        private void SetSearchPage()
+        {
+            if (SearchMode && SearchItems != 0)
+            {
+                RequestPage1 = SearchPages[SearchPageIndex];
             }
         }
 
@@ -667,7 +691,7 @@ namespace Avalon.ViewModels
             {
                 SearchItems = 0;
                 SearchPageIndex = 0;
-                SearchPages = null;
+                SearchPages.Clear();
             }
         }
     }

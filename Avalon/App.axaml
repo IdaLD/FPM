@@ -20,6 +20,11 @@
 			<Setter Property="MaxWidth" Value="999" />
 			<Setter Property="Padding" Value="0" />
 		</Style>
+
+		<Style Selector="ListBoxItem">
+			<Setter Property="Height" Value="25"/>
+			<Setter Property="Padding" Value="5 5 0 5"/>
+		</Style>
 		
 		<Style Selector="TreeViewItem">
 			<Setter Property="Margin" Value="0"/>
