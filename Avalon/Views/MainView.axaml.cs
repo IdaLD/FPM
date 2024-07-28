@@ -57,7 +57,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
 
-        PreviewGrid.AddHandler(Grid.SizeChangedEvent, ResetView);
+        PreviewGrid.AddHandler(Grid.SizeChangedEvent, PreviewSizeChanged);
 
         this.AddHandler(KeyDownEvent, OnKeyDown);
         this.AddHandler(KeyUpEvent, OnKeyUp);
@@ -368,9 +368,25 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     }
 
 
+    private void PreviewSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        Debug.WriteLine(e.NewSize.Width);
+        if (pwr == null)
+        {
+            return;
+        }
+        if (e.NewSize.Width < 100 && pwr != null)
+        {
+            pwr.SafeDispose();
+        }
+        else
+        {
+            ResetView(null, null);
+        }
+    }
+
     private void ResetView(object sender, RoutedEventArgs e)
     {
-        Debug.WriteLine("reset view");
         MuPDFRenderer.Contain();
     }
 

@@ -219,6 +219,13 @@ namespace Avalon.ViewModels
             set { searchMode = value; OnPropertyChanged("SearchMode"); }
         }
 
+        private bool searchBusy = false;
+        public bool SearchBusy
+        {
+            get { return searchBusy; }
+            set { searchBusy = value; OnPropertyChanged("SearchBusy"); }
+        }
+
 
         public void GetRenderControl(PDFRenderer renderer)
         {
@@ -341,7 +348,6 @@ namespace Avalon.ViewModels
                         DualWorkerBusy = false;
                         break;
                     }
-                    Debug.WriteLine(i);
 
                     page1 = pdfSource.GetPage(i);
                     iText.Kernel.Geom.Rectangle size1 = page1.GetPageSize();
@@ -392,9 +398,10 @@ namespace Avalon.ViewModels
 
         public async Task SafeDispose()
         {
-            while (RenderWorkerBusy || DualWorkerBusy)
+            while (RenderWorkerBusy || DualWorkerBusy || SearchBusy)
             {
                 Debug.WriteLine("Waiting");
+                await Task.Delay(25);
             }
 
             if (PreviewFile != null)
@@ -593,7 +600,6 @@ namespace Avalon.ViewModels
                 {
                     RequestPage1 = CurrentPage1 - 1;
                 }
-                Debug.WriteLine(RequestPage1);
             }
         }
 
@@ -629,31 +635,50 @@ namespace Avalon.ViewModels
                     SearchPages.Clear();
                 }
 
-                for (int i = 0; i < Pagecount; i++)
+                Task.Run(() => SearchDocumentAsync());
+
+            }
+        }
+
+        public async void SearchDocumentAsync()
+        {
+            SearchBusy = true;
+            SearchPagesText.Clear();
+
+            for (int i = 0; i < Pagecount; i++)
+            {
+                if (CurrentFile != RequestFile)
                 {
-                    using (IDisposable disposable = PreviewFile.GetStructuredTextPage(i))
+                    Debug.WriteLine("STOPPING SEARCH");
+                    SearchBusy = false;
+                    break;
+                }
+                using (IDisposable disposable = PreviewFile.GetStructuredTextPage(i))
+                {
+                    MuPDFStructuredTextPage StructuredPage = (MuPDFStructuredTextPage)disposable;
+
+                    int nr = StructuredPage.Search(Regex).Count();
+
+                    if (nr != 0)
                     {
-                        MuPDFStructuredTextPage StructuredPage = (MuPDFStructuredTextPage)disposable;
-
-                        int nr = StructuredPage.Search(Regex).Count();
-
-                        if (nr != 0)
-                        {
-                            SearchPages.Add(i);
-                            SearchItems = SearchItems + 1;
-                        }
+                        SearchPages.Add(i);
+                        SearchItems = SearchItems + 1;
+                        SearchPagesText.Add("Page: " + (i + 1).ToString() + " - " + nr + " items");
                     }
                 }
-                if (SearchItems > 0)
+            }
+
+            if (SearchItems > 0)
+            {
+                Dispatcher.UIThread.Invoke(() =>
                 {
                     SearchPageIndex = 0;
                     RequestPage1 = SearchPages[SearchPageIndex];
-
-                    SetSearchText();
-
                     Renderer.Search(Regex);
-                }
+                });
+                
             }
+            SearchBusy = false;
         }
 
         public void NextSearchPage()
@@ -683,17 +708,6 @@ namespace Avalon.ViewModels
             if (SearchMode && SearchItems != 0)
             {
                 RequestPage1 = SearchPages[SearchPageIndex];
-            }
-        }
-
-        private void SetSearchText()
-        {
-            SearchPagesText.Clear();
-
-            foreach(int nr in SearchPages)
-            {
-                string text = "Page: " + (nr + 1).ToString();
-                SearchPagesText.Add(text);
             }
         }
 
