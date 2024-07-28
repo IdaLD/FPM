@@ -337,12 +337,12 @@
 										<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 											<Label Content="{Binding SearchPageIndex, Converter={StaticResource AddOneConverter}}" VerticalAlignment="Center"/>
 											<Label Content="/" VerticalAlignment="Center"/>
-											<Label Content="{Binding SearchItems, Converter={StaticResource AddOneConverter}}" VerticalAlignment="Center"/>
+											<Label Content="{Binding SearchItems}" VerticalAlignment="Center"/>
 										</StackPanel>
 									</StackPanel>
 								</StackPanel>
 								
-								<ListBox Grid.Row="3" ItemsSource="{Binding SearchPages}" SelectedIndex="{Binding SearchPageIndex}"/>
+								<ListBox Grid.Row="3" ItemsSource="{Binding SearchPagesText}" SelectedIndex="{Binding SearchPageIndex}"/>
 								
 							</Grid>
 						</Border>

@@ -10,25 +10,14 @@ namespace Avalon.Converters
     {
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            Debug.WriteLine("Converting");
-
-            AvaloniaList<string> NewList = new AvaloniaList<string>();
-
-            AvaloniaList<int> OldList = value as AvaloniaList<int>;
-
-            foreach (int nr in OldList)
-            {
-                string text = "Page nr: " + nr;
-                NewList.Add(text);
-                Debug.WriteLine(text);
-            }
-
-            return NewList;
+            Debug.WriteLine("Returnning Convert");
+            return value;
         }
 
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return null;
+            Debug.WriteLine("Convert Back");
+            return value;
         }
     }
 }

@@ -191,6 +191,13 @@ namespace Avalon.ViewModels
             set { searchPages = value; OnPropertyChanged("SearchPages"); }
         }
 
+        private AvaloniaList<string> searchPagesText = new AvaloniaList<string>() { };
+        public AvaloniaList<string> SearchPagesText
+        {
+            get { return searchPagesText; }
+            set { searchPagesText = value; OnPropertyChanged("SearchPagesText"); }
+        }
+
         private int searchPageIndex = 0;
         public int SearchPageIndex
         {
@@ -642,6 +649,8 @@ namespace Avalon.ViewModels
                     SearchPageIndex = 0;
                     RequestPage1 = SearchPages[SearchPageIndex];
 
+                    SetSearchText();
+
                     Renderer.Search(Regex);
                 }
             }
@@ -677,6 +686,17 @@ namespace Avalon.ViewModels
             }
         }
 
+        private void SetSearchText()
+        {
+            SearchPagesText.Clear();
+
+            foreach(int nr in SearchPages)
+            {
+                string text = "Page: " + (nr + 1).ToString();
+                SearchPagesText.Add(text);
+            }
+        }
+
         private void DisposeSearch()
         {
             if (Renderer.HighlightedRegions != null)
@@ -691,6 +711,8 @@ namespace Avalon.ViewModels
             {
                 SearchItems = 0;
                 SearchPageIndex = 0;
+
+                SearchPagesText.Clear();
                 SearchPages.Clear();
             }
         }
