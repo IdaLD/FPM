@@ -316,7 +316,7 @@
 										<Button Grid.Column="2" MinWidth="30" Width="30" Margin="0" Click="OnSeachRegex" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0" IsEnabled="{Binding !SearchBusy}">
 											<materialIcons:MaterialIcon Grid.Column="0" Kind="Search" Width="20" Height="20"/>
 										</Button>
-										<Button Grid.Column="3" MinWidth="30" Width="30" Margin="0" Click="OnClearSearch" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0" IsEnabled="{Binding !SearchBusy}">
+										<Button Grid.Column="3" MinWidth="30" Width="30" Margin="0" Click="OnClearSearch" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0">
 											<materialIcons:MaterialIcon Grid.Column="0" Kind="Close" Width="20" Height="20"/>
 										</Button>
 									</Grid>

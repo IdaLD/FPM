@@ -52,7 +52,6 @@ namespace Avalon.ViewModels
             set { previewFileDual = value; OnPropertyChanged("PreviewFileDual"); }
         }
 
-
         public bool twopageMode = false;
         public bool TwopageMode
         {
@@ -142,7 +141,6 @@ namespace Avalon.ViewModels
             set { currentPage2 = value; OnPropertyChanged("CurrentPage2"); }
         }
 
-
         public int pagecount = 0;
         public int Pagecount
         {
@@ -164,15 +162,13 @@ namespace Avalon.ViewModels
             set { fileWorkerBusy = value; OnPropertyChanged("FileWorkerBusy"); }
         }
 
-
         private bool RenderWorkerBusy = false;
+
         private bool DualWorkerBusy = false;
 
         private byte[] bytes;
 
         private byte[] tempbytes;
-
-        private Task MainFileTask;
 
         private PdfDocument pdfSource;
 
@@ -226,6 +222,12 @@ namespace Avalon.ViewModels
             set { searchBusy = value; OnPropertyChanged("SearchBusy"); }
         }
 
+        private CancellationTokenSource DualCts = new CancellationTokenSource();
+
+        private CancellationTokenSource SearchCts = new CancellationTokenSource();
+
+        private bool FileAvailable = false;
+
 
         public void GetRenderControl(PDFRenderer renderer)
         {
@@ -234,45 +236,39 @@ namespace Avalon.ViewModels
 
         private void SetFile()
         {
-            Debug.WriteLine(FileWorkerBusy);
+
             if (!FileWorkerBusy)
             {
                 FileWorkerBusy = true;
-                SetMainFile();
+                FileAvailable = false;
+                TwopageModeAvail = false;
+                TwopageMode = false;
+
+                StopSearch();
+                ClearSearch();
+
+                if (Renderer.IsEffectivelyVisible)
+                {
+                    Renderer.IsVisible = false;
+                }
+
+                Task.Run(()=>SetMainFile());
             }
         }
 
-        private void SetMainFile()
+        private async Task SetMainFile()
         {
-            
-            TwopageModeAvail = false;
-
-            if(Renderer.IsEffectivelyVisible)
-            {
-                Renderer.IsVisible = false;
-            }
-
             string path = RequestFile.Sökväg;
 
-            MainFileTask = Task.Run(() => GetMainFile(path));
-            MainFileTask.ContinueWith(delegate { CheckMainFile(path); });
-        }
+            bytes = await File.ReadAllBytesAsync(path);
 
-
-
-        private async Task GetMainFile(string path)
-        {
-            bytes = await Task.Run(() => File.ReadAllBytesAsync(path));
-        }
-
-        private async Task CheckMainFile(string path)
-        {
             if (RequestFile.Sökväg == path)
             {
                 await SafeDispose();
                 await SetupMainFile();
 
                 FileWorkerBusy = false;
+                FileAvailable = true;
 
                 if (Pagecount > 1)
                 {
@@ -281,7 +277,6 @@ namespace Avalon.ViewModels
             }
             else
             {
-                Debug.WriteLine("Rerunning");
                 FileWorkerBusy = false;
                 SetFile();
             }
@@ -294,12 +289,9 @@ namespace Avalon.ViewModels
 
             Pagecount = PreviewFile.Pages.Count;
             CurrentFile = RequestFile;
+
             RequestPage1 = 0;
             CurrentPage1 = 0;
-
-            ClearSearch();
-
-            TwopageMode = false;
 
             Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 4, 0, 0.5); });
             Dispatcher.UIThread.Invoke(() => { Renderer.IsVisible = true; });
@@ -307,8 +299,10 @@ namespace Avalon.ViewModels
 
         private async void SetDualFile()
         {
+            DualCts = new CancellationTokenSource();
+
             await Task.Run(() => GetDualPageFile());
-            await Task.Run(() => GetDualPage());
+            await Task.Run(() => GetDualPage(DualCts.Token));
             TwopageModeAvail = true;
         }
 
@@ -321,83 +315,88 @@ namespace Avalon.ViewModels
         }
 
 
-        private async Task GetDualPage()
+        private async Task GetDualPage(CancellationToken Token)
         {
-            DualWorkerBusy = true;
-
-            using (MemoryStream ms = new MemoryStream())
+            try
             {
-                PdfDocument pdf = new PdfDocument(new PdfWriter(ms));
 
-                Debug.WriteLine(Pagecount);
-                for (int i = 1; i < Pagecount + 1; i = i + 2) 
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    
-                    float width1 = 0;
-                    float height1 = 0;
-                    float width2 = 0;
-                    float height2 = 0;
+                    PdfDocument pdf = new PdfDocument(new PdfWriter(ms));
 
-                    PdfPage page1 = null;
-                    PdfPage page2 = null;
-
-
-                    if (FileWorkerBusy)
+                    for (int i = 1; i < Pagecount + 1; i = i + 2)
                     {
-                        Debug.WriteLine("ABORT!");
-                        DualWorkerBusy = false;
-                        break;
+                        Token.ThrowIfCancellationRequested();
+
+                        float width1 = 0;
+                        float height1 = 0;
+                        float width2 = 0;
+                        float height2 = 0;
+
+                        PdfPage page1 = null;
+                        PdfPage page2 = null;
+
+                        page1 = pdfSource.GetPage(i);
+                        iText.Kernel.Geom.Rectangle size1 = page1.GetPageSize();
+                        height1 = size1.GetHeight();
+                        width1 = size1.GetWidth();
+
+                        if (i + 1 <= pdfSource.GetNumberOfPages())
+                        {
+                            page2 = pdfSource.GetPage(i + 1);
+                            iText.Kernel.Geom.Rectangle size2 = page2.GetPageSize();
+                            height2 = size2.GetHeight();
+                            width2 = size2.GetWidth();
+                        }
+
+                        float newWidth = width1 + width2;
+                        float newHeight = Math.Max(height1, height2);
+
+                        iText.Kernel.Geom.Rectangle bounds = new iText.Kernel.Geom.Rectangle(newWidth, newHeight);
+
+                        PageSize nUpPageSize = new PageSize(bounds);
+
+                        PdfPage targetPage = pdf.AddNewPage(nUpPageSize);
+                        PdfCanvas canvas = new PdfCanvas(targetPage);
+
+                        PdfFormXObject pageCopy1 = page1.CopyAsFormXObject(pdf);
+
+                        canvas.AddXObjectAt(pageCopy1, 0, 0);
+
+                        if (i + 1 <= pdfSource.GetNumberOfPages())
+                        {
+                            PdfFormXObject pageCopy2 = page2.CopyAsFormXObject(pdf);
+                            canvas.AddXObjectAt(pageCopy2, width1, 0);
+                        }
                     }
 
-                    page1 = pdfSource.GetPage(i);
-                    iText.Kernel.Geom.Rectangle size1 = page1.GetPageSize();
-                    height1 = size1.GetHeight();
-                    width1 = size1.GetWidth();
+                    DualWorkerBusy = false;
 
-                    if (i+1 <= pdfSource.GetNumberOfPages())
-                    {
-                        page2 = pdfSource.GetPage(i + 1);
-                        iText.Kernel.Geom.Rectangle size2 = page2.GetPageSize();
-                        height2 = size2.GetHeight();
-                        width2 = size2.GetWidth();
-                    }
+                    pdf.Close();
 
-                    float newWidth = width1 + width2;
-                    float newHeight = Math.Max(height1, height2);
-
-                    iText.Kernel.Geom.Rectangle bounds = new iText.Kernel.Geom.Rectangle(newWidth, newHeight);
-
-                    PageSize nUpPageSize = new PageSize(bounds);
-
-                    PdfPage targetPage = pdf.AddNewPage(nUpPageSize);
-                    PdfCanvas canvas = new PdfCanvas(targetPage);
-
-                    PdfFormXObject pageCopy1 = page1.CopyAsFormXObject(pdf);
-
-                    canvas.AddXObjectAt(pageCopy1, 0, 0);
-
-                    if (i+1 <= pdfSource.GetNumberOfPages())
-                    {
-                        PdfFormXObject pageCopy2 = page2.CopyAsFormXObject(pdf);
-                        canvas.AddXObjectAt(pageCopy2, width1, 0);
-                    }
+                    tempbytes = ms.ToArray();
                 }
+                await SafeDualDispose();
+                ContextDual = new MuPDFContext();
+                PreviewFileDual = new MuPDFDocument(ContextDual, tempbytes, InputFileTypes.PDF);
 
+                Debug.WriteLine("DUAL PAGE SET");
                 DualWorkerBusy = false;
-
-                pdf.Close();
-
-                tempbytes = ms.ToArray();
             }
-            await SafeDualDispose();
-            ContextDual = new MuPDFContext();
-            PreviewFileDual = new MuPDFDocument(ContextDual, tempbytes, InputFileTypes.PDF);
+            catch
+            {
+                Debug.WriteLine("CT CANCEL");
+                DualWorkerBusy = false;
+            }
 
-            Debug.WriteLine("DUAL PAGE SET");
+            
+
         }
 
         public async Task SafeDispose()
         {
+            DualCts.Cancel();
+
             while (RenderWorkerBusy || DualWorkerBusy || SearchBusy)
             {
                 Debug.WriteLine("Waiting");
@@ -408,16 +407,20 @@ namespace Avalon.ViewModels
             {
                 Dispatcher.UIThread.Invoke(() =>
                 {
-                    DisposeSearch();
+                    DisposeHighlight();
+
                     Renderer?.ReleaseResources();
                     PreviewFile?.Dispose();
                     Context?.Dispose();
                 });
+
+                FileAvailable = false;
             }
         }
 
         public async Task SafeDualDispose()
         {
+
             if (PreviewFileDual != null)
             {
                 PreviewFileDual?.Dispose();
@@ -427,7 +430,7 @@ namespace Avalon.ViewModels
 
         private async void SetPage()
         {
-            if (FileWorkerBusy)
+            if (FileWorkerBusy || SearchBusy)
             {
                 return;
             }
@@ -439,13 +442,10 @@ namespace Avalon.ViewModels
         }
 
         public void RenderPage(int pagenr)
-        {            
-            if (Renderer.HighlightedRegions != null)
-            {
-                DisposeSearch();
-            }
-            
-            
+        {
+
+            DisposeHighlight();
+                
             Renderer.IsVisible = false;
 
             if (TwopageMode)
@@ -470,33 +470,6 @@ namespace Avalon.ViewModels
             }
 
             Renderer.IsVisible = true;
-        }
-
-        private async Task RenderPage2(int pagenr)
-        {
-            RenderWorkerBusy = true;
-            //Renderer.IsVisible = false;
-
-            if (TwopageMode)
-            {
-                await Renderer.InitializeAsync(PreviewFileDual, 1, pagenr/2, 0.5);
-            }
-            else
-            {
-                await Renderer.InitializeAsync(PreviewFile, 1, pagenr, 0.5);
-            }
-
-
-            if (RequestPage1 == pagenr)
-            {
-                CurrentPage1 = RequestPage1;
-                //Renderer.IsVisible = true;
-                RenderWorkerBusy = false;
-            }
-            else
-            {
-                RenderPage(RequestPage1);
-            }
         }
 
 
@@ -624,7 +597,7 @@ namespace Avalon.ViewModels
 
         public void Search(string text)
         {
-            if (CurrentFile != null && text != "" && text != null)
+            if (FileAvailable && text != "" && text != null)
             {
                 ClearSearch();
 
@@ -635,50 +608,57 @@ namespace Avalon.ViewModels
                     SearchPages.Clear();
                 }
 
-                Task.Run(() => SearchDocumentAsync());
+                SearchCts = new CancellationTokenSource();
+
+                Task.Run(() => SearchDocumentAsync(SearchCts.Token));
 
             }
         }
 
-        public async void SearchDocumentAsync()
+        public async void SearchDocumentAsync(CancellationToken Token)
         {
-            SearchBusy = true;
-            SearchPagesText.Clear();
-
-            for (int i = 0; i < Pagecount; i++)
+            try
             {
-                if (CurrentFile != RequestFile)
-                {
-                    Debug.WriteLine("STOPPING SEARCH");
-                    SearchBusy = false;
-                    break;
-                }
-                using (IDisposable disposable = PreviewFile.GetStructuredTextPage(i))
-                {
-                    MuPDFStructuredTextPage StructuredPage = (MuPDFStructuredTextPage)disposable;
+                SearchBusy = true;
+                SearchPagesText.Clear();
 
-                    int nr = StructuredPage.Search(Regex).Count();
+                for (int i = 0; i < Pagecount; i++)
+                {
+                    Token.ThrowIfCancellationRequested();
 
-                    if (nr != 0)
+                    using (IDisposable disposable = PreviewFile.GetStructuredTextPage(i))
                     {
-                        SearchPages.Add(i);
-                        SearchItems = SearchItems + 1;
-                        SearchPagesText.Add("Page: " + (i + 1).ToString() + " - " + nr + " items");
+                        MuPDFStructuredTextPage StructuredPage = (MuPDFStructuredTextPage)disposable;
+
+                        int nr = StructuredPage.Search(Regex).Count();
+
+                        if (nr != 0)
+                        {
+                            SearchPages.Add(i);
+                            SearchItems = SearchItems + 1;
+                            SearchPagesText.Add("Page: " + (i + 1).ToString() + " - " + nr + " items");
+                        }
                     }
                 }
+
+                if (SearchItems > 0)
+                {
+                    Dispatcher.UIThread.Invoke(() =>
+                    {
+                        SearchPageIndex = 0;
+                        RequestPage1 = SearchPages[SearchPageIndex];
+                        Renderer.Search(Regex);
+                    });
+
+                }
+                SearchBusy = false;
+            }
+            catch
+            {
+                Debug.WriteLine("CTS SEARCH ABORT");
+                SearchBusy = false;
             }
 
-            if (SearchItems > 0)
-            {
-                Dispatcher.UIThread.Invoke(() =>
-                {
-                    SearchPageIndex = 0;
-                    RequestPage1 = SearchPages[SearchPageIndex];
-                    Renderer.Search(Regex);
-                });
-                
-            }
-            SearchBusy = false;
         }
 
         public void NextSearchPage()
@@ -711,7 +691,7 @@ namespace Avalon.ViewModels
             }
         }
 
-        private void DisposeSearch()
+        private void DisposeHighlight()
         {
             if (Renderer.HighlightedRegions != null)
             {
@@ -719,16 +699,39 @@ namespace Avalon.ViewModels
             }
         }
 
+
+
+        public async Task StopSearch()
+        {
+            if (SearchBusy)
+            {
+                SearchCts.Cancel();
+
+                while (SearchBusy)
+                {
+                    await Task.Delay(25);
+                }
+            }
+        }
+
+
         public void ClearSearch()
         {
-            if (CurrentFile != null)
-            {
-                SearchItems = 0;
-                SearchPageIndex = 0;
+            SearchItems = 0;
+            SearchPageIndex = 0;
 
-                SearchPagesText.Clear();
-                SearchPages.Clear();
-            }
+            SearchPagesText.Clear();
+            SearchPages.Clear();
+        }
+
+
+        public async Task CloseRenderer()
+        {
+            await StopSearch();
+            ClearSearch();
+
+            await SafeDispose();
+
         }
     }
 }

@@ -29,6 +29,7 @@ using Avalonia.Animation;
 using Avalonia.Input.Raw;
 using System.Linq.Expressions;
 using System.Security.Cryptography;
+using Org.BouncyCastle.OpenSsl;
 
 
 namespace Avalon.Views;
@@ -276,7 +277,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void on_toggle_preview(object sender, RoutedEventArgs e)
+    private async void on_toggle_preview(object sender, RoutedEventArgs e)
     {
         previewMode = !previewMode;
 
@@ -293,13 +294,18 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
         if (previewMode == false)
         {
-            pwr.SafeDispose();
+            await pwr.CloseRenderer();
         }
 
 
         MainGrid.ColumnDefinitions[1] = new ColumnDefinition(1f, GridUnitType.Star);
         MainGrid.ColumnDefinitions[2] = new ColumnDefinition(val1, GridUnitType.Pixel);
         MainGrid.ColumnDefinitions[3] = new ColumnDefinition(val2, GridUnitType.Star);
+
+        if (previewMode)
+        {
+            MainGrid.ColumnDefinitions[3].MinWidth = 300f;
+        }
 
     }
 
@@ -312,7 +318,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             if (file != null && Path.Exists(file.Sökväg)) 
             {
                 pwr.RequestFile = file;
-                //ITransition transition = MuPDFRenderer.Transitions.FirstOrDefault();
             }
             else
             {
@@ -370,19 +375,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void PreviewSizeChanged(object sender, SizeChangedEventArgs e)
     {
-        Debug.WriteLine(e.NewSize.Width);
-        if (pwr == null)
-        {
-            return;
-        }
-        if (e.NewSize.Width < 100 && pwr != null)
-        {
-            pwr.SafeDispose();
-        }
-        else
+        if (previewMode)
         {
             ResetView(null, null);
         }
+
     }
 
     private void ResetView(object sender, RoutedEventArgs e)
@@ -412,11 +409,14 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void OnClearSearch(object sender, RoutedEventArgs e)
     {
-        if(pwr.CurrentFile != null)
+        if(pwr.SearchBusy)
         {
-            SearchRegex.Clear();
+            pwr.StopSearch();
+        }
+        else
+        {
             pwr.ClearSearch();
-            pwr.RenderPage(pwr.CurrentPage1);
+            SearchRegex.Clear();
         }
     }
 
