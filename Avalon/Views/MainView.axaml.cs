@@ -393,6 +393,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             MainPreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
             MainPreviewGrid.ColumnDefinitions[1] = new ColumnDefinition(200f, GridUnitType.Pixel);
+            SearchRegex.Focus();
         }
         else
         {

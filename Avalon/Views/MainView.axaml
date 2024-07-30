@@ -51,7 +51,7 @@
 
 				
 					<StackPanel Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" Margin="210,2,0,0">
-						<ProgressBar Name="ProgressBar" Width="200" VerticalAlignment="Center"/>
+						<ProgressBar Name="ProgressBar" Width="200" VerticalAlignment="Center" Value="{Binding PreviewVM.Progress}"/>
 						<Label Name="ProgressStatus" Width="200" Height="40" VerticalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Foreground="Gray" Padding="10"/>
 					</StackPanel>
 

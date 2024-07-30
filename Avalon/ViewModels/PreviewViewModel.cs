@@ -228,6 +228,12 @@ namespace Avalon.ViewModels
 
         private bool FileAvailable = false;
 
+        private int progress = 0;
+        public int Progress
+        {
+            get { return progress; }
+            set { progress = value; OnPropertyChanged("Progress"); }
+        }
 
         public void GetRenderControl(PDFRenderer renderer)
         {
@@ -260,7 +266,7 @@ namespace Avalon.ViewModels
         {
             string path = RequestFile.Sökväg;
 
-            bytes = await File.ReadAllBytesAsync(path);
+            bytes = await ReadBytesWithProgress(path);
 
             if (RequestFile.Sökväg == path)
             {
@@ -279,6 +285,46 @@ namespace Avalon.ViewModels
             {
                 FileWorkerBusy = false;
                 SetFile();
+            }
+        }
+
+        private async Task<byte[]> ReadBytesWithProgress(string path)
+        {
+            Progress = 0;
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (Stream source = File.OpenRead(path))
+                {
+                    long total = source.Length;
+
+
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+
+                    int steps = (int)(total / buffer.Length);
+                    int leap = steps / 20;
+
+                    int i = 0;
+
+                    while ((bytesRead = source.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        ms.Write(buffer, 0, bytesRead);
+
+                        if (leap > 20)
+                        {
+                            if (i % leap == 0)
+                            {
+                                Progress = 100 * i / steps;
+                            }
+                        }
+
+                        i++;
+                    }
+                }
+                Progress = 0;
+
+                return ms.ToArray();
             }
         }
 
@@ -643,6 +689,9 @@ namespace Avalon.ViewModels
 
                 if (SearchItems > 0)
                 {
+
+                    SearchBusy = false;
+
                     Dispatcher.UIThread.Invoke(() =>
                     {
                         SearchPageIndex = 0;
@@ -651,7 +700,7 @@ namespace Avalon.ViewModels
                     });
 
                 }
-                SearchBusy = false;
+                
             }
             catch
             {
