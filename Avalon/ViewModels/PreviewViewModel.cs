@@ -345,11 +345,13 @@ namespace Avalon.ViewModels
 
         private async void SetDualFile()
         {
-            DualCts = new CancellationTokenSource();
+            if (!DualWorkerBusy)
+            {
+                DualCts = new CancellationTokenSource();
 
-            await Task.Run(() => GetDualPageFile());
-            await Task.Run(() => GetDualPage(DualCts.Token));
-            TwopageModeAvail = true;
+                await Task.Run(() => GetDualPageFile());
+                await Task.Run(() => GetDualPage(DualCts.Token));
+            }
         }
 
 
@@ -365,7 +367,7 @@ namespace Avalon.ViewModels
         {
             try
             {
-
+                DualWorkerBusy = true;
                 using (MemoryStream ms = new MemoryStream())
                 {
                     PdfDocument pdf = new PdfDocument(new PdfWriter(ms));
@@ -416,17 +418,16 @@ namespace Avalon.ViewModels
                         }
                     }
 
-                    DualWorkerBusy = false;
-
                     pdf.Close();
 
                     tempbytes = ms.ToArray();
                 }
-                await SafeDualDispose();
+                //await SafeDualDispose();
                 ContextDual = new MuPDFContext();
                 PreviewFileDual = new MuPDFDocument(ContextDual, tempbytes, InputFileTypes.PDF);
 
                 Debug.WriteLine("DUAL PAGE SET");
+                TwopageModeAvail = true;
                 DualWorkerBusy = false;
             }
             catch
@@ -461,6 +462,15 @@ namespace Avalon.ViewModels
                 });
 
                 FileAvailable = false;
+            }
+
+            if (PreviewFileDual != null)
+            {
+                Debug.WriteLine("dual file starting dispose");
+                PreviewFileDual?.Dispose();
+                ContextDual?.Dispose();
+                Debug.WriteLine("dual file disposed");
+
             }
         }
 

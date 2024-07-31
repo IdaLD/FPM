@@ -332,7 +332,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void ModifiedControlPointerWheelChanged(object sender, PointerWheelEventArgs e)
     {
-        if (!MuPDFRenderer.ZoomEnabled && pwr.Pagecount >  0)
+        if (MuPDFRenderer.ZoomIncrement == 1 && pwr.Pagecount >  0)
         {
             if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))
             {
@@ -353,22 +353,33 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
-        if (!MuPDFRenderer.ZoomEnabled)
+        if (MuPDFRenderer.ZoomIncrement == 1)
         {
             if (e.KeyModifiers == KeyModifiers.Control)
             {
                 Debug.WriteLine("Zoom enabled");
-                MuPDFRenderer.ZoomEnabled = true;
+
+                MuPDFRenderer.ZoomIncrement = 1.75;
+
+                RectTransition transition = MuPDFRenderer.Transitions[0] as RectTransition;
+                transition.Duration = TimeSpan.FromSeconds(0.1);
+
+
+
             }
         }
     }
 
     private void OnKeyUp(object sender, KeyEventArgs e)
     {
-        if(MuPDFRenderer.ZoomEnabled)
+        if(MuPDFRenderer.ZoomIncrement == 1.75)
         {
             Debug.WriteLine("Zoom Disabled");
-            MuPDFRenderer.ZoomEnabled = false;
+
+            MuPDFRenderer.ZoomIncrement = 1;
+
+            RectTransition transition = MuPDFRenderer.Transitions[0] as RectTransition;
+            transition.Duration = TimeSpan.FromSeconds(0.0);
         }
     }
 
