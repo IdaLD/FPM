@@ -104,6 +104,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private double BitmapRes = 0.5;
 
+    private bool ZoomMode = false;
+
     
 
     private void init_startup(object sender, RoutedEventArgs e)
@@ -328,11 +330,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     }
 
 
-
-
     private void ModifiedControlPointerWheelChanged(object sender, PointerWheelEventArgs e)
     {
-        if (MuPDFRenderer.ZoomIncrement == 1 && pwr.Pagecount >  0)
+        if (!ZoomMode && pwr.Pagecount >  0)
         {
             if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))
             {
@@ -353,33 +353,22 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
-        if (MuPDFRenderer.ZoomIncrement == 1)
+        if (e.KeyModifiers == KeyModifiers.Control)
         {
-            if (e.KeyModifiers == KeyModifiers.Control)
+            if (!ZoomMode)
             {
-                Debug.WriteLine("Zoom enabled");
-
-                MuPDFRenderer.ZoomIncrement = 1.75;
-
-                RectTransition transition = MuPDFRenderer.Transitions[0] as RectTransition;
-                transition.Duration = TimeSpan.FromSeconds(0.1);
-
-
-
+                ZoomMode = true;
+                MuPDFRenderer.ZoomEnabled = ZoomMode;
             }
         }
     }
 
     private void OnKeyUp(object sender, KeyEventArgs e)
     {
-        if(MuPDFRenderer.ZoomIncrement == 1.75)
+        if (ZoomMode)
         {
-            Debug.WriteLine("Zoom Disabled");
-
-            MuPDFRenderer.ZoomIncrement = 1;
-
-            RectTransition transition = MuPDFRenderer.Transitions[0] as RectTransition;
-            transition.Duration = TimeSpan.FromSeconds(0.0);
+            ZoomMode = false;
+            MuPDFRenderer.ZoomEnabled = ZoomMode;
         }
     }
 
@@ -390,7 +379,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             ResetView(null, null);
         }
-
     }
 
     private void ResetView(object sender, RoutedEventArgs e)

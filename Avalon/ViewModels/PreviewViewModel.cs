@@ -339,7 +339,7 @@ namespace Avalon.ViewModels
             RequestPage1 = 0;
             CurrentPage1 = 0;
 
-            Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 4, 0, 0.5); });
+            Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 1, 0, 1); });
             Dispatcher.UIThread.Invoke(() => { Renderer.IsVisible = true; });
         }
 
@@ -506,11 +506,11 @@ namespace Avalon.ViewModels
 
             if (TwopageMode)
             {
-                Renderer.Initialize(PreviewFileDual, 1, pagenr / 2, 0.5);
+                Renderer.Initialize(PreviewFileDual, 1, pagenr / 2, 0.2);
             }
             else
             {
-                Renderer.Initialize(PreviewFile, 1, pagenr, 0.5);
+                Renderer.Initialize(PreviewFile, 1, pagenr, 0.2);
             }
 
             CurrentPage1 = RequestPage1;
@@ -531,13 +531,10 @@ namespace Avalon.ViewModels
 
         public void NextPage(bool SecondPage = false)
         {
-
-            Debug.WriteLine("NEXT PAGE");
             if (!TwopageMode)
             {
                 RequestPage1 = RequestPage1 + 1;
             }
-
 
             if (TwopageMode)
             {
@@ -576,7 +573,6 @@ namespace Avalon.ViewModels
 
         public void PrevPage(bool SecondPage = false)
         {
-            Debug.WriteLine("PREV PAGE");
             if (!TwopageMode)
             {
                 RequestPage1 = RequestPage1 - 1;
