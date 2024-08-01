@@ -222,6 +222,8 @@ namespace Avalon.ViewModels
             set { searchBusy = value; OnPropertyChanged("SearchBusy"); }
         }
 
+        private CancellationTokenSource MainCts = new CancellationTokenSource();
+
         private CancellationTokenSource DualCts = new CancellationTokenSource();
 
         private CancellationTokenSource SearchCts = new CancellationTokenSource();
@@ -240,18 +242,19 @@ namespace Avalon.ViewModels
             Renderer = renderer;
         }
 
-        private void SetFile()
+        private async void SetFile()
         {
+            FileAvailable = false;
+            TwopageModeAvail = false;
+
+            MainCts.Cancel();
+            MainCts = new CancellationTokenSource();
+
 
             if (!FileWorkerBusy)
             {
                 FileWorkerBusy = true;
-                FileAvailable = false;
-                TwopageModeAvail = false;
                 TwopageMode = false;
-
-                StopSearch();
-                ClearSearch();
 
                 if (Renderer.IsEffectivelyVisible)
                 {
@@ -266,9 +269,11 @@ namespace Avalon.ViewModels
         {
             string path = RequestFile.Sökväg;
 
-            bytes = await ReadBytesWithProgress(path);
+            bytes = null;
 
-            if (RequestFile.Sökväg == path)
+            bytes = await ReadBytesWithProgress(path, MainCts.Token);
+
+            if (RequestFile.Sökväg == path && bytes != null)
             {
                 await SafeDispose();
                 await SetupMainFile();
@@ -278,6 +283,11 @@ namespace Avalon.ViewModels
 
                 if (Pagecount > 1)
                 {
+                    Debug.WriteLine("CANCEL REQUESTED?!");
+                    if (bytes == null)
+                    {
+                        Debug.WriteLine("BYTES NULL");
+                    }
                     SetDualFile();
                 }
             }
@@ -288,43 +298,53 @@ namespace Avalon.ViewModels
             }
         }
 
-        private async Task<byte[]> ReadBytesWithProgress(string path)
+        private async Task<byte[]> ReadBytesWithProgress(string path, CancellationToken Token)
         {
-            Progress = 0;
-
-            using (MemoryStream ms = new MemoryStream())
+            try
             {
-                using (Stream source = File.OpenRead(path))
-                {
-                    long total = source.Length;
-
-
-                    byte[] buffer = new byte[4096];
-                    int bytesRead;
-
-                    int steps = (int)(total / buffer.Length);
-                    int leap = steps / 20;
-
-                    int i = 0;
-
-                    while ((bytesRead = source.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        ms.Write(buffer, 0, bytesRead);
-
-                        if (leap > 20)
-                        {
-                            if (i % leap == 0)
-                            {
-                                Progress = 100 * i / steps;
-                            }
-                        }
-
-                        i++;
-                    }
-                }
                 Progress = 0;
 
-                return ms.ToArray();
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (Stream source = File.OpenRead(path))
+                    {
+                        long total = source.Length;
+
+
+                        byte[] buffer = new byte[4096];
+                        int bytesRead;
+
+                        int steps = (int)(total / buffer.Length);
+                        int leap = steps / 20;
+
+                        int i = 0;
+
+                        while ((bytesRead = source.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            Token.ThrowIfCancellationRequested();
+                            ms.Write(buffer, 0, bytesRead);
+
+                            if (leap > 20)
+                            {
+                                if (i % leap == 0)
+                                {
+                                    Progress = 100 * i / steps;
+                                }
+                            }
+
+                            i++;
+                        }
+                    }
+                    Progress = 0;
+
+                    return ms.ToArray();
+                }
+
+            }
+            catch
+            {
+                Debug.WriteLine("CT MAIN");
+                return null;
             }
         }
 
@@ -347,6 +367,7 @@ namespace Avalon.ViewModels
         {
             if (!DualWorkerBusy)
             {
+                DualWorkerBusy = true;
                 DualCts = new CancellationTokenSource();
 
                 await Task.Run(() => GetDualPageFile());
@@ -367,7 +388,6 @@ namespace Avalon.ViewModels
         {
             try
             {
-                DualWorkerBusy = true;
                 using (MemoryStream ms = new MemoryStream())
                 {
                     PdfDocument pdf = new PdfDocument(new PdfWriter(ms));
@@ -426,6 +446,8 @@ namespace Avalon.ViewModels
                 ContextDual = new MuPDFContext();
                 PreviewFileDual = new MuPDFDocument(ContextDual, tempbytes, InputFileTypes.PDF);
 
+                tempbytes = null;
+
                 Debug.WriteLine("DUAL PAGE SET");
                 TwopageModeAvail = true;
                 DualWorkerBusy = false;
@@ -442,12 +464,16 @@ namespace Avalon.ViewModels
 
         public async Task SafeDispose()
         {
+
+            StopSearch();
+            ClearSearch();
+
             DualCts.Cancel();
 
             while (RenderWorkerBusy || DualWorkerBusy || SearchBusy)
             {
                 Debug.WriteLine("Waiting");
-                await Task.Delay(25);
+                await Task.Delay(100);
             }
 
             if (PreviewFile != null)
@@ -464,7 +490,7 @@ namespace Avalon.ViewModels
                 FileAvailable = false;
             }
 
-            if (PreviewFileDual != null)
+            if (PreviewFileDual != null && Pagecount > 0)
             {
                 Debug.WriteLine("dual file starting dispose");
                 PreviewFileDual?.Dispose();
