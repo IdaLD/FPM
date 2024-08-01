@@ -31,6 +31,7 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using Avalonia.Collections;
+using System.ComponentModel.DataAnnotations;
 
 namespace Avalon.ViewModels
 {
@@ -56,7 +57,7 @@ namespace Avalon.ViewModels
         public bool TwopageMode
         {
             get { return twopageMode; }
-            set { twopageMode = value;  OnPropertyChanged("TwopageMode"); if (!FileWorkerBusy) { SetPage(); }}
+            set { twopageMode = value;  OnPropertyChanged("TwopageMode"); if (!FileWorkerBusy && !DualWorkerBusy) { SetPage(); }}
         }
 
         public bool twopageModeAvail = false;
@@ -244,6 +245,7 @@ namespace Avalon.ViewModels
 
         private async void SetFile()
         {
+            Debug.WriteLine("SETTING NEW FILE");
             FileAvailable = false;
             TwopageModeAvail = false;
 
@@ -284,6 +286,7 @@ namespace Avalon.ViewModels
                 if (Pagecount > 1)
                 {
                     Debug.WriteLine("CANCEL REQUESTED?!");
+                    Debug.WriteLine(MainCts.IsCancellationRequested);
                     if (bytes == null)
                     {
                         Debug.WriteLine("BYTES NULL");
@@ -373,6 +376,10 @@ namespace Avalon.ViewModels
                 await Task.Run(() => GetDualPageFile());
                 await Task.Run(() => GetDualPage(DualCts.Token));
             }
+            else
+            {
+                Debug.WriteLine("DUAL WORKER BUSY, SKIPPING");
+            }
         }
 
 
@@ -388,6 +395,7 @@ namespace Avalon.ViewModels
         {
             try
             {
+                Debug.WriteLine("TRYING FETCH DUAL");
                 using (MemoryStream ms = new MemoryStream())
                 {
                     PdfDocument pdf = new PdfDocument(new PdfWriter(ms));
@@ -457,9 +465,6 @@ namespace Avalon.ViewModels
                 Debug.WriteLine("CT CANCEL");
                 DualWorkerBusy = false;
             }
-
-            
-
         }
 
         public async Task SafeDispose()
@@ -639,17 +644,21 @@ namespace Avalon.ViewModels
 
         public void toggle_pw_mode()
         {
-            TwopageMode = !TwopageMode;
-
-            if (TwopageMode)
+            if(!DualWorkerBusy)
             {
-                if (CurrentPage1 %2 == 0)
+                Debug.WriteLine("TOGGLING PW MODE");
+                TwopageMode = !TwopageMode;
+
+                if (TwopageMode)
                 {
-                    RequestPage1 = CurrentPage1;
-                }
-                else
-                {
-                    RequestPage1 = CurrentPage1 - 1;
+                    if (CurrentPage1 % 2 == 0)
+                    {
+                        RequestPage1 = CurrentPage1;
+                    }
+                    else
+                    {
+                        RequestPage1 = CurrentPage1 - 1;
+                    }
                 }
             }
         }
