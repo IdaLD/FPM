@@ -285,12 +285,6 @@ namespace Avalon.ViewModels
 
                 if (Pagecount > 1)
                 {
-                    Debug.WriteLine("CANCEL REQUESTED?!");
-                    Debug.WriteLine(MainCts.IsCancellationRequested);
-                    if (bytes == null)
-                    {
-                        Debug.WriteLine("BYTES NULL");
-                    }
                     SetDualFile();
                 }
             }
@@ -370,15 +364,12 @@ namespace Avalon.ViewModels
         {
             if (!DualWorkerBusy)
             {
+                TwopageModeAvail = false;
                 DualWorkerBusy = true;
                 DualCts = new CancellationTokenSource();
 
                 await Task.Run(() => GetDualPageFile());
                 await Task.Run(() => GetDualPage(DualCts.Token));
-            }
-            else
-            {
-                Debug.WriteLine("DUAL WORKER BUSY, SKIPPING");
             }
         }
 
@@ -450,7 +441,7 @@ namespace Avalon.ViewModels
 
                     tempbytes = ms.ToArray();
                 }
-                //await SafeDualDispose();
+
                 ContextDual = new MuPDFContext();
                 PreviewFileDual = new MuPDFDocument(ContextDual, tempbytes, InputFileTypes.PDF);
 
@@ -498,6 +489,7 @@ namespace Avalon.ViewModels
             if (PreviewFileDual != null && Pagecount > 0)
             {
                 Debug.WriteLine("dual file starting dispose");
+                TwopageModeAvail = false;
                 PreviewFileDual?.Dispose();
                 ContextDual?.Dispose();
                 Debug.WriteLine("dual file disposed");
@@ -727,11 +719,10 @@ namespace Avalon.ViewModels
                         }
                     }
                 }
+                SearchBusy = false;
 
                 if (SearchItems > 0)
                 {
-
-                    SearchBusy = false;
 
                     Dispatcher.UIThread.Invoke(() =>
                     {
@@ -739,6 +730,10 @@ namespace Avalon.ViewModels
                         RequestPage1 = SearchPages[SearchPageIndex];
                         Renderer.Search(Regex);
                     });
+
+                }
+                else
+                {
 
                 }
                 

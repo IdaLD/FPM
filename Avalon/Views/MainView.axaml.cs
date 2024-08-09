@@ -321,11 +321,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             {
                 pwr.RequestFile = file;
             }
-            else
-            {
-                StatusLabel.Content = "File not found";
-            }
-
         }
     }
 

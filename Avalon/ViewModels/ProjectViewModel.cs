@@ -455,11 +455,13 @@ namespace Avalon.ViewModels
             {
                 foreach (FileData file in project.StoredFiles)
                 {
+                    string b0 = file.Namn;
                     string b1 = file.Beskrivning1;
                     string b2 = file.Beskrivning2;
                     string b3 = file.Beskrivning3;
                     string b4 = file.Tagg;
 
+                    if (b0 != null) { if (b0.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
                     if (b1 != null) { if (b1.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
                     if (b2 != null) { if (b2.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
                     if (b3 != null) { if (b3.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }

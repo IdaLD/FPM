@@ -30,7 +30,7 @@
 
 	
 			<Grid Name ="MainGrid" DragDrop.AllowDrop="True" ColumnDefinitions="0,*,0,0" RowDefinitions="35,30,*" Margin="5">
-
+				
 				<DockPanel Width="190" VerticalAlignment="Top" HorizontalAlignment="Left">
 					<Menu DockPanel.Dock="Top">
 						<MenuItem Header="File">
@@ -105,7 +105,7 @@
 							</Button.Flyout>
 						</Button>
 
-						<Button Name="SelectedType" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
+						<Button Name="SelectedType" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed" IsVisible="False">
 							<Button.Content>
 								<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="130">
 									<materialIcons:MaterialIcon Grid.Column="0" Kind="FolderQuestion" Width="20" Height="20"/>
@@ -122,7 +122,7 @@
 							</Button.Flyout>
 						</Button>
 
-						<Button Name="SelectedProject" Width="150" Margin="0 0 9 0" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed" FlowDirection="LeftToRight">
+						<Button Name="SelectedProject" Width="150" Margin="0 0 9 0" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed" FlowDirection="LeftToRight" IsVisible="False">
 							<Button.Content>
 								<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="150">
 									<materialIcons:MaterialIcon Grid.Column="0" Kind="Folder" Width="20" Height="20"/>
@@ -175,14 +175,14 @@
 							</StackPanel>
 						</ToggleButton>
 						
-						<ToggleButton Name="Lockedstatus" Height="25" Width="35" Margin="0,-5,0,0" VerticalAlignment="Center">
+						<ToggleButton Name="Lockedstatus" ToolTip.Tip="Lock Files: Ctrl + L" HotKey="Ctrl+L" Height="25" Width="35" Margin="0,-5,0,0" VerticalAlignment="Center">
 							<StackPanel>
 								<materialIcons:MaterialIcon Name="LockIcon" Kind="Lock" Width="20" Height="20"/>
 								<materialIcons:MaterialIcon Name="UnlockedIcon" Kind="LockOpenVariant" Width="20" Height="20" IsVisible="False"/>
 							</StackPanel>
 						</ToggleButton>
 
-						<Button Name="InfoText" Height="25" MinWidth="35" Width="35" Margin="0,-5,0,0" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0" Click="Border_PointerPressed">
+						<Button Name="InfoText" ToolTip.Tip="Project Notepad: Ctrl + N" HotKey="Ctrl+N" Height="25" MinWidth="35" Width="35" Margin="0,-5,0,0" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0" Click="Border_PointerPressed">
 							<materialIcons:MaterialIcon Grid.Column="0" Kind="NoteText" Width="20" Height="20"/>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-110" VerticalOffset="45" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
@@ -355,11 +355,11 @@
 								<Label Content="{Binding Pagecount}" VerticalAlignment="Center"/>
 							</StackPanel>
 
-							<Button ToolTip.Tip="Previous Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevPage}" CommandParameter="false">
+							<Button ToolTip.Tip="Previous Page, -" HotKey="-" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevPage}" CommandParameter="false">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
 							</Button>
 
-							<Button ToolTip.Tip="Next Page" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextPage}" CommandParameter="false">
+							<Button ToolTip.Tip="Next Page, +" HotKey="+" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextPage}" CommandParameter="false">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
 							</Button>
 
