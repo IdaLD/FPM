@@ -39,6 +39,16 @@ namespace Avalon.ViewModels
 
         public string ProjectMessage { get; set; } = "";
 
+        public List<string> FileTypes { get; set; } = new List<string>();
+
+        private List<MenuItem> fileTypeSelection = new List<MenuItem>();
+        public List<MenuItem> FileTypeSelection
+        {
+            get { return fileTypeSelection; }
+            set { fileTypeSelection = value; OnPropertyChanged("FileTypeSelection"); }
+        }
+
+
         public async Task LoadFile(Avalonia.Visual window)
         {
             var topLevel = TopLevel.GetTopLevel(window);
@@ -65,6 +75,7 @@ namespace Avalon.ViewModels
                 ProjectsVM.StoredProjects = JsonConvert.DeserializeObject<ObservableCollection<ProjectData>>(fileContent);
                 ProjectsVM.SetProjectlist();
                 ProjectsVM.SetDefaultSelection();
+                FileTypeSelection = ProjectsVM.GetAllowedTypes();
 
             }
         }
@@ -78,6 +89,7 @@ namespace Avalon.ViewModels
                 ProjectsVM.StoredProjects = JsonConvert.DeserializeObject<ObservableCollection<ProjectData>>(json);
                 ProjectsVM.SetProjectlist();
                 ProjectsVM.SetDefaultSelection();
+                FileTypeSelection = ProjectsVM.GetAllowedTypes();
             }
         }
 
@@ -430,6 +442,7 @@ namespace Avalon.ViewModels
             if (currentProjectName != name)
             {
                 ProjectsVM.SetProject(name);
+                FileTypeSelection = ProjectsVM.GetAllowedTypes();
             }
             OnPropertyChanged("UpdateColumns");
         }

@@ -15,6 +15,21 @@ using Avalon.Model;
 using Avalonia.LogicalTree;
 using System.IO;
 using Newtonsoft.Json.Bson;
+using System.Net;
+using System.Diagnostics;
+using MuPDFCore;
+using Avalonia.Media.Imaging;
+using System.Xml.Serialization;
+using System.Threading.Tasks;
+using Avalonia.Data;
+using System.Drawing.Printing;
+using MuPDFCore.MuPDFRenderer;
+using Avalonia.Threading;
+using Avalonia.Animation;
+using Avalonia.Input.Raw;
+using System.Linq.Expressions;
+using System.Security.Cryptography;
+using Org.BouncyCastle.OpenSsl;
 
 
 namespace Avalon.Views;
@@ -35,34 +50,17 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         FileGrid.AddHandler(DragDrop.DropEvent, on_drop);
 
-        ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
-        TypeList.AddHandler(ListBox.SelectionChangedEvent, on_type_selected);
-
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
         FileGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
 
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
 
+        PreviewGrid.AddHandler(Grid.SizeChangedEvent, PreviewSizeChanged);
 
-        Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
-        Preview.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
-
-        Preview2.AddHandler(Viewbox.PointerWheelChangedEvent, on_preview_zoom);
-        Preview2.AddHandler(Viewbox.PointerWheelChangedEvent, on_scroll_preview);
-
-        Preview.AddHandler(Viewbox.PointerPressedEvent, on_pan_start);
-        Preview.AddHandler(Viewbox.PointerMovedEvent, on_preview_pan);
-        Preview.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
-
-        Preview2.AddHandler(Viewbox.PointerPressedEvent, on_pan_start);
-        Preview2.AddHandler(Viewbox.PointerMovedEvent, on_preview_pan);
-        Preview2.AddHandler(Viewbox.PointerReleasedEvent, on_pan_end);
-
-        ScrollSlider.AddHandler(Slider.ValueChangedEvent, on_select_page);
+        this.AddHandler(KeyDownEvent, OnKeyDown);
+        this.AddHandler(KeyUpEvent, OnKeyUp);
 
         init_MetaWorker();
-        init_PreviewWorker();
-        setup_preview_transform();
 
         StatusLabel.Content = "Ready";
     }
@@ -77,9 +75,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     public double pw_scale = 1f;
 
-    public string preview_request = "";
-    public string preview_current = "";
-
     public bool darkmode = true;
     public bool treeview = false;
 
@@ -89,20 +84,32 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     public TransformGroup transform = new TransformGroup();
 
     private BackgroundWorker MetaWorker = new BackgroundWorker();
-    private BackgroundWorker PreviewWorker = new BackgroundWorker();
 
     private Thread taskThread = null;
 
-    private bool PreviewWorker_busy = false;
+    private CancellationTokenSource cts = new CancellationTokenSource();
+
 
     public MainViewModel ctx = null;
     public PreviewViewModel pwr = null;
 
     public List<DataGridRowEventArgs> Args = new List<DataGridRowEventArgs>();
 
+    private bool PreviewTaskBusy = false;
+
+    private bool PreviewReady = false;
+
+    private double BitmapRes = 0.5;
+
+    private bool ZoomMode = false;
+
+    
+
     private void init_startup(object sender, RoutedEventArgs e)
     {
         get_datacontext();
+        pwr.GetRenderControl(MuPDFRenderer);
+        
         Lockedstatus.IsChecked = true;
         TreeStatus.IsChecked = true;
 
@@ -122,6 +129,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         
 
         ctx.PropertyChanged += on_binding_ctx;
+        pwr.PropertyChanged += on_binding_pwr;
 
     }
 
@@ -130,6 +138,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         if (e.PropertyName == "FilteredFiles") { on_update_columns(); }
         if (e.PropertyName == "UpdateColumns") { on_update_columns(); }
+    }
+
+    private void on_binding_pwr(object sender, PropertyChangedEventArgs e)
+    {
+
     }
 
     public void on_search(object sender, RoutedEventArgs e)
@@ -263,7 +276,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void on_toggle_preview(object sender, RoutedEventArgs e)
+    private async void on_toggle_preview(object sender, RoutedEventArgs e)
     {
         previewMode = !previewMode;
 
@@ -278,18 +291,21 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             val1 = 5f;
             val2 = 3.2f;
         }
+        if (previewMode == false)
+        {
+            await pwr.CloseRenderer();
+        }
 
-        set_preview_request(null, null);
 
         MainGrid.ColumnDefinitions[1] = new ColumnDefinition(1f, GridUnitType.Star);
         MainGrid.ColumnDefinitions[2] = new ColumnDefinition(val1, GridUnitType.Pixel);
         MainGrid.ColumnDefinitions[3] = new ColumnDefinition(val2, GridUnitType.Star);
 
-
-        if (previewMode == false)
+        if (previewMode)
         {
-            pwr.clear_preview_file();
+            MainGrid.ColumnDefinitions[3].MinWidth = 300f;
         }
+
     }
 
     private void set_preview_request(object sender, RoutedEventArgs r)
@@ -298,174 +314,112 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             FileData file = (FileData)FileGrid.SelectedItem;
 
-            if (file != null)
+            if (file != null && Path.Exists(file.Sökväg)) 
             {
-                preview_request = file.Sökväg;
-
-                int QFak = (int)PreviewQuality.Value;
-                if (PreviewWorker_busy == false)
-                {
-                    try
-                    {
-                        PreviewWorker_busy = true;
-                        PreviewWorker.RunWorkerAsync(QFak);
-                    }
-                    catch (Exception e) { }
-                }
+                pwr.RequestFile = file;
             }
-
         }
     }
 
-    private void init_PreviewWorker()
+
+    private void ModifiedControlPointerWheelChanged(object sender, PointerWheelEventArgs e)
     {
-        PreviewWorker.DoWork += PreviewWorker_DoWork;
-        PreviewWorker.RunWorkerCompleted += PreviewWorker_RunWorkerCompleted;
-        PreviewWorker.WorkerSupportsCancellation = true;
-    }
-
-    private void PreviewWorker_DoWork(object sender, DoWorkEventArgs e)
-    {
-        pwr.clear_preview_file();
-
-        int QFak = (int)e.Argument;
-        string current_task = preview_request;
-        pwr.create_preview_file(current_task, QFak);
-        preview_current = current_task;
-    }
-
-    private void PreviewWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        PreviewWorker_busy = false;
-
-        if (preview_current != preview_request)
+        if (!ZoomMode && pwr.Pagecount >  0)
         {
-            PreviewWorker_busy = true;
-            PreviewWorker.RunWorkerAsync(4);
+            if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))
+            {
+                Vector mode = e.Delta;
+
+                if (mode.Y > 0)
+                {
+                    pwr.PrevPage();
+                }
+
+                if (mode.Y < 0)
+                {
+                    pwr.NextPage();
+                }
+            }
+        }
+    }
+
+    private void OnKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.KeyModifiers == KeyModifiers.Control)
+        {
+            if (!ZoomMode)
+            {
+                ZoomMode = true;
+                MuPDFRenderer.ZoomEnabled = ZoomMode;
+            }
+        }
+    }
+
+    private void OnKeyUp(object sender, KeyEventArgs e)
+    {
+        if (ZoomMode)
+        {
+            ZoomMode = false;
+            MuPDFRenderer.ZoomEnabled = ZoomMode;
+        }
+    }
+
+
+    private void PreviewSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (previewMode)
+        {
+            ResetView(null, null);
+        }
+    }
+
+    private void ResetView(object sender, RoutedEventArgs e)
+    {
+        MuPDFRenderer.Contain();
+    }
+
+    private void ToggleSearchMode(object sender, RoutedEventArgs e)
+    {
+        if (pwr.SearchMode)
+        {
+            MainPreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
+            MainPreviewGrid.ColumnDefinitions[1] = new ColumnDefinition(200f, GridUnitType.Pixel);
+            SearchRegex.Focus();
         }
         else
         {
-            pwr.start_preview_page();
+            MainPreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
+            MainPreviewGrid.ColumnDefinitions[1] = new ColumnDefinition(0f, GridUnitType.Pixel);
         }
     }
 
-    private void setup_preview_transform()
+    private void OnSeachRegex(object sender, RoutedEventArgs e)
     {
-        trTns = new TranslateTransform(0, 0);
-        trScl = new ScaleTransform(1, 1);
-
-        trGrp = new TransformGroup();
-        trGrp.Children.Add(trTns);
-        trGrp.Children.Add(trScl);
+        string text = SearchRegex.Text;
+        pwr.Search(text);
     }
 
-    private void reset_preview_transform(object sender, RoutedEventArgs e)
+    private void OnClearSearch(object sender, RoutedEventArgs e)
     {
-        trScl.ScaleX = 1;
-        trScl.ScaleY = 1;
-        trTns.X = 0;
-        trTns.Y = 0;
-        pw_scale = 1f;
-
-        Previewer.RenderTransform = trGrp;
-    }
-
-    private void on_scroll_preview(object sender, PointerWheelEventArgs args)
-    {
-
-        if (!args.KeyModifiers.HasFlag(KeyModifiers.Control))
+        if(pwr.SearchBusy)
         {
-            Vector mode = args.Delta;
-
-            if (mode.Y > 0)
-            {
-                pwr.previous_preview_page();
-            }
-            if (mode.Y < 0)
-            {
-                pwr.next_preview_page();
-            }
+            pwr.StopSearch();
         }
-    }
-
-    private void on_select_page(object sender, RoutedEventArgs e)
-    {
-        if (ScrollSlider.IsPointerOver == true)
+        else
         {
-            pwr.selected_page((int)ScrollSlider.Value - 1);
+            pwr.ClearSearch();
+            SearchRegex.Clear();
         }
     }
 
-    private void on_pan_start(object sender, PointerEventArgs args)
+    private void OnStartSearhRegex(object sender, KeyEventArgs e)
     {
-        preview_pan = true;
-
-        double dx = 0;
-        double dy = 0;
-
-        if (Previewer.RenderTransform != null)
+        if (e.Key == Key.Enter)
         {
-            dx = trTns.X;
-            dy = trTns.Y;
-        }
-
-        x_start = args.GetPosition(null).X - dx;
-        y_start = args.GetPosition(null).Y - dy;
-
-    }
-
-    private void on_pan_end(object sender, PointerEventArgs args)
-    {
-        preview_pan = false;
-    }
-
-    private void on_preview_pan(object sender, PointerEventArgs args)
-    {
-        if (preview_pan == true)
-        {
-            trTns.X = args.GetPosition(null).X - x_start;
-            trTns.Y = args.GetPosition(null).Y - y_start;
-
-            Previewer.RenderTransform = trGrp;
+            OnSeachRegex(null, null);
         }
     }
 
-    private void on_preview_zoom(object sender, PointerWheelEventArgs args)
-    {
-
-        if (args.KeyModifiers.HasFlag(KeyModifiers.Control)) 
-
-        {
-            Vector mode = args.Delta;
-
-            if (mode.Y > 0)
-            {
-                pw_scale = pw_scale * 1.05;
-                trScl.ScaleX = trScl.ScaleY = pw_scale;
-                Previewer.RenderTransform = trGrp;
-            }
-
-            else if (mode.Y < 0 && pw_scale > 1)
-            {
-                pw_scale = pw_scale * 0.95;
-                trScl.ScaleX = trScl.ScaleY = pw_scale;
-                Previewer.RenderTransform = trGrp;
-            }
-        }
-    }
-
-    private void on_toggle_dualmode(object sender, RoutedEventArgs e)
-    {
-        if (DualMode.IsChecked == true)
-        {
-            ScrollSlider.TickFrequency = 2;
-        }
-        if (DualMode.IsChecked == false)
-        {
-            ScrollSlider.TickFrequency = 1;
-        }
-
-    }
 
     private void on_lock(object sender, EventArgs e)
     {
@@ -502,31 +456,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.CopyListviewToClipboard(this);
     }
 
-    private void on_project_selected(object sender, RoutedEventArgs e)
-    {
-        object selected = ProjectList.SelectedItem;
-
-        if (selected != null) 
-        {
-            string name = selected.ToString();
-            ctx.select_project(name);
-        }
-
-        on_update_columns();
-    }
-
-    private void on_type_selected(object sender, RoutedEventArgs e)
-    {
-        object type = TypeList.SelectedItem;
-
-        if (type != null)
-        {
-            ctx.select_type(type.ToString());
-        }
-
-        on_update_columns();
-    }
-
     private void edit_color(object sender, RoutedEventArgs e)
     {
         var menuItem = sender as MenuItem;
@@ -541,9 +470,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void edit_type(object sender, RoutedEventArgs e)
     {
         var menuItem = sender as MenuItem;
-        string type = menuItem.Tag.ToString();
 
-        ctx.edit_type(type);
+        MenuItem SelectedMenu = ctx.FileTypeSelection[menuItem.SelectedIndex];
+
+        ctx.edit_type(SelectedMenu.Header.ToString());
     }
 
     private void deselect_items()
@@ -659,56 +589,35 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_open_path(object sender, RoutedEventArgs e)
     {
-        if (StatusLabel.Content == "Ready")
-        {
-            StatusLabel.Content = "Opening path";
-            ctx.open_path();
-            StatusLabel.Content = "Ready";
-        }
-
+        StatusLabel.Content = "Opening path";
+        ctx.open_path();
+        StatusLabel.Content = "Ready";
     }
 
     private void on_open_file(object sender, RoutedEventArgs e)
     {
-        if (StatusLabel.Content == "Ready")
-        {
-            StatusLabel.Content = "Opening file";
-
-            ctx.open_files();
-
-            StatusLabel.Content = "Ready";
-        }
+        StatusLabel.Content = "Opening file";
+        ctx.open_files();
+        StatusLabel.Content = "Ready";   
     }
 
     private void on_open_metafile(object sender, RoutedEventArgs e)
     {
-        if (StatusLabel.Content == "Ready")
-        {
-            StatusLabel.Content = "Opening metafile";
-
-            ctx.open_meta();
-
-            StatusLabel.Content = "Ready";
-        }
+        StatusLabel.Content = "Opening metafile";
+        ctx.open_meta();
+        StatusLabel.Content = "Ready";   
     }
 
     private void on_open_dwg(object sender, RoutedEventArgs e)
     {
-        if (StatusLabel.Content == "Ready")
-        {
-
-            StatusLabel.Content = "Opening Drawing";
-            ctx.open_dwg();
-            StatusLabel.Content = "Ready";
-            
-        }
+        StatusLabel.Content = "Opening Drawing";
+        ctx.open_dwg();
+        StatusLabel.Content = "Ready";       
     }
 
     private async void on_load_file(object sender, RoutedEventArgs e)
     {
-        StatusLabel.Content = "Loading file";
         await ctx.LoadFile(this);
-        StatusLabel.Content = "Ready";
     }
 
     private async void on_save_file(object sender, RoutedEventArgs e)
@@ -731,6 +640,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         string projectname = MoveFileToProjectName.Text;
         ctx.move_files(projectname);
     }
+
 
     private void on_update_columns()
     {
@@ -837,6 +747,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             }
         }
     }
+
+    private void RaisePropertyChanged(string propName)
+    {
+        if (PropertyChanged != null)
+            PropertyChanged(this, new PropertyChangedEventArgs(propName));
+    }
+    public event PropertyChangedEventHandler PropertyChanged;
 
 }
 

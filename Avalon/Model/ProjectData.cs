@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Avalon.Model
@@ -84,28 +85,18 @@ namespace Avalon.Model
         public void SetFiletypeList()
         {
             Filetypes.Clear();
-            Filetypes.Add("All Types");
+            FiletypesTree.Clear();
 
             List<string> filetypes = StoredFiles.Select(x=>x.Filtyp).Distinct().ToList();
+
+            filetypes.Sort();
 
             foreach (string filetype in filetypes)
             {
                 Filetypes.Add(filetype);
-            }
 
-            SetFiletypeTree();
-        }
-
-        public void SetFiletypeTree()
-        {
-            FiletypesTree.Clear();
-            foreach (string item in Filetypes)
-            {
-                if (item != "All Types")
-                {
-                    int nrFiles = StoredFiles.Where(x=>x.Filtyp == item).Count();
-                    FiletypesTree.Add(item + "\t" + "(" + nrFiles + ")" + "\t\t\t\t\t\t\t\t\t" + Namn);
-                }
+                int nrFiles = StoredFiles.Where(x => x.Filtyp == filetype).Count();
+                FiletypesTree.Add(filetype + "\t" + "(" + nrFiles + ")" + "\t\t\t\t\t\t\t\t\t" + Namn);
             }
         }
 

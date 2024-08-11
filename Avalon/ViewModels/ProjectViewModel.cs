@@ -6,6 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalon.Model;
+using Avalonia.Controls;
+using Material.Icons;
+using Material.Icons.Avalonia;
 
 namespace Avalon.ViewModels
 {
@@ -86,8 +89,6 @@ namespace Avalon.ViewModels
                 OnPropertyChanged("CurrentFiles");
                 OnPropertyChanged("CurrentFile");
                 OnPropertyChanged("NrSelectedFiles");
-                OnPropertyChanged("FileDate");
-                OnPropertyChanged("FileSize");
             }
         }
 
@@ -106,56 +107,6 @@ namespace Avalon.ViewModels
                 }
             }
         }
-
-        public string FileDate
-        {
-            get
-            {
-                if (CurrentFile != null)
-                {
-                    try
-                    {
-                        FileInfo file = new FileInfo(CurrentFile.Sökväg);
-                        return file.LastWriteTime.ToShortDateString();
-                    }
-                    catch
-                    {
-                        return string.Empty;
-                    }
-
-                }
-                else
-                {
-                    return string.Empty;
-                }
-
-            }
-        }
-
-        public string FileSize
-        {
-            get
-            {
-                if (CurrentFile != null)
-                {
-                    try
-                    {
-                        FileInfo file = new FileInfo(CurrentFile.Sökväg);
-                        return Math.Round(file.Length * 0.000001, 1).ToString() + " Mb";
-                    }
-                    catch
-                    {
-                        return string.Empty;
-                    }
-
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
-        }
-
 
         public bool Meta_1
         {
@@ -282,6 +233,33 @@ namespace Avalon.ViewModels
                     file.Uppdrag = projectName;
                 }
                 CurrentProject.SetFiletypeList();
+            }
+        }
+
+        public List<MenuItem> GetAllowedTypes()
+        {
+            if (CurrentProject.Category == "Project")
+            {
+                return new List<MenuItem>() 
+                {
+                    new MenuItem(){Header="Drawing", Icon=new MaterialIcon(){Kind=MaterialIconKind.FilePdfBox } },
+                    new MenuItem(){Header="Document", Icon=new MaterialIcon(){Kind=MaterialIconKind.FileDocument } },
+                    new MenuItem(){Header="Other", Icon=new MaterialIcon(){Kind=MaterialIconKind.FileQuestion } }
+                };
+            }
+            else
+            {
+                return new List<MenuItem>()
+                {
+                    new MenuItem(){Header="General", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaLBoxOutline } },
+                    new MenuItem(){Header="Loads", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaLBoxOutline } },
+                    new MenuItem(){Header="Concrete", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaCBoxOutline } },
+                    new MenuItem(){Header="Steel", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
+                    new MenuItem(){Header="Timber", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaTBoxOutline } },
+                    new MenuItem(){Header="Fem", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaFBoxOutline } },
+                    new MenuItem(){Header="Mechanics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaMBoxOutline } },
+                    new MenuItem(){Header="Geotechnics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaGBoxOutline } }
+                };
             }
         }
 
@@ -507,11 +485,13 @@ namespace Avalon.ViewModels
             {
                 foreach (FileData file in project.StoredFiles)
                 {
+                    string b0 = file.Namn;
                     string b1 = file.Beskrivning1;
                     string b2 = file.Beskrivning2;
                     string b3 = file.Beskrivning3;
                     string b4 = file.Tagg;
 
+                    if (b0 != null) { if (b0.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
                     if (b1 != null) { if (b1.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
                     if (b2 != null) { if (b2.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
                     if (b3 != null) { if (b3.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
