@@ -50,9 +50,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         FileGrid.AddHandler(DragDrop.DropEvent, on_drop);
 
-        ProjectList.AddHandler(ListBox.SelectionChangedEvent, on_project_selected);
-        TypeList.AddHandler(ListBox.SelectionChangedEvent, on_type_selected);
-
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
         FileGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
 
@@ -459,31 +456,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.CopyListviewToClipboard(this);
     }
 
-    private void on_project_selected(object sender, RoutedEventArgs e)
-    {
-        object selected = ProjectList.SelectedItem;
-
-        if (selected != null) 
-        {
-            string name = selected.ToString();
-            ctx.select_project(name);
-        }
-
-        on_update_columns();
-    }
-
-    private void on_type_selected(object sender, RoutedEventArgs e)
-    {
-        object type = TypeList.SelectedItem;
-
-        if (type != null)
-        {
-            ctx.select_type(type.ToString());
-        }
-
-        on_update_columns();
-    }
-
     private void edit_color(object sender, RoutedEventArgs e)
     {
         var menuItem = sender as MenuItem;
@@ -498,9 +470,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void edit_type(object sender, RoutedEventArgs e)
     {
         var menuItem = sender as MenuItem;
-        string type = menuItem.Tag.ToString();
 
-        ctx.edit_type(type);
+        MenuItem SelectedMenu = ctx.FileTypeSelection[menuItem.SelectedIndex];
+
+        ctx.edit_type(SelectedMenu.Header.ToString());
     }
 
     private void deselect_items()

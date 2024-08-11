@@ -6,6 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalon.Model;
+using Avalonia.Controls;
+using Material.Icons;
+using Material.Icons.Avalonia;
 
 namespace Avalon.ViewModels
 {
@@ -230,6 +233,33 @@ namespace Avalon.ViewModels
                     file.Uppdrag = projectName;
                 }
                 CurrentProject.SetFiletypeList();
+            }
+        }
+
+        public List<MenuItem> GetAllowedTypes()
+        {
+            if (CurrentProject.Category == "Project")
+            {
+                return new List<MenuItem>() 
+                {
+                    new MenuItem(){Header="Drawing", Icon=new MaterialIcon(){Kind=MaterialIconKind.FilePdfBox } },
+                    new MenuItem(){Header="Document", Icon=new MaterialIcon(){Kind=MaterialIconKind.FileDocument } },
+                    new MenuItem(){Header="Other", Icon=new MaterialIcon(){Kind=MaterialIconKind.FileQuestion } }
+                };
+            }
+            else
+            {
+                return new List<MenuItem>()
+                {
+                    new MenuItem(){Header="General", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaLBoxOutline } },
+                    new MenuItem(){Header="Loads", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaLBoxOutline } },
+                    new MenuItem(){Header="Concrete", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaCBoxOutline } },
+                    new MenuItem(){Header="Steel", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
+                    new MenuItem(){Header="Timber", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaTBoxOutline } },
+                    new MenuItem(){Header="Fem", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaFBoxOutline } },
+                    new MenuItem(){Header="Mechanics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaMBoxOutline } },
+                    new MenuItem(){Header="Geotechnics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaGBoxOutline } }
+                };
             }
         }
 

@@ -104,41 +104,6 @@
 								</Flyout>
 							</Button.Flyout>
 						</Button>
-
-						<Button Name="SelectedType" Width="130" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed" IsVisible="False">
-							<Button.Content>
-								<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="130">
-									<materialIcons:MaterialIcon Grid.Column="0" Kind="FolderQuestion" Width="20" Height="20"/>
-									<Label Grid.Column="1" Content="{Binding ProjectsVM.Type}" HorizontalAlignment="Center"/>
-									<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
-								</Grid>
-							</Button.Content>
-							<Button.Flyout>
-								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<StackPanel>
-										<ListBox Name="TypeList" ItemsSource="{Binding ProjectsVM.CurrentProject.Filetypes}" Height="300" Width="130" FlowDirection="LeftToRight"/>
-									</StackPanel>
-								</Flyout>
-							</Button.Flyout>
-						</Button>
-
-						<Button Name="SelectedProject" Width="150" Margin="0 0 9 0" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed" FlowDirection="LeftToRight" IsVisible="False">
-							<Button.Content>
-								<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="150">
-									<materialIcons:MaterialIcon Grid.Column="0" Kind="Folder" Width="20" Height="20"/>
-									<Label Grid.Column="1" Content="{Binding ProjectsVM.CurrentProject.Namn}" HorizontalAlignment="Center"/>
-									<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
-								</Grid>
-							</Button.Content>
-							<Button.Flyout>
-								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<StackPanel Orientation="Vertical">
-										<ListBox Name="ProjectList" ItemsSource="{Binding ProjectsVM.ProjectList}" Height="300" Width="130" FlowDirection="LeftToRight"/>
-									</StackPanel>
-								</Flyout>
-							</Button.Flyout>
-						</Button>
-
 					</StackPanel>
 
 				<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="4" HorizontalAlignment="Center">
@@ -240,14 +205,7 @@
 									<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding clear_meta}" Icon="{materialIcons:MaterialIconExt Kind=DatabaseOff}"/>
 								</MenuItem>
 
-								<MenuItem Name="TypeMenu" Header="Filetype" Icon="{materialIcons:MaterialIconExt Kind=FolderQuestion}">
-									<MenuItem Header="None" Tag ="" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
-									<MenuItem Header="Drawing" Tag ="Drawing" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FilePdfBox}"/>
-									<MenuItem Header="Document" Tag ="Document" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FileDocument}"/>
-									<MenuItem Header="Handbook" Tag ="Handbook" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=BookOpen}"/>
-									<MenuItem Header="Standard" Tag ="Standard" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FileCog}"/>
-									<MenuItem Header="Other" Tag ="Other" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FileQuestion}"/>
-								</MenuItem>
+								<MenuItem Name="TypeMenu" Header="FileType" ItemsSource="{Binding FileTypeSelection}" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FolderQuestion}"/>
 
 								<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{materialIcons:MaterialIconExt Kind=ClipboardEditOutline}">
 									<MenuItem Name="FilenameCopyMenu" Header="List" Click="on_copy_filename" Icon="{materialIcons:MaterialIconExt Kind=FormatListBulletedSquare}"/>

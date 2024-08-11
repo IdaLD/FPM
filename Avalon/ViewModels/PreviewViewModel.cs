@@ -1,37 +1,21 @@
 using System.ComponentModel;
-using Avalonia.Media.Imaging;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using MuPDFCore;
 using System.Threading;
 using System.IO;
-using Avalonia.Layout;
-using Avalonia.Platform;
-using Avalonia;
 using Avalon.Model;
-using Avalonia.Controls.Shapes;
-using System.Runtime.InteropServices;
 using System;
-using System.Security.Cryptography;
 using iText.Kernel.Pdf;
-using iText.Kernel.Font;
 using iText.Kernel.Geom;
-using iText.Layout.Properties;
 using iText.Kernel.Pdf.Xobject;
 using iText.Kernel.Pdf.Canvas;
-using Org.BouncyCastle.Asn1.BC;
-using Avalonia.Controls;
 using Avalonia.Threading;
 using MuPDFCore.MuPDFRenderer;
-using System.Drawing;
 using Avalonia.Media;
-using Avalonia.Interactivity;
 using System.Text.RegularExpressions;
-using System.Collections;
 using System.Linq;
-using System.Collections.Generic;
 using Avalonia.Collections;
-using System.ComponentModel.DataAnnotations;
 
 namespace Avalon.ViewModels
 {
