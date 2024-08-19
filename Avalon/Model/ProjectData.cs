@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Avalon.Model
@@ -62,14 +61,14 @@ namespace Avalon.Model
             SetFiletypeList();
         }
 
-        public void Newfile(string filepath)
+        public void Newfile(string filepath, string type="New")
         {
             if (!StoredFiles.Any(x => x.Sökväg == filepath))
             {
                 StoredFiles.Add(new FileData
                 {
                     Namn = System.IO.Path.GetFileNameWithoutExtension(filepath),
-                    Filtyp = "New",
+                    Filtyp = type,
                     Uppdrag = Namn,
                     Sökväg = filepath
                 });

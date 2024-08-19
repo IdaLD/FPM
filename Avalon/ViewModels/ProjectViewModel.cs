@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalon.Model;
@@ -247,8 +246,9 @@ namespace Avalon.ViewModels
                     new MenuItem(){Header="Other", Icon=new MaterialIcon(){Kind=MaterialIconKind.FileQuestion } }
                 };
             }
-            else
+            if (CurrentProject.Category == "Library")
             {
+
                 return new List<MenuItem>()
                 {
                     new MenuItem(){Header="General", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaLBoxOutline } },
@@ -256,10 +256,33 @@ namespace Avalon.ViewModels
                     new MenuItem(){Header="Concrete", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaCBoxOutline } },
                     new MenuItem(){Header="Steel", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
                     new MenuItem(){Header="Timber", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaTBoxOutline } },
-                    new MenuItem(){Header="Fem", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaFBoxOutline } },
+                    new MenuItem(){Header="FEM", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaFBoxOutline } },
                     new MenuItem(){Header="Mechanics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaMBoxOutline } },
-                    new MenuItem(){Header="Geotechnics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaGBoxOutline } }
+                    new MenuItem(){Header="Dynamics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaDBoxOutline } },
+                    new MenuItem(){Header="Geotechnics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaGBoxOutline } },
                 };
+            }
+
+            if (CurrentProject.Category == "Archive")
+            {
+                return new List<MenuItem>()
+                {
+                    new MenuItem(){Header="Portal Frame", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaPBoxOutline } },
+                    new MenuItem(){Header="Slab", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
+                    new MenuItem(){Header="Beam", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaBBoxOutline } },
+                    new MenuItem(){Header="Composite", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaCBoxOutline } },
+                    new MenuItem(){Header="Concrete deck", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaCBoxOutline } },
+                    new MenuItem(){Header="Integral", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaIBoxOutline } },
+                    new MenuItem(){Header="Steel", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
+                    new MenuItem(){Header="Post tension", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
+                    new MenuItem(){Header="Substructure", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
+                    new MenuItem(){Header="Other", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaLBoxOutline } }
+                };
+            }
+
+            else
+            {
+                return null;
             }
         }
 
@@ -267,12 +290,14 @@ namespace Avalon.ViewModels
         {
             List<ProjectData> search = StoredProjects.Where(x => x.Category == "Search").ToList();
             List<ProjectData> sortedLibrary = StoredProjects.Where(x => x.Category == "Library").OrderBy(x => x.Namn).ToList();
+            List<ProjectData> sortedArchive = StoredProjects.Where(x => x.Category == "Archive").OrderBy(x => x.Namn).ToList();
             List<ProjectData> sortedProject = StoredProjects.Where(x => x.Category == "Project").OrderBy(x => x.Namn).ToList();
 
             StoredProjects.Clear();
 
             foreach (var project in search) { StoredProjects.Add(project); }
             foreach (var project in sortedLibrary) { StoredProjects.Add(project); }
+            foreach (var project in sortedArchive) { StoredProjects.Add(project); }
             foreach (var project in sortedProject) { StoredProjects.Add(project); }
 
             SetProjectlist();
@@ -485,19 +510,23 @@ namespace Avalon.ViewModels
             {
                 foreach (FileData file in project.StoredFiles)
                 {
+                    bool finished = false;
+
                     string b0 = file.Namn;
                     string b1 = file.Beskrivning1;
                     string b2 = file.Beskrivning2;
                     string b3 = file.Beskrivning3;
                     string b4 = file.Tagg;
 
-                    if (b0 != null) { if (b0.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
-                    if (b1 != null) { if (b1.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
-                    if (b2 != null) { if (b2.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
-                    if (b3 != null) { if (b3.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
-                    if (b3 != null) { if (b4.ToLower().Contains(searchtext.ToLower())) { results.Add(file); } }
+                    if (b0 != null && !finished) { if (b0.ToLower().Contains(searchtext.ToLower())) { results.Add(file); finished = true; } }
+                    if (b1 != null && !finished) { if (b1.ToLower().Contains(searchtext.ToLower())) { results.Add(file); finished = true; } }
+                    if (b2 != null && !finished) { if (b2.ToLower().Contains(searchtext.ToLower())) { results.Add(file); finished = true; } }
+                    if (b3 != null && !finished) { if (b3.ToLower().Contains(searchtext.ToLower())) { results.Add(file); finished = true; } }
+                    if (b3 != null && !finished) { if (b4.ToLower().Contains(searchtext.ToLower())) { results.Add(file); finished = true; } }
                 }
             }
+
+            results.DistinctBy(x => x.Sökväg);
 
             CurrentProject.StoredFiles.Clear();
             CurrentProject.StoredFiles = results;

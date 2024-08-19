@@ -14,22 +14,8 @@ using System.Collections.Generic;
 using Avalon.Model;
 using Avalonia.LogicalTree;
 using System.IO;
-using Newtonsoft.Json.Bson;
-using System.Net;
-using System.Diagnostics;
-using MuPDFCore;
-using Avalonia.Media.Imaging;
-using System.Xml.Serialization;
-using System.Threading.Tasks;
 using Avalonia.Data;
-using System.Drawing.Printing;
-using MuPDFCore.MuPDFRenderer;
-using Avalonia.Threading;
-using Avalonia.Animation;
-using Avalonia.Input.Raw;
-using System.Linq.Expressions;
-using System.Security.Cryptography;
-using Org.BouncyCastle.OpenSsl;
+using System.Diagnostics;
 
 
 namespace Avalon.Views;
@@ -41,20 +27,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         InitializeComponent();
 
         FileGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
-
         FetchMetadata.AddHandler(Button.ClickEvent, on_fetch_full_meta);
 
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
-
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_files);
-
         FileGrid.AddHandler(DragDrop.DropEvent, on_drop);
 
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
         FileGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
-
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
-
         PreviewGrid.AddHandler(Grid.SizeChangedEvent, PreviewSizeChanged);
 
         this.AddHandler(KeyDownEvent, OnKeyDown);
@@ -65,23 +46,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         StatusLabel.Content = "Ready";
     }
 
-    public string TagInput = "";
-
     public bool previewMode = false;
-    public bool preview_pan = false;
-
-    public double x_start = 0f;
-    public double y_start = 0f;
-
-    public double pw_scale = 1f;
-
     public bool darkmode = true;
     public bool treeview = false;
-
-    private TransformGroup trGrp;
-    private TranslateTransform trTns;
-    private ScaleTransform trScl;
-    public TransformGroup transform = new TransformGroup();
 
     private BackgroundWorker MetaWorker = new BackgroundWorker();
 
@@ -89,21 +56,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private CancellationTokenSource cts = new CancellationTokenSource();
 
-
     public MainViewModel ctx = null;
     public PreviewViewModel pwr = null;
 
     public List<DataGridRowEventArgs> Args = new List<DataGridRowEventArgs>();
 
     private bool PreviewTaskBusy = false;
-
     private bool PreviewReady = false;
-
     private double BitmapRes = 0.5;
-
     private bool ZoomMode = false;
-
-    
 
     private void init_startup(object sender, RoutedEventArgs e)
     {
@@ -127,10 +88,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx = (MainViewModel)this.DataContext;
         pwr = ctx.PreviewVM;
         
-
         ctx.PropertyChanged += on_binding_ctx;
         pwr.PropertyChanged += on_binding_pwr;
-
     }
 
 
@@ -174,6 +133,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             {
                 string path = item.Path.LocalPath;
                 string type = Path.GetExtension(path);
+
 
                 if (type == ".pdf")
                 {
@@ -239,7 +199,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             }
             on_update_columns();
         }
-
     }
 
     public void toggle_theme(object sender, RoutedEventArgs e)
@@ -316,6 +275,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             if (file != null && Path.Exists(file.Sökväg)) 
             {
+                ScrollSlider.Value = 1;
                 pwr.RequestFile = file;
             }
         }
