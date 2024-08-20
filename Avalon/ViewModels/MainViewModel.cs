@@ -356,12 +356,23 @@ namespace Avalon.ViewModels
         {
             if (ProjectsVM.CurrentFile.Filtyp == "Drawing")
             {
-                string dwgPath = ProjectsVM.CurrentFile.Sökväg.Replace("Ritning", "Ritdef").Replace("pdf", "dwg");
+                string dwgPathOld = ProjectsVM.CurrentFile.Sökväg.Replace("Ritning", "Ritdef").Replace("pdf", "dwg");
+                string dwgPathNew = ProjectsVM.CurrentFile.Sökväg.Replace("Drawing", "Drawing Definition").Replace("pdf", "dwg");
 
                 try
                 {
                     ProcessStartInfo psi = new ProcessStartInfo();
-                    psi.FileName = dwgPath;
+                    psi.FileName = dwgPathOld;
+                    psi.UseShellExecute = true;
+                    Process.Start(psi);
+                }
+                catch (Exception)
+                { }
+
+                try
+                {
+                    ProcessStartInfo psi = new ProcessStartInfo();
+                    psi.FileName = dwgPathNew;
                     psi.UseShellExecute = true;
                     Process.Start(psi);
                 }

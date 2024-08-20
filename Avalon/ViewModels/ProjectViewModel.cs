@@ -260,6 +260,7 @@ namespace Avalon.ViewModels
                     new MenuItem(){Header="Mechanics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaMBoxOutline } },
                     new MenuItem(){Header="Dynamics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaDBoxOutline } },
                     new MenuItem(){Header="Geotechnics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaGBoxOutline } },
+                    new MenuItem(){Header="Other", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaGBoxOutline } },
                 };
             }
 
