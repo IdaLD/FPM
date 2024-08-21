@@ -381,6 +381,25 @@ namespace Avalon.ViewModels
             }
         }
 
+        public void open_doc()
+        {
+            if (ProjectsVM.CurrentFile.Filtyp == "Document")
+            {
+                string docPath = ProjectsVM.CurrentFile.Sökväg.Replace("pdf", "docx");
+
+                try
+                {
+                    ProcessStartInfo psi = new ProcessStartInfo();
+                    psi.FileName = docPath;
+                    psi.UseShellExecute = true;
+                    Process.Start(psi);
+                }
+                catch (Exception)
+                { }
+            }
+
+        }
+
         public void open_path()
         {
             try

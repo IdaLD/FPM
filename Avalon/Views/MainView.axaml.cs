@@ -575,6 +575,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         StatusLabel.Content = "Ready";       
     }
 
+    private void on_open_doc(object sender, RoutedEventArgs e)
+    {
+        StatusLabel.Content = "Opening Document";
+        ctx.open_doc();
+        StatusLabel.Content = "Ready";
+    }
+
     private async void on_load_file(object sender, RoutedEventArgs e)
     {
         await ctx.LoadFile(this);
