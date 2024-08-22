@@ -38,9 +38,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
         PreviewGrid.AddHandler(Grid.SizeChangedEvent, PreviewSizeChanged);
 
-        this.AddHandler(KeyDownEvent, OnKeyDown);
-        this.AddHandler(KeyUpEvent, OnKeyUp);
-
         init_MetaWorker();
 
         StatusLabel.Content = "Ready";
@@ -60,6 +57,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     public PreviewViewModel pwr = null;
 
     public List<DataGridRowEventArgs> Args = new List<DataGridRowEventArgs>();
+
+    public ColumnDefinition a = new ColumnDefinition();
+    public ColumnDefinition b = new ColumnDefinition();
+    public ColumnDefinition c = new ColumnDefinition();
+    public ColumnDefinition d = new ColumnDefinition();
 
     private bool PreviewTaskBusy = false;
     private bool PreviewReady = false;
@@ -133,7 +135,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             {
                 string path = item.Path.LocalPath;
                 string type = Path.GetExtension(path);
-
 
                 if (type == ".pdf")
                 {
@@ -237,6 +238,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private async void on_toggle_preview(object sender, RoutedEventArgs e)
     {
+        if (previewMode)
+        {
+            if(ctx.FullScreenMode)
+            {
+                OnFullscreenMode(null, null);
+            }
+        }
         previewMode = !previewMode;
 
         EyeOnIcon.IsVisible = previewMode;
@@ -284,6 +292,17 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void ModifiedControlPointerWheelChanged(object sender, PointerWheelEventArgs e)
     {
+        if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            ZoomMode = true;
+        }
+        else
+        {
+            ZoomMode = false;
+        }
+
+        MuPDFRenderer.ZoomEnabled = ZoomMode;
+
         if (!ZoomMode && pwr.Pagecount >  0)
         {
             if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))
@@ -303,27 +322,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void OnKeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.KeyModifiers == KeyModifiers.Control)
-        {
-            if (!ZoomMode)
-            {
-                ZoomMode = true;
-                MuPDFRenderer.ZoomEnabled = ZoomMode;
-            }
-        }
-    }
-
-    private void OnKeyUp(object sender, KeyEventArgs e)
-    {
-        if (ZoomMode)
-        {
-            ZoomMode = false;
-            MuPDFRenderer.ZoomEnabled = ZoomMode;
-        }
-    }
-
 
     private void PreviewSizeChanged(object sender, SizeChangedEventArgs e)
     {
@@ -336,6 +334,56 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void ResetView(object sender, RoutedEventArgs e)
     {
         MuPDFRenderer.Contain();
+    }
+
+    private void OnFullscreenMode(object sender, RoutedEventArgs e)
+    {
+        if (previewMode)
+        {
+
+            ctx.FullScreenMode = !ctx.FullScreenMode;
+             
+            if (ctx.FullScreenMode)
+            {
+                if (pwr.SearchMode)
+                {
+                    pwr.SearchMode = !pwr.SearchMode;
+                    ToggleSearchMode(null, null);
+                }
+
+                a = MainGrid.ColumnDefinitions[0];
+                b = MainGrid.ColumnDefinitions[1];
+                c = MainGrid.ColumnDefinitions[2];
+                d = MainGrid.ColumnDefinitions[3];
+
+                MainGrid.RowDefinitions[0] = new RowDefinition(15f, GridUnitType.Pixel);
+                MainGrid.RowDefinitions[1] = new RowDefinition(0f, GridUnitType.Pixel);
+                MainGrid.RowDefinitions[2] = new RowDefinition(1f, GridUnitType.Star);
+
+                MainGrid.ColumnDefinitions[0] = new ColumnDefinition(0f, GridUnitType.Pixel);
+                MainGrid.ColumnDefinitions[1] = new ColumnDefinition(0f, GridUnitType.Pixel);
+                MainGrid.ColumnDefinitions[2] = new ColumnDefinition(0f, GridUnitType.Pixel);
+                MainGrid.ColumnDefinitions[3] = new ColumnDefinition(1f, GridUnitType.Star);
+
+                ZoomMode = false;
+                MuPDFRenderer.ZoomEnabled = ZoomMode;
+            }
+
+            else
+            {
+                MainGrid.RowDefinitions[0] = new RowDefinition(35f, GridUnitType.Pixel);
+                MainGrid.RowDefinitions[1] = new RowDefinition(30f, GridUnitType.Pixel);
+                MainGrid.RowDefinitions[2] = new RowDefinition(1f, GridUnitType.Star);
+
+                MainGrid.ColumnDefinitions[0] = a;
+                MainGrid.ColumnDefinitions[1] = b;
+                MainGrid.ColumnDefinitions[2] = c;
+                MainGrid.ColumnDefinitions[3] = d;
+
+                ZoomMode = false;
+                MuPDFRenderer.ZoomEnabled = ZoomMode;
+            }
+        }
     }
 
     private void ToggleSearchMode(object sender, RoutedEventArgs e)

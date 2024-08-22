@@ -12,7 +12,6 @@
              mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
              x:Class="Avalon.Views.MainView"
 			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-			 
              x:DataType="vm:MainViewModel">
 
 	<Design.DataContext>
@@ -30,7 +29,7 @@
 
 	
 			<Grid Name ="MainGrid" DragDrop.AllowDrop="True" ColumnDefinitions="0,*,0,0" RowDefinitions="35,30,*" Margin="5">
-				<DockPanel Width="190" VerticalAlignment="Top" HorizontalAlignment="Left">
+				<DockPanel Width="190" VerticalAlignment="Top" HorizontalAlignment="Left" IsVisible="{Binding !FullScreenMode}">
 					<Menu DockPanel.Dock="Top">
 						<MenuItem Header="File">
 							<MenuItem Header="Load" Click="on_load_file" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
@@ -41,16 +40,16 @@
 					<TextBlock/>
 				</DockPanel>
 
-					<StackPanel Grid.Row="0" Grid.ColumnSpan="4" Orientation="Vertical" Spacing="10" Margin="0">
+					<StackPanel Grid.Row="0" Grid.ColumnSpan="4" Orientation="Vertical" Spacing="10" Margin="0" IsVisible="{Binding !FullScreenMode}">
 						<Label Name="StatusLabel" Height="40" Width="250" HorizontalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Foreground="Gray" Padding="10"/>
 					</StackPanel>
 				
-					<StackPanel Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" Margin="210,2,0,0">
+					<StackPanel Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" Margin="210,2,0,0" IsVisible="{Binding !FullScreenMode}">
 						<ProgressBar Name="ProgressBar" Width="200" VerticalAlignment="Center" Value="{Binding PreviewVM.Progress}"/>
 						<Label Name="ProgressStatus" Width="200" Height="40" VerticalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Foreground="Gray" Padding="10"/>
 					</StackPanel>
 
-				<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical">
+				<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical" IsVisible="{Binding !FullScreenMode}">
 					<StackPanel Margin="8 -1 0 0" Orientation="Horizontal">
 						<materialIcons:MaterialIcon Grid.Column="0" Kind="Folder" Foreground="Gray" Width="25" Height="15"/>
 						<TextBlock Text="Filtered: " Foreground="Gray" FontStyle="Italic"/>
@@ -68,7 +67,7 @@
 
 		
 				
-					<StackPanel Grid.Row="1" Grid.ColumnSpan="4" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
+					<StackPanel Grid.Row="1" Grid.ColumnSpan="4" MinHeight="0" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5" IsVisible="{Binding !FullScreenMode}">
 						<Button Name="Columns" Width="140" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
 							<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="140">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="Database" Width="20" Height="20"/>
@@ -100,7 +99,7 @@
 						</Button>
 					</StackPanel>
 
-				<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="4" HorizontalAlignment="Center">
+				<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="4" HorizontalAlignment="Center" IsVisible="{Binding !FullScreenMode}">
 					<Border Width="170" HorizontalAlignment="Right" FlowDirection="LeftToRight" BorderBrush="Gray" Padding="0" BorderThickness="1" Margin="0" CornerRadius="5">
 						<Grid ColumnDefinitions="10,*,30" Height="20" >
 							<TextBox Grid.Column="1" Watermark="Seach All Files" Name="SearchText" Margin="0" Padding="0" KeyDown="on_start_search"/>
@@ -111,7 +110,7 @@
 					</Border>
 				</StackPanel>
 				
-					<StackPanel Orientation="Horizontal" Spacing="0" Height="35" HorizontalAlignment="Right" Grid.Row="0" Grid.ColumnSpan="4" Margin="0 0 155 0">
+					<StackPanel Orientation="Horizontal" Spacing="0" Height="35" HorizontalAlignment="Right" Grid.Row="0" Grid.ColumnSpan="4" Margin="0 0 155 0" IsVisible="{Binding !FullScreenMode}">
 						
 						<ToggleButton Name="TreeStatus" ToolTip.Tip="Treeview: Ctrl + T" HotKey="Ctrl+T" Height="25" Width="35" Margin="0,-5,0,0" IsCheckedChanged="toggle_treeview">
 							<StackPanel>
@@ -160,7 +159,7 @@
 					</StackPanel>
 
 					<DataGrid Name="FileGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
-							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true" >
+							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true" IsVisible="{Binding !FullScreenMode}">
 					
 						<DataGrid.Columns>
 							<DataGridTextColumn Binding="{Binding Namn}"							Header="Namn"           Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_1}"  FontFamily="UbuntuMono"/>
@@ -188,11 +187,12 @@
 						<DataGrid.ContextMenu>
 							<ContextMenu Name="Menu">
 								<MenuItem Name="OpenMenu" Header="Open" Icon="{materialIcons:MaterialIconExt Kind=OpenInNew}">
-									<MenuItem Name="OpenFileMenu" Header="Open File" Click="on_open_file" Icon="{materialIcons:MaterialIconExt Kind=FilePdfBox}"/>
-									<MenuItem Name="OpenPathMenu" Header="Open Path" Click="on_open_path" Icon="{materialIcons:MaterialIconExt Kind=FolderOpen}"/>
+									<MenuItem Name="OpenFileMenu" Header="Open PDF" Click="on_open_file" Icon="{materialIcons:MaterialIconExt Kind=FilePdfBox}"/>
+									<MenuItem Name="OpenPathMenu" Header="Open Folder" Click="on_open_path" Icon="{materialIcons:MaterialIconExt Kind=FolderOpen}"/>
 									<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile" Icon="{materialIcons:MaterialIconExt Kind=FileCode}"/>
-									<MenuItem Name="OpenDocMenu" Header="Open Doc" Click="on_open_doc" Icon="{materialIcons:MaterialIconExt Kind=MicrosoftWord}"/>
+									<MenuItem Name="OpenDocMenu" Header="Open Docx" Click="on_open_doc" Icon="{materialIcons:MaterialIconExt Kind=MicrosoftWord}"/>
 									<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg" Icon="{materialIcons:MaterialIconExt Kind=FileCad}"/>
+								
 								</MenuItem>
 								<MenuItem Name="MetaMenu" Header="Metadata" Icon="{materialIcons:MaterialIconExt Kind=Database}">
 									<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta" Icon="{materialIcons:MaterialIconExt Kind=DatabaseSync}"/>
@@ -330,6 +330,13 @@
 								</StackPanel>
 							</ToggleButton>
 
+
+							<ToggleButton ToolTip.Tip="Fullscreen, Ctrl+X" HotKey="Ctrl+X" ToolTip.Placement="Right" Name="FullScreen" Click="OnFullscreenMode" Width="35" Height="25">
+								<StackPanel>
+									<materialIcons:MaterialIcon Kind="Fullscreen" Width="20" Height="20"/>
+								</StackPanel>
+							</ToggleButton>
+
 							<ToggleButton ToolTip.Tip="Open Search, Ctrl+F" HotKey="Ctrl+F" ToolTip.Placement="Right" Name="SearchMode" Width="35" Height="25" Click="ToggleSearchMode" IsChecked="{Binding SearchMode}">
 								<StackPanel>
 									<materialIcons:MaterialIcon Kind="Search" Width="20" Height="20" IsVisible="{Binding !SearchMode}"/>
@@ -341,8 +348,6 @@
 								<materialIcons:MaterialIcon Kind="Check" Width="20" Height="20" IsVisible="{Binding !FileWorkerBusy}"/>
 								<materialIcons:MaterialIcon Kind="Reload" Width="20" Height="20" IsVisible="{Binding FileWorkerBusy}"/>
 							</StackPanel>
-
-
 
 							
 						</StackPanel>

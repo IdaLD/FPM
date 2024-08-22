@@ -39,6 +39,12 @@ namespace Avalon.ViewModels
 
         public string ProjectMessage { get; set; } = "";
 
+        private bool fullScreenMode = false;
+        public bool FullScreenMode
+        {
+            get { return fullScreenMode; }
+            set { fullScreenMode = value; OnPropertyChanged("FullScreenMode"); }
+        }
         public List<string> FileTypes { get; set; } = new List<string>();
 
         private List<MenuItem> fileTypeSelection = new List<MenuItem>();
