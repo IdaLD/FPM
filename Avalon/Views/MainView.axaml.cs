@@ -15,7 +15,7 @@ using Avalon.Model;
 using Avalonia.LogicalTree;
 using System.IO;
 using Avalonia.Data;
-using System.Diagnostics;
+using iText.Kernel.Geom;
 
 
 namespace Avalon.Views;
@@ -134,7 +134,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             if (item.Path.IsFile == true)
             {
                 string path = item.Path.LocalPath;
-                string type = Path.GetExtension(path);
+                string type = System.IO.Path.GetExtension(path);
 
                 if (type == ".pdf")
                 {
@@ -281,7 +281,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             FileData file = (FileData)FileGrid.SelectedItem;
 
-            if (file != null && Path.Exists(file.Sökväg)) 
+            if (file != null && System.IO.Path.Exists(file.Sökväg)) 
             {
                 ScrollSlider.Value = 1;
                 pwr.RequestFile = file;
@@ -307,7 +307,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))
             {
-                Vector mode = e.Delta;
+                Avalonia.Vector mode = e.Delta;
 
                 if (mode.Y > 0)
                 {
@@ -645,7 +645,16 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private async void on_save_file_auto(object sender, RoutedEventArgs e)
     {
         StatusLabel.Content = "Saving file";
+
+        if (!Directory.Exists("\\FIlePathManager"))
+        {
+            Directory.CreateDirectory("\\FIlePathManager");
+        }
+
         string path = "C:\\FIlePathManager\\Projects.json";
+
+        
+
         await ctx.SaveFileAuto(path);
         StatusLabel.Content = "Ready";
     }
