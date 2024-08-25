@@ -16,6 +16,7 @@ using Avalonia.Media;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Avalonia.Collections;
+using System.Reflection.PortableExecutable;
 
 namespace Avalon.ViewModels
 {
@@ -354,7 +355,6 @@ namespace Avalon.ViewModels
                 DualCts = new CancellationTokenSource();
 
                 await Task.Run(() => GetDualPageFile());
-
                 await Task.Run(() => GetDualPage(DualCts.Token));
             }
         }
@@ -364,10 +364,15 @@ namespace Avalon.ViewModels
         {
             Debug.WriteLine("DUAL PAGE FETCH");
             MemoryStream stream = new MemoryStream(bytes);
+
             PdfReader reader = new PdfReader(stream);
 
-            reader.SetUnethicalReading(true);
             pdfSource = new PdfDocument(reader);
+
+            if (!reader.IsOpenedWithFullPermission())
+            {
+                reader.SetUnethicalReading(true);
+            }
         }
 
 
