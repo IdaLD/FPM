@@ -289,6 +289,7 @@ namespace Avalon.ViewModels
                 {
                     using (Stream source = File.OpenRead(path))
                     {
+                        
                         long total = source.Length;
 
 
@@ -353,6 +354,7 @@ namespace Avalon.ViewModels
                 DualCts = new CancellationTokenSource();
 
                 await Task.Run(() => GetDualPageFile());
+
                 await Task.Run(() => GetDualPage(DualCts.Token));
             }
         }
@@ -362,7 +364,10 @@ namespace Avalon.ViewModels
         {
             Debug.WriteLine("DUAL PAGE FETCH");
             MemoryStream stream = new MemoryStream(bytes);
-            pdfSource = new PdfDocument(new PdfReader(stream));
+            PdfReader reader = new PdfReader(stream);
+
+            reader.SetUnethicalReading(true);
+            pdfSource = new PdfDocument(reader);
         }
 
 
@@ -411,7 +416,6 @@ namespace Avalon.ViewModels
                         PdfCanvas canvas = new PdfCanvas(targetPage);
 
                         PdfFormXObject pageCopy1 = page1.CopyAsFormXObject(pdf);
-
                         canvas.AddXObjectAt(pageCopy1, 0, 0);
 
                         if (i + 1 <= pdfSource.GetNumberOfPages())
