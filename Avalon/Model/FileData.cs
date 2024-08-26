@@ -12,6 +12,13 @@ namespace Avalon.Model
             set { namn = value; RaisePropertyChanged("Namn"); }
         }
 
+        private string fileStatus = string.Empty;
+        public string FileStatus
+        {
+            get { return fileStatus; }
+            set { fileStatus = value; RaisePropertyChanged("FileStatus"); }
+        }
+
         private string tagg = string.Empty;
         public string Tagg
         {

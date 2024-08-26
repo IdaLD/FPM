@@ -328,6 +328,37 @@ namespace Avalon.ViewModels
             OnPropertyChanged("UpdateColumns");
         }
 
+        public void CheckSingleFile()
+        {
+            if (ProjectsVM.CurrentFile != null)
+            {
+                if (File.Exists(ProjectsVM.CurrentFile.Sökväg))
+                {
+                    ProjectsVM.CurrentFile.FileStatus = "OK";
+                }
+                else
+                {
+                    ProjectsVM.CurrentFile.FileStatus = "Missing";
+                }
+            }
+        }
+
+
+        public void CheckProjectFiles()
+        {
+            foreach(FileData file in ProjectsVM.CurrentProject.StoredFiles)
+            {
+                if (File.Exists(file.Sökväg))
+                {
+                    file.FileStatus = "OK";
+                }
+                else
+                {
+                    file.FileStatus = "Missing";
+                }
+            }
+        }
+
         public void open_files()
         {
             try

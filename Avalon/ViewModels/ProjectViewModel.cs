@@ -182,8 +182,13 @@ namespace Avalon.ViewModels
             get { return FetchMetaCheck(14); }
             set { CurrentProject.MetaCheckStore[14] = value; OnPropertyChanged("Meta_15"); }
         }
+        public bool Meta_16
+        {
+            get { return FetchMetaCheck(15); }
+            set { CurrentProject.MetaCheckStore[15] = value; OnPropertyChanged("Meta_16"); }
+        }
 
-        public bool[] MetaCheckDefault = { true, true, true, true, false, false, false, true, true, true, false, false, false, false, false };
+        public bool[] MetaCheckDefault = { true, true, true, true, true, false, false, false, true, true, true, false, false, false, false, false };
 
         public void NewProject(string name)
         {
@@ -347,15 +352,23 @@ namespace Avalon.ViewModels
 
         public bool FetchMetaCheck(int i)
         {
-            if (CurrentProject.MetaCheckStore[i] != null)
-            {
-                return CurrentProject.MetaCheckStore[i];
-            }
-
-            else
+            if (i >= CurrentProject.MetaCheckStore.Length)
             {
                 return MetaCheckDefault[i];
             }
+            else
+            {
+                if (CurrentProject.MetaCheckStore[i] != null)
+                {
+                    return CurrentProject.MetaCheckStore[i];
+                }
+
+                else
+                {
+                    return MetaCheckDefault[i];
+                }
+            }
+
         }
 
         public void UpdateMetaCheck()
@@ -374,6 +387,7 @@ namespace Avalon.ViewModels
             OnPropertyChanged("Meta_12");
             OnPropertyChanged("Meta_13");
             OnPropertyChanged("Meta_14");
+            OnPropertyChanged("Meta_15");
         }
 
         public bool[] GetMetaCheckState()

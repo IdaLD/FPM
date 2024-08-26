@@ -16,6 +16,8 @@ using Avalonia.LogicalTree;
 using System.IO;
 using Avalonia.Data;
 using iText.Kernel.Geom;
+using Org.BouncyCastle.Asn1.BC;
+using System.Diagnostics;
 
 
 namespace Avalon.Views;
@@ -281,6 +283,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             FileData file = (FileData)FileGrid.SelectedItem;
 
+            CheckStatusSingleFile();
+
             if (file != null && System.IO.Path.Exists(file.Sökväg)) 
             {
                 ScrollSlider.Value = 1;
@@ -469,7 +473,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var menuItem = sender as MenuItem;
         string color = menuItem.Tag.ToString();
 
-        ctx.add_color(color);
+        if (color != "None")
+        {
+            ctx.add_color(color);
+        }
 
         deselect_items();
         update_row_color();
@@ -513,6 +520,26 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         ctx.clear_tag();
         deselect_items();
+    }
+
+    private void OnCheckStatusSingleFile(object sender, RoutedEventArgs e)
+    {
+        CheckStatusSingleFile();
+    }
+
+    private void CheckStatusSingleFile()
+    {
+        ctx.CheckSingleFile();
+        update_row_color();
+    }
+
+
+
+    private void OnCheckProjectFiles(object sender, RoutedEventArgs e)
+    {
+        ctx.CheckProjectFiles();
+        deselect_items();
+        update_row_color();
     }
 
     private void on_add_project(object sender, RoutedEventArgs e)
@@ -598,6 +625,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void on_open_path(object sender, RoutedEventArgs e)
     {
         StatusLabel.Content = "Opening path";
+        CheckStatusSingleFile();
         ctx.open_path();
         StatusLabel.Content = "Ready";
     }
@@ -605,7 +633,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void on_open_file(object sender, RoutedEventArgs e)
     {
         StatusLabel.Content = "Opening file";
+
+        CheckStatusSingleFile();
         ctx.open_files();
+        
         StatusLabel.Content = "Ready";   
     }
 
@@ -663,8 +694,16 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         string projectname = MoveFileToProjectName.Text;
         ctx.move_files(projectname);
+        ctx.ProjectsVM.UpdateFilter();
     }
 
+    private void OnRemoveFiles(object sender, RoutedEventArgs e)
+    {
+        Debug.WriteLine("REMOVING FILES");
+        ctx.ProjectsVM.RemoveSelectedFiles();
+        ctx.ProjectsVM.UpdateFilter();
+
+    }
 
     private void on_update_columns()
     {
@@ -692,6 +731,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         e.Row.Classes.Clear();
 
         if (dataObject != null && dataObject.Färg == "") { e.Row.Classes.Clear(); }
+
+        if (dataObject != null && dataObject.FileStatus == "Missing") { e.Row.Classes.Add("RedForeground"); }
 
         if (darkmode == true)
         {
@@ -748,6 +789,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             var dataObject = e.Row.DataContext as FileData;
 
             e.Row.Classes.Clear();
+
+            if (dataObject != null && dataObject.FileStatus == "Missing") { e.Row.Classes.Add("RedForeground"); }
 
             if (darkmode == true)
             {

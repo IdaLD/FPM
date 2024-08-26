@@ -57,6 +57,11 @@
 		<Style Selector="DataGridRow.MagentaLight">
 			<Setter Property="Background" Value="#eb99eb"/>
 		</Style>
+
+
+		<Style Selector="DataGridRow.RedForeground">
+			<Setter Property="Foreground" Value="Red"/>
+		</Style>
 		
 	</Window.Styles>
 
