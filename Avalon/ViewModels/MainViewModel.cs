@@ -343,11 +343,24 @@ namespace Avalon.ViewModels
             }
         }
 
-
-        public void CheckProjectFiles()
+        public async Task CheckProjectFiles()
         {
-            foreach(FileData file in ProjectsVM.CurrentProject.StoredFiles)
+            await Task.Run(() => CheckFileAsync());
+
+            Debug.WriteLine("Complete");
+        }
+
+        public async Task CheckFileAsync()
+        {
+            ClearFileStatus();
+
+            int n = ProjectsVM.CurrentProject.StoredFiles.Count();
+            int i = 0;
+
+            foreach (FileData file in ProjectsVM.CurrentProject.StoredFiles)
             {
+                i++;
+
                 if (File.Exists(file.Sökväg))
                 {
                     file.FileStatus = "OK";
@@ -356,6 +369,16 @@ namespace Avalon.ViewModels
                 {
                     file.FileStatus = "Missing";
                 }
+
+                PreviewVM.Progress = (int)(100 * ((float)i / (float)n));
+            }
+        }
+
+        public void ClearFileStatus()
+        {
+            foreach (FileData file in ProjectsVM.CurrentProject.StoredFiles)
+            {
+                file.FileStatus = "";
             }
         }
 

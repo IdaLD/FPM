@@ -535,9 +535,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
 
 
-    private void OnCheckProjectFiles(object sender, RoutedEventArgs e)
+    private async void OnCheckProjectFiles(object sender, RoutedEventArgs e)
     {
-        ctx.CheckProjectFiles();
+        await ctx.CheckProjectFiles();
         deselect_items();
         update_row_color();
     }
