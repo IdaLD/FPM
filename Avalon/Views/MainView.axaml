@@ -216,7 +216,7 @@
 								
 								<MenuItem Name="TypeMenu" Header="FileType" ItemsSource="{Binding FileTypeSelection}" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FolderQuestion}"/>
 
-								<MenuItem Name="AddToTray" Header="Favorite" Icon="{materialIcons:MaterialIconExt Kind=StarPlus}" Command="{Binding ProjectsVM.AddSelectedToTray}"/>
+								<MenuItem Name="AddFavorite" Header="Favorite" Icon="{materialIcons:MaterialIconExt Kind=StarPlus}" Command="{Binding ProjectsVM.AddFavorite}"/>
 								
 								<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{materialIcons:MaterialIconExt Kind=ClipboardEditOutline}">
 									<MenuItem Name="FilenameCopyMenu" Header="List" Click="on_copy_filename" Icon="{materialIcons:MaterialIconExt Kind=FormatListBulletedSquare}"/>
@@ -263,12 +263,16 @@
 
 				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1">
 					<Border BorderBrush="Gray" BorderThickness="0.5" Margin="5" CornerRadius="5">
-						<DataGrid Name="TrayGrid" Padding="0" ItemsSource="{Binding ProjectsVM.TrayFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
-									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true" IsVisible="{Binding !FullScreenMode}">
+						<DataGrid Name="TrayGrid" Padding="0" ItemsSource="{Binding ProjectsVM.TrayFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
+									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow">
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding Namn}" Header="Favorites" Width="Auto" MinWidth="120" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding Namn}" Header="Favorites" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
 							</DataGrid.Columns>
-						
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem Name="Remove" Header="Remove" Command="{Binding ProjectsVM.RemoveFavorite}"/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
 						</DataGrid>
 					</Border>
 				</Grid>

@@ -63,14 +63,14 @@ namespace Avalon.ViewModels
         public FileData CurrentFile
         {
             get { return currentFile; }
-            set { currentFile = value; OnPropertyChanged("CurrentFile"); }
+            set { currentFile = value;  OnPropertyChanged("CurrentFile"); }
         }
 
         public FileData requestFile = null;
         public FileData RequestFile
         {
             get { return requestFile; }
-            set { requestFile = value; SetFile(); OnPropertyChanged("RequestFile"); }
+            set { requestFile = value; RequestPage1 = requestFile.DefaultPage; SetFile(); OnPropertyChanged("RequestFile"); }
         }
 
         public int requestPage1 = 0;
@@ -81,7 +81,7 @@ namespace Avalon.ViewModels
             {
                 if (PageInRange(value))
                 {
-                    requestPage1 = value;
+                    requestPage1 = value; 
                     SetPage();
                     OnPropertyChanged("RequestPage1");
                 }
@@ -257,7 +257,6 @@ namespace Avalon.ViewModels
             string path = RequestFile.Sökväg;
 
             bytes = null;
-
             bytes = await ReadBytesWithProgress(path, MainCts.Token);
 
             if (RequestFile.Sökväg == path && bytes != null)
@@ -339,10 +338,7 @@ namespace Avalon.ViewModels
             Pagecount = PreviewFile.Pages.Count;
             CurrentFile = RequestFile;
 
-            RequestPage1 = 0;
-            CurrentPage1 = 0;
-
-            Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 1, 0, 1); });
+            Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 1, RequestPage1, 1); });
             Dispatcher.UIThread.Invoke(() => { Renderer.IsVisible = true; });
         }
 
@@ -515,6 +511,8 @@ namespace Avalon.ViewModels
 
         public void RenderPage(int pagenr)
         {
+
+            CurrentFile.DefaultPage = pagenr;
 
             DisposeHighlight();
                 

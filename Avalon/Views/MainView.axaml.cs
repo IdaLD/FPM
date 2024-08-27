@@ -29,12 +29,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         InitializeComponent();
 
         FileGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
+        TrayGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
+
         FetchMetadata.AddHandler(Button.ClickEvent, on_fetch_full_meta);
 
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_main);
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_files);
         FileGrid.AddHandler(DragDrop.DropEvent, on_drop);
 
+        TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, select_favorite);
         TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_tray);
 
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
@@ -323,6 +326,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             if (file != null && System.IO.Path.Exists(file.Sökväg)) 
             {
                 ScrollSlider.Value = 1;
+            
                 pwr.RequestFile = file;
             }
         }
@@ -657,9 +661,19 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ProgressBar.Value = 0;
     }
 
+    private void select_favorite(object sender, RoutedEventArgs e)
+    {
+        IList<FileData> files = TrayGrid.SelectedItems.Cast<FileData>().ToList();
+        
+        deselect_items();
+        ctx.select_files(files);
+    }
+
     private void select_files(object sender, RoutedEventArgs e)
     {
         IList<FileData> files = FileGrid.SelectedItems.Cast<FileData>().ToList();
+        TrayGrid.SelectedItem = null;
+
         ctx.select_files(files);
     }
 

@@ -56,7 +56,10 @@ namespace Avalon.Model
         {
             foreach(FileData file in files)
             {
-                StoredFiles.Add(file);
+                if (!StoredFiles.Contains(file))
+                {
+                    StoredFiles.Add(file);
+                }
             }
             SetFiletypeList();
         }

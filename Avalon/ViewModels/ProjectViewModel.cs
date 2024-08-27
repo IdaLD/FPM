@@ -303,6 +303,7 @@ namespace Avalon.ViewModels
         public void SortProjects()
         {
             List<ProjectData> search = StoredProjects.Where(x => x.Category == "Search").ToList();
+            List<ProjectData> favorites = StoredProjects.Where(x => x.Category == "Favorites").ToList();
             List<ProjectData> sortedLibrary = StoredProjects.Where(x => x.Category == "Library").OrderBy(x => x.Namn).ToList();
             List<ProjectData> sortedArchive = StoredProjects.Where(x => x.Category == "Archive").OrderBy(x => x.Namn).ToList();
             List<ProjectData> sortedProject = StoredProjects.Where(x => x.Category == "Project").OrderBy(x => x.Namn).ToList();
@@ -310,6 +311,7 @@ namespace Avalon.ViewModels
             StoredProjects.Clear();
 
             foreach (var project in search) { StoredProjects.Add(project); }
+            foreach (var project in favorites) { StoredProjects.Add(project); }
             foreach (var project in sortedLibrary) { StoredProjects.Add(project); }
             foreach (var project in sortedArchive) { StoredProjects.Add(project); }
             foreach (var project in sortedProject) { StoredProjects.Add(project); }
@@ -525,6 +527,29 @@ namespace Avalon.ViewModels
                 file.Beskrivning4 = "";
                 file.Revidering = "";
             }
+        }
+
+        public void AddFavorite()
+        {
+            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
+
+            if (FavProject == null)
+            {
+                FavProject = new ProjectData { Namn = "Favorites", Category = "Favorites" };
+                FavProject.MetaCheckStore = MetaCheckDefault;
+                StoredProjects.Add(FavProject);
+                SortProjects();
+            }
+
+            FavProject.AddFiles(CurrentFiles);
+            TrayFiles = FavProject.StoredFiles;
+        }
+
+        public void RemoveFavorite()
+        {
+            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
+            FavProject.RemoveFile(CurrentFile);
+            UpdateFilter();
         }
 
         public void SeachFiles(string searchtext)
