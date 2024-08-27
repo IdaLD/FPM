@@ -249,8 +249,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
         previewMode = !previewMode;
 
-        EyeOnIcon.IsVisible = previewMode;
-        EyeOffIcon.IsVisible = !previewMode;
+        SearchMode.IsEnabled = previewMode;
+        FullScreen.IsEnabled = previewMode;
+
+        EyeOnIcon.IsEnabled = previewMode;
+        EyeOffIcon.IsEnabled = previewMode;
+        DimmedMode.IsEnabled = previewMode;
 
         float val1 = 0f;
         float val2 = 0f;
@@ -392,6 +396,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void ToggleSearchMode(object sender, RoutedEventArgs e)
     {
+        Debug.WriteLine("SEARCH TOGGLE");
+
+        
+
         if (pwr.SearchMode)
         {
             MainPreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
@@ -400,6 +408,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
         else
         {
+            SearchRegex.Text = "";
+
             MainPreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
             MainPreviewGrid.ColumnDefinitions[1] = new ColumnDefinition(0f, GridUnitType.Pixel);
         }
