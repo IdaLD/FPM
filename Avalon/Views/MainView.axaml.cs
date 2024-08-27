@@ -31,9 +31,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         FileGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
         FetchMetadata.AddHandler(Button.ClickEvent, on_fetch_full_meta);
 
-        FileGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request);
+        FileGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_main);
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_files);
         FileGrid.AddHandler(DragDrop.DropEvent, on_drop);
+
+        TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_tray);
 
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
         FileGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
@@ -48,6 +50,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     public bool previewMode = false;
     public bool darkmode = true;
     public bool treeview = false;
+    public bool trayview = false;
 
     private BackgroundWorker MetaWorker = new BackgroundWorker();
 
@@ -171,6 +174,23 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
+    public void toggle_tray(object sender, RoutedEventArgs e)
+    {
+        trayview = !trayview;
+
+        TrayOn.IsVisible = !TrayOn.IsVisible;
+        TrayOff.IsVisible = !TrayOff.IsVisible;
+
+        if (trayview)
+        {
+            MainGrid.ColumnDefinitions[4] = new ColumnDefinition(300, GridUnitType.Pixel);
+        }
+        else
+        {
+            MainGrid.ColumnDefinitions[4] = new ColumnDefinition(0, GridUnitType.Pixel);
+        }
+    }
+
     public void on_treeview_selected(object sender, SelectionChangedEventArgs e)
     {  
         object selected = MainTree.SelectedItem;
@@ -281,12 +301,23 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     }
 
-    private void set_preview_request(object sender, RoutedEventArgs r)
+    private void set_preview_request_main(object sender, RoutedEventArgs r)
+    {
+        FileData file = (FileData)FileGrid.SelectedItem;
+        set_preview_request(file);
+
+    }
+
+    private void set_preview_request_tray(object sender, RoutedEventArgs r)
+    {
+        FileData file = (FileData)TrayGrid.SelectedItem;
+        set_preview_request(file);
+    }
+
+    private void set_preview_request(FileData file)
     {
         if (previewMode == true)
         {
-            FileData file = (FileData)FileGrid.SelectedItem;
-
             CheckStatusSingleFile();
 
             if (file != null && System.IO.Path.Exists(file.Sökväg)) 

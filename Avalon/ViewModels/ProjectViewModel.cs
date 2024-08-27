@@ -8,6 +8,7 @@ using Avalon.Model;
 using Avalonia.Controls;
 using Material.Icons;
 using Material.Icons.Avalonia;
+using Org.BouncyCastle.Asn1.BC;
 
 namespace Avalon.ViewModels
 {
@@ -57,6 +58,13 @@ namespace Avalon.ViewModels
         {
             get { return filteredFiles; }
             set { filteredFiles = value; OnPropertyChanged("FilteredFiles"); }
+        }
+
+        private ObservableCollection<FileData> trayFiles = new ObservableCollection<FileData>();
+        public ObservableCollection<FileData> TrayFiles
+        {
+            get { return trayFiles; }
+            set { trayFiles = value; OnPropertyChanged("TrayFiles"); }
         }
 
         public int NrFilteredFiles
@@ -307,6 +315,14 @@ namespace Avalon.ViewModels
             foreach (var project in sortedProject) { StoredProjects.Add(project); }
 
             SetProjectlist();
+        }
+
+        public void AddSelectedToTray()
+        {
+            foreach(FileData file in CurrentFiles)
+            {
+                TrayFiles.Add(file);
+            }
         }
 
         public void RemoveSelectedFiles()
