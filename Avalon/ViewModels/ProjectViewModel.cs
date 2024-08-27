@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalon.Model;
@@ -327,6 +328,11 @@ namespace Avalon.ViewModels
             }
         }
 
+        public void UpdateCurrentPagenr(int nr)
+        {
+            CurrentFile.DefaultPage = nr;
+        }
+
         public void RemoveSelectedFiles()
         {
             foreach (FileData file in CurrentFiles)
@@ -542,7 +548,6 @@ namespace Avalon.ViewModels
             }
 
             FavProject.AddFiles(CurrentFiles);
-            TrayFiles = FavProject.StoredFiles;
         }
 
         public void RemoveFavorite()
@@ -550,6 +555,11 @@ namespace Avalon.ViewModels
             ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
             FavProject.RemoveFile(CurrentFile);
             UpdateFilter();
+        }
+
+        public void UpdateFavorite()
+        {
+            TrayFiles = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites").StoredFiles;
         }
 
         public void SeachFiles(string searchtext)

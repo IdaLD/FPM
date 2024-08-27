@@ -16,7 +16,6 @@ using Avalonia.Media;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Avalonia.Collections;
-using System.Reflection.PortableExecutable;
 
 namespace Avalon.ViewModels
 {
@@ -70,10 +69,10 @@ namespace Avalon.ViewModels
         public FileData RequestFile
         {
             get { return requestFile; }
-            set { requestFile = value; RequestPage1 = requestFile.DefaultPage; SetFile(); OnPropertyChanged("RequestFile"); }
+            set { requestFile = value; SetFile(); OnPropertyChanged("RequestFile"); }
         }
 
-        public int requestPage1 = 0;
+        public int requestPage1;
         public int RequestPage1
         {
             get { return requestPage1; }
@@ -230,7 +229,6 @@ namespace Avalon.ViewModels
 
         private async void SetFile()
         {
-            Debug.WriteLine("SETTING NEW FILE");
             FileAvailable = false;
             TwopageModeAvail = false;
 
@@ -289,9 +287,7 @@ namespace Avalon.ViewModels
                 {
                     using (Stream source = File.OpenRead(path))
                     {
-                        
                         long total = source.Length;
-
 
                         byte[] buffer = new byte[4096];
                         int bytesRead;
@@ -321,11 +317,9 @@ namespace Avalon.ViewModels
 
                     return ms.ToArray();
                 }
-
             }
             catch
             {
-                Debug.WriteLine("CT MAIN");
                 return null;
             }
         }
@@ -358,11 +352,8 @@ namespace Avalon.ViewModels
 
         private async Task GetDualPageFile()
         {
-            Debug.WriteLine("DUAL PAGE FETCH");
             MemoryStream stream = new MemoryStream(bytes);
-
             PdfReader reader = new PdfReader(stream);
-
             pdfSource = new PdfDocument(reader);
 
             if (!reader.IsOpenedWithFullPermission())
@@ -376,7 +367,6 @@ namespace Avalon.ViewModels
         {
             try
             {
-                Debug.WriteLine("TRYING FETCH DUAL");
                 using (MemoryStream ms = new MemoryStream())
                 {
                     PdfDocument pdf = new PdfDocument(new PdfWriter(ms));
@@ -436,13 +426,11 @@ namespace Avalon.ViewModels
 
                 tempbytes = null;
 
-                Debug.WriteLine("DUAL PAGE SET");
                 TwopageModeAvail = true;
                 DualWorkerBusy = false;
             }
             catch
             {
-                Debug.WriteLine("CT CANCEL");
                 DualWorkerBusy = false;
             }
         }
@@ -458,7 +446,7 @@ namespace Avalon.ViewModels
             while (RenderWorkerBusy || DualWorkerBusy || SearchBusy)
             {
                 Debug.WriteLine("Waiting");
-                await Task.Delay(100);
+                await Task.Delay(300);
             }
 
             if (PreviewFile != null)
@@ -477,12 +465,9 @@ namespace Avalon.ViewModels
 
             if (PreviewFileDual != null && Pagecount > 0)
             {
-                Debug.WriteLine("dual file starting dispose");
                 TwopageModeAvail = false;
                 PreviewFileDual?.Dispose();
                 ContextDual?.Dispose();
-                Debug.WriteLine("dual file disposed");
-
             }
         }
 
@@ -511,8 +496,6 @@ namespace Avalon.ViewModels
 
         public void RenderPage(int pagenr)
         {
-
-            CurrentFile.DefaultPage = pagenr;
 
             DisposeHighlight();
                 
@@ -581,7 +564,7 @@ namespace Avalon.ViewModels
             {
                 Renderer.PageBackground = new SolidColorBrush(Colors.White);
             }
-
+           
             SetPage();
         }
 
@@ -629,7 +612,6 @@ namespace Avalon.ViewModels
         {
             if(!DualWorkerBusy)
             {
-                Debug.WriteLine("TOGGLING PW MODE");
                 TwopageMode = !TwopageMode;
 
                 if (TwopageMode)
@@ -731,7 +713,6 @@ namespace Avalon.ViewModels
             }
             catch
             {
-                Debug.WriteLine("CTS SEARCH ABORT");
                 SearchBusy = false;
             }
 
@@ -774,8 +755,6 @@ namespace Avalon.ViewModels
                 Renderer.HighlightedRegions = null;
             }
         }
-
-
 
         public async Task StopSearch()
         {
