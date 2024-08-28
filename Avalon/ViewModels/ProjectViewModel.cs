@@ -217,7 +217,7 @@ namespace Avalon.ViewModels
 
         public void RemoveProject()
         {
-            if (CurrentProject.Category != "Favorites")
+            if (CurrentProject.Category != "Search" && CurrentProject.Category != "Favorites")
             {
                 StoredProjects.Remove(CurrentProject);
                 SetProjectlist();
@@ -240,10 +240,10 @@ namespace Avalon.ViewModels
 
         public void RenameProject(string projectName)
         {
-            CurrentProject.Namn = projectName;
-
-            if (CurrentProject.Category != "Search")
+            if (CurrentProject.Category != "Search" && CurrentProject.Category != "Favorites")
             {
+                CurrentProject.Namn = projectName;
+
                 foreach (FileData file in CurrentProject.StoredFiles)
                 {
                     file.Uppdrag = projectName;
@@ -323,19 +323,6 @@ namespace Avalon.ViewModels
             SetProjectlist();
         }
 
-        public void AddSelectedToTray()
-        {
-            foreach(FileData file in CurrentFiles)
-            {
-                TrayFiles.Add(file);
-            }
-        }
-
-        public void UpdateCurrentPagenr(int nr)
-        {
-            CurrentFile.DefaultPage = nr;
-        }
-
         public void RemoveSelectedFiles()
         {
             foreach (FileData file in CurrentFiles)
@@ -370,7 +357,7 @@ namespace Avalon.ViewModels
 
         public void SetProjecCategory(string name)
         {
-            if (currentProject.Category != "Search")
+            if (currentProject.Category != "Search" && currentProject.Category != "Favorites")
             {
                 CurrentProject.Category = name;
                 SortProjects();
@@ -552,7 +539,7 @@ namespace Avalon.ViewModels
             }
 
             FavProject.AddFiles(CurrentFiles);
-            CurrentProject.SetFiletypeList();
+            FavProject.SetFiletypeList();
         }
 
         public void RemoveFavorite()
@@ -563,7 +550,7 @@ namespace Avalon.ViewModels
                 FavProject.RemoveFile(CurrentFile);
             }
 
-            CurrentProject.SetFiletypeList();
+            FavProject.SetFiletypeList();
         }
 
         public void UpdateFavorite()
@@ -575,7 +562,7 @@ namespace Avalon.ViewModels
                 TrayFiles = FavProject.StoredFiles;
             }
 
-            CurrentProject.SetFiletypeList();
+            FavProject.SetFiletypeList();
         }
 
         public void SeachFiles(string searchtext)
@@ -631,6 +618,11 @@ namespace Avalon.ViewModels
             Meta_13 = false;
             Meta_14 = false;
             Meta_15 = false;
+
+        }
+
+        private void SetupDefaultFolders()
+        {
 
         }
     }

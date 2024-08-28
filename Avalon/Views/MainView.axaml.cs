@@ -37,6 +37,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_files);
         FileGrid.AddHandler(DragDrop.DropEvent, on_drop);
 
+        ScrollSlider.AddHandler(Slider.ValueChangedEvent, PageNrSlider);
+
         TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, select_favorite);
         TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_tray);
 
@@ -327,16 +329,24 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             if (file != null && System.IO.Path.Exists(file.Sökväg)) 
             {
-                ScrollSlider.IsVisible = true;
-
                 int startPage = file.DefaultPage;
-
-                Debug.WriteLine(file.DefaultPage);
 
                 pwr.SetupPage(startPage);
                 pwr.RequestFile = file;
 
                 pwr.SetFile();
+            }
+        }
+    }
+
+    private void PageNrSlider(object sender, RoutedEventArgs e)
+    {
+        if (ScrollSlider.IsFocused)
+        {
+            if((int)ScrollSlider.Value - 1 != pwr.RequestPage1)
+            {
+                pwr.RequestPage1 = (int)ScrollSlider.Value - 1;
+                Debug.WriteLine(ScrollSlider.Value);
             }
         }
     }

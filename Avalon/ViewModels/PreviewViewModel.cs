@@ -119,7 +119,7 @@ namespace Avalon.ViewModels
         public int CurrentPage1
         {
             get { return currentPage1; }
-            set { currentPage1 = value; CurrentFile.DefaultPage = value; Debug.WriteLine(value); OnPropertyChanged("CurrentPage1"); }
+            set { currentPage1 = value; CurrentFile.DefaultPage = value; OnPropertyChanged("CurrentPage1"); }
         }
 
         public int currentPage2 = 0;
