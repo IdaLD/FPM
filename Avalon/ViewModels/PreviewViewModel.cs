@@ -16,6 +16,9 @@ using Avalonia.Media;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Avalonia.Collections;
+using iText.Kernel.Pdf.Annot;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Avalon.ViewModels
 {
@@ -69,10 +72,10 @@ namespace Avalon.ViewModels
         public FileData RequestFile
         {
             get { return requestFile; }
-            set { requestFile = value; RequestPage1 = requestFile.DefaultPage; SetFile(); OnPropertyChanged("RequestFile"); }
+            set { requestFile = value; OnPropertyChanged("RequestFile"); }
         }
 
-        public int requestPage1;
+        public int requestPage1 = 0;
         public int RequestPage1
         {
             get { return requestPage1; }
@@ -83,7 +86,6 @@ namespace Avalon.ViewModels
                     requestPage1 = value; 
                     SetPage();
                     OnPropertyChanged("RequestPage1");
-                    requestFile.DefaultPage = value;
                 }
             }
         }
@@ -117,7 +119,7 @@ namespace Avalon.ViewModels
         public int CurrentPage1
         {
             get { return currentPage1; }
-            set { currentPage1 = value; OnPropertyChanged("CurrentPage1"); }
+            set { currentPage1 = value; CurrentFile.DefaultPage = value; Debug.WriteLine(value); OnPropertyChanged("CurrentPage1"); }
         }
 
         public int currentPage2 = 0;
@@ -228,7 +230,12 @@ namespace Avalon.ViewModels
             Renderer = renderer;
         }
 
-        private async void SetFile()
+        public void SetupPage(int page = 0)
+        {
+            requestPage1 = page; 
+        }
+
+        public async void SetFile(int defPagenr = 0)
         {
             FileAvailable = false;
             TwopageModeAvail = false;
@@ -260,9 +267,14 @@ namespace Avalon.ViewModels
 
             if (RequestFile.Sökväg == path && bytes != null)
             {
+
                 await SafeDispose();
                 await SetupMainFile();
 
+                OnPropertyChanged("RequestPage1");
+
+                CurrentPage1 = RequestPage1;
+               
                 FileWorkerBusy = false;
                 FileAvailable = true;
 
@@ -310,7 +322,6 @@ namespace Avalon.ViewModels
                                     Progress = 100 * i / steps;
                                 }
                             }
-
                             i++;
                         }
                     }
@@ -384,7 +395,8 @@ namespace Avalon.ViewModels
                         PdfPage page1 = null;
                         PdfPage page2 = null;
 
-                        page1 = pdfSource.GetPage(i);
+                        page1 = pdfSource.GetPage(i); 
+
                         iText.Kernel.Geom.Rectangle size1 = page1.GetPageSize();
                         height1 = size1.GetHeight();
                         width1 = size1.GetWidth();
@@ -403,7 +415,6 @@ namespace Avalon.ViewModels
                         iText.Kernel.Geom.Rectangle bounds = new iText.Kernel.Geom.Rectangle(newWidth, newHeight);
 
                         PageSize nUpPageSize = new PageSize(bounds);
-
                         PdfPage targetPage = pdf.AddNewPage(nUpPageSize);
                         PdfCanvas canvas = new PdfCanvas(targetPage);
 
@@ -468,6 +479,7 @@ namespace Avalon.ViewModels
                 PreviewFileDual?.Dispose();
                 ContextDual?.Dispose();
             }
+            
         }
 
         public async Task SafeDualDispose()
@@ -509,8 +521,6 @@ namespace Avalon.ViewModels
                 Renderer.Initialize(PreviewFile, 1, pagenr, 0.2);
             }
 
-            CurrentPage1 = RequestPage1;
-
             if (SearchPages != null)
             {
                 if (SearchPages.Contains(pagenr))
@@ -522,6 +532,8 @@ namespace Avalon.ViewModels
             }
 
             Renderer.IsVisible = true;
+
+            CurrentPage1 = RequestPage1;
         }
 
 

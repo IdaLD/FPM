@@ -217,10 +217,13 @@ namespace Avalon.ViewModels
 
         public void RemoveProject()
         {
-            StoredProjects.Remove(CurrentProject);
-            SetProjectlist();
-            SetDefaultSelection();
-            SortProjects();
+            if (CurrentProject.Category != "Favorites")
+            {
+                StoredProjects.Remove(CurrentProject);
+                SetProjectlist();
+                SetDefaultSelection();
+                SortProjects();
+            }
         }
 
         public void RemoveProjects(List<ProjectData> list)
@@ -544,22 +547,35 @@ namespace Avalon.ViewModels
                 FavProject = new ProjectData { Namn = "Favorites", Category = "Favorites" };
                 FavProject.MetaCheckStore = MetaCheckDefault;
                 StoredProjects.Add(FavProject);
+                
                 SortProjects();
             }
 
             FavProject.AddFiles(CurrentFiles);
+            CurrentProject.SetFiletypeList();
         }
 
         public void RemoveFavorite()
         {
             ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
-            FavProject.RemoveFile(CurrentFile);
-            UpdateFilter();
+            foreach(FileData file in CurrentFiles)
+            {
+                FavProject.RemoveFile(CurrentFile);
+            }
+
+            CurrentProject.SetFiletypeList();
         }
 
         public void UpdateFavorite()
         {
-            TrayFiles = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites").StoredFiles;
+            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
+
+            if (FavProject != null)
+            {
+                TrayFiles = FavProject.StoredFiles;
+            }
+
+            CurrentProject.SetFiletypeList();
         }
 
         public void SeachFiles(string searchtext)
@@ -601,7 +617,7 @@ namespace Avalon.ViewModels
             UpdateFilter();
 
             Meta_1 = true;
-            Meta_2 = true;
+            Meta_2 = false;
             Meta_3 = true;
             Meta_4 = true;
             Meta_5 = false;

@@ -117,7 +117,7 @@ namespace Avalon.Model
             set { sökväg = value; RaisePropertyChanged("Sökväg"); }
         }
 
-        private int defaultPage = 2;
+        private int defaultPage;
         public int DefaultPage
         {
             get { return defaultPage; }

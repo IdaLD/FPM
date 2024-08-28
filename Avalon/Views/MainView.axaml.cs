@@ -276,8 +276,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         SearchMode.IsEnabled = previewMode;
         FullScreen.IsEnabled = previewMode;
 
-        EyeOnIcon.IsEnabled = previewMode;
-        EyeOffIcon.IsEnabled = previewMode;
+        EyeOnIcon.IsVisible = previewMode;
+        EyeOffIcon.IsVisible = !previewMode;
+
         DimmedMode.IsEnabled = previewMode;
 
         float val1 = 0f;
@@ -326,10 +327,16 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             if (file != null && System.IO.Path.Exists(file.Sökväg)) 
             {
-                //ScrollSlider.Value = 1;
-                //Debug.WriteLine(file.DefaultPage);
-                //pwr.requestPage1 = file.DefaultPage;
+                ScrollSlider.IsVisible = true;
+
+                int startPage = file.DefaultPage;
+
+                Debug.WriteLine(file.DefaultPage);
+
+                pwr.SetupPage(startPage);
                 pwr.RequestFile = file;
+
+                pwr.SetFile();
             }
         }
     }
