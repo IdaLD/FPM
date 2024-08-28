@@ -111,7 +111,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_binding_pwr(object sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == "CurrentPage1") { ctx.ProjectsVM.UpdateCurrentPagenr(pwr.CurrentPage1); }
+
     }
 
     public void on_search(object sender, RoutedEventArgs e)
@@ -326,11 +326,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             if (file != null && System.IO.Path.Exists(file.Sökväg)) 
             {
-                ScrollSlider.Value = 1;
-
+                //ScrollSlider.Value = 1;
+                //Debug.WriteLine(file.DefaultPage);
+                //pwr.requestPage1 = file.DefaultPage;
                 pwr.RequestFile = file;
-
-                
             }
         }
     }

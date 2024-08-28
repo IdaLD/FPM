@@ -69,7 +69,7 @@ namespace Avalon.ViewModels
         public FileData RequestFile
         {
             get { return requestFile; }
-            set { requestFile = value; SetFile(); OnPropertyChanged("RequestFile"); }
+            set { requestFile = value; RequestPage1 = requestFile.DefaultPage; SetFile(); OnPropertyChanged("RequestFile"); }
         }
 
         public int requestPage1;
@@ -83,6 +83,7 @@ namespace Avalon.ViewModels
                     requestPage1 = value; 
                     SetPage();
                     OnPropertyChanged("RequestPage1");
+                    requestFile.DefaultPage = value;
                 }
             }
         }
@@ -437,7 +438,6 @@ namespace Avalon.ViewModels
 
         public async Task SafeDispose()
         {
-
             StopSearch();
             ClearSearch();
 
@@ -454,7 +454,6 @@ namespace Avalon.ViewModels
                 Dispatcher.UIThread.Invoke(() =>
                 {
                     DisposeHighlight();
-
                     Renderer?.ReleaseResources();
                     PreviewFile?.Dispose();
                     Context?.Dispose();
