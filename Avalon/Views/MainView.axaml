@@ -337,11 +337,11 @@
 								<Label Content="{Binding Pagecount}" VerticalAlignment="Center"/>
 							</StackPanel>
 
-							<Button ToolTip.Tip="Previous Page, -" HotKey="-" FontWeight="Normal" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevPage}" CommandParameter="false">
+							<Button ToolTip.Tip="Previous Page, Left" HotKey="Left" FontWeight="Normal" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevPage}" CommandParameter="false">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
 							</Button>
 
-							<Button ToolTip.Tip="Next Page, +" HotKey="+" FontWeight="Normal" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextPage}" CommandParameter="false">
+							<Button ToolTip.Tip="Next Page, Right" HotKey="Right" FontWeight="Normal" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextPage}" CommandParameter="false">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
 							</Button>
 
