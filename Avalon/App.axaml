@@ -11,8 +11,15 @@
 
 
 	<Application.Styles>
-		<themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Grey" SecondaryColor="Orange" />
-
+		<FluentTheme>
+			<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+			<FluentTheme.Palettes>
+				<!-- Palette for Light theme variant -->
+				<ColorPaletteResources x:Key="Light" Accent="Blue" RegionColor="White" ErrorText="Red" />
+				<!-- Palette for Dark theme variant -->
+				<ColorPaletteResources x:Key="Dark" Accent="Gray" RegionColor="" ErrorText="Yellow" />
+			</FluentTheme.Palettes>
+		</FluentTheme>
 		<materialIcons:MaterialIconStyles />
 		
 		<Style Selector="FlyoutPresenter.mySpecialClass">
@@ -21,71 +28,47 @@
 			<Setter Property="Padding" Value="0" />
 		</Style>
 
+		<Style Selector="TreeViewItem">
+			
+		</Style>
+
 		<Style Selector="ListBoxItem">
 			<Setter Property="Height" Value="25"/>
 			<Setter Property="Padding" Value="5 5 0 5"/>
 		</Style>
-		
-		<Style Selector="TreeViewItem">
-			<Setter Property="Margin" Value="0"/>
-			<Setter Property="Padding" Value="0 5 0 0"/>
-			<Setter Property="MaxWidth" Value="180"/>
-			
+
+		<Style Selector="Button">
+			<Setter Property="MinHeight" Value="30"/>
+			<Setter Property="Height" Value="30"/>
+			<Setter Property="MinWidth" Value="30"/>
+			<Setter Property="Padding" Value="0"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="BorderThickness" Value="1"/>
 		</Style>
 
 		<Style Selector="ToggleButton">
-			
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+
+		<Style Selector="TextBox">
+			<Setter Property="MinHeight" Value="30"/>
+			<Setter Property="Height" Value="30"/>
 		</Style>
 		
 		<Style Selector="MenuItem">
 			<Setter Property="MinHeight" Value="0"/>
 			<Setter Property="Height" Value="30"/>
-
-		</Style>
-
-		<Style Selector="Button">
-			<Setter Property="MinHeight" Value="0"/>
-			<Setter Property="Height" Value="30"/>
-			<Setter Property="MinWidth" Value="50"/>
-			<Setter Property="Padding" Value="0,1,0,0"/>
-			<Setter Property="HorizontalContentAlignment" Value="Center"/>
-			<Setter Property="BorderThickness" Value="1"/>
-			<Setter Property="BorderBrush" Value="Gray"/>
 		</Style>
 
 		<Style Selector="DataGridColumnHeader">
-			<Setter Property="Height" Value="30"/>
-			<Setter Property="MinHeight" Value="30"/>
+			<Setter Property="Background" Value="Transparent"/>
 		</Style>
-		
-		<Style Selector="DataGridRow">
-			<Setter Property="Background" Value="{Binding $parent[DataGrid].RowBackground}" />
-			<Setter Property="Template">
-				<ControlTemplate>
-					<Border x:Name="RowBorder"
-							Background="{TemplateBinding Background}"
-							BorderBrush="{TemplateBinding BorderBrush}"
-							BorderThickness="{TemplateBinding BorderThickness}"
-							CornerRadius="{TemplateBinding CornerRadius}">
-						<DataGridFrozenGrid Name="PART_Root"
-											MinHeight="20"
-											RowDefinitions="*,Auto,Auto"
-											ColumnDefinitions="Auto,*">
 
-							<Rectangle Name="BackgroundRectangle" Grid.RowSpan="2" Grid.ColumnSpan="2" />
 
-							<DataGridRowHeader Grid.RowSpan="3" Name="PART_RowHeader" DataGridFrozenGrid.IsFrozen="True" />
-							<DataGridCellsPresenter Grid.Column="1" Name="PART_CellsPresenter" DataGridFrozenGrid.IsFrozen="True" />
-							<DataGridDetailsPresenter Grid.Row="1" Grid.Column="1" Name="PART_DetailsPresenter" />
-							<Rectangle Grid.Row="2" Grid.Column="1" Margin="0"
-									   VerticalAlignment="Bottom" Height="1" Name="PART_BottomGridLine"
-									   HorizontalAlignment="Stretch" />
-						</DataGridFrozenGrid>
-					</Border>
-				</ControlTemplate>
-			</Setter>
-		</Style>
 	</Application.Styles>
+		
 	
 </Application>
 

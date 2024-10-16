@@ -11,6 +11,8 @@
         Icon="/Assets/folder.ico"
         WindowStartupLocation="CenterScreen"
         ExtendClientAreaToDecorationsHint="True"
+		TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
         Title="Avalon">
 
 	<Window.Styles>
@@ -65,23 +67,37 @@
 		
 	</Window.Styles>
 
-	<Grid>
-		<views:MainView/>
+	<Panel>
+		<ExperimentalAcrylicBorder IsHitTestVisible="False">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.65" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
 
-		<Border Name="ConfirmLeave" Margin="0" Height="80" Width="250" Background="{DynamicResource MaterialCardBackgroundBrush}" IsVisible="False" CornerRadius="5">
-			<Border.Effect>
-				<DropShadowDirectionEffect  BlurRadius="10" Direction="180" ShadowDepth="10" Opacity="0.20"/>
-			</Border.Effect>
-			<StackPanel Orientation="Vertical" VerticalAlignment="Center">
-				<Label Grid.Row="0" Grid.ColumnSpan="3" FontSize="18" FontFamily="Ubuntu" HorizontalAlignment="Center" VerticalContentAlignment="Center" Content="Save before close?"/>
-				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
-					<Button Theme="{DynamicResource MaterialButtonBase}" Width="70" Content="Yes" Click="on_save_before_close"/>
-					<Button Theme="{DynamicResource MaterialButtonBase}" Width="70" Content="No" Click="on_leave"/>
-					<Button Theme="{DynamicResource MaterialButtonBase}" Width="70" Content="Cancel" Click="on_cancel"/>
+	
+	
+		<Grid>
+			<views:MainView/>
+
+			<Border Name="ConfirmLeave" Margin="0" Height="80" Width="250" Background="{DynamicResource MaterialCardBackgroundBrush}" IsVisible="False" CornerRadius="5">
+				<Border.Effect>
+					<DropShadowDirectionEffect  BlurRadius="10" Direction="180" ShadowDepth="10" Opacity="0.20"/>
+				</Border.Effect>
+				<StackPanel Orientation="Vertical" VerticalAlignment="Center">
+					<Label Grid.Row="0" Grid.ColumnSpan="3" FontSize="18" FontFamily="Ubuntu" HorizontalAlignment="Center" VerticalContentAlignment="Center" Content="Save before close?"/>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
+						<Button Theme="{DynamicResource MaterialButtonBase}" Width="70" Content="Yes" Click="on_save_before_close"/>
+						<Button Theme="{DynamicResource MaterialButtonBase}" Width="70" Content="No" Click="on_leave"/>
+						<Button Theme="{DynamicResource MaterialButtonBase}" Width="70" Content="Cancel" Click="on_cancel"/>
+					</StackPanel>
 				</StackPanel>
-			</StackPanel>
-		</Border>
-	</Grid>
+			</Border>
+		</Grid>
+	</Panel>
 
 </Window>
 

@@ -70,7 +70,7 @@
 					<StackPanel Grid.Row="1" Grid.ColumnSpan="5" MinHeight="0" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5" IsVisible="{Binding !FullScreenMode}">
 						<Button Name="Columns" Width="140" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
 							<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="140">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="Database" Width="20" Height="20"/>
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="Database"/>
 								<Label Grid.Column="1" Content="Metadata" HorizontalAlignment="Center"/>
 								<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
 							</Grid>
@@ -101,55 +101,55 @@
 					</StackPanel>
 
 				<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="5" HorizontalAlignment="Center" IsVisible="{Binding !FullScreenMode}">
-					<Border Width="170" HorizontalAlignment="Right" FlowDirection="LeftToRight" BorderBrush="Gray" Padding="0" BorderThickness="1" Margin="0" CornerRadius="5">
-						<Grid ColumnDefinitions="10,*,30" Height="20" >
-							<TextBox Grid.Column="1" Watermark="Seach All Files" Name="SearchText" Margin="0" Padding="0" KeyDown="on_start_search"/>
-							<Button Grid.Column="2" MinWidth="30" Width="30" Margin="0" Click="on_search" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="Search" Width="20" Height="20"/>
+					<Border Width="170" HorizontalAlignment="Right" FlowDirection="LeftToRight">
+						<Grid ColumnDefinitions="*,5,30">
+							<TextBox Grid.Column="0" Watermark="Seach All Files" Name="SearchText" KeyDown="on_start_search"/>
+							<Button Grid.Column="2" Click="on_search" >
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="Search"/>
 							</Button>
 						</Grid>
 					</Border>
 				</StackPanel>
 				
-					<StackPanel Orientation="Horizontal" Spacing="0" Height="35" HorizontalAlignment="Right" Grid.Row="0" Grid.ColumnSpan="5" Margin="0 0 155 0" IsVisible="{Binding !FullScreenMode}">
+					<StackPanel Orientation="Horizontal" Spacing="2" Height="35" HorizontalAlignment="Right" Grid.Row="0" Grid.ColumnSpan="5" Margin="0 0 155 0" IsVisible="{Binding !FullScreenMode}">
 
-						<ToggleButton Name="TrayStatus" ToolTip.Tip="Tray: Ctrl + R" HotKey="Ctrl+R" FontWeight="Normal" Height="25" Width="35" Margin="0,-5,0,0" IsCheckedChanged="toggle_tray">
+						<ToggleButton Name="TrayStatus" ToolTip.Tip="Tray: Ctrl + R" HotKey="Ctrl+R" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_tray">
 							<StackPanel>
-								<materialIcons:MaterialIcon Name="TrayOn" Kind="Star" Width="20" Height="20" IsVisible="False"/>
-								<materialIcons:MaterialIcon Name="TrayOff" Kind="StarOff" Width="20" Height="20" />
+								<materialIcons:MaterialIcon Name="TrayOn" Kind="Star" IsVisible="False"/>
+								<materialIcons:MaterialIcon Name="TrayOff" Kind="StarOff" />
 							</StackPanel>
 						</ToggleButton>
 
-						<ToggleButton Name="TreeStatus" ToolTip.Tip="Treeview: Ctrl + T" HotKey="Ctrl+T" FontWeight="Normal" Height="25" Width="35" Margin="0,-5,0,0" IsCheckedChanged="toggle_treeview">
+						<ToggleButton Name="TreeStatus" ToolTip.Tip="Treeview: Ctrl + T" HotKey="Ctrl+T" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_treeview">
 							<StackPanel>
-								<materialIcons:MaterialIcon Name="TreeviewOn" Kind="Tree" Width="20" Height="20" IsVisible="False"/>
-								<materialIcons:MaterialIcon Name="TreeviewOff" Kind="TreeOutline" Width="20" Height="20" />
+								<materialIcons:MaterialIcon Name="TreeviewOn" Kind="Tree" IsVisible="False"/>
+								<materialIcons:MaterialIcon Name="TreeviewOff" Kind="TreeOutline" />
 							</StackPanel>
 						</ToggleButton>
 
-						<ToggleButton Name="PreviewToggle" ToolTip.Tip="Preview: Ctrl + P" HotKey="Ctrl+P" FontWeight="Normal" Height="25" Width="35" Margin="0,-5,0,0">
+						<ToggleButton Name="PreviewToggle" ToolTip.Tip="Preview: Ctrl + P" HotKey="Ctrl+P" FontWeight="Normal" Margin="0,-5,0,0">
 							<StackPanel>
-								<materialIcons:MaterialIcon Name="EyeOnIcon" Kind="Eye" Width="20" Height="20" IsVisible="False"/>
-								<materialIcons:MaterialIcon Name="EyeOffIcon" Kind="EyeOff" Width="20" Height="20"/>
+								<materialIcons:MaterialIcon Name="EyeOnIcon" Kind="Eye" IsVisible="False"/>
+								<materialIcons:MaterialIcon Name="EyeOffIcon" Kind="EyeOff"/>
 							</StackPanel>
 						</ToggleButton>	
 
-						<ToggleButton Name="ThemeToggle" ToolTip.Tip="Mode: Ctrl + M" HotKey="Ctrl+M" FontWeight="Normal" Height="25" Width="35" Margin="0,-5,0,0" IsCheckedChanged="toggle_theme">
+						<ToggleButton Name="ThemeToggle" ToolTip.Tip="Mode: Ctrl + M" HotKey="Ctrl+M" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_theme">
 							<StackPanel>
-								<materialIcons:MaterialIcon Name="ModeNightIcon" Kind="WeatherNight" Width="20" Height="20"/>
-								<materialIcons:MaterialIcon Name="ModeDayIcon" Kind="WeatherSunny" Width="20" Height="20" IsVisible="False"/>
+								<materialIcons:MaterialIcon Name="ModeNightIcon" Kind="WeatherNight"/>
+								<materialIcons:MaterialIcon Name="ModeDayIcon" Kind="WeatherSunny" IsVisible="False"/>
 							</StackPanel>
 						</ToggleButton>
 						
-						<ToggleButton Name="Lockedstatus" ToolTip.Tip="Lock Files: Ctrl + L" HotKey="Ctrl+L" FontWeight="Normal" Height="25" Width="35" Margin="0,-5,0,0" VerticalAlignment="Center">
+						<ToggleButton Name="Lockedstatus" ToolTip.Tip="Lock Files: Ctrl + L" HotKey="Ctrl+L" FontWeight="Normal" Margin="0,-5,0,0" VerticalAlignment="Center">
 							<StackPanel>
-								<materialIcons:MaterialIcon Name="LockIcon" Kind="Lock" Width="20" Height="20"/>
-								<materialIcons:MaterialIcon Name="UnlockedIcon" Kind="LockOpenVariant" Width="20" Height="20" IsVisible="False"/>
+								<materialIcons:MaterialIcon Name="LockIcon" Kind="Lock"/>
+								<materialIcons:MaterialIcon Name="UnlockedIcon" Kind="LockOpenVariant" IsVisible="False"/>
 							</StackPanel>
 						</ToggleButton>
 
-						<Button Name="InfoText" ToolTip.Tip="Project Notepad: Ctrl + N" HotKey="Ctrl+N" FontWeight="Normal" Height="25" MinWidth="35" Width="35" Margin="0,-5,0,0" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0" Click="Border_PointerPressed">
-							<materialIcons:MaterialIcon Grid.Column="0" Kind="NoteText" Width="20" Height="20"/>
+						<Button Name="InfoText" ToolTip.Tip="Project Notepad: Ctrl + N" HotKey="Ctrl+N" Width="33" FontWeight="Normal" Margin="0,-5,0,0" Click="Border_PointerPressed">
+							<materialIcons:MaterialIcon Grid.Column="0" Kind="NoteText"/>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-110" VerticalOffset="45" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<StackPanel Orientation="Vertical">
@@ -279,36 +279,36 @@
 
 					
 
-				<Grid Name="MainPreviewGrid" RowDefinitions="*,30" ColumnDefinitions="*,0" Grid.Column="3" Grid.Row="2" Margin="0 5 0 0">
+				<Grid Name="MainPreviewGrid" RowDefinitions="*,35" ColumnDefinitions="*,0" Grid.Column="3" Grid.Row="2" Margin="0 5 0 0">
 					<Grid Name="PreviewGrid" ClipToBounds="True" ColumnDefinitions="*" Grid.Row="0" Grid.Column="0">
 						<mupdf:PDFRenderer Name="MuPDFRenderer" Grid.Column="0" Background="Transparent" PageBackground="White" ZoomEnabled="False" PointerWheelChanged="ModifiedControlPointerWheelChanged" 
 											ZoomIncrement="1.3" ClipToBounds="True" PointerEventHandlersType="PanHighlight"/>
 					</Grid>
 
 					<Grid Name="SearchGrid" Grid.Column="1" ClipToBounds="True" DataContext="{Binding PreviewVM}">
-						<Border Grid.Row="0" BorderBrush="Gray" Margin="0 0 5 0" BorderThickness="1" CornerRadius="5">
+						<Border Grid.Row="0" BorderBrush="Gray" Margin="0 0 5 0" BorderThickness="1">
 							<Grid RowDefinitions="10,30,30,*">
 								
 								<Border Grid.Row="1" Width="170" HorizontalAlignment="Center" FlowDirection="LeftToRight" BorderBrush="Gray" BorderThickness="1" CornerRadius="5">
-									<Grid ColumnDefinitions="10,*,30,30" Height="25" >
+									<Grid ColumnDefinitions="10,*,30,30" >
 										<TextBox Grid.Column="1" Watermark="Seach String" Name="SearchRegex" KeyDown="OnStartSearhRegex"/>
-										<Button Grid.Column="2" MinWidth="30" Width="30" Margin="0" Click="OnSeachRegex" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0" IsEnabled="{Binding !SearchBusy}">
-											<materialIcons:MaterialIcon Grid.Column="0" Kind="Search" Width="20" Height="20"/>
+										<Button Grid.Column="2" Margin="0" Click="OnSeachRegex" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0" IsEnabled="{Binding !SearchBusy}">
+											<materialIcons:MaterialIcon Grid.Column="0" Kind="Search"/>
 										</Button>
-										<Button Grid.Column="3" MinWidth="30" Width="30" Margin="0" Click="OnClearSearch" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0">
-											<materialIcons:MaterialIcon Grid.Column="0" Kind="Close" Width="20" Height="20"/>
+										<Button Grid.Column="3" Margin="0" Click="OnClearSearch" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0">
+											<materialIcons:MaterialIcon Grid.Column="0" Kind="Close"/>
 										</Button>
 									</Grid>
 								</Border>
 
 								<Border Grid.Row="2" BorderBrush="Gray" BorderThickness="0 0 0 1">
 									<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-										<Button ToolTip.Tip="Prev Search" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevSearchPage}">
-											<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
+										<Button ToolTip.Tip="Prev Search" ToolTip.Placement="Right" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevSearchPage}">
+											<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious"/>
 										</Button>
 
-										<Button ToolTip.Tip="Next Search" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextSearchPage}">
-											<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
+										<Button ToolTip.Tip="Next Search" ToolTip.Placement="Right" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextSearchPage}">
+											<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext"/>
 										</Button>
 
 										<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -326,9 +326,9 @@
 					</Grid>
 
 					<StackPanel ClipToBounds="True" Grid.Row="1" Grid.ColumnSpan="2" FlowDirection="LeftToRight" Orientation="Vertical" Margin="0" DataContext="{Binding PreviewVM}">
-						<StackPanel Width="700" Orientation="Horizontal" VerticalAlignment="Center" Spacing="0">
+						<StackPanel Width="700" Orientation="Horizontal" VerticalAlignment="Top" Spacing="2">
 
-							<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Width="200" Height="30" Margin="0 0 10 0" Minimum="1" IsSnapToTickEnabled="True" TickFrequency="1" Maximum="{Binding Pagecount}" Value="{Binding RequestPage1, Mode=OneWay, Converter={StaticResource AddOneConverter}}"/>
+							<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Width="200" Margin="0 0 10 0" Minimum="1" IsSnapToTickEnabled="True" TickFrequency="1" Maximum="{Binding Pagecount}" Value="{Binding RequestPage1, Mode=OneWay, Converter={StaticResource AddOneConverter}}"/>
 
 							
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -337,49 +337,49 @@
 								<Label Content="{Binding Pagecount}" VerticalAlignment="Center"/>
 							</StackPanel>
 
-							<Button ToolTip.Tip="Previous Page, -" HotKey="-" FontWeight="Normal" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevPage}" CommandParameter="false">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious" Width="20" Height="20"/>
+							<Button ToolTip.Tip="Previous Page, -" HotKey="-" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Command="{Binding PrevPage}" CommandParameter="false">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious"/>
 							</Button>
 
-							<Button ToolTip.Tip="Next Page, +" HotKey="+" FontWeight="Normal" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextPage}" CommandParameter="false">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext" Width="20" Height="20"/>
+							<Button ToolTip.Tip="Next Page, +" HotKey="+" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Command="{Binding NextPage}" CommandParameter="false">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext"/>
 							</Button>
 
-							<Button ToolTip.Tip="Reset And Center, Ctrl+C" HotKey="Ctrl + C" FontWeight="Normal" ToolTip.Placement="Right" MinWidth="35" Width="35" Height="25" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Click="ResetView">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="StretchToPageOutline" Width="20" Height="20"/>
+							<Button ToolTip.Tip="Reset And Center, Ctrl+C" HotKey="Ctrl + C" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Click="ResetView">
+								<materialIcons:MaterialIcon Grid.Column="0" Kind="StretchToPageOutline"/>
 							</Button>
 
-							<ToggleButton ToolTip.Tip="Toggle Dimmed Background, Ctrl + G" HotKey="Ctrl+G" FontWeight="Normal" Name="DimmedMode" ToolTip.Placement="Right" IsChecked="{Binding DimmedBackground}" Width="35" Height="25" IsEnabled="False">
+							<ToggleButton ToolTip.Tip="Toggle Dimmed Background, Ctrl + G" HotKey="Ctrl+G" FontWeight="Normal" Name="DimmedMode" ToolTip.Placement="Right" IsChecked="{Binding DimmedBackground}" IsEnabled="False">
 								<StackPanel>
-									<materialIcons:MaterialIcon Grid.Column="0" Kind="CarLightHigh" Width="20" Height="20" IsVisible="{Binding !DimmedBackground}"/>
-									<materialIcons:MaterialIcon Grid.Column="0" Kind="CarLightDimmed" Width="20" Height="20" IsVisible="{Binding DimmedBackground}"/>
+									<materialIcons:MaterialIcon Grid.Column="0" Kind="CarLightHigh" IsVisible="{Binding !DimmedBackground}"/>
+									<materialIcons:MaterialIcon Grid.Column="0" Kind="CarLightDimmed" IsVisible="{Binding DimmedBackground}"/>
 								</StackPanel>
 							</ToggleButton>
 
-							<ToggleButton ToolTip.Tip="Duak Page Mode, Ctrl + D" HotKey="Ctrl+D" FontWeight="Normal" ToolTip.Placement="Right" Name="DualMode" Width="35" Height="25" IsChecked="{Binding TwopageMode}" IsEnabled="{Binding TwopageModeAvail}" IsVisible="{Binding TwopageModeAvail}">
+							<ToggleButton ToolTip.Tip="Duak Page Mode, Ctrl + D" HotKey="Ctrl+D" FontWeight="Normal" ToolTip.Placement="Right" Name="DualMode" IsChecked="{Binding TwopageMode}" IsEnabled="{Binding TwopageModeAvail}" IsVisible="{Binding TwopageModeAvail}">
 								<StackPanel>
-									<materialIcons:MaterialIcon Kind="FileDocument" Width="20" Height="20" IsVisible="{Binding !TwopageMode}"/>
-									<materialIcons:MaterialIcon Kind="BookOpenPageVariant" Width="20" Height="20" IsVisible="{Binding TwopageMode}"/>
+									<materialIcons:MaterialIcon Kind="FileDocument" IsVisible="{Binding !TwopageMode}"/>
+									<materialIcons:MaterialIcon Kind="BookOpenPageVariant" IsVisible="{Binding TwopageMode}"/>
 								</StackPanel>
 							</ToggleButton>
 
 
-							<ToggleButton ToolTip.Tip="Fullscreen, Ctrl + X" HotKey="Ctrl+X" FontWeight="Normal" ToolTip.Placement="Right" Name="FullScreen" Click="OnFullscreenMode" Width="35" Height="25" IsEnabled="False">
+							<ToggleButton ToolTip.Tip="Fullscreen, Ctrl + X" HotKey="Ctrl+X" FontWeight="Normal" ToolTip.Placement="Right" Name="FullScreen" Click="OnFullscreenMode" IsEnabled="False">
 								<StackPanel>
-									<materialIcons:MaterialIcon Kind="Fullscreen" Width="20" Height="20"/>
+									<materialIcons:MaterialIcon Kind="Fullscreen"/>
 								</StackPanel>
 							</ToggleButton>
 
-							<ToggleButton ToolTip.Tip="Open Search, Ctrl + F" HotKey="Ctrl+F" FontWeight="Normal" ToolTip.Placement="Right" Name="SearchMode" Width="35" Height="25" Click="ToggleSearchMode" IsChecked="{Binding SearchMode}" IsEnabled="False">
+							<ToggleButton ToolTip.Tip="Open Search, Ctrl + F" HotKey="Ctrl+F" FontWeight="Normal" ToolTip.Placement="Right" Name="SearchMode" Click="ToggleSearchMode" IsChecked="{Binding SearchMode}" IsEnabled="False">
 								<StackPanel>
-									<materialIcons:MaterialIcon Kind="Search" Width="20" Height="20" IsVisible="{Binding !SearchMode}"/>
-									<materialIcons:MaterialIcon Kind="SearchPlus" Width="20" Height="20" IsVisible="{Binding SearchMode}"/>
+									<materialIcons:MaterialIcon Kind="Search" IsVisible="{Binding !SearchMode}"/>
+									<materialIcons:MaterialIcon Kind="SearchPlus" IsVisible="{Binding SearchMode}"/>
 								</StackPanel>
 							</ToggleButton>
 
-							<StackPanel Width="25" Height="25" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10 5 5 0">
-								<materialIcons:MaterialIcon Kind="Check" Width="20" Height="20" IsVisible="{Binding !FileWorkerBusy}"/>
-								<materialIcons:MaterialIcon Kind="Reload" Width="20" Height="20" IsVisible="{Binding FileWorkerBusy}"/>
+							<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10 0 5 0">
+								<materialIcons:MaterialIcon Kind="Check" IsVisible="{Binding !FileWorkerBusy}"/>
+								<materialIcons:MaterialIcon Kind="Reload" IsVisible="{Binding FileWorkerBusy}"/>
 							</StackPanel>
 
 							
@@ -389,7 +389,7 @@
 
 
 				<Grid Grid.Row="2" Grid.Column="0">
-					<Border BorderBrush="Gray" BorderThickness="1" Margin="5" CornerRadius="5">
+					<Border BorderBrush="Gray" BorderThickness="1" Margin="5">
 						<StackPanel Orientation="Vertical">
 							<Border BorderBrush="Gray" BorderThickness="0 0 0 1">
 								<TextBlock Text="Storage" Height="21" Margin="14 8 0 0"/>
