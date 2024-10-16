@@ -29,7 +29,10 @@
 		</Style>
 
 		<Style Selector="TreeViewItem">
-			
+			<Setter Property="Margin" Value="0"/>
+			<Setter Property="Padding" Value="0 5 0 0"/>
+			<Setter Property="MaxWidth" Value="180"/>
+			<Setter Property="MinHeight" Value="15"/>
 		</Style>
 
 		<Style Selector="ListBoxItem">
@@ -44,7 +47,8 @@
 			<Setter Property="Padding" Value="0"/>
 			<Setter Property="VerticalContentAlignment" Value="Center"/>
 			<Setter Property="Background" Value="Transparent"/>
-			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			
 		</Style>
 
 		<Style Selector="ToggleButton">
@@ -53,7 +57,7 @@
 		</Style>
 
 		<Style Selector="TextBox">
-			<Setter Property="MinHeight" Value="30"/>
+			<Setter Property="MinHeight" Value="25"/>
 			<Setter Property="Height" Value="30"/>
 		</Style>
 		
@@ -64,6 +68,7 @@
 
 		<Style Selector="DataGridColumnHeader">
 			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Height" Value="20"/>
 		</Style>
 
 

@@ -68,7 +68,7 @@
 		
 				
 					<StackPanel Grid.Row="1" Grid.ColumnSpan="5" MinHeight="0" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5" IsVisible="{Binding !FullScreenMode}">
-						<Button Name="Columns" Width="140" Theme="{DynamicResource MaterialButtonBase}" Click="Border_PointerPressed">
+						<Button Name="Columns" Width="140" BorderBrush="Gray" BorderThickness="1" Click="Border_PointerPressed">
 							<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="140">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="Database"/>
 								<Label Grid.Column="1" Content="Metadata" HorizontalAlignment="Center"/>
@@ -76,7 +76,7 @@
 							</Grid>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<ListBox Name="ColumnList" Height="500" Width="140" FlowDirection="LeftToRight" >
+									<ListBox Name="ColumnList" Height="510" Width="140" FlowDirection="LeftToRight" >
 										<ListBoxItem Height="30"><CheckBox Content="Name" Height="30" IsChecked="{Binding ProjectsVM.Meta_1, Mode=TwoWay}"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="FileStatus" Height="30" IsChecked="{Binding ProjectsVM.Meta_2, Mode=TwoWay}"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="Filtyp" Height="30" IsChecked="{Binding ProjectsVM.Meta_3, Mode=TwoWay}"/></ListBoxItem>
@@ -235,11 +235,7 @@
 									<MenuItem Name="MagentaMenu" Foreground="#57244a" Tag ="Magenta" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
 								</MenuItem>
 								<MenuItem Name="TagMenu" Header="User Tag" Icon="{materialIcons:MaterialIconExt Kind=Tag}">
-									<StackPanel Orientation="Horizontal">
-										<materialIcons:MaterialIcon Grid.Column="0" Kind="Input" Width="25" Height="20" HorizontalAlignment="Left"/>
-										<TextBox Name="TagMenuInput" Width="160"  Margin="10 0 0 0"/>
-									</StackPanel>
-									
+									<TextBox Name="TagMenuInput" Width="160" Padding="0" Height="28"/>							
 									<MenuItem Name="TagMenuAdd" Header="Add Tag" Click="on_add_tag" FlowDirection="LeftToRight" Icon="{materialIcons:MaterialIconExt Kind=TagAdd}"/>
 									<MenuItem Name="TagMenuClear" Header="Clear Tag" Click="on_clear_tag" Icon="{materialIcons:MaterialIconExt Kind=TagOff}"/>
 								</MenuItem>
@@ -289,13 +285,13 @@
 						<Border Grid.Row="0" BorderBrush="Gray" Margin="0 0 5 0" BorderThickness="1">
 							<Grid RowDefinitions="10,30,30,*">
 								
-								<Border Grid.Row="1" Width="170" HorizontalAlignment="Center" FlowDirection="LeftToRight" BorderBrush="Gray" BorderThickness="1" CornerRadius="5">
-									<Grid ColumnDefinitions="10,*,30,30" >
-										<TextBox Grid.Column="1" Watermark="Seach String" Name="SearchRegex" KeyDown="OnStartSearhRegex"/>
-										<Button Grid.Column="2" Margin="0" Click="OnSeachRegex" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0" IsEnabled="{Binding !SearchBusy}">
+								<Border Grid.Row="1" Width="170" HorizontalAlignment="Center" FlowDirection="LeftToRight">
+									<Grid ColumnDefinitions="*,5,30,30" >
+										<TextBox Grid.Column="0" Watermark="Seach String" Name="SearchRegex" KeyDown="OnStartSearhRegex"/>
+										<Button Grid.Column="2" Margin="0" Click="OnSeachRegex" BorderThickness="0" IsEnabled="{Binding !SearchBusy}">
 											<materialIcons:MaterialIcon Grid.Column="0" Kind="Search"/>
 										</Button>
-										<Button Grid.Column="3" Margin="0" Click="OnClearSearch" Theme="{DynamicResource MaterialButtonBase}" BorderThickness="0">
+										<Button Grid.Column="3" Margin="0" Click="OnClearSearch" BorderThickness="0">
 											<materialIcons:MaterialIcon Grid.Column="0" Kind="Close"/>
 										</Button>
 									</Grid>
@@ -325,7 +321,7 @@
 						</Border>
 					</Grid>
 
-					<StackPanel ClipToBounds="True" Grid.Row="1" Grid.ColumnSpan="2" FlowDirection="LeftToRight" Orientation="Vertical" Margin="0" DataContext="{Binding PreviewVM}">
+					<StackPanel ClipToBounds="True" Grid.Row="1" Grid.ColumnSpan="2" FlowDirection="LeftToRight" Orientation="Vertical" Margin="0 -5 0 0" DataContext="{Binding PreviewVM}">
 						<StackPanel Width="700" Orientation="Horizontal" VerticalAlignment="Top" Spacing="2">
 
 							<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Width="200" Margin="0 0 10 0" Minimum="1" IsSnapToTickEnabled="True" TickFrequency="1" Maximum="{Binding Pagecount}" Value="{Binding RequestPage1, Mode=OneWay, Converter={StaticResource AddOneConverter}}"/>
@@ -392,10 +388,9 @@
 					<Border BorderBrush="Gray" BorderThickness="1" Margin="5">
 						<StackPanel Orientation="Vertical">
 							<Border BorderBrush="Gray" BorderThickness="0 0 0 1">
-								<TextBlock Text="Storage" Height="21" Margin="14 8 0 0"/>
+								<TextBlock Text="Storage" Height="23" Margin="14 8 0 0"/>
 							</Border>
 							<TreeView Name="MainTree" ItemsSource="{Binding ProjectsVM.StoredProjects}" SelectionChanged="on_treeview_selected">
-							 
 								<TreeView.ItemTemplate>
 									<TreeDataTemplate x:DataType="model:ProjectData" ItemsSource="{Binding FiletypesTree}">
 										<StackPanel Orientation="Horizontal">
