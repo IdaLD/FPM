@@ -101,14 +101,12 @@
 					</StackPanel>
 
 				<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="5" HorizontalAlignment="Center" IsVisible="{Binding !FullScreenMode}">
-					<Border Width="170" HorizontalAlignment="Right" FlowDirection="LeftToRight">
-						<Grid ColumnDefinitions="*,5,30">
-							<TextBox Grid.Column="0" Watermark="Seach All Files" Name="SearchText" KeyDown="on_start_search"/>
-							<Button Grid.Column="2" Click="on_search" >
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="Search"/>
-							</Button>
-						</Grid>
-					</Border>
+					<Grid ColumnDefinitions="*,5,30">
+						<TextBox Grid.Column="0" Watermark="Seach All Files" Name="SearchText" Width="120" KeyDown="on_start_search"/>
+						<Button Grid.Column="2" Click="on_search" >
+							<materialIcons:MaterialIcon Grid.Column="0" Kind="Search"/>
+						</Button>
+					</Grid>
 				</StackPanel>
 				
 					<StackPanel Orientation="Horizontal" Spacing="2" Height="35" HorizontalAlignment="Right" Grid.Row="0" Grid.ColumnSpan="5" Margin="0 0 155 0" IsVisible="{Binding !FullScreenMode}">
@@ -226,16 +224,19 @@
 								
 								<MenuItem Name="ColorMainMenu" Header="Color Tag" Icon="{materialIcons:MaterialIconExt Kind=PaintBucket}">
 									<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="edit_color"/>
-									<MenuItem Name="YellowMenu" Foreground="#646424" Tag ="Yellow" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
-									<MenuItem Name="OrangeMenu" Foreground="#643e24" Tag ="Orange" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
-									<MenuItem Name="BrownMenu" Foreground="#3e3124" Tag ="Brown" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
-									<MenuItem Name="GreenMenu" Foreground="#244a24" Tag ="Green" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
-									<MenuItem Name="BlueMenu" Foreground="#243e64" Tag ="Blue" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
-									<MenuItem Name="RedMenu" Foreground="#642424" Tag ="Red" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
-									<MenuItem Name="MagentaMenu" Foreground="#57244a" Tag ="Magenta" Click="edit_color" Icon="{materialIcons:MaterialIconExt Kind=Rectangle, Size=40}"/>
+									<MenuItem Name="YellowMenu" Background="#646424" Tag ="Yellow" Click="edit_color"/>
+									<MenuItem Name="OrangeMenu" Background="#643e24" Tag ="Orange" Click="edit_color"/>
+									<MenuItem Name="BrownMenu" Background="#3e3124" Tag ="Brown" Click="edit_color"/>
+									<MenuItem Name="GreenMenu" Background="#244a24" Tag ="Green" Click="edit_color"/>
+									<MenuItem Name="BlueMenu" Background="#243e64" Tag ="Blue" Click="edit_color"/>
+									<MenuItem Name="RedMenu" Background="#642424" Tag ="Red" Click="edit_color"/>
+									<MenuItem Name="MagentaMenu" Background="#57244a" Tag ="Magenta" Click="edit_color"/>
 								</MenuItem>
 								<MenuItem Name="TagMenu" Header="User Tag" Icon="{materialIcons:MaterialIconExt Kind=Tag}">
-									<TextBox Name="TagMenuInput" Width="160" Padding="0" Height="28"/>							
+									<StackPanel Orientation="Horizontal" Margin="-35 0 -25 0">
+										<materialIcons:MaterialIcon Kind="Input" Width="30"/>
+										<TextBox Name="TagMenuInput" Width="140" Padding="4" Margin="5 0 0 0" Height="28"/>
+									</StackPanel>						
 									<MenuItem Name="TagMenuAdd" Header="Add Tag" Click="on_add_tag" FlowDirection="LeftToRight" Icon="{materialIcons:MaterialIconExt Kind=TagAdd}"/>
 									<MenuItem Name="TagMenuClear" Header="Clear Tag" Click="on_clear_tag" Icon="{materialIcons:MaterialIconExt Kind=TagOff}"/>
 								</MenuItem>
@@ -282,7 +283,7 @@
 					</Grid>
 
 					<Grid Name="SearchGrid" Grid.Column="1" ClipToBounds="True" DataContext="{Binding PreviewVM}">
-						<Border Grid.Row="0" BorderBrush="Gray" Margin="0 0 5 0" BorderThickness="1">
+						<Border Grid.Row="0" BorderBrush="Gray" Margin="0 0 5 0" BorderThickness="1" Background="{DynamicResource TextControlBackground}">
 							<Grid RowDefinitions="10,30,30,*">
 								
 								<Border Grid.Row="1" Width="170" HorizontalAlignment="Center" FlowDirection="LeftToRight">
@@ -315,7 +316,7 @@
 									</StackPanel>
 								</Border>
 								
-								<ListBox Grid.Row="3" ItemsSource="{Binding SearchPagesText}" SelectedIndex="{Binding SearchPageIndex}"/>
+								<ListBox Grid.Row="3" ItemsSource="{Binding SearchPagesText}" Background="Transparent" SelectedIndex="{Binding SearchPageIndex}"/>
 								
 							</Grid>
 						</Border>
@@ -385,7 +386,7 @@
 
 
 				<Grid Grid.Row="2" Grid.Column="0">
-					<Border BorderBrush="Gray" BorderThickness="1" Margin="5">
+					<Border BorderBrush="Gray" BorderThickness="1" Margin="5" Background="{DynamicResource TextControlBackground}">
 						<StackPanel Orientation="Vertical">
 							<Border BorderBrush="Gray" BorderThickness="0 0 0 1">
 								<TextBlock Text="Storage" Height="23" Margin="14 8 0 0"/>
@@ -406,17 +407,17 @@
 									<ContextMenu Name="TreeMenu">
 										<MenuItem Header="Add Files" Click="on_add_file" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
 										<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{materialIcons:MaterialIconExt Kind=FolderPlus}">
-											<StackPanel Orientation="Horizontal">
+											<StackPanel Orientation="Horizontal" Margin="-35 0 -25 0">
 												<materialIcons:MaterialIcon Grid.Column="0" Kind="Input" Width="25" Height="20" HorizontalAlignment="Left"/>
-												<TextBox Name="ProjectName" Width="160"  Margin="10 0 0 0"/>
+												<TextBox Name="ProjectName" Height="28" Width="160" Padding="4" Margin="5 0 0 0"/>
 											</StackPanel>
 											<MenuItem Name="AddProject" Header="Add" Click="on_add_project" Icon="{materialIcons:MaterialIconExt Kind=Plus}"/>
 										</MenuItem>
 
 										<MenuItem Name="RenameMenu" Header="Rename" Icon="{materialIcons:MaterialIconExt Kind=Rename}">
-											<StackPanel Orientation="Horizontal">
-												<materialIcons:MaterialIcon Grid.Column="0" Kind="Input" Width="25" Height="20" HorizontalAlignment="Left"/>
-												<TextBox Name="NewProjectName" Text="{Binding ProjectsVM.CurrentProject.Namn, Mode=OneWay}" Width="160"  Margin="10 0 0 0"/>
+											<StackPanel Orientation="Horizontal" Margin="-35 0 -25 0">
+												<materialIcons:MaterialIcon Kind="Input" Width="30"/>
+												<TextBox Name="NewProjectName" Text="{Binding ProjectsVM.CurrentProject.Namn, Mode=OneWay}" Height="28" Width="160" Padding="4" Margin="5 0 0 0"/>
 											</StackPanel>
 											<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project" Icon="{materialIcons:MaterialIconExt Kind=Rename}"/>
 										</MenuItem>

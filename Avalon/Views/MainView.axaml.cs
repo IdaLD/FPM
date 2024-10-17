@@ -18,6 +18,7 @@ using Avalonia.Data;
 using iText.Kernel.Geom;
 using Org.BouncyCastle.Asn1.BC;
 using System.Diagnostics;
+using Avalonia.Styling;
 
 
 namespace Avalon.Views;
@@ -236,18 +237,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         ModeDayIcon.IsVisible = !ModeDayIcon.IsVisible;
         ModeNightIcon.IsVisible = !ModeNightIcon.IsVisible;
+        var window = Window.GetTopLevel(this);
 
         if (darkmode)
         {
-            var MaterialThemeStyles = Avalonia.Application.Current!.LocateMaterialTheme<MaterialTheme>();
-            MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Dark;
-            MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Grey;
+            window.RequestedThemeVariant = ThemeVariant.Dark;
         }
         else
         {
-            var MaterialThemeStyles = Avalonia.Application.Current!.LocateMaterialTheme<MaterialTheme>();
-            MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Light;
-            MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Blue;
+            window.RequestedThemeVariant = ThemeVariant.Light;
         }
 
         set_theme_colors();
@@ -835,24 +833,24 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (darkmode == true)
         {
 
-            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#646424");
-            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#643e24");
-            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#3e3124");
-            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#244a24");
-            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#243e64");
-            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#642424");
-            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#57244a");
+            YellowMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#646424");
+            OrangeMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#643e24");
+            BrownMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#3e3124");
+            GreenMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#244a24");
+            BlueMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#243e64");
+            RedMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#642424");
+            MagentaMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#57244a");
         }
 
         if (darkmode == false)
         {
-            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffff99");
-            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffd699");
-            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#c2ad99");
-            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#8cd1a3");
+            YellowMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#ffff99");
+            OrangeMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#ffd699");
+            BrownMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#c2ad99");
+            GreenMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#8cd1a3");
             BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#a3a3ff");
-            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ff8c8c");
-            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#eb99eb");
+            RedMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#ff8c8c");
+            MagentaMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#eb99eb");
         }
     }
 

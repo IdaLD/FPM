@@ -7,19 +7,16 @@
 			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia" 
              x:Class="Avalon.App">
 
-	
-
-
 	<Application.Styles>
 		<FluentTheme>
-			<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
 			<FluentTheme.Palettes>
-				<!-- Palette for Light theme variant -->
-				<ColorPaletteResources x:Key="Light" Accent="Blue" RegionColor="White" ErrorText="Red" />
-				<!-- Palette for Dark theme variant -->
-				<ColorPaletteResources x:Key="Dark" Accent="Gray" RegionColor="" ErrorText="Yellow" />
+				<ColorPaletteResources x:Key="Light" Accent="#444444" RegionColor="#dfe6e9" ErrorText="Red" />
+				<ColorPaletteResources x:Key="Dark" Accent="#444444" RegionColor="#333333" ErrorText="Red" />
 			</FluentTheme.Palettes>
 		</FluentTheme>
+
+		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+		
 		<materialIcons:MaterialIconStyles />
 		
 		<Style Selector="FlyoutPresenter.mySpecialClass">
@@ -48,7 +45,6 @@
 			<Setter Property="VerticalContentAlignment" Value="Center"/>
 			<Setter Property="Background" Value="Transparent"/>
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
-			
 		</Style>
 
 		<Style Selector="ToggleButton">
@@ -71,6 +67,9 @@
 			<Setter Property="Height" Value="20"/>
 		</Style>
 
+		<Style Selector="DataGrid">
+			<Setter Property="Background" Value="{DynamicResource TextControlBackground}"/>
+		</Style>
 
 	</Application.Styles>
 		

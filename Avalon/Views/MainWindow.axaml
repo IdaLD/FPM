@@ -11,8 +11,6 @@
         Icon="/Assets/folder.ico"
         WindowStartupLocation="CenterScreen"
         ExtendClientAreaToDecorationsHint="True"
-		TransparencyLevelHint="AcrylicBlur"
-        Background="Transparent"
         Title="Avalon">
 
 	<Window.Styles>
@@ -67,34 +65,24 @@
 		
 	</Window.Styles>
 
-	<Panel>
-		<ExperimentalAcrylicBorder IsHitTestVisible="False">
-			<ExperimentalAcrylicBorder.Material>
-				<ExperimentalAcrylicMaterial
-                    BackgroundSource="Digger"
-                    TintColor="Black"
-                    TintOpacity="1"
-                    MaterialOpacity="0.65" />
-			</ExperimentalAcrylicBorder.Material>
-		</ExperimentalAcrylicBorder>
 
 	
 	
 		<Grid>
 			<views:MainView/>
 
-			<Border Name="ConfirmLeave" Margin="0" Height="80" Width="250" BorderBrush="Gray" BorderThickness="1" IsVisible="False">
+			<Border Name="ConfirmLeave" Margin="0" Height="80" Width="250" Background="{DynamicResource TextControlBackground}" BorderBrush="Gray" BorderThickness="1" IsVisible="False">
 				<StackPanel Orientation="Vertical" VerticalAlignment="Center">
 					<Label Grid.Row="0" Grid.ColumnSpan="3" FontSize="18" FontFamily="Ubuntu" HorizontalAlignment="Center" VerticalContentAlignment="Center" Content="Save before close?"/>
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
-						<Button Theme="{DynamicResource MaterialButtonBase}" Width="70" Content="Yes" Click="on_save_before_close"/>
-						<Button Theme="{DynamicResource MaterialButtonBase}" Width="70" Content="No" Click="on_leave"/>
-						<Button Theme="{DynamicResource MaterialButtonBase}" Width="70" Content="Cancel" Click="on_cancel"/>
+						<Button Theme="{DynamicResource ThemeControlHighBrush}" Width="70" Content="Yes" Click="on_save_before_close"/>
+						<Button Theme="{DynamicResource ThemeControlHighBrush}" Width="70" Content="No" Click="on_leave"/>
+						<Button Theme="{DynamicResource ThemeControlHighBrush}" Width="70" Content="Cancel" Click="on_cancel"/>
 					</StackPanel>
 				</StackPanel>
 			</Border>
 		</Grid>
-	</Panel>
+
 
 </Window>
 
