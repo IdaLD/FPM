@@ -102,7 +102,7 @@
 
 				<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="5" HorizontalAlignment="Center" IsVisible="{Binding !FullScreenMode}">
 					<Grid ColumnDefinitions="*,5,30">
-						<TextBox Grid.Column="0" Watermark="Seach All Files" Name="SearchText" Width="120" KeyDown="on_start_search"/>
+						<TextBox Grid.Column="0" Watermark="Seach All Files" Name="SearchText" Width="160" KeyDown="on_start_search"/>
 						<Button Grid.Column="2" Click="on_search" >
 							<materialIcons:MaterialIcon Grid.Column="0" Kind="Search"/>
 						</Button>
@@ -334,11 +334,11 @@
 								<Label Content="{Binding Pagecount}" VerticalAlignment="Center"/>
 							</StackPanel>
 
-							<Button ToolTip.Tip="Previous Page, -" HotKey="-" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Command="{Binding PrevPage}" CommandParameter="false">
+							<Button ToolTip.Tip="Previous Page, Left" HotKey="Left" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Command="{Binding PrevPage}" CommandParameter="false">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious"/>
 							</Button>
 
-							<Button ToolTip.Tip="Next Page, +" HotKey="+" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Command="{Binding NextPage}" CommandParameter="false">
+							<Button ToolTip.Tip="Next Page, Right" HotKey="Right" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Command="{Binding NextPage}" CommandParameter="false">
 								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext"/>
 							</Button>
 

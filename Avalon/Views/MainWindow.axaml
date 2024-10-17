@@ -71,7 +71,7 @@
 		<Grid>
 			<views:MainView/>
 
-			<Border Name="ConfirmLeave" Margin="0" Height="80" Width="250" Background="{DynamicResource TextControlBackground}" BorderBrush="Gray" BorderThickness="1" IsVisible="False">
+			<Border Name="ConfirmLeave" Margin="0" Height="80" Width="250" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1" IsVisible="False">
 				<StackPanel Orientation="Vertical" VerticalAlignment="Center">
 					<Label Grid.Row="0" Grid.ColumnSpan="3" FontSize="18" FontFamily="Ubuntu" HorizontalAlignment="Center" VerticalContentAlignment="Center" Content="Save before close?"/>
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
