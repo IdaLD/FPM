@@ -75,7 +75,7 @@
 								<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
 							</Grid>
 							<Button.Flyout>
-								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-4" VerticalOffset="0" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
+								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="0" VerticalOffset="2" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<ListBox Name="ColumnList" Height="510" Width="140" FlowDirection="LeftToRight" >
 										<ListBoxItem Height="30"><CheckBox Content="Name" Height="30" IsChecked="{Binding ProjectsVM.Meta_1, Mode=TwoWay}"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="FileStatus" Height="30" IsChecked="{Binding ProjectsVM.Meta_2, Mode=TwoWay}"/></ListBoxItem>
@@ -100,8 +100,8 @@
 						</Button>
 					</StackPanel>
 
-				<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="5" HorizontalAlignment="Center" IsVisible="{Binding !FullScreenMode}">
-					<Grid ColumnDefinitions="*,5,30">
+				<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="5" HorizontalAlignment="Center" Margin="30 0 0 0" IsVisible="{Binding !FullScreenMode}">
+					<Grid ColumnDefinitions="*,30">
 						<TextBox Grid.Column="0" Watermark="Seach All Files" Name="SearchText" Width="160" KeyDown="on_start_search"/>
 						<Button Grid.Column="2" Click="on_search" >
 							<materialIcons:MaterialIcon Grid.Column="0" Kind="Search"/>
@@ -151,11 +151,11 @@
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-110" VerticalOffset="45" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<StackPanel Orientation="Vertical">
-										<Border BorderBrush="Gray" BorderThickness="0 0 0 1">
+										<Border BorderBrush="Gray" Background="{DynamicResource MenuFlyoutPresenterBackground}">
 											<Label Content="Project Notepad" Margin="5" HorizontalAlignment="Center"/>
 										</Border>
 										<TextBox Text="{Binding ProjectsVM.CurrentProject.Notes}" InnerLeftContent="   " InnerRightContent="   " AcceptsReturn="True" AcceptsTab="True"
-												 Width="560" FontSize="14" FontWeight="Medium" Height="500" FlowDirection="LeftToRight" IsEnabled="True">
+												 Width="560" FontSize="14" FontWeight="Medium" Height="500" FlowDirection="LeftToRight" IsEnabled="True" Background="{DynamicResource MenuFlyoutPresenterBackground}">
 										</TextBox>
 									</StackPanel>
 								</Flyout>
@@ -287,12 +287,12 @@
 							<Grid RowDefinitions="10,30,30,*">
 								
 								<Border Grid.Row="1" Width="170" HorizontalAlignment="Center" FlowDirection="LeftToRight">
-									<Grid ColumnDefinitions="*,5,30,30" >
+									<Grid ColumnDefinitions="*,30,30" Margin="-5 0 -5 0">
 										<TextBox Grid.Column="0" Watermark="Seach String" Name="SearchRegex" KeyDown="OnStartSearhRegex"/>
-										<Button Grid.Column="2" Margin="0" Click="OnSeachRegex" BorderThickness="0" IsEnabled="{Binding !SearchBusy}">
+										<Button Grid.Column="1" Margin="0" Click="OnSeachRegex" BorderThickness="0" IsEnabled="{Binding !SearchBusy}">
 											<materialIcons:MaterialIcon Grid.Column="0" Kind="Search"/>
 										</Button>
-										<Button Grid.Column="3" Margin="0" Click="OnClearSearch" BorderThickness="0">
+										<Button Grid.Column="2" Margin="0" Click="OnClearSearch" BorderThickness="0">
 											<materialIcons:MaterialIcon Grid.Column="0" Kind="Close"/>
 										</Button>
 									</Grid>

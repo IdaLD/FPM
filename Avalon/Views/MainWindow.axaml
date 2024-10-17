@@ -14,6 +14,13 @@
         Title="Avalon">
 
 	<Window.Styles>
+
+
+		<Style Selector="Window[WindowState=Maximized]">
+			<Setter Property="Padding" Value="5 5 0 5"/>
+		</Style>
+
+		
 		<Style Selector="DataGridRow.YellowDark">
 			<Setter Property="Background" Value="#646424"/>
 		</Style>
@@ -65,12 +72,8 @@
 		
 	</Window.Styles>
 
-
-	
-	
 		<Grid>
 			<views:MainView/>
-
 			<Border Name="ConfirmLeave" Margin="0" Height="80" Width="250" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1" IsVisible="False">
 				<StackPanel Orientation="Vertical" VerticalAlignment="Center">
 					<Label Grid.Row="0" Grid.ColumnSpan="3" FontSize="18" FontFamily="Ubuntu" HorizontalAlignment="Center" VerticalContentAlignment="Center" Content="Save before close?"/>
