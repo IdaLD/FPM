@@ -9,7 +9,6 @@ using Avalon.Model;
 using Avalonia.Controls;
 using Material.Icons;
 using Material.Icons.Avalonia;
-using Org.BouncyCastle.Asn1.BC;
 
 namespace Avalon.ViewModels
 {

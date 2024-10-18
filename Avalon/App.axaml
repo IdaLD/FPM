@@ -4,8 +4,8 @@
 			 xmlns:assists="clr-namespace:Material.Styles.Assists"
 			 xmlns:controls="clr-namespace:Material.Styles.Controls"
 			 xmlns:system="clr-namespace:System;assembly=netstandard"
-			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia" 
-             x:Class="Avalon.App">
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 x:Class="Avalon.App">
 
 	<Application.Styles>
 		<FluentTheme>
@@ -18,7 +18,7 @@
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
 		
 		<materialIcons:MaterialIconStyles />
-		
+
 		<Style Selector="FlyoutPresenter.mySpecialClass">
 			<Setter Property="Background" Value="{DynamicResource MaterialCardBackgroundBrush}"/>
 			<Setter Property="MaxWidth" Value="999" />

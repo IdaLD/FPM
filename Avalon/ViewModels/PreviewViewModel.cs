@@ -16,9 +16,6 @@ using Avalonia.Media;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Avalonia.Collections;
-using iText.Kernel.Pdf.Annot;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Avalon.ViewModels
 {

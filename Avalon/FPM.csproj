@@ -28,8 +28,6 @@
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.4" />
     <PackageReference Include="itext7" Version="8.0.5" />
     <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.5" />
-    <PackageReference Include="Material.Avalonia" Version="3.7.4" />
-    <PackageReference Include="Material.Avalonia.DataGrid" Version="3.7.4" />
     <PackageReference Include="Material.Icons.Avalonia" Version="2.1.10" />
     <PackageReference Include="MuPDFCore" Version="1.10.2" />
     <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.10.2" />
