@@ -8,15 +8,12 @@ using System.ComponentModel;
 using Avalonia.Controls.Primitives;
 using Avalonia.Media;
 using Avalonia.Input;
-using Material.Styles.Themes;
 using System.Threading;
 using System.Collections.Generic;
 using Avalon.Model;
 using Avalonia.LogicalTree;
 using System.IO;
 using Avalonia.Data;
-using iText.Kernel.Geom;
-using Org.BouncyCastle.Asn1.BC;
 using System.Diagnostics;
 using Avalonia.Styling;
 
