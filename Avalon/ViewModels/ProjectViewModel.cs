@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalon.Model;
 using Avalonia.Controls;
+using FluentIcons.Avalonia.MarkupExtensions;
+using FluentIcons.Common;
 using Material.Icons;
 using Material.Icons.Avalonia;
-using Org.BouncyCastle.Asn1.BC;
 
 namespace Avalon.ViewModels
 {
@@ -258,9 +258,9 @@ namespace Avalon.ViewModels
             {
                 return new List<MenuItem>() 
                 {
-                    new MenuItem(){Header="Drawing", Icon=new MaterialIcon(){Kind=MaterialIconKind.FilePdfBox } },
-                    new MenuItem(){Header="Document", Icon=new MaterialIcon(){Kind=MaterialIconKind.FileDocument } },
-                    new MenuItem(){Header="Other", Icon=new MaterialIcon(){Kind=MaterialIconKind.FileQuestion } }
+                    new MenuItem(){Header="Drawing", Icon=new SymbolIconExtension(){Symbol=Symbol.Box } },
+                    new MenuItem(){Header="Document", Icon=new SymbolIconExtension(){Symbol=Symbol.Document } },
+                    new MenuItem(){Header="Other", Icon=new SymbolIconExtension(){Symbol=Symbol.DocumentQuestionMark } }
                 };
             }
             if (CurrentProject.Category == "Library")

@@ -9,7 +9,9 @@
 			 xmlns:anim="clr-namespace:Avalonia.Animation;assembly=MuPDFCore.MuPDFRenderer"
 			 xmlns:converter="clr-namespace:Avalon.Converters"
 			 xmlns:extensions="clr-namespace:Material.Styles.Controls.Extensions"
-             mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
+			 xmlns:ic="using:FluentIcons.Avalonia" 
+			 xmlns:icxt="using:FluentIcons.Avalonia.MarkupExtensions" 
+			 mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
              x:Class="Avalon.Views.MainView"
 			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              x:DataType="vm:MainViewModel">
@@ -32,9 +34,9 @@
 				<DockPanel Width="190" VerticalAlignment="Top" HorizontalAlignment="Left" IsVisible="{Binding !FullScreenMode}">
 					<Menu DockPanel.Dock="Top">
 						<MenuItem Header="File">
-							<MenuItem Header="Load" Click="on_load_file" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
-							<MenuItem Header="Save" HotKey="Ctrl+S" Click="on_save_file_auto" Icon="{materialIcons:MaterialIconExt Kind=ContentSave}"/>
-							<MenuItem Header="Save As" Click="on_save_file" Icon="{materialIcons:MaterialIconExt Kind=ContentSaveEdit}"/>
+							<MenuItem Header="Load" Click="on_load_file" Icon="{icxt:SymbolIconExtension Symbol=FolderOpen}"/>
+							<MenuItem Header="Save" HotKey="Ctrl+S" Click="on_save_file_auto" Icon="{icxt:SymbolIconExtension Symbol=Save}"/>
+							<MenuItem Header="Save As" Click="on_save_file" Icon="{icxt:SymbolIconExtension Symbol=SaveEdit}"/>
 						</MenuItem>
 					</Menu>
 					<TextBlock/>
@@ -50,8 +52,8 @@
 					</StackPanel>
 
 				<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical" IsVisible="{Binding !FullScreenMode}">
-					<StackPanel Margin="8 -1 0 0" Orientation="Horizontal">
-						<materialIcons:MaterialIcon Grid.Column="0" Kind="Folder" Foreground="Gray" Width="25" Height="15"/>
+					<StackPanel Margin="8 -1 0 0" Orientation="Horizontal" >
+						<ic:SymbolIcon Symbol="Folder" IsFilled="True" Foreground="Gray" Width="25" FontSize="16"/>
 						<TextBlock Text="Filtered: " Foreground="Gray" FontStyle="Italic"/>
 						<TextBlock Text="{Binding ProjectsVM.NrFilteredFiles}" Foreground="Gray" FontStyle="Italic"/>
 						<TextBlock Text=" | Selected: " Foreground="Gray" FontStyle="Italic"/>
@@ -59,7 +61,7 @@
 
 					</StackPanel>
 					<StackPanel Margin="8 0 0 0" Orientation="Horizontal">
-						<materialIcons:MaterialIcon Grid.Column="0" Kind="File" Foreground="Gray" Width="25" Height="15"/>
+						<ic:SymbolIcon Symbol="Document" IsFilled="True" Foreground="Gray" Width="25" FontSize="16"/>
 						<TextBlock Text="{Binding ProjectsVM.CurrentFile.Namn}" Foreground="Gray" FontStyle="Italic"/>
 					</StackPanel>
 				</StackPanel>
@@ -70,9 +72,9 @@
 					<StackPanel Grid.Row="1" Grid.ColumnSpan="5" MinHeight="0" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5" IsVisible="{Binding !FullScreenMode}">
 						<Button Name="Columns" Width="140" BorderBrush="Gray" BorderThickness="1" Click="Border_PointerPressed">
 							<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="140">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="Database"/>
-								<Label Grid.Column="1" Content="Metadata" HorizontalAlignment="Center"/>
-								<Label Grid.Column="2" Content="⮟" HorizontalAlignment="Left"/>
+								<ic:SymbolIcon Grid.Column="0" Symbol="Database" IsFilled="False" FontSize="20"/>
+								<Label Grid.Column="1" Content="Metadata" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+								<ic:SymbolIcon Grid.Column="2" Symbol="CaretDown" IsFilled="False" FontSize="20"/>
 							</Grid>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="0" VerticalOffset="2" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
@@ -104,7 +106,7 @@
 					<Grid ColumnDefinitions="*,30">
 						<TextBox Grid.Column="0" Watermark="Seach All Files" Name="SearchText" Width="160" KeyDown="on_start_search"/>
 						<Button Grid.Column="2" Click="on_search" >
-							<materialIcons:MaterialIcon Grid.Column="0" Kind="Search"/>
+							<ic:SymbolIcon Symbol="Search" IsFilled="True" FontSize="20"/>
 						</Button>
 					</Grid>
 				</StackPanel>
@@ -113,41 +115,41 @@
 
 						<ToggleButton Name="TrayStatus" ToolTip.Tip="Tray: Ctrl + R" HotKey="Ctrl+R" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_tray">
 							<StackPanel>
-								<materialIcons:MaterialIcon Name="TrayOn" Kind="Star" IsVisible="False"/>
-								<materialIcons:MaterialIcon Name="TrayOff" Kind="StarOff" />
+								<ic:SymbolIcon Name="TrayOn" Symbol="Star" IsFilled="False" FontSize="20" IsVisible="False"/>
+								<ic:SymbolIcon Name="TrayOff" Symbol="StarOff" IsFilled="False" FontSize="20"/>
 							</StackPanel>
 						</ToggleButton>
 
 						<ToggleButton Name="TreeStatus" ToolTip.Tip="Treeview: Ctrl + T" HotKey="Ctrl+T" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_treeview">
 							<StackPanel>
-								<materialIcons:MaterialIcon Name="TreeviewOn" Kind="Tree" IsVisible="False"/>
-								<materialIcons:MaterialIcon Name="TreeviewOff" Kind="TreeOutline" />
+								<ic:SymbolIcon Name="TreeviewOn" Symbol="DataTreemap" IsFilled="True" FontSize="20" IsVisible="False"/>
+								<ic:SymbolIcon Name="TreeviewOff" Symbol="DataTreemap" IsFilled="False" FontSize="20"/>
 							</StackPanel>
 						</ToggleButton>
 
 						<ToggleButton Name="PreviewToggle" ToolTip.Tip="Preview: Ctrl + P" HotKey="Ctrl+P" FontWeight="Normal" Margin="0,-5,0,0">
 							<StackPanel>
-								<materialIcons:MaterialIcon Name="EyeOnIcon" Kind="Eye" IsVisible="False"/>
-								<materialIcons:MaterialIcon Name="EyeOffIcon" Kind="EyeOff"/>
+								<ic:SymbolIcon Name="EyeOnIcon" Symbol="Eye" IsFilled="False" FontSize="20" IsVisible="False"/>
+								<ic:SymbolIcon Name="EyeOffIcon" Symbol="EyeOff" IsFilled="False" FontSize="20"/>
 							</StackPanel>
 						</ToggleButton>	
 
 						<ToggleButton Name="ThemeToggle" ToolTip.Tip="Mode: Ctrl + M" HotKey="Ctrl+M" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_theme">
 							<StackPanel>
-								<materialIcons:MaterialIcon Name="ModeNightIcon" Kind="WeatherNight"/>
-								<materialIcons:MaterialIcon Name="ModeDayIcon" Kind="WeatherSunny" IsVisible="False"/>
+								<ic:SymbolIcon Name="ModeNightIcon" Symbol="WeatherMoon" IsFilled="False" FontSize="20" IsVisible="False"/>
+								<ic:SymbolIcon Name="ModeDayIcon" Symbol="WeatherSunny" IsFilled="False" FontSize="20"/>
 							</StackPanel>
 						</ToggleButton>
 						
 						<ToggleButton Name="Lockedstatus" ToolTip.Tip="Lock Files: Ctrl + L" HotKey="Ctrl+L" FontWeight="Normal" Margin="0,-5,0,0" VerticalAlignment="Center">
 							<StackPanel>
-								<materialIcons:MaterialIcon Name="LockIcon" Kind="Lock"/>
-								<materialIcons:MaterialIcon Name="UnlockedIcon" Kind="LockOpenVariant" IsVisible="False"/>
+								<ic:SymbolIcon Name="LockIcon" Symbol="LockClosed" IsFilled="False" FontSize="20" IsVisible="False"/>
+								<ic:SymbolIcon Name="UnlockedIcon" Symbol="LockOpen" IsFilled="False" FontSize="20"/>
 							</StackPanel>
 						</ToggleButton>
 
 						<Button Name="InfoText" ToolTip.Tip="Project Notepad: Ctrl + N" HotKey="Ctrl+N" Width="33" FontWeight="Normal" Margin="0,-5,0,0" Click="Border_PointerPressed">
-							<materialIcons:MaterialIcon Grid.Column="0" Kind="NoteText"/>
+							<ic:SymbolIcon Symbol="Notebook" FontSize="20"/>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-110" VerticalOffset="45" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<StackPanel Orientation="Vertical">
@@ -193,36 +195,36 @@
 						
 						<DataGrid.ContextMenu>
 							<ContextMenu Name="Menu">
-								<MenuItem Name="OpenMenu" Header="Open" Icon="{materialIcons:MaterialIconExt Kind=OpenInNew}">
-									<MenuItem Name="OpenFileMenu" Header="Open PDF" Click="on_open_file" Icon="{materialIcons:MaterialIconExt Kind=FilePdfBox}"/>
-									<MenuItem Name="OpenPathMenu" Header="Open Folder" Click="on_open_path" Icon="{materialIcons:MaterialIconExt Kind=FolderOpen}"/>
-									<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile" Icon="{materialIcons:MaterialIconExt Kind=FileCode}"/>
-									<MenuItem Name="OpenDocMenu" Header="Open Docx" Click="on_open_doc" Icon="{materialIcons:MaterialIconExt Kind=MicrosoftWord}"/>
-									<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg" Icon="{materialIcons:MaterialIconExt Kind=FileCad}"/>
+								<MenuItem Name="OpenMenu" Header="Open" Icon="{icxt:SymbolIconExtension Symbol=Open}">
+									<MenuItem Name="OpenFileMenu" Header="Open PDF" Click="on_open_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentPdf}"/>
+									<MenuItem Name="OpenPathMenu" Header="Open Folder" Click="on_open_path" Icon="{icxt:SymbolIconExtension Symbol=FolderOpen}"/>
+									<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile" Icon="{icxt:SymbolIconExtension Symbol=DocumentDataLink}"/>
+									<MenuItem Name="OpenDocMenu" Header="Open Docx" Click="on_open_doc" Icon="{icxt:SymbolIconExtension Symbol=DocumentEdit}"/>
+									<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg" Icon="{icxt:SymbolIconExtension Symbol=DocumentTableCube}"/>
 								
 								</MenuItem>
-								<MenuItem Name="MetaMenu" Header="Metadata" Icon="{materialIcons:MaterialIconExt Kind=Database}">
-									<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta" Icon="{materialIcons:MaterialIconExt Kind=DatabaseSync}"/>
-									<MenuItem Name="FetchMetadata" Header="Fetch All" Click="on_fetch_full_meta" Icon="{materialIcons:MaterialIconExt Kind=Database}"/>
-									<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding clear_meta}" Icon="{materialIcons:MaterialIconExt Kind=DatabaseOff}"/>
+								<MenuItem Name="MetaMenu" Header="Metadata" Icon="{icxt:SymbolIconExtension Symbol=Database}">
+									<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta" Icon="{icxt:SymbolIconExtension Symbol=DatabaseSearch}"/>
+									<MenuItem Name="FetchMetadata" Header="Fetch All" Click="on_fetch_full_meta" Icon="{icxt:SymbolIconExtension Symbol=DatabaseLink}"/>
+									<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding clear_meta}" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
 								</MenuItem>
 
-								<MenuItem Name="StatusMenu" Header="Status" Icon="{materialIcons:MaterialIconExt Kind=CheckCircle}">
-									<MenuItem Name="CheckSingleFile" Header="Check File" Click="OnCheckStatusSingleFile" Icon="{materialIcons:MaterialIconExt Kind=Check}"/>
-									<MenuItem Name="CheckProjectFiles" Header="Check All" Click="OnCheckProjectFiles" Icon="{materialIcons:MaterialIconExt Kind=CheckAll}"/>
+								<MenuItem Name="StatusMenu" Header="Status" Icon="{icxt:SymbolIconExtension Symbol=CheckmarkCircle}">
+									<MenuItem Name="CheckSingleFile" Header="Check File" Click="OnCheckStatusSingleFile" Icon="{icxt:SymbolIconExtension Symbol=CheckboxChecked}"/>
+									<MenuItem Name="CheckProjectFiles" Header="Check All" Click="OnCheckProjectFiles" Icon="{icxt:SymbolIconExtension Symbol=CheckboxChecked}"/>
 								</MenuItem>
 								
-								<MenuItem Name="TypeMenu" Header="FileType" ItemsSource="{Binding FileTypeSelection}" Click="edit_type" Icon="{materialIcons:MaterialIconExt Kind=FolderQuestion}"/>
+								<MenuItem Name="TypeMenu" Header="FileType" ItemsSource="{Binding FileTypeSelection}" Click="edit_type" Icon="{icxt:SymbolIconExtension Symbol=QuestionCircle}"/>
 
-								<MenuItem Name="AddFavorite" Header="Favorite" Icon="{materialIcons:MaterialIconExt Kind=StarPlus}" Command="{Binding ProjectsVM.AddFavorite}"/>
+								<MenuItem Name="AddFavorite" Header="Favorite" Icon="{icxt:SymbolIconExtension Symbol=StarAdd}" Command="{Binding ProjectsVM.AddFavorite}"/>
 								
-								<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{materialIcons:MaterialIconExt Kind=ClipboardEditOutline}">
-									<MenuItem Name="FilenameCopyMenu" Header="List" Click="on_copy_filename" Icon="{materialIcons:MaterialIconExt Kind=FormatListBulletedSquare}"/>
-									<MenuItem Name="FilepathCopyMenu" Header="Path" Click="on_copy_filepath" Icon="{materialIcons:MaterialIconExt Kind=FormatListBulleted}"/>
-									<MenuItem Name="ListviewCopyMenu" Header="Table" Click="on_copy_listview" Icon="{materialIcons:MaterialIconExt Kind=Table}"/>
+								<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{icxt:SymbolIconExtension Symbol=ClipboardSettings}">
+									<MenuItem Name="FilenameCopyMenu" Header="List" Click="on_copy_filename" Icon="{icxt:SymbolIconExtension Symbol=TextBulletListAdd}"/>
+									<MenuItem Name="FilepathCopyMenu" Header="Path" Click="on_copy_filepath" Icon="{icxt:SymbolIconExtension Symbol=AppsList}"/>
+									<MenuItem Name="ListviewCopyMenu" Header="Table" Click="on_copy_listview" Icon="{icxt:SymbolIconExtension Symbol=TableLightning}"/>
 								</MenuItem>
 								
-								<MenuItem Name="ColorMainMenu" Header="Color Tag" Icon="{materialIcons:MaterialIconExt Kind=PaintBucket}">
+								<MenuItem Name="ColorMainMenu" Header="Color Tag" Icon="{icxt:SymbolIconExtension Symbol=Color}">
 									<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="edit_color"/>
 									<MenuItem Name="YellowMenu" Background="#646424" Tag ="Yellow" Click="edit_color"/>
 									<MenuItem Name="OrangeMenu" Background="#643e24" Tag ="Orange" Click="edit_color"/>
@@ -232,26 +234,26 @@
 									<MenuItem Name="RedMenu" Background="#642424" Tag ="Red" Click="edit_color"/>
 									<MenuItem Name="MagentaMenu" Background="#57244a" Tag ="Magenta" Click="edit_color"/>
 								</MenuItem>
-								<MenuItem Name="TagMenu" Header="User Tag" Icon="{materialIcons:MaterialIconExt Kind=Tag}">
+								<MenuItem Name="TagMenu" Header="User Tag" Icon="{icxt:SymbolIconExtension Symbol=Tag}">
 									<StackPanel Orientation="Horizontal" Margin="-35 0 -25 0">
-										<materialIcons:MaterialIcon Kind="Input" Width="30"/>
+										<ic:SymbolIcon Symbol="Pen" Width="30" FontSize="15"/>
 										<TextBox Name="TagMenuInput" Width="140" Padding="4" Margin="5 0 0 0" Height="28"/>
 									</StackPanel>						
-									<MenuItem Name="TagMenuAdd" Header="Add Tag" Click="on_add_tag" FlowDirection="LeftToRight" Icon="{materialIcons:MaterialIconExt Kind=TagAdd}"/>
-									<MenuItem Name="TagMenuClear" Header="Clear Tag" Click="on_clear_tag" Icon="{materialIcons:MaterialIconExt Kind=TagOff}"/>
+									<MenuItem Name="TagMenuAdd" Header="Add" Click="on_add_tag" FlowDirection="LeftToRight" Icon="{icxt:SymbolIconExtension Symbol=Add}"/>
+									<MenuItem Name="TagMenuClear" Header="Clear" Click="on_clear_tag" Icon="{icxt:SymbolIconExtension Symbol=Dismiss}"/>
 								</MenuItem>
 
-								<MenuItem Name="ClearAllMenu" Header="Clear Tags" Click="on_clear_files" Icon="{materialIcons:MaterialIconExt Kind=TagRemove}"/>
+								<MenuItem Name="ClearAllMenu" Header="Clear Tags" Click="on_clear_files" Icon="{icxt:SymbolIconExtension Symbol=TagDismiss}"/>
 
 
 								<Separator></Separator>
 
-								<MenuItem Name="MoveFileMenu" Header="Move Files To" Icon="{materialIcons:MaterialIconExt Kind=MoveFromInbox}">
+								<MenuItem Name="MoveFileMenu" Header="Move Files To" Icon="{icxt:SymbolIconExtension Symbol=ArrowRight}">
 									<TextBox Name="MoveFileToProjectName" Width="160" FlowDirection="LeftToRight"/>
 									<MenuItem Name="MoveMenu" Header="Move" Click="on_move_files"/>
 								</MenuItem>
 								
-								<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="OnRemoveFiles" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
+								<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="OnRemoveFiles" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
 							</ContextMenu>
 						</DataGrid.ContextMenu>
 					</DataGrid>
@@ -290,10 +292,10 @@
 									<Grid ColumnDefinitions="*,30,30" Margin="-5 0 -5 0">
 										<TextBox Grid.Column="0" Watermark="Seach String" Name="SearchRegex" KeyDown="OnStartSearhRegex"/>
 										<Button Grid.Column="1" Margin="0" Click="OnSeachRegex" BorderThickness="0" IsEnabled="{Binding !SearchBusy}">
-											<materialIcons:MaterialIcon Grid.Column="0" Kind="Search"/>
+											<ic:SymbolIcon Symbol="Search" IsFilled="False" FontSize="20"/>
 										</Button>
 										<Button Grid.Column="2" Margin="0" Click="OnClearSearch" BorderThickness="0">
-											<materialIcons:MaterialIcon Grid.Column="0" Kind="Close"/>
+											<ic:SymbolIcon Symbol="Dismiss" IsFilled="False" FontSize="20"/>
 										</Button>
 									</Grid>
 								</Border>
@@ -301,11 +303,11 @@
 								<Border Grid.Row="2" BorderBrush="Gray" BorderThickness="0 0 0 1">
 									<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 										<Button ToolTip.Tip="Prev Search" ToolTip.Placement="Right" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevSearchPage}">
-											<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious"/>
+											<ic:SymbolIcon Symbol="ArrowPrevious" IsFilled="False" FontSize="20"/>
 										</Button>
 
 										<Button ToolTip.Tip="Next Search" ToolTip.Placement="Right" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextSearchPage}">
-											<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext"/>
+											<ic:SymbolIcon Symbol="ArrowNext" IsFilled="False" FontSize="20"/>
 										</Button>
 
 										<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -335,48 +337,48 @@
 							</StackPanel>
 
 							<Button ToolTip.Tip="Previous Page, Left" HotKey="Left" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Command="{Binding PrevPage}" CommandParameter="false">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipPrevious"/>
+								<ic:SymbolIcon Symbol="ArrowPrevious" IsFilled="False" FontSize="20"/>
 							</Button>
 
 							<Button ToolTip.Tip="Next Page, Right" HotKey="Right" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Command="{Binding NextPage}" CommandParameter="false">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="SkipNext"/>
+								<ic:SymbolIcon Symbol="ArrowNext" IsFilled="False" FontSize="20"/>
 							</Button>
 
 							<Button ToolTip.Tip="Reset And Center, Ctrl+C" HotKey="Ctrl + C" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Click="ResetView">
-								<materialIcons:MaterialIcon Grid.Column="0" Kind="StretchToPageOutline"/>
+								<ic:SymbolIcon Symbol="PageFit" IsFilled="False" FontSize="20"/>
 							</Button>
 
 							<ToggleButton ToolTip.Tip="Toggle Dimmed Background, Ctrl + G" HotKey="Ctrl+G" FontWeight="Normal" Name="DimmedMode" ToolTip.Placement="Right" IsChecked="{Binding DimmedBackground}" IsEnabled="False">
 								<StackPanel>
-									<materialIcons:MaterialIcon Grid.Column="0" Kind="CarLightHigh" IsVisible="{Binding !DimmedBackground}"/>
-									<materialIcons:MaterialIcon Grid.Column="0" Kind="CarLightDimmed" IsVisible="{Binding DimmedBackground}"/>
+									<ic:SymbolIcon Symbol="WeatherMoonOff" IsFilled="False" FontSize="20" IsVisible="{Binding !DimmedBackground}"/>
+									<ic:SymbolIcon Symbol="WeatherMoon" IsFilled="False" FontSize="20" IsVisible="{Binding DimmedBackground}"/>
 								</StackPanel>
 							</ToggleButton>
 
 							<ToggleButton ToolTip.Tip="Duak Page Mode, Ctrl + D" HotKey="Ctrl+D" FontWeight="Normal" ToolTip.Placement="Right" Name="DualMode" IsChecked="{Binding TwopageMode}" IsEnabled="{Binding TwopageModeAvail}" IsVisible="{Binding TwopageModeAvail}">
 								<StackPanel>
-									<materialIcons:MaterialIcon Kind="FileDocument" IsVisible="{Binding !TwopageMode}"/>
-									<materialIcons:MaterialIcon Kind="BookOpenPageVariant" IsVisible="{Binding TwopageMode}"/>
+									<ic:SymbolIcon Symbol="DocumentOnePage" IsFilled="False" FontSize="20" IsVisible="{Binding !TwopageMode}"/>
+									<ic:SymbolIcon Symbol="BookOpen" IsFilled="False" FontSize="20" IsVisible="{Binding TwopageMode}"/>
 								</StackPanel>
 							</ToggleButton>
 
 
 							<ToggleButton ToolTip.Tip="Fullscreen, Ctrl + X" HotKey="Ctrl+X" FontWeight="Normal" ToolTip.Placement="Right" Name="FullScreen" Click="OnFullscreenMode" IsEnabled="False">
 								<StackPanel>
-									<materialIcons:MaterialIcon Kind="Fullscreen"/>
+									<ic:SymbolIcon Symbol="PageFit" IsFilled="False" FontSize="20"/>
 								</StackPanel>
 							</ToggleButton>
 
 							<ToggleButton ToolTip.Tip="Open Search, Ctrl + F" HotKey="Ctrl+F" FontWeight="Normal" ToolTip.Placement="Right" Name="SearchMode" Click="ToggleSearchMode" IsChecked="{Binding SearchMode}" IsEnabled="False">
 								<StackPanel>
-									<materialIcons:MaterialIcon Kind="Search" IsVisible="{Binding !SearchMode}"/>
-									<materialIcons:MaterialIcon Kind="SearchPlus" IsVisible="{Binding SearchMode}"/>
+									<ic:SymbolIcon Symbol="Search" IsFilled="False" FontSize="20" IsVisible="{Binding !SearchMode}"/>
+									<ic:SymbolIcon Symbol="DocumentSearch" IsFilled="False" FontSize="20" IsVisible="{Binding SearchMode}"/>
 								</StackPanel>
 							</ToggleButton>
 
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10 0 5 0">
-								<materialIcons:MaterialIcon Kind="Check" IsVisible="{Binding !FileWorkerBusy}"/>
-								<materialIcons:MaterialIcon Kind="Reload" IsVisible="{Binding FileWorkerBusy}"/>
+								<ic:SymbolIcon Symbol="Checkmark" IsFilled="False" FontSize="20" IsVisible="{Binding !FileWorkerBusy}"/>
+								<ic:SymbolIcon Symbol="ArrowClockwise" IsFilled="False" FontSize="20" IsVisible="{Binding FileWorkerBusy}"/>
 							</StackPanel>
 
 							
@@ -405,29 +407,29 @@
 								
 								<TreeView.ContextMenu>
 									<ContextMenu Name="TreeMenu">
-										<MenuItem Header="Add Files" Click="on_add_file" Icon="{materialIcons:MaterialIconExt Kind=File}"/>
-										<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{materialIcons:MaterialIconExt Kind=FolderPlus}">
+										<MenuItem Header="Add Files" Click="on_add_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentAdd}"/>
+										<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{icxt:SymbolIconExtension Symbol=FolderAdd}">
 											<StackPanel Orientation="Horizontal" Margin="-35 0 -25 0">
-												<materialIcons:MaterialIcon Grid.Column="0" Kind="Input" Width="25" Height="20" HorizontalAlignment="Left"/>
+												<ic:SymbolIcon Symbol="Pen" Width="30" FontSize="15"/>
 												<TextBox Name="ProjectName" Height="28" Width="160" Padding="4" Margin="5 0 0 0"/>
 											</StackPanel>
-											<MenuItem Name="AddProject" Header="Add" Click="on_add_project" Icon="{materialIcons:MaterialIconExt Kind=Plus}"/>
+											<MenuItem Name="AddProject" Header="Add" Click="on_add_project" Icon="{icxt:SymbolIconExtension Symbol=FolderAdd}"/>
 										</MenuItem>
 
-										<MenuItem Name="RenameMenu" Header="Rename" Icon="{materialIcons:MaterialIconExt Kind=Rename}">
+										<MenuItem Name="RenameMenu" Header="Rename" Icon="{icxt:SymbolIconExtension Symbol=Rename}">
 											<StackPanel Orientation="Horizontal" Margin="-35 0 -25 0">
-												<materialIcons:MaterialIcon Kind="Input" Width="30"/>
+												<ic:SymbolIcon Symbol="Pen" Width="30" FontSize="15"/>
 												<TextBox Name="NewProjectName" Text="{Binding ProjectsVM.CurrentProject.Namn, Mode=OneWay}" Height="28" Width="160" Padding="4" Margin="5 0 0 0"/>
 											</StackPanel>
-											<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project" Icon="{materialIcons:MaterialIconExt Kind=Rename}"/>
+											<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project" Icon="{icxt:SymbolIconExtension Symbol=Checkmark}"/>
 										</MenuItem>
-										<MenuItem Header="Type" Icon="{materialIcons:MaterialIconExt Kind=Category}">
-											<MenuItem Header="Project" Click="on_set_category"/>
-											<MenuItem Header="Library" Click="on_set_category"/>
-											<MenuItem Header="Archive" Click="on_set_category"/>
+										<MenuItem Header="Type" Icon="{icxt:SymbolIconExtension Symbol=Tag}">
+											<MenuItem Header="P: Project" Click="on_set_category"/>
+											<MenuItem Header="L: Library" Click="on_set_category"/>
+											<MenuItem Header="A: Archive" Click="on_set_category"/>
 										</MenuItem>
 										<Separator></Separator>
-										<MenuItem Name="RemoveProjectMenu" Header="Remove" Command="{Binding remove_project}" Icon="{materialIcons:MaterialIconExt Kind=Delete}"/>
+										<MenuItem Name="RemoveProjectMenu" Header="Remove" Command="{Binding remove_project}" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
 									</ContextMenu>
 								</TreeView.ContextMenu>
 								
