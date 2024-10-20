@@ -78,9 +78,9 @@
 				<StackPanel Orientation="Vertical" VerticalAlignment="Center">
 					<Label Grid.Row="0" Grid.ColumnSpan="3" FontSize="18" FontFamily="Ubuntu" HorizontalAlignment="Center" VerticalContentAlignment="Center" Content="Save before close?"/>
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
-						<Button Theme="{DynamicResource ThemeControlHighBrush}" Width="70" Content="Yes" Click="on_save_before_close"/>
-						<Button Theme="{DynamicResource ThemeControlHighBrush}" Width="70" Content="No" Click="on_leave"/>
-						<Button Theme="{DynamicResource ThemeControlHighBrush}" Width="70" Content="Cancel" Click="on_cancel"/>
+						<Button Name="SaveYes" Theme="{DynamicResource ThemeControlHighBrush}" Width="70" Content="Yes" Click="on_save_before_close"/>
+						<Button Name="SaveNo" Theme="{DynamicResource ThemeControlHighBrush}" Width="70" Content="No" Click="on_leave"/>
+						<Button Name="SaveCancel" Theme="{DynamicResource ThemeControlHighBrush}" Width="70" Content="Cancel" Click="on_cancel"/>
 					</StackPanel>
 				</StackPanel>
 			</Border>

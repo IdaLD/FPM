@@ -6,11 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalon.Model;
 using Avalonia.Controls;
-using FluentIcons.Avalonia.MarkupExtensions;
-using FluentIcons.Common;
-using iText.Layout.Element;
-using Material.Icons;
-using Material.Icons.Avalonia;
 
 namespace Avalon.ViewModels
 {

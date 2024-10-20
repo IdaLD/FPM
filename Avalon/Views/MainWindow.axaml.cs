@@ -1,5 +1,6 @@
 ﻿using Avalon.ViewModels;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using System.ComponentModel;
 
@@ -7,6 +8,9 @@ namespace Avalon.Views;
 
 public partial class MainWindow : Window, INotifyPropertyChanged
 {
+    private KeyGesture KeyEnter;
+    private KeyGesture KeyEscape;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -19,7 +23,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         if (!confirmClose)
         {
             e.Cancel = true;
-            ConfirmLeave.IsVisible = true;
+            OnOpenConfirm();
         }
         else
         {
@@ -28,6 +32,14 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     }
 
+    public void OnOpenConfirm()
+    {
+
+        ConfirmLeave.IsVisible = true;
+
+        HotKeyManager.SetHotKey(SaveYes, new KeyGesture(Key.Enter));
+        HotKeyManager.SetHotKey(SaveCancel, new KeyGesture(Key.Escape));
+    }
 
     public async void on_save_before_close(object sender, RoutedEventArgs args)
     {
@@ -52,6 +64,9 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     public void on_cancel(object sender, RoutedEventArgs args)
     {
         ConfirmLeave.IsVisible = false;
+
+        HotKeyManager.SetHotKey(SaveYes, null);
+        HotKeyManager.SetHotKey(SaveCancel, null);
     }
 
 

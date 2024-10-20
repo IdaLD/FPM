@@ -3,7 +3,6 @@ using System;
 using Avalonia.Interactivity;
 using System.Linq;
 using Avalon.ViewModels;
-using Avalonia;
 using System.ComponentModel;
 using Avalonia.Controls.Primitives;
 using Avalonia.Media;
@@ -16,9 +15,7 @@ using System.IO;
 using Avalonia.Data;
 using System.Diagnostics;
 using Avalonia.Styling;
-using MsBox.Avalonia.Enums;
-using MsBox.Avalonia;
-using System.Threading.Tasks;
+using Org.BouncyCastle.Asn1.BC;
 
 
 namespace Avalon.Views;
@@ -114,11 +111,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     }
 
     private void on_binding_pwr(object sender, PropertyChangedEventArgs e)
-    {
-
-    }
-
-    public void SetupFlyouts()
     {
 
     }
@@ -607,6 +599,23 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         update_row_color();
     }
 
+    private void OpenAddPopup(object sender, RoutedEventArgs e)
+    {
+        ctx.OpenNewPop();
+        ProjectName.Focus();
+
+        HotKeyManager.SetHotKey(AddAccept, new KeyGesture(Key.Enter));
+        HotKeyManager.SetHotKey(AddCancel, new KeyGesture(Key.Escape));
+    }
+
+    private void CloseAddPopup(object sender, RoutedEventArgs e)
+    {
+        ctx.CloseNewPop();
+
+        HotKeyManager.SetHotKey(AddAccept, null);
+        HotKeyManager.SetHotKey(AddCancel, null);
+    }
+
     private void on_add_project(object sender, RoutedEventArgs e)
     {
         var Name = ProjectName.Text;
@@ -615,7 +624,26 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             ctx.new_project(Name.ToString());
         }
 
-        ctx.CloseNewPop();
+        CloseAddPopup(null, null);
+    }
+
+    private void OpenRenamePopup(object sender, RoutedEventArgs e)
+    {
+        ctx.OpenRenamePop();
+        NewProjectName.Text = ctx.ProjectsVM.CurrentProject.Namn;
+
+        HotKeyManager.SetHotKey(RenameAccept, new KeyGesture(Key.Enter));
+        HotKeyManager.SetHotKey(RenameCancel, new KeyGesture(Key.Escape));
+
+        NewProjectName.Focus();
+    }
+
+    private void CloseRenamePopup(object sender, RoutedEventArgs e)
+    {
+        ctx.CloseRenamePop();
+
+        HotKeyManager.SetHotKey(RenameAccept, null);
+        HotKeyManager.SetHotKey(RenameCancel, null);
     }
 
     private void on_rename_project(object sender, RoutedEventArgs e)
@@ -626,7 +654,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             NewProjectName.Text = null;
         }
 
-        ctx.CloseRenamePop();
+        CloseRenamePopup(null,null);
     }
 
 
@@ -779,7 +807,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void OnRemoveFiles(object sender, RoutedEventArgs e)
     {
-        Debug.WriteLine("REMOVING FILES");
         ctx.ProjectsVM.RemoveSelectedFiles();
         ctx.ProjectsVM.UpdateFilter();
 

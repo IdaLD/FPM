@@ -409,8 +409,8 @@
 									<ContextMenu Name="TreeMenu">
 										<MenuItem Header="Add Files" Click="on_add_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentAdd}"/>
 										
-										<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{icxt:SymbolIconExtension Symbol=FolderAdd}" Command="{Binding OpenNewPop}"/>
-										<MenuItem Name="RenameMenu" Header="Rename" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Command="{Binding OpenRenamePop}"/>
+										<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{icxt:SymbolIconExtension Symbol=FolderAdd}" Click="OpenAddPopup"/>
+										<MenuItem Name="RenameMenu" Header="Rename" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Click="OpenRenamePopup"/>
 										
 										<MenuItem Header="Type" Icon="{icxt:SymbolIconExtension Symbol=Tag}">
 											<MenuItem Header="Project" Click="on_set_category"/>
@@ -432,10 +432,10 @@
 						VerticalAlignment="Center" Padding="20" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">
 					<StackPanel Orientation="Vertical" Spacing="10">
 						<Label Content="Rename Project" FontWeight="Bold" HorizontalContentAlignment="Center"/>
-						<TextBox Name="NewProjectName" HorizontalContentAlignment="Center" Text="{Binding ProjectsVM.CurrentProject.Namn, Mode=OneWay}"  Width="160" />
+						<TextBox Name="NewProjectName" HorizontalContentAlignment="Center"  Width="160" />
 						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
-							<Button Content="Accept" Width="70" BorderBrush="Gray" Click="on_rename_project"/>
-							<Button Content="Cancel" Width="70" BorderBrush="Gray" Command="{Binding CloseRenamePop}"/>
+							<Button Name="RenameAccept" Content="Accept" Width="70" BorderBrush="Gray" Click="on_rename_project"/>
+							<Button Name="RenameCancel" Content="Cancel" Width="70" BorderBrush="Gray" Click="CloseRenamePopup"/>
 						</StackPanel>
 					</StackPanel>
 				</Border>
@@ -446,8 +446,8 @@
 						<Label Content="New Project" FontWeight="Bold" HorizontalContentAlignment="Center"/>
 						<TextBox Name="ProjectName" HorizontalContentAlignment="Center" Width="160" />
 						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
-							<Button Content="Accept" Width="70" BorderBrush="Gray" Click="on_add_project"/>
-							<Button Content="Cancel" Width="70" BorderBrush="Gray" Command="{Binding CloseNewPop}"/>
+							<Button Name="AddAccept" Content="Accept" Width="70" BorderBrush="Gray" Click="on_add_project"/>
+							<Button Name="AddCancel" Content="Cancel" Width="70" BorderBrush="Gray" Click="CloseAddPopup"/>
 						</StackPanel>
 					</StackPanel>
 				</Border>
