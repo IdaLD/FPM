@@ -338,7 +338,7 @@
 							</Button>
 
 							<Button ToolTip.Tip="Reset And Center, Ctrl+C" HotKey="Ctrl + C" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Click="ResetView">
-								<ic:SymbolIcon Symbol="PageFit" IsFilled="False" FontSize="20"/>
+								<ic:SymbolIcon Symbol="ScaleFit" IsFilled="False" FontSize="20"/>
 							</Button>
 
 							<ToggleButton ToolTip.Tip="Toggle Dimmed Background, Ctrl + G" HotKey="Ctrl+G" FontWeight="Normal" Name="DimmedMode" ToolTip.Placement="Right" IsChecked="{Binding DimmedBackground}" IsEnabled="False">
@@ -357,9 +357,7 @@
 
 
 							<ToggleButton ToolTip.Tip="Fullscreen, Ctrl + X" HotKey="Ctrl+X" FontWeight="Normal" ToolTip.Placement="Right" Name="FullScreen" Click="OnFullscreenMode" IsEnabled="False">
-								<StackPanel>
-									<ic:SymbolIcon Symbol="PageFit" IsFilled="False" FontSize="20"/>
-								</StackPanel>
+								<ic:SymbolIcon Symbol="PageFit" IsFilled="False" FontSize="20"/>
 							</ToggleButton>
 
 							<ToggleButton ToolTip.Tip="Open Search, Ctrl + F" HotKey="Ctrl+F" FontWeight="Normal" ToolTip.Placement="Right" Name="SearchMode" Click="ToggleSearchMode" IsChecked="{Binding SearchMode}" IsEnabled="False">

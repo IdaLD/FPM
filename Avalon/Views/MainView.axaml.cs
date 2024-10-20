@@ -303,15 +303,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             MainGrid.ColumnDefinitions[3].MinWidth = 300f;
             FileGrid.SelectedItems.Clear();
         }
-    }
 
-
-    private void tester()
-    {
-        if (FileGrid.SelectedItems.Count > 0)
+        if (pwr.SearchMode)
         {
-            FileData file = (FileData)FileGrid.SelectedItem;
-            set_preview_request(file);
+            pwr.SearchMode = false;
+            ToggleSearchMode(null, null);
         }
     }
 
