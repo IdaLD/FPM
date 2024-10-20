@@ -8,6 +8,7 @@ using Avalon.Model;
 using Avalonia.Controls;
 using FluentIcons.Avalonia.MarkupExtensions;
 using FluentIcons.Common;
+using iText.Layout.Element;
 using Material.Icons;
 using Material.Icons.Avalonia;
 
@@ -254,30 +255,32 @@ namespace Avalon.ViewModels
 
         public List<MenuItem> GetAllowedTypes()
         {
+
             if (CurrentProject.Category == "Project")
             {
-                return new List<MenuItem>() 
+                return new List<MenuItem>()
                 {
-                    new MenuItem(){Header="Drawing", Icon=new SymbolIconExtension(){Symbol=Symbol.Box } },
-                    new MenuItem(){Header="Document", Icon=new SymbolIconExtension(){Symbol=Symbol.Document } },
-                    new MenuItem(){Header="Other", Icon=new SymbolIconExtension(){Symbol=Symbol.DocumentQuestionMark } }
+                    new MenuItem(){Header="Drawing", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Document", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Other", Icon=new Label(){Content="○" } }
                 };
             }
+
             if (CurrentProject.Category == "Library")
             {
 
                 return new List<MenuItem>()
                 {
-                    new MenuItem(){Header="General", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaLBoxOutline } },
-                    new MenuItem(){Header="Loads", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaLBoxOutline } },
-                    new MenuItem(){Header="Concrete", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaCBoxOutline } },
-                    new MenuItem(){Header="Steel", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
-                    new MenuItem(){Header="Timber", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaTBoxOutline } },
-                    new MenuItem(){Header="FEM", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaFBoxOutline } },
-                    new MenuItem(){Header="Mechanics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaMBoxOutline } },
-                    new MenuItem(){Header="Dynamics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaDBoxOutline } },
-                    new MenuItem(){Header="Geotechnics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaGBoxOutline } },
-                    new MenuItem(){Header="Other", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaGBoxOutline } },
+                    new MenuItem(){Header="General", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Loads", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Concrete", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Steel", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Timber", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="FEM", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Mechanics", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Dynamics", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Geotechnics", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Other", Icon=new Label(){Content="○" } }
                 };
             }
 
@@ -285,22 +288,25 @@ namespace Avalon.ViewModels
             {
                 return new List<MenuItem>()
                 {
-                    new MenuItem(){Header="Portal Frame", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaPBoxOutline } },
-                    new MenuItem(){Header="Slab", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
-                    new MenuItem(){Header="Beam", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaBBoxOutline } },
-                    new MenuItem(){Header="Composite", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaCBoxOutline } },
-                    new MenuItem(){Header="Concrete deck", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaCBoxOutline } },
-                    new MenuItem(){Header="Integral", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaIBoxOutline } },
-                    new MenuItem(){Header="Steel", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
-                    new MenuItem(){Header="Post tension", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
-                    new MenuItem(){Header="Substructure", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
-                    new MenuItem(){Header="Other", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaLBoxOutline } }
+                    new MenuItem(){Header="Portal Frame", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Slab", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Beam", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Composite", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Concrete deck", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Integral", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Steel", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Post tension", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Substructure", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Other", Icon=new Label(){Content="○" } }
                 };
             }
 
             else
             {
-                return null;
+                return new List<MenuItem>()
+                {
+                    new MenuItem(){Header="" }
+                };
             }
         }
 
@@ -562,7 +568,10 @@ namespace Avalon.ViewModels
                 TrayFiles = FavProject.StoredFiles;
             }
 
-            FavProject.SetFiletypeList();
+            if (FavProject != null)
+            {
+                FavProject.SetFiletypeList();
+            }
         }
 
         public void SeachFiles(string searchtext)

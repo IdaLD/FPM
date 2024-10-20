@@ -16,6 +16,9 @@ using System.IO;
 using Avalonia.Data;
 using System.Diagnostics;
 using Avalonia.Styling;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using System.Threading.Tasks;
 
 
 namespace Avalon.Views;
@@ -80,6 +83,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         get_datacontext();
         pwr.GetRenderControl(MuPDFRenderer);
+
         
         Lockedstatus.IsChecked = true;
         TreeStatus.IsChecked = true;
@@ -110,6 +114,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     }
 
     private void on_binding_pwr(object sender, PropertyChangedEventArgs e)
+    {
+
+    }
+
+    public void SetupFlyouts()
     {
 
     }
@@ -158,6 +167,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         string category = menuitem.Header.ToString();
 
         ctx.set_category(category);
+        ctx.SetAllowedTypes();
     }
 
     public void toggle_treeview(object sender, RoutedEventArgs e)
@@ -379,7 +389,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-
     private void PreviewSizeChanged(object sender, SizeChangedEventArgs e)
     {
         if (previewMode)
@@ -445,9 +454,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void ToggleSearchMode(object sender, RoutedEventArgs e)
     {
-        Debug.WriteLine("SEARCH TOGGLE");
-
-        
 
         if (pwr.SearchMode)
         {
@@ -608,6 +614,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             ctx.new_project(Name.ToString());
         }
+
+        ctx.CloseNewPop();
     }
 
     private void on_rename_project(object sender, RoutedEventArgs e)
@@ -617,7 +625,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             ctx.rename_project(NewProjectName.Text.ToString());
             NewProjectName.Text = null;
         }
+
+        ctx.CloseRenamePop();
     }
+
 
     private void on_add_file(object sender, RoutedEventArgs e)
     {

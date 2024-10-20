@@ -14,7 +14,6 @@
 			 mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
              x:Class="Avalon.Views.MainView"
 			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:ic="using:FluentIcons.WinUI"
 			 x:DataType="vm:MainViewModel">
 
 	<Design.DataContext>
@@ -29,9 +28,9 @@
 		<converter:AddPageConverter x:Key="AddPageConverter" />
 	</UserControl.Resources>
 
-
 	
 			<Grid Name ="MainGrid" DragDrop.AllowDrop="True" ColumnDefinitions="0,*,0,0,0" RowDefinitions="35,30,*" Margin="5">
+				
 				<DockPanel Width="190" VerticalAlignment="Top" HorizontalAlignment="Left" IsVisible="{Binding !FullScreenMode}">
 					<Menu DockPanel.Dock="Top">
 						<MenuItem Header="File">
@@ -409,26 +408,16 @@
 								<TreeView.ContextMenu>
 									<ContextMenu Name="TreeMenu">
 										<MenuItem Header="Add Files" Click="on_add_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentAdd}"/>
-										<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{icxt:SymbolIconExtension Symbol=FolderAdd}">
-											<StackPanel Orientation="Horizontal" Margin="-35 0 -25 0">
-												<ic:SymbolIcon Symbol="Pen" Width="30" FontSize="15"/>
-												<TextBox Name="ProjectName" Height="28" Width="160" Padding="4" Margin="5 0 0 0"/>
-											</StackPanel>
-											<MenuItem Name="AddProject" Header="Add" Click="on_add_project" Icon="{icxt:SymbolIconExtension Symbol=FolderAdd}"/>
-										</MenuItem>
-
-										<MenuItem Name="RenameMenu" Header="Rename" Icon="{icxt:SymbolIconExtension Symbol=Rename}">
-											<StackPanel Orientation="Horizontal" Margin="-35 0 -25 0">
-												<ic:SymbolIcon Symbol="Pen" Width="30" FontSize="15"/>
-												<TextBox Name="NewProjectName" Text="{Binding ProjectsVM.CurrentProject.Namn, Mode=OneWay}" Height="28" Width="160" Padding="4" Margin="5 0 0 0"/>
-											</StackPanel>
-											<MenuItem Name="RenameProjectMenu" Header="Rename" Click="on_rename_project" Icon="{icxt:SymbolIconExtension Symbol=Checkmark}"/>
-										</MenuItem>
+										
+										<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{icxt:SymbolIconExtension Symbol=FolderAdd}" Command="{Binding OpenNewPop}"/>
+										<MenuItem Name="RenameMenu" Header="Rename" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Command="{Binding OpenRenamePop}"/>
+										
 										<MenuItem Header="Type" Icon="{icxt:SymbolIconExtension Symbol=Tag}">
-											<MenuItem Header="P: Project" Click="on_set_category"/>
-											<MenuItem Header="L: Library" Click="on_set_category"/>
-											<MenuItem Header="A: Archive" Click="on_set_category"/>
+											<MenuItem Header="Project" Click="on_set_category"/>
+											<MenuItem Header="Library" Click="on_set_category"/>
+											<MenuItem Header="Archive" Click="on_set_category"/>
 										</MenuItem>
+												
 										<Separator></Separator>
 										<MenuItem Name="RemoveProjectMenu" Header="Remove" Command="{Binding remove_project}" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
 									</ContextMenu>
@@ -439,6 +428,31 @@
 					</Border>
 				</Grid>
 				
+				<Border IsVisible="{Binding RenamePopup}" IsHitTestVisible="{Binding RenamePopup}" Grid.ColumnSpan="5" Grid.RowSpan="3" HorizontalAlignment="Center"
+						VerticalAlignment="Center" Padding="20" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">
+					<StackPanel Orientation="Vertical" Spacing="10">
+						<Label Content="Rename Project" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+						<TextBox Name="NewProjectName" HorizontalContentAlignment="Center" Text="{Binding ProjectsVM.CurrentProject.Namn, Mode=OneWay}"  Width="160" />
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+							<Button Content="Accept" Width="70" BorderBrush="Gray" Click="on_rename_project"/>
+							<Button Content="Cancel" Width="70" BorderBrush="Gray" Command="{Binding CloseRenamePop}"/>
+						</StackPanel>
+					</StackPanel>
+				</Border>
+
+				<Border IsVisible="{Binding NewPopup}" IsHitTestVisible="{Binding NewPopup}" Grid.ColumnSpan="5" Grid.RowSpan="3" HorizontalAlignment="Center"
+						VerticalAlignment="Center" Padding="20" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">
+					<StackPanel Orientation="Vertical" Spacing="10">
+						<Label Content="New Project" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+						<TextBox Name="ProjectName" HorizontalContentAlignment="Center" Width="160" />
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+							<Button Content="Accept" Width="70" BorderBrush="Gray" Click="on_add_project"/>
+							<Button Content="Cancel" Width="70" BorderBrush="Gray" Command="{Binding CloseNewPop}"/>
+						</StackPanel>
+					</StackPanel>
+				</Border>
+				
 			</Grid>
+	
 </UserControl>
  

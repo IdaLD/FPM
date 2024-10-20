@@ -11,6 +11,13 @@ using System.Text;
 using System;
 using System.ComponentModel;
 using Avalon.Model;
+using Org.BouncyCastle.Asn1.BC;
+using System.Drawing;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Dto;
+using MsBox.Avalonia.Models;
+using System.Runtime.InteropServices;
 
 
 namespace Avalon.ViewModels
@@ -45,13 +52,54 @@ namespace Avalon.ViewModels
             get { return fullScreenMode; }
             set { fullScreenMode = value; OnPropertyChanged("FullScreenMode"); }
         }
+
+        private bool renamePopup = false;
+        public bool RenamePopup
+        {
+            get { return renamePopup; }
+            set { renamePopup = value; OnPropertyChanged("RenamePopup"); }
+        }
+
+        private bool newPopup = false;
+        public bool NewPopup
+        {
+            get { return newPopup; }
+            set { newPopup = value; OnPropertyChanged("NewPopup"); }
+        }
+
         public List<string> FileTypes { get; set; } = new List<string>();
 
-        private List<MenuItem> fileTypeSelection = new List<MenuItem>();
+        private List<MenuItem> fileTypeSelection = new List<MenuItem>()
+        {
+            new MenuItem() { Header = "Drawing", Icon = new Label() { Content = "○" } },
+            new MenuItem() { Header = "Document", Icon = new Label() { Content = "○" } },
+            new MenuItem() { Header = "Other", Icon = new Label() { Content = "○" } }
+        };
+
         public List<MenuItem> FileTypeSelection
         {
             get { return fileTypeSelection; }
             set { fileTypeSelection = value; OnPropertyChanged("FileTypeSelection"); }
+        }
+
+        public void OpenRenamePop()
+        {
+            RenamePopup = true;
+        }
+
+        public void CloseRenamePop()
+        {
+            RenamePopup = false;
+        }
+
+        public void OpenNewPop()
+        {
+            NewPopup = true;
+        }
+
+        public void CloseNewPop()
+        {
+            NewPopup = false;
         }
 
 
@@ -81,7 +129,7 @@ namespace Avalon.ViewModels
                 ProjectsVM.StoredProjects = JsonConvert.DeserializeObject<ObservableCollection<ProjectData>>(fileContent);
                 ProjectsVM.SetProjectlist();
                 ProjectsVM.SetDefaultSelection();
-                FileTypeSelection = ProjectsVM.GetAllowedTypes();
+                SetAllowedTypes();
 
             }
         }
@@ -95,7 +143,7 @@ namespace Avalon.ViewModels
                 ProjectsVM.StoredProjects = JsonConvert.DeserializeObject<ObservableCollection<ProjectData>>(json);
                 ProjectsVM.SetProjectlist();
                 ProjectsVM.SetDefaultSelection();
-                FileTypeSelection = ProjectsVM.GetAllowedTypes();
+                SetAllowedTypes();
             }
         }
 
@@ -164,6 +212,11 @@ namespace Avalon.ViewModels
         public void set_category(string category)
         {
             ProjectsVM.SetProjecCategory(category);
+        }
+
+        public void SetAllowedTypes()
+        {
+            FileTypeSelection = ProjectsVM.GetAllowedTypes();
         }
 
         public void CopyFilenameToClipboard(Avalonia.Visual window)
@@ -532,8 +585,15 @@ namespace Avalon.ViewModels
             if (currentProjectName != name)
             {
                 ProjectsVM.SetProject(name);
-                FileTypeSelection = ProjectsVM.GetAllowedTypes();
+                SetAllowedTypes();
             }
+            OnPropertyChanged("UpdateColumns");
+        }
+
+        public void ReselectProject()
+        {
+            ProjectsVM.SetProject(ProjectsVM.CurrentProject.Namn);
+            SetAllowedTypes();
             OnPropertyChanged("UpdateColumns");
         }
 
@@ -552,6 +612,8 @@ namespace Avalon.ViewModels
             ProjectsVM.RenameProject(newProjectName);
             ProjectsVM.SetProjectlist();
         }
+
+
 
         public void move_files(string projectname)
         {
