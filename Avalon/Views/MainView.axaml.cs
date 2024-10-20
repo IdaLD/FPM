@@ -16,6 +16,7 @@ using Avalonia.Data;
 using System.Diagnostics;
 using Avalonia.Styling;
 using Org.BouncyCastle.Asn1.BC;
+using Avalonia;
 
 
 namespace Avalon.Views;
@@ -293,7 +294,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             await pwr.CloseRenderer();
         }
 
-
         MainGrid.ColumnDefinitions[1] = new ColumnDefinition(1f, GridUnitType.Star);
         MainGrid.ColumnDefinitions[2] = new ColumnDefinition(val1, GridUnitType.Pixel);
         MainGrid.ColumnDefinitions[3] = new ColumnDefinition(val2, GridUnitType.Star);
@@ -301,8 +301,18 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (previewMode)
         {
             MainGrid.ColumnDefinitions[3].MinWidth = 300f;
+            FileGrid.SelectedItems.Clear();
         }
+    }
 
+
+    private void tester()
+    {
+        if (FileGrid.SelectedItems.Count > 0)
+        {
+            FileData file = (FileData)FileGrid.SelectedItem;
+            set_preview_request(file);
+        }
     }
 
     private void set_preview_request_main(object sender, RoutedEventArgs r)
@@ -343,7 +353,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             if((int)ScrollSlider.Value - 1 != pwr.RequestPage1)
             {
                 pwr.RequestPage1 = (int)ScrollSlider.Value - 1;
-                Debug.WriteLine(ScrollSlider.Value);
             }
         }
     }
@@ -561,6 +570,23 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         update_row_color();
     }
 
+    private void OpenTagPop(object sender, RoutedEventArgs e)
+    {
+        ctx.OpenTagPop();
+        TagMenuInput.Focus();
+
+        HotKeyManager.SetHotKey(TagAccept, new KeyGesture(Key.Enter));
+        HotKeyManager.SetHotKey(TagCancel, new KeyGesture(Key.Escape));
+    }
+
+    private void CloseTagPop(object sender, RoutedEventArgs e)
+    {
+        ctx.CloseTagPop();
+
+        HotKeyManager.SetHotKey(TagAccept, null);
+        HotKeyManager.SetHotKey(TagCancel, null);
+    }
+
     private void on_add_tag(object sender, RoutedEventArgs e)
     {
         if (TagMenuInput.Text != null)
@@ -571,12 +597,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
 
         deselect_items();
+        CloseTagPop(null, null);
     }
 
     private void on_clear_tag(object sender, RoutedEventArgs e)
     {
         ctx.clear_tag();
+        TagMenuInput.Text = null;
         deselect_items();
+        CloseTagPop(null, null);
     }
 
     private void OnCheckStatusSingleFile(object sender, RoutedEventArgs e)
@@ -636,6 +665,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         HotKeyManager.SetHotKey(RenameCancel, new KeyGesture(Key.Escape));
 
         NewProjectName.Focus();
+        NewProjectName.CaretIndex = NewProjectName.Text.Length;
     }
 
     private void CloseRenamePopup(object sender, RoutedEventArgs e)

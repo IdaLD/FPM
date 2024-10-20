@@ -60,6 +60,13 @@ namespace Avalon.ViewModels
             set { newPopup = value; OnPropertyChanged("NewPopup"); }
         }
 
+        private bool tagPopup = false;
+        public bool TagPopup
+        {
+            get { return tagPopup; }
+            set { tagPopup = value; OnPropertyChanged("TagPopup"); }
+        }
+
         public List<string> FileTypes { get; set; } = new List<string>();
 
         private List<MenuItem> fileTypeSelection = new List<MenuItem>()
@@ -93,6 +100,16 @@ namespace Avalon.ViewModels
         public void CloseNewPop()
         {
             NewPopup = false;
+        }
+
+        public void OpenTagPop()
+        {
+            TagPopup = true;
+        }
+
+        public void CloseTagPop()
+        {
+            TagPopup = false;
         }
 
 

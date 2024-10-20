@@ -234,17 +234,10 @@
 									<MenuItem Name="RedMenu" Background="#642424" Tag ="Red" Click="edit_color"/>
 									<MenuItem Name="MagentaMenu" Background="#57244a" Tag ="Magenta" Click="edit_color"/>
 								</MenuItem>
-								<MenuItem Name="TagMenu" Header="User Tag" Icon="{icxt:SymbolIconExtension Symbol=Tag}">
-									<StackPanel Orientation="Horizontal" Margin="-35 0 -25 0">
-										<ic:SymbolIcon Symbol="Pen" Width="30" FontSize="15"/>
-										<TextBox Name="TagMenuInput" Width="140" Padding="4" Margin="5 0 0 0" Height="28"/>
-									</StackPanel>						
-									<MenuItem Name="TagMenuAdd" Header="Add" Click="on_add_tag" FlowDirection="LeftToRight" Icon="{icxt:SymbolIconExtension Symbol=Add}"/>
-									<MenuItem Name="TagMenuClear" Header="Clear" Click="on_clear_tag" Icon="{icxt:SymbolIconExtension Symbol=Dismiss}"/>
-								</MenuItem>
+								
+								<MenuItem Name="TagMenu" Header="User Tag" Click="OpenTagPop" Icon="{icxt:SymbolIconExtension Symbol=Tag}"/>
 
 								<MenuItem Name="ClearAllMenu" Header="Clear Tags" Click="on_clear_files" Icon="{icxt:SymbolIconExtension Symbol=TagDismiss}"/>
-
 
 								<Separator></Separator>
 
@@ -448,6 +441,19 @@
 						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
 							<Button Name="AddAccept" Content="Accept" Width="70" BorderBrush="Gray" Click="on_add_project"/>
 							<Button Name="AddCancel" Content="Cancel" Width="70" BorderBrush="Gray" Click="CloseAddPopup"/>
+						</StackPanel>
+					</StackPanel>
+				</Border>
+
+				<Border IsVisible="{Binding TagPopup}" IsHitTestVisible="{Binding TagPopup}" Grid.ColumnSpan="5" Grid.RowSpan="3" HorizontalAlignment="Center"
+						VerticalAlignment="Center" Padding="10" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">
+					<StackPanel Orientation="Vertical" Spacing="10">
+						<Label Content="Set Tag" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+						<TextBox Name="TagMenuInput" HorizontalContentAlignment="Center" Width="160" />
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+							<Button Name="TagAccept" Content="Accept" Width="70" BorderBrush="Gray" Click="on_add_tag"/>
+							<Button Name="TagClear" Content="Clear" Width="70" BorderBrush="Gray" Click="on_clear_tag"/>
+							<Button Name="TagCancel" Content="Cancel" Width="70" BorderBrush="Gray" Click="CloseTagPop"/>
 						</StackPanel>
 					</StackPanel>
 				</Border>
