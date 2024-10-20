@@ -413,9 +413,9 @@
 										<MenuItem Name="RenameMenu" Header="Rename" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Click="OpenRenamePopup"/>
 										
 										<MenuItem Header="Type" Icon="{icxt:SymbolIconExtension Symbol=Tag}">
-											<MenuItem Header="Project" Click="on_set_category"/>
-											<MenuItem Header="Library" Click="on_set_category"/>
-											<MenuItem Header="Archive" Click="on_set_category"/>
+											<MenuItem Header="P: Project" Tag="Project" Click="on_set_category"/>
+											<MenuItem Header="L: Library" Tag="Library" Click="on_set_category"/>
+											<MenuItem Header="A: Archive" Tag="Archive" Click="on_set_category"/>
 										</MenuItem>
 												
 										<Separator></Separator>
@@ -429,7 +429,7 @@
 				</Grid>
 				
 				<Border IsVisible="{Binding RenamePopup}" IsHitTestVisible="{Binding RenamePopup}" Grid.ColumnSpan="5" Grid.RowSpan="3" HorizontalAlignment="Center"
-						VerticalAlignment="Center" Padding="20" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">
+						VerticalAlignment="Center" Padding="10" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">
 					<StackPanel Orientation="Vertical" Spacing="10">
 						<Label Content="Rename Project" FontWeight="Bold" HorizontalContentAlignment="Center"/>
 						<TextBox Name="NewProjectName" HorizontalContentAlignment="Center"  Width="160" />
@@ -441,7 +441,7 @@
 				</Border>
 
 				<Border IsVisible="{Binding NewPopup}" IsHitTestVisible="{Binding NewPopup}" Grid.ColumnSpan="5" Grid.RowSpan="3" HorizontalAlignment="Center"
-						VerticalAlignment="Center" Padding="20" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">
+						VerticalAlignment="Center" Padding="10" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">
 					<StackPanel Orientation="Vertical" Spacing="10">
 						<Label Content="New Project" FontWeight="Bold" HorizontalContentAlignment="Center"/>
 						<TextBox Name="ProjectName" HorizontalContentAlignment="Center" Width="160" />

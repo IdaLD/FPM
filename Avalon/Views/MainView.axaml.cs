@@ -156,7 +156,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     public void on_set_category(object sender, RoutedEventArgs e)
     {
         MenuItem menuitem = sender as MenuItem;
-        string category = menuitem.Header.ToString();
+        string category = menuitem.Tag.ToString();
 
         ctx.set_category(category);
         ctx.SetAllowedTypes();
