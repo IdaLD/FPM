@@ -137,7 +137,7 @@ namespace Avalon.ViewModels
         public bool DimmedBackground
         {
             get { return dimmedBackground; }
-            set { dimmedBackground = value; SetDimmedMode(); OnPropertyChanged("DimmedBackground"); }
+            set { if (FileAvailable) { dimmedBackground = value; SetDimmedMode(); OnPropertyChanged("DimmedBackground"); } }
         }
 
         private bool fileWorkerBusy = false;
@@ -562,8 +562,14 @@ namespace Avalon.ViewModels
             }
         }
 
+        public void ToggleDimmed()
+        {
+            DimmedBackground = !DimmedBackground;
+        }
+
         public void SetDimmedMode()
         {
+
             if (DimmedBackground)
             {
                 Renderer.PageBackground = new SolidColorBrush(Colors.AntiqueWhite);
@@ -572,8 +578,9 @@ namespace Avalon.ViewModels
             {
                 Renderer.PageBackground = new SolidColorBrush(Colors.White);
             }
-           
+
             SetPage();
+            
         }
 
         public void PrevPage(bool SecondPage = false)

@@ -8,12 +8,10 @@
 			 xmlns:mupdf="clr-namespace:MuPDFCore.MuPDFRenderer;assembly=MuPDFCore.MuPDFRenderer"
 			 xmlns:anim="clr-namespace:Avalonia.Animation;assembly=MuPDFCore.MuPDFRenderer"
 			 xmlns:converter="clr-namespace:Avalon.Converters"
-			 xmlns:extensions="clr-namespace:Material.Styles.Controls.Extensions"
 			 xmlns:ic="using:FluentIcons.Avalonia" 
 			 xmlns:icxt="using:FluentIcons.Avalonia.MarkupExtensions" 
 			 mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
              x:Class="Avalon.Views.MainView"
-			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 			 x:DataType="vm:MainViewModel">
 
 	<Design.DataContext>
@@ -53,7 +51,7 @@
 
 				<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical" IsVisible="{Binding !FullScreenMode}">
 					<StackPanel Margin="8 -1 0 0" Orientation="Horizontal" >
-						<ic:SymbolIcon Symbol="Folder" IsFilled="True" Foreground="Gray" Width="25" FontSize="16"/>
+						<ic:SymbolIcon Symbol="Folder" IconVariant="Filled" Foreground="Gray" Width="25" FontSize="16"/>
 						<TextBlock Text="Filtered: " Foreground="Gray" FontStyle="Italic"/>
 						<TextBlock Text="{Binding ProjectsVM.NrFilteredFiles}" Foreground="Gray" FontStyle="Italic"/>
 						<TextBlock Text=" | Selected: " Foreground="Gray" FontStyle="Italic"/>
@@ -61,7 +59,7 @@
 
 					</StackPanel>
 					<StackPanel Margin="8 0 0 0" Orientation="Horizontal">
-						<ic:SymbolIcon Symbol="Document" IsFilled="True" Foreground="Gray" Width="25" FontSize="16"/>
+						<ic:SymbolIcon Symbol="Document" IconVariant="Filled" Foreground="Gray" Width="25" FontSize="16"/>
 						<TextBlock Text="{Binding ProjectsVM.CurrentFile.Namn}" Foreground="Gray" FontStyle="Italic"/>
 					</StackPanel>
 				</StackPanel>
@@ -72,13 +70,13 @@
 					<StackPanel Grid.Row="1" Grid.ColumnSpan="5" MinHeight="0" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5" IsVisible="{Binding !FullScreenMode}">
 						<Button Name="Columns" Width="140" BorderBrush="Gray" BorderThickness="1" Click="Border_PointerPressed">
 							<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="140">
-								<ic:SymbolIcon Grid.Column="0" Symbol="Database" IsFilled="False" FontSize="20"/>
+								<ic:SymbolIcon Grid.Column="0" Symbol="Database" IconVariant="Regular" FontSize="20"/>
 								<Label Grid.Column="1" Content="Metadata" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-								<ic:SymbolIcon Grid.Column="2" Symbol="CaretDown" IsFilled="False" FontSize="20"/>
+								<ic:SymbolIcon Grid.Column="2" Symbol="CaretDown" IconVariant="Regular" FontSize="20"/>
 							</Grid>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="0" VerticalOffset="2" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<ListBox Name="ColumnList" Height="510" Width="140" FlowDirection="LeftToRight" >
+									<ListBox Name="ColumnList" Height="510" Width="140" FlowDirection="LeftToRight">
 										<ListBoxItem Height="30"><CheckBox Content="Name" Height="30" IsChecked="{Binding ProjectsVM.Meta_1, Mode=TwoWay}"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="FileStatus" Height="30" IsChecked="{Binding ProjectsVM.Meta_2, Mode=TwoWay}"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="Filtyp" Height="30" IsChecked="{Binding ProjectsVM.Meta_3, Mode=TwoWay}"/></ListBoxItem>
@@ -106,7 +104,7 @@
 					<Grid ColumnDefinitions="*,30">
 						<TextBox Grid.Column="0" Watermark="Seach All Files" Name="SearchText" Width="160" KeyDown="on_start_search"/>
 						<Button Grid.Column="2" Click="on_search" >
-							<ic:SymbolIcon Symbol="Search" IsFilled="True" FontSize="20"/>
+							<ic:SymbolIcon Symbol="Search" IconVariant="Regular" FontSize="20"/>
 						</Button>
 					</Grid>
 				</StackPanel>
@@ -115,40 +113,72 @@
 
 						<ToggleButton Name="TrayStatus" ToolTip.Tip="Tray: Ctrl + R" HotKey="Ctrl+R" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_tray">
 							<StackPanel>
-								<ic:SymbolIcon Name="TrayOn" Symbol="Star" IsFilled="False" FontSize="20" IsVisible="False"/>
-								<ic:SymbolIcon Name="TrayOff" Symbol="StarOff" IsFilled="False" FontSize="20"/>
+								<ic:SymbolIcon Name="TrayOn" Symbol="Star" IconVariant="Regular" FontSize="20" IsVisible="False"/>
+								<ic:SymbolIcon Name="TrayOff" Symbol="StarOff" IconVariant="Regular" FontSize="20"/>
 							</StackPanel>
 						</ToggleButton>
 
 						<ToggleButton Name="TreeStatus" ToolTip.Tip="Treeview: Ctrl + T" HotKey="Ctrl+T" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_treeview">
 							<StackPanel>
-								<ic:SymbolIcon Name="TreeviewOn" Symbol="DataTreemap" IsFilled="True" FontSize="20" IsVisible="False"/>
-								<ic:SymbolIcon Name="TreeviewOff" Symbol="DataTreemap" IsFilled="False" FontSize="20"/>
+								<ic:SymbolIcon Name="TreeviewOn" Symbol="DataTreemap" IconVariant="Filled" FontSize="20" IsVisible="False"/>
+								<ic:SymbolIcon Name="TreeviewOff" Symbol="DataTreemap" IconVariant="Regular" FontSize="20"/>
 							</StackPanel>
 						</ToggleButton>
 
 						<ToggleButton Name="PreviewToggle" ToolTip.Tip="Preview: Ctrl + P" HotKey="Ctrl+P" FontWeight="Normal" Margin="0,-5,0,0">
 							<StackPanel>
-								<ic:SymbolIcon Name="EyeOnIcon" Symbol="Eye" IsFilled="False" FontSize="20" IsVisible="False"/>
-								<ic:SymbolIcon Name="EyeOffIcon" Symbol="EyeOff" IsFilled="False" FontSize="20"/>
+								<ic:SymbolIcon Name="EyeOnIcon" Symbol="Eye" IconVariant="Regular" FontSize="20" IsVisible="False"/>
+								<ic:SymbolIcon Name="EyeOffIcon" Symbol="EyeOff" IconVariant="Regular" FontSize="20"/>
 							</StackPanel>
 						</ToggleButton>	
 
 						<ToggleButton Name="ThemeToggle" ToolTip.Tip="Mode: Ctrl + M" HotKey="Ctrl+M" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_theme">
 							<StackPanel>
-								<ic:SymbolIcon Name="ModeNightIcon" Symbol="WeatherMoon" IsFilled="False" FontSize="20" IsVisible="False"/>
-								<ic:SymbolIcon Name="ModeDayIcon" Symbol="WeatherSunny" IsFilled="False" FontSize="20"/>
+								<ic:SymbolIcon Name="ModeNightIcon" Symbol="WeatherMoon" IconVariant="Regular" FontSize="20" IsVisible="False"/>
+								<ic:SymbolIcon Name="ModeDayIcon" Symbol="WeatherSunny" IconVariant="Regular" FontSize="20"/>
 							</StackPanel>
 						</ToggleButton>
 						
 						<ToggleButton Name="Lockedstatus" ToolTip.Tip="Lock Files: Ctrl + L" HotKey="Ctrl+L" FontWeight="Normal" Margin="0,-5,0,0" VerticalAlignment="Center">
 							<StackPanel>
-								<ic:SymbolIcon Name="LockIcon" Symbol="LockClosed" IsFilled="False" FontSize="20" IsVisible="False"/>
-								<ic:SymbolIcon Name="UnlockedIcon" Symbol="LockOpen" IsFilled="False" FontSize="20"/>
+								<ic:SymbolIcon Name="LockIcon" Symbol="LockClosed" IconVariant="Regular" FontSize="20" IsVisible="False"/>
+								<ic:SymbolIcon Name="UnlockedIcon" Symbol="LockOpen" IconVariant="Regular" FontSize="20"/>
 							</StackPanel>
 						</ToggleButton>
 
-						<Button Name="InfoText" ToolTip.Tip="Project Notepad: Ctrl + N" HotKey="Ctrl+N" Width="33" FontWeight="Normal" Margin="0,-5,0,0" Click="Border_PointerPressed">
+						<Button Name="ColorMenu" ToolTip.Tip="UI Color" FontWeight="Normal" Height="33" Width="35" Margin="0,-5,0,0" Click="Border_PointerPressed">
+							<ic:SymbolIcon Symbol="Color" FontSize="20"/>
+							<Button.Flyout>
+								<Flyout FlyoutPresenterClasses="mySpecialClass" Placement="Bottom" VerticalOffset="5" ShowMode="Transient">
+									<Border Background="{DynamicResource MenuFlyoutPresenterBackground}">
+										
+										<Grid ColumnDefinitions="100,50" RowDefinitions="30,40,40,30,40,40,40" Margin="5">
+
+											<Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" FontWeight="Bold" Content="Dark theme" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+											<Label Grid.Column="0" Grid.Row="1" Content="Background" VerticalAlignment="Center"/>
+											<Label Grid.Column="0" Grid.Row="2" Content="Accent" VerticalAlignment="Center"/>
+
+											<Label Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" FontWeight="Bold" Content="Light theme" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+											<Label Grid.Column="0" Grid.Row="4" Content="Background" VerticalAlignment="Center"/>
+											<Label Grid.Column="0" Grid.Row="5" Content="Accent" VerticalAlignment="Center"/>
+
+											<ColorPicker Grid.Column="1" Grid.Row="1" Color="#333333" Name="BackgroundColorPickerDark" ColorChanged="OnColorChanged" Margin="5"/>
+											<ColorPicker Grid.Column="1" Grid.Row="2" Color="#444444" Name="AccentColorPickerDark" ColorChanged="OnColorChanged"/>
+
+											<ColorPicker Grid.Column="1" Grid.Row="4" Color="#dfe6e9" Name="BackgroundColorPickerLight" ColorChanged="OnColorChanged" Margin="5"/>
+											<ColorPicker Grid.Column="1" Grid.Row="5" Color="#999999" Name="AccentColorPickerLight" ColorChanged="OnColorChanged"/>
+											
+											<Button Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" Width="100" BorderBrush="Gray" Content="Reset" Click="ResetThemeColors" HorizontalAlignment="Center"/>
+											
+										</Grid>
+									</Border>
+								</Flyout>
+							</Button.Flyout>
+						</Button>
+						
+						
+
+						<Button Name="InfoText" ToolTip.Tip="Project Notepad: Ctrl + N" HotKey="Ctrl+N" Height="33" Width="35"  FontWeight="Normal" Margin="0,-5,0,0" Click="Border_PointerPressed">
 							<ic:SymbolIcon Symbol="Notebook" FontSize="20"/>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-110" VerticalOffset="45" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
@@ -163,12 +193,19 @@
 								</Flyout>
 							</Button.Flyout>
 						</Button>
+
+						
 						
 					</StackPanel>
 
 					<DataGrid Name="FileGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
 							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true" IsVisible="{Binding !FullScreenMode}">
-					
+						<DataGrid.Styles>
+							<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
+								<Setter Property="IsVisible" Value="false" />
+							</Style>
+						</DataGrid.Styles>
+						
 						<DataGrid.Columns>
 							<DataGridTextColumn Binding="{Binding Namn}"							Header="Namn"           Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_1}"  FontFamily="UbuntuMono"/>
 							<DataGridTextColumn Binding="{Binding FileStatus, Mode=OneWay}"			Header="FileStatus"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_2}"  FontFamily="Ubuntu"/>
@@ -194,7 +231,7 @@
 						</DataGrid.Columns>
 						
 						<DataGrid.ContextMenu>
-							<ContextMenu Name="Menu">
+							<ContextMenu Name="Menu" CornerRadius="0">
 								<MenuItem Name="OpenMenu" Header="Open" Icon="{icxt:SymbolIconExtension Symbol=Open}">
 									<MenuItem Name="OpenFileMenu" Header="Open PDF" Click="on_open_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentPdf}"/>
 									<MenuItem Name="OpenPathMenu" Header="Open Folder" Click="on_open_path" Icon="{icxt:SymbolIconExtension Symbol=FolderOpen}"/>
@@ -285,10 +322,10 @@
 									<Grid ColumnDefinitions="*,30,30" Margin="-5 0 -5 0">
 										<TextBox Grid.Column="0" Watermark="Seach String" Name="SearchRegex" KeyDown="OnStartSearhRegex"/>
 										<Button Grid.Column="1" Margin="0" Click="OnSeachRegex" BorderThickness="0" IsEnabled="{Binding !SearchBusy}">
-											<ic:SymbolIcon Symbol="Search" IsFilled="False" FontSize="20"/>
+											<ic:SymbolIcon Symbol="Search" IconVariant="Regular" FontSize="20"/>
 										</Button>
 										<Button Grid.Column="2" Margin="0" Click="OnClearSearch" BorderThickness="0">
-											<ic:SymbolIcon Symbol="Dismiss" IsFilled="False" FontSize="20"/>
+											<ic:SymbolIcon Symbol="Dismiss" IconVariant="Regular" FontSize="20"/>
 										</Button>
 									</Grid>
 								</Border>
@@ -296,11 +333,11 @@
 								<Border Grid.Row="2" BorderBrush="Gray" BorderThickness="0 0 0 1">
 									<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 										<Button ToolTip.Tip="Prev Search" ToolTip.Placement="Right" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding PrevSearchPage}">
-											<ic:SymbolIcon Symbol="ArrowPrevious" IsFilled="False" FontSize="20"/>
+											<ic:SymbolIcon Symbol="ArrowPrevious" IconVariant="Regular" FontSize="20"/>
 										</Button>
 
 										<Button ToolTip.Tip="Next Search" ToolTip.Placement="Right" BorderThickness="0" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding NextSearchPage}">
-											<ic:SymbolIcon Symbol="ArrowNext" IsFilled="False" FontSize="20"/>
+											<ic:SymbolIcon Symbol="ArrowNext" IconVariant="Regular" FontSize="20"/>
 										</Button>
 
 										<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -330,46 +367,46 @@
 							</StackPanel>
 
 							<Button ToolTip.Tip="Previous Page, Left" HotKey="Left" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Command="{Binding PrevPage}" CommandParameter="false">
-								<ic:SymbolIcon Symbol="ArrowPrevious" IsFilled="False" FontSize="20"/>
+								<ic:SymbolIcon Symbol="ArrowPrevious" IconVariant="Regular" FontSize="20"/>
 							</Button>
 
 							<Button ToolTip.Tip="Next Page, Right" HotKey="Right" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Command="{Binding NextPage}" CommandParameter="false">
-								<ic:SymbolIcon Symbol="ArrowNext" IsFilled="False" FontSize="20"/>
+								<ic:SymbolIcon Symbol="ArrowNext" IconVariant="Regular" FontSize="20"/>
 							</Button>
 
 							<Button ToolTip.Tip="Reset And Center, Ctrl+C" HotKey="Ctrl + C" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Click="ResetView">
-								<ic:SymbolIcon Symbol="ScaleFit" IsFilled="False" FontSize="20"/>
+								<ic:SymbolIcon Symbol="ScaleFit" IconVariant="Regular" FontSize="20"/>
 							</Button>
 
-							<ToggleButton ToolTip.Tip="Toggle Dimmed Background, Ctrl + G" HotKey="Ctrl+G" FontWeight="Normal" Name="DimmedMode" ToolTip.Placement="Right" IsChecked="{Binding DimmedBackground}" IsEnabled="False">
+							<Button ToolTip.Tip="Toggle Dimmed Background, Ctrl + G" HotKey="Ctrl+G" FontWeight="Normal" Name="DimmedMode" Command="{Binding ToggleDimmed}" ToolTip.Placement="Right" IsEnabled="False">
 								<StackPanel>
-									<ic:SymbolIcon Symbol="WeatherMoonOff" IsFilled="False" FontSize="20" IsVisible="{Binding !DimmedBackground}"/>
-									<ic:SymbolIcon Symbol="WeatherMoon" IsFilled="False" FontSize="20" IsVisible="{Binding DimmedBackground}"/>
+									<ic:SymbolIcon Symbol="WeatherMoonOff" IconVariant="Regular" FontSize="20" IsVisible="{Binding !DimmedBackground}"/>
+									<ic:SymbolIcon Symbol="WeatherMoon" IconVariant="Regular" FontSize="20" IsVisible="{Binding DimmedBackground}"/>
 								</StackPanel>
-							</ToggleButton>
+							</Button>
 
 							<ToggleButton ToolTip.Tip="Duak Page Mode, Ctrl + D" HotKey="Ctrl+D" FontWeight="Normal" ToolTip.Placement="Right" Name="DualMode" IsChecked="{Binding TwopageMode}" IsEnabled="{Binding TwopageModeAvail}" IsVisible="{Binding TwopageModeAvail}">
 								<StackPanel>
-									<ic:SymbolIcon Symbol="DocumentOnePage" IsFilled="False" FontSize="20" IsVisible="{Binding !TwopageMode}"/>
-									<ic:SymbolIcon Symbol="BookOpen" IsFilled="False" FontSize="20" IsVisible="{Binding TwopageMode}"/>
+									<ic:SymbolIcon Symbol="DocumentOnePage" IconVariant="Regular" FontSize="20" IsVisible="{Binding !TwopageMode}"/>
+									<ic:SymbolIcon Symbol="BookOpen" IconVariant="Regular" FontSize="20" IsVisible="{Binding TwopageMode}"/>
 								</StackPanel>
 							</ToggleButton>
 
 
 							<ToggleButton ToolTip.Tip="Fullscreen, Ctrl + X" HotKey="Ctrl+X" FontWeight="Normal" ToolTip.Placement="Right" Name="FullScreen" Click="OnFullscreenMode" IsEnabled="False">
-								<ic:SymbolIcon Symbol="PageFit" IsFilled="False" FontSize="20"/>
+								<ic:SymbolIcon Symbol="PageFit" IconVariant="Regular" FontSize="20"/>
 							</ToggleButton>
 
 							<ToggleButton ToolTip.Tip="Open Search, Ctrl + F" HotKey="Ctrl+F" FontWeight="Normal" ToolTip.Placement="Right" Name="SearchMode" Click="ToggleSearchMode" IsChecked="{Binding SearchMode}" IsEnabled="False">
 								<StackPanel>
-									<ic:SymbolIcon Symbol="Search" IsFilled="False" FontSize="20" IsVisible="{Binding !SearchMode}"/>
-									<ic:SymbolIcon Symbol="DocumentSearch" IsFilled="False" FontSize="20" IsVisible="{Binding SearchMode}"/>
+									<ic:SymbolIcon Symbol="Search" IconVariant="Regular" FontSize="20" IsVisible="{Binding !SearchMode}"/>
+									<ic:SymbolIcon Symbol="DocumentSearch" IconVariant="Regular" FontSize="20" IsVisible="{Binding SearchMode}"/>
 								</StackPanel>
 							</ToggleButton>
 
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10 0 5 0">
-								<ic:SymbolIcon Symbol="Checkmark" IsFilled="False" FontSize="20" IsVisible="{Binding !FileWorkerBusy}"/>
-								<ic:SymbolIcon Symbol="ArrowClockwise" IsFilled="False" FontSize="20" IsVisible="{Binding FileWorkerBusy}"/>
+								<ic:SymbolIcon Symbol="Checkmark" IconVariant="Regular" FontSize="20" IsVisible="{Binding !FileWorkerBusy}"/>
+								<ic:SymbolIcon Symbol="ArrowClockwise" IconVariant="Regular" FontSize="20" IsVisible="{Binding FileWorkerBusy}"/>
 							</StackPanel>
 
 							

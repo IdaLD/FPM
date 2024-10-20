@@ -1,8 +1,5 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
-			 xmlns:assists="clr-namespace:Material.Styles.Assists"
-			 xmlns:controls="clr-namespace:Material.Styles.Controls"
 			 xmlns:system="clr-namespace:System;assembly=netstandard"
 			 xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
 			 RequestedThemeVariant="Dark"
@@ -17,11 +14,13 @@
 		</FluentTheme>
 
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+		<StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml"/> 
 
 		<Style Selector="FlyoutPresenter.mySpecialClass">
-			<Setter Property="Background" Value="{DynamicResource MaterialCardBackgroundBrush}"/>
+			<Setter Property="Background" Value="{DynamicResource MenuFlyoutPresenterBackground}"/>
 			<Setter Property="MaxWidth" Value="999" />
 			<Setter Property="Padding" Value="0" />
+			<Setter Property="CornerRadius" Value="0" />
 		</Style>
 
 		<Style Selector="TreeViewItem">
@@ -41,6 +40,7 @@
 			<Setter Property="Height" Value="30"/>
 			<Setter Property="MinWidth" Value="30"/>
 			<Setter Property="Padding" Value="0"/>
+			<Setter Property="CornerRadius" Value="0"/>
 			<Setter Property="VerticalContentAlignment" Value="Center"/>
 			<Setter Property="Background" Value="Transparent"/>
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -68,6 +68,10 @@
 
 		<Style Selector="DataGrid">
 			<Setter Property="Background" Value="{DynamicResource TextControlBackground}"/>
+		</Style>
+
+		<Style Selector="DataGrid:focus DataGridCell:current /template/ Grid#FocusVisual">
+			<Setter Property="IsVisible" Value="True" />
 		</Style>
 
 	</Application.Styles>
