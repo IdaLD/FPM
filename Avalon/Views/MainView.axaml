@@ -75,8 +75,8 @@
 								<ic:SymbolIcon Grid.Column="2" Symbol="CaretDown" IconVariant="Regular" FontSize="20"/>
 							</Grid>
 							<Button.Flyout>
-								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="0" VerticalOffset="2" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
-									<ListBox Name="ColumnList" Height="510" Width="140" FlowDirection="LeftToRight">
+								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="0" VerticalOffset="2" Placement="Bottom" ShowMode="Transient">
+									<StackPanel Orientation="Vertical" FlowDirection="LeftToRight" Width="140" Margin="0">
 										<ListBoxItem Height="30"><CheckBox Content="Name" Height="30" IsChecked="{Binding ProjectsVM.Meta_1, Mode=TwoWay}"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="FileStatus" Height="30" IsChecked="{Binding ProjectsVM.Meta_2, Mode=TwoWay}"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="Filtyp" Height="30" IsChecked="{Binding ProjectsVM.Meta_3, Mode=TwoWay}"/></ListBoxItem>
@@ -94,7 +94,7 @@
 										<ListBoxItem Height="30"><CheckBox Content="Revidering" Height="30" IsChecked="{Binding ProjectsVM.Meta_15, Mode=TwoWay}"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="Sökväg" Height="30" IsChecked="{Binding ProjectsVM.Meta_16, Mode=TwoWay}"/></ListBoxItem>
 										<Button Content="Set as default" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding ProjectsVM.SetAllMetaCheckState}"/>
-									</ListBox>
+									</StackPanel>
 								</Flyout>
 							</Button.Flyout>
 						</Button>
@@ -146,35 +146,9 @@
 							</StackPanel>
 						</ToggleButton>
 
-						<Button Name="ColorMenu" ToolTip.Tip="UI Color" FontWeight="Normal" Height="33" Width="35" Margin="0,-5,0,0" Click="Border_PointerPressed">
+						<ToggleButton Name="ColorMenu" ToolTip.Tip="UI Color" FontWeight="Normal" Height="33" Width="35" Margin="0,-5,0,0" IsChecked="{Binding ColorPopup}">
 							<ic:SymbolIcon Symbol="Color" FontSize="20"/>
-							<Button.Flyout>
-								<Flyout FlyoutPresenterClasses="mySpecialClass" Placement="Bottom" VerticalOffset="5" ShowMode="Transient">
-									<Border Background="{DynamicResource MenuFlyoutPresenterBackground}">
-										
-										<Grid ColumnDefinitions="100,50" RowDefinitions="30,40,40,30,40,40,40" Margin="5">
-
-											<Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" FontWeight="Bold" Content="Dark theme" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-											<Label Grid.Column="0" Grid.Row="1" Content="Background" VerticalAlignment="Center"/>
-											<Label Grid.Column="0" Grid.Row="2" Content="Accent" VerticalAlignment="Center"/>
-
-											<Label Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" FontWeight="Bold" Content="Light theme" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-											<Label Grid.Column="0" Grid.Row="4" Content="Background" VerticalAlignment="Center"/>
-											<Label Grid.Column="0" Grid.Row="5" Content="Accent" VerticalAlignment="Center"/>
-
-											<ColorPicker Grid.Column="1" Grid.Row="1" Color="#333333" Name="BackgroundColorPickerDark" ColorChanged="OnColorChanged" Margin="5"/>
-											<ColorPicker Grid.Column="1" Grid.Row="2" Color="#444444" Name="AccentColorPickerDark" ColorChanged="OnColorChanged"/>
-
-											<ColorPicker Grid.Column="1" Grid.Row="4" Color="#dfe6e9" Name="BackgroundColorPickerLight" ColorChanged="OnColorChanged" Margin="5"/>
-											<ColorPicker Grid.Column="1" Grid.Row="5" Color="#999999" Name="AccentColorPickerLight" ColorChanged="OnColorChanged"/>
-											
-											<Button Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" Width="100" BorderBrush="Gray" Content="Reset" Click="ResetThemeColors" HorizontalAlignment="Center"/>
-											
-										</Grid>
-									</Border>
-								</Flyout>
-							</Button.Flyout>
-						</Button>
+						</ToggleButton>
 						
 						
 
@@ -491,6 +465,29 @@
 							<Button Name="TagCancel" Content="Cancel" Width="70" BorderBrush="Gray" Click="CloseTagPop"/>
 						</StackPanel>
 					</StackPanel>
+				</Border>
+
+				<Border IsVisible="{Binding ColorPopup}" IsHitTestVisible="{Binding ColorPopup}" Grid.ColumnSpan="5" Grid.RowSpan="3" HorizontalAlignment="Center"
+					VerticalAlignment="Center" Padding="10" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">
+					<Grid ColumnDefinitions="*,*" RowDefinitions="30,40,40,30,40,40,30">
+						<Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" FontWeight="Bold" Content="Dark theme" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						<Label Grid.Column="0" Grid.Row="1" Content="Background" VerticalAlignment="Center"/>
+						<Label Grid.Column="0" Grid.Row="2" Content="Accent" VerticalAlignment="Center"/>
+
+						<Label Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" FontWeight="Bold" Content="Light theme" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						<Label Grid.Column="0" Grid.Row="4" Content="Background" VerticalAlignment="Center"/>
+						<Label Grid.Column="0" Grid.Row="5" Content="Accent" VerticalAlignment="Center"/>
+
+						<ColorPicker Grid.Column="1" Grid.Row="1" Color="#333333" Name="BackgroundColorPickerDark" ColorChanged="OnColorChanged" Margin="5"/>
+						<ColorPicker Grid.Column="1" Grid.Row="2" Color="#444444" Name="AccentColorPickerDark" ColorChanged="OnColorChanged"/>
+
+						<ColorPicker Grid.Column="1" Grid.Row="4" Color="#dfe6e9" Name="BackgroundColorPickerLight" ColorChanged="OnColorChanged" Margin="5"/>
+						<ColorPicker Grid.Column="1" Grid.Row="5" Color="#999999" Name="AccentColorPickerLight" ColorChanged="OnColorChanged"/>
+
+						<Button Grid.Column="0" Grid.Row="6" Width="80" BorderBrush="Gray" Content="Reset" Click="ResetThemeColors" HorizontalAlignment="Center"/>
+						<Button Grid.Column="1" Grid.Row="6" Width="80" BorderBrush="Gray" Content="Close" Command="{Binding CloseColorPopup}" HorizontalAlignment="Center"/>
+						
+					</Grid>
 				</Border>
 				
 			</Grid>
