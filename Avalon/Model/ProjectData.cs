@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Avalonia.Controls;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing.Printing;
 using System.Linq;
 
 namespace Avalon.Model
@@ -34,6 +36,13 @@ namespace Avalon.Model
         {
             get { return notes; }
             set { notes = value; RaisePropertyChanged("Notes"); }
+        }
+
+        private string[] colors;
+        public string[] Colors
+        {
+            get { return colors; }
+            set { colors = value; RaisePropertyChanged("Colors"); }
         }
 
         private List<string> filetypes = new List<string>();

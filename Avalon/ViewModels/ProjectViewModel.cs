@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalon.Model;
@@ -566,6 +567,14 @@ namespace Avalon.ViewModels
             if (FavProject != null)
             {
                 FavProject.SetFiletypeList();
+            }
+        }
+
+        public void SetProjectColor(string[] colors)
+        {
+            foreach(ProjectData project in StoredProjects)
+            {
+                project.Colors = colors;
             }
         }
 

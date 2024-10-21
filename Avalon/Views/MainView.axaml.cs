@@ -16,6 +16,7 @@ using Avalonia.Data;
 using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
 using Org.BouncyCastle.Asn1.BC;
+using System.Diagnostics;
 
 
 namespace Avalon.Views;
@@ -81,7 +82,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         get_datacontext();
         pwr.GetRenderControl(MuPDFRenderer);
 
-        
         Lockedstatus.IsChecked = true;
         TreeStatus.IsChecked = true;
 
@@ -89,6 +89,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             string path = "C:\\FIlePathManager\\Projects.json";
             ctx.read_savefile(path);
+            OnColorStartup();
         }
         catch
         { }
@@ -115,13 +116,42 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     }
 
+    public void OnColorStartup()
+    {
+        string[] colors = ctx.ProjectsVM.StoredProjects.FirstOrDefault().Colors;
+
+        if (colors != null)
+        {
+            Color AvaBackgroundDark = new Color();
+            Color AvaAccentDark = new Color();
+
+            Color AvaBackgroundLight = new Color();
+            Color AvaAccentLight = new Color();
+
+            Color.TryParse(colors[0], out AvaBackgroundDark);
+            Color.TryParse(colors[1], out AvaAccentDark);
+
+            Color.TryParse(colors[2], out AvaBackgroundLight);
+            Color.TryParse(colors[3], out AvaAccentLight);
+
+            BackgroundColorPickerDark.Color = AvaBackgroundDark;
+            AccentColorPickerDark.Color = AvaAccentDark;
+
+            BackgroundColorPickerLight.Color = AvaBackgroundLight;
+            AccentColorPickerLight.Color = AvaAccentLight;
+        }
+
+    }
+
     public void OnColorChanged(object sender, ColorChangedEventArgs e)
     {
-        string backgroundStringDark = BackgroundColorPickerDark.Color.ToString();
-        string accentStringDark = AccentColorPickerDark.Color.ToString();
+        string[] colors = new string[4];
 
-        string backgroundStringLight = BackgroundColorPickerLight.Color.ToString();
-        string accentStringLight = AccentColorPickerLight.Color.ToString();
+        colors[0] = BackgroundColorPickerDark.Color.ToString();
+        colors[1] = AccentColorPickerDark.Color.ToString();
+
+        colors[2] = BackgroundColorPickerLight.Color.ToString();
+        colors[3] = AccentColorPickerLight.Color.ToString();
 
         Color AvaBackgroundDark = new Color();
         Color AvaAccentDark = new Color();
@@ -129,11 +159,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         Color AvaBackgroundLight = new Color();
         Color AvaAccentLight = new Color();
 
-        Color.TryParse(backgroundStringDark, out AvaBackgroundDark);
-        Color.TryParse(accentStringDark, out AvaAccentDark);
+        Color.TryParse(colors[0], out AvaBackgroundDark);
+        Color.TryParse(colors[1], out AvaAccentDark);
 
-        Color.TryParse(backgroundStringLight, out AvaBackgroundLight);
-        Color.TryParse(accentStringLight, out AvaAccentLight);
+        Color.TryParse(colors[2], out AvaBackgroundLight);
+        Color.TryParse(colors[3], out AvaAccentLight);
+
+        ctx.ProjectsVM.SetProjectColor(colors);
 
         var window = Window.GetTopLevel(this);
 
