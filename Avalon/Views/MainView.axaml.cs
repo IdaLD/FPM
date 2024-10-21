@@ -169,7 +169,20 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         var window = Window.GetTopLevel(this);
 
-        window.Styles.Clear();
+        if (window.Styles.Count == 17)
+        {
+            window.Styles.RemoveAt(16);
+        }
+
+        foreach(var style in window.Styles)
+        {
+            Debug.WriteLine(style.ToString());
+        }
+
+        Debug.WriteLine(window.Styles.Count);
+            
+        //window.Styles.Clear();
+        
 
         var theme = new FluentTheme()
         {
@@ -180,6 +193,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
         };
         window.Styles.Add(theme);
+        set_theme_colors();
+        update_row_color();
+
         //window.RequestedThemeVariant = ThemeVariant.Dark;
     }
 
@@ -946,7 +962,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void DataGrid_OnLoadingRow(object? sender, DataGridRowEventArgs e)
     {
-
         Args.Add(e);
 
         var dataObject = e.Row.DataContext as FileData;

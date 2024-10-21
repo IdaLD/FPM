@@ -205,15 +205,16 @@
 						</DataGrid.Columns>
 						
 						<DataGrid.ContextMenu>
-							<ContextMenu Name="Menu" CornerRadius="0">
+							<ContextMenu Name="Menu" CornerRadius="0" ItemsPanel="">
+								
 								<MenuItem Name="OpenMenu" Header="Open" Icon="{icxt:SymbolIconExtension Symbol=Open}">
 									<MenuItem Name="OpenFileMenu" Header="Open PDF" Click="on_open_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentPdf}"/>
 									<MenuItem Name="OpenPathMenu" Header="Open Folder" Click="on_open_path" Icon="{icxt:SymbolIconExtension Symbol=FolderOpen}"/>
 									<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile" Icon="{icxt:SymbolIconExtension Symbol=DocumentDataLink}"/>
 									<MenuItem Name="OpenDocMenu" Header="Open Docx" Click="on_open_doc" Icon="{icxt:SymbolIconExtension Symbol=DocumentEdit}"/>
 									<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg" Icon="{icxt:SymbolIconExtension Symbol=DocumentTableCube}"/>
-								
 								</MenuItem>
+								
 								<MenuItem Name="MetaMenu" Header="Metadata" Icon="{icxt:SymbolIconExtension Symbol=Database}">
 									<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta" Icon="{icxt:SymbolIconExtension Symbol=DatabaseSearch}"/>
 									<MenuItem Name="FetchMetadata" Header="Fetch All" Click="on_fetch_full_meta" Icon="{icxt:SymbolIconExtension Symbol=DatabaseLink}"/>

@@ -8,8 +8,8 @@
 	<Application.Styles>
 		<FluentTheme>
 			<FluentTheme.Palettes>
-				<ColorPaletteResources x:Key="Light" Accent="#999999" RegionColor="#dfe6e9" ErrorText="Red" />
-				<ColorPaletteResources x:Key="Dark" Accent="#444444" RegionColor="#333333" ErrorText="Red" />
+				<ColorPaletteResources x:Key="Light" Accent="#999999" RegionColor="#dfe6e9"/>
+				<ColorPaletteResources x:Key="Dark" Accent="#444444" RegionColor="#333333" />
 			</FluentTheme.Palettes>
 		</FluentTheme>
 
