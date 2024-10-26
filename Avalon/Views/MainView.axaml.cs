@@ -17,6 +17,10 @@ using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
 using Org.BouncyCastle.Asn1.BC;
 using System.Diagnostics;
+using Avalonia;
+using Avalonia.Layout;
+using Avalonia.VisualTree;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 
 
 namespace Avalon.Views;
@@ -89,7 +93,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             string path = "C:\\FIlePathManager\\Projects.json";
             ctx.read_savefile(path);
-            OnColorStartup();
+            //OnColorStartup();
         }
         catch
         { }
@@ -116,109 +120,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     }
 
-    public void OnColorStartup()
-    {
-        string[] colors = ctx.ProjectsVM.StoredProjects.FirstOrDefault().Colors;
-
-        if (colors != null)
-        {
-            Color AvaBackgroundDark = new Color();
-            Color AvaAccentDark = new Color();
-
-            Color AvaBackgroundLight = new Color();
-            Color AvaAccentLight = new Color();
-
-            Color.TryParse(colors[0], out AvaBackgroundDark);
-            Color.TryParse(colors[1], out AvaAccentDark);
-
-            Color.TryParse(colors[2], out AvaBackgroundLight);
-            Color.TryParse(colors[3], out AvaAccentLight);
-
-            BackgroundColorPickerDark.Color = AvaBackgroundDark;
-            AccentColorPickerDark.Color = AvaAccentDark;
-
-            BackgroundColorPickerLight.Color = AvaBackgroundLight;
-            AccentColorPickerLight.Color = AvaAccentLight;
-        }
-
-    }
-
-    public void OnColorChanged(object sender, ColorChangedEventArgs e)
-    {
-        string[] colors = new string[4];
-
-        colors[0] = BackgroundColorPickerDark.Color.ToString();
-        colors[1] = AccentColorPickerDark.Color.ToString();
-
-        colors[2] = BackgroundColorPickerLight.Color.ToString();
-        colors[3] = AccentColorPickerLight.Color.ToString();
-
-        Color AvaBackgroundDark = new Color();
-        Color AvaAccentDark = new Color();
-
-        Color AvaBackgroundLight = new Color();
-        Color AvaAccentLight = new Color();
-
-        Color.TryParse(colors[0], out AvaBackgroundDark);
-        Color.TryParse(colors[1], out AvaAccentDark);
-
-        Color.TryParse(colors[2], out AvaBackgroundLight);
-        Color.TryParse(colors[3], out AvaAccentLight);
-
-        ctx.ProjectsVM.SetProjectColor(colors);
-
-        var window = Window.GetTopLevel(this);
-
-        if (window.Styles.Count == 17)
-        {
-            window.Styles.RemoveAt(16);
-        }
-
-        foreach(var style in window.Styles)
-        {
-            Debug.WriteLine(style.ToString());
-        }
-
-        Debug.WriteLine(window.Styles.Count);
-            
-        //window.Styles.Clear();
-        
-
-        var theme = new FluentTheme()
-        {
-            Palettes =
-        {
-            [ThemeVariant.Dark] = new ColorPaletteResources() {RegionColor = AvaBackgroundDark, Accent = AvaAccentDark },
-            [ThemeVariant.Light] = new ColorPaletteResources() {RegionColor = AvaBackgroundLight, Accent = AvaAccentLight }
-        }
-        };
-        window.Styles.Add(theme);
-        set_theme_colors();
-        update_row_color();
-
-        //window.RequestedThemeVariant = ThemeVariant.Dark;
-    }
-
     public void ResetThemeColors(object sender, RoutedEventArgs e)
     {
+        BackgroundColorPickerDark.Color = Color.Parse("#333333");
+        AccentColorPickerDark.Color = Color.Parse("#444444");
 
-        Color AvaBackgroundDark = new Color();
-        Color AvaAccentDark = new Color();
-
-        Color AvaBackgroundLight = new Color();
-        Color AvaAccentLight = new Color();
-
-        Color.TryParse("#333333", out AvaBackgroundDark);
-        Color.TryParse("#444444", out AvaAccentDark);
-
-        Color.TryParse("#dfe6e9", out AvaBackgroundLight);
-        Color.TryParse("#999999", out AvaAccentLight);
-
-        BackgroundColorPickerDark.Color = AvaBackgroundDark;
-        AccentColorPickerDark.Color = AvaAccentDark;
-
-        BackgroundColorPickerLight.Color = AvaBackgroundLight;
-        AccentColorPickerLight.Color = AvaAccentLight;
+        BackgroundColorPickerLight.Color = Color.Parse("#dfe6e9");
+        AccentColorPickerLight.Color = Color.Parse("#999999");
     }
 
     public void on_search(object sender, RoutedEventArgs e)

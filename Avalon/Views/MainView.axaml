@@ -479,11 +479,11 @@
 						<Label Grid.Column="0" Grid.Row="4" Content="Background" VerticalAlignment="Center"/>
 						<Label Grid.Column="0" Grid.Row="5" Content="Accent" VerticalAlignment="Center"/>
 
-						<ColorPicker Grid.Column="1" Grid.Row="1" Color="#333333" Name="BackgroundColorPickerDark" ColorChanged="OnColorChanged" Margin="5"/>
-						<ColorPicker Grid.Column="1" Grid.Row="2" Color="#444444" Name="AccentColorPickerDark" ColorChanged="OnColorChanged"/>
+						<ColorPicker Grid.Column="1" Grid.Row="1" Color="{Binding Color1}" Name="BackgroundColorPickerDark"/>
+						<ColorPicker Grid.Column="1" Grid.Row="2" Color="{Binding Color2}" Name="AccentColorPickerDark"/>
 
-						<ColorPicker Grid.Column="1" Grid.Row="4" Color="#dfe6e9" Name="BackgroundColorPickerLight" ColorChanged="OnColorChanged" Margin="5"/>
-						<ColorPicker Grid.Column="1" Grid.Row="5" Color="#999999" Name="AccentColorPickerLight" ColorChanged="OnColorChanged"/>
+						<ColorPicker Grid.Column="1" Grid.Row="4" Color="{Binding Color3}" Name="BackgroundColorPickerLight"/>
+						<ColorPicker Grid.Column="1" Grid.Row="5" Color="{Binding Color4}" Name="AccentColorPickerLight"/>
 
 						<Button Grid.Column="0" Grid.Row="6" Width="80" BorderBrush="Gray" Content="Reset" Click="ResetThemeColors" HorizontalAlignment="Center"/>
 						<Button Grid.Column="1" Grid.Row="6" Width="80" BorderBrush="Gray" Content="Close" Command="{Binding CloseColorPopup}" HorizontalAlignment="Center"/>

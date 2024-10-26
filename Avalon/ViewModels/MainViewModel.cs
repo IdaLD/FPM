@@ -11,6 +11,10 @@ using System.Text;
 using System;
 using System.ComponentModel;
 using Avalon.Model;
+using Avalonia.Media;
+using Org.BouncyCastle.Asn1.BC;
+using Avalonia.Styling;
+using Avalonia.Themes.Fluent;
 
 
 namespace Avalon.ViewModels
@@ -38,6 +42,34 @@ namespace Avalon.ViewModels
         public List<string> PathStore = new List<string>();
 
         public string ProjectMessage { get; set; } = "";
+
+        private Color color1 = Color.Parse("#333333");
+        public Color Color1
+        {
+            get { return color1; }
+            set { color1 = value; OnPropertyChanged("Color1"); ColorChanged(); }
+        }
+
+        private Color color2 = Color.Parse("#444444");
+        public Color Color2
+        {
+            get { return color2; }
+            set { color2 = value; OnPropertyChanged("Color2"); ColorChanged(); }
+        }
+
+        private Color color3 = Color.Parse("#dfe6e9");
+        public Color Color3
+        {
+            get { return color3; }
+            set { color3 = value; OnPropertyChanged("Color3"); ColorChanged(); }
+        }
+
+        private Color color4 = Color.Parse("#999999");
+        public Color Color4
+        {
+            get { return color4; }
+            set { color4 = value; OnPropertyChanged("Color4"); ColorChanged(); }
+        }
 
         private bool fullScreenMode = false;
         public bool FullScreenMode
@@ -151,6 +183,7 @@ namespace Avalon.ViewModels
                 ProjectsVM.StoredProjects = JsonConvert.DeserializeObject<ObservableCollection<ProjectData>>(fileContent);
                 ProjectsVM.SetProjectlist();
                 ProjectsVM.SetDefaultSelection();
+                SetCurrentColor();
                 SetAllowedTypes();
 
             }
@@ -165,12 +198,15 @@ namespace Avalon.ViewModels
                 ProjectsVM.StoredProjects = JsonConvert.DeserializeObject<ObservableCollection<ProjectData>>(json);
                 ProjectsVM.SetProjectlist();
                 ProjectsVM.SetDefaultSelection();
+                SetCurrentColor();
                 SetAllowedTypes();
             }
         }
 
         public async Task SaveFile(Avalonia.Visual window)
         {
+            ProjectsVM.SetProjectColor(Color1, Color2, Color3, Color4);
+
             var topLevel = TopLevel.GetTopLevel(window);
 
             var jsonformat = new FilePickerFileType("Json format") { Patterns = new[] { "*.json" } };
@@ -196,11 +232,12 @@ namespace Avalon.ViewModels
 
         public async Task SaveFileAuto(string path)
         {
+            ProjectsVM.SetProjectColor(Color1, Color2, Color3, Color4);
+
             using (StreamWriter streamWriter = new StreamWriter(path))
             {
                 var data = JsonConvert.SerializeObject(ProjectsVM.StoredProjects);
                 await streamWriter.WriteLineAsync(data);
-
             }
         }
 
@@ -223,6 +260,33 @@ namespace Avalon.ViewModels
                     ProjectsVM.SetDefaultType();
                 }
             }
+        }
+
+        public void SetCurrentColor()
+        {
+            string[] hexColors = ProjectsVM.GetDefaultProject().Colors;
+
+            if (hexColors != null)
+            {
+                Color1 = Color.Parse(hexColors[0]);
+                Color2 = Color.Parse(hexColors[1]);
+                Color3 = Color.Parse(hexColors[2]);
+                Color4 = Color.Parse(hexColors[3]);
+            }
+        }
+
+        public void ColorChanged()
+        {           
+            var theme = new FluentTheme()
+            {
+                Palettes =
+                {
+                    [ThemeVariant.Dark] = new ColorPaletteResources() {RegionColor = Color1, Accent = Color2 },
+                    [ThemeVariant.Light] = new ColorPaletteResources() {RegionColor = Color3, Accent = Color4 }
+                }
+            };
+
+            App.Current.Resources = theme.Resources;   
         }
 
         public void AddFilesDrag(string path)

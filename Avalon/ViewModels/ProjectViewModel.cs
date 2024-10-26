@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalon.Model;
 using Avalonia.Controls;
+using Avalonia.Media;
 
 namespace Avalon.ViewModels
 {
@@ -490,7 +491,7 @@ namespace Avalon.ViewModels
 
         public ProjectData GetDefaultProject()
         {
-            return StoredProjects.FirstOrDefault();
+            return StoredProjects.Where(x => x.Category != "Search").Where(x=>x.Category != "Favorites").FirstOrDefault();
         }
 
         public void TransferFiles(string toProjectName)
@@ -570,11 +571,14 @@ namespace Avalon.ViewModels
             }
         }
 
-        public void SetProjectColor(string[] colors)
+        public void SetProjectColor(Color color1, Color color2, Color color3, Color color4)
         {
             foreach(ProjectData project in StoredProjects)
             {
-                project.Colors = colors;
+                project.Colors[0] = color1.ToString();
+                project.Colors[1] = color2.ToString();
+                project.Colors[2] = color3.ToString();
+                project.Colors[3] = color4.ToString();
             }
         }
 

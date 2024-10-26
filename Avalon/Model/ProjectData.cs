@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Media;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -39,6 +40,7 @@ namespace Avalon.Model
         }
 
         private string[] colors;
+
         public string[] Colors
         {
             get { return colors; }
