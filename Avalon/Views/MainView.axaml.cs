@@ -44,6 +44,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, select_favorite);
         TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_tray);
+        FavoriteGroups.AddHandler(ListBox.SelectionChangedEvent, OnFavoriteGroupChanged);
 
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
         FileGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
@@ -761,10 +762,26 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.select_files(files);
     }
 
+    private void OnAddFavGroup(object sender, RoutedEventArgs e)
+    {
+        ctx.AddFavGroup(NewFavGroupInput.Text);
+        NewFavGroupInput.Clear();
+    }
+
     private void OnAddFavorite(object sender, RoutedEventArgs e)
     {
         MenuItem source = e.Source as MenuItem;
         ctx.ProjectsVM.AddFavorite(source.Header.ToString());
+        ctx.CurrentFavorite = source.Header.ToString();
+    }
+
+    private void OnFavoriteGroupChanged(object sender, RoutedEventArgs e)
+    {
+        ListBox source = e.Source as ListBox;
+        if (source.SelectedItem != null)
+        {
+            ctx.CurrentFavorite = source.SelectedItem.ToString();
+        }
     }
 
     private void select_files(object sender, RoutedEventArgs e)

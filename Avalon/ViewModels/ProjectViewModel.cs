@@ -67,6 +67,13 @@ namespace Avalon.ViewModels
             set { filteredFiles = value; OnPropertyChanged("FilteredFiles"); }
         }
 
+        private IEnumerable<FileData> filteredFav;
+        public IEnumerable<FileData> FilteredFav
+        {
+            get { return filteredFav; }
+            set { filteredFav = value; OnPropertyChanged("FilteredFav"); }
+        }
+
         private ObservableCollection<FileData> trayFiles = new ObservableCollection<FileData>();
         public ObservableCollection<FileData> TrayFiles
         {
@@ -551,7 +558,7 @@ namespace Avalon.ViewModels
 
             foreach(FileData file in CurrentFiles)
             {
-                FileData currentFav = new FileData() { Namn = file.Namn, Sökväg = file.Sökväg, Uppdrag = group };
+                FileData currentFav = new FileData() { Namn = file.Namn, Sökväg = file.Sökväg, Filtyp = file.Filtyp, Uppdrag = group };
                 FavProject.AddFile(currentFav);
             }
 
@@ -567,6 +574,28 @@ namespace Avalon.ViewModels
             }
 
             FavProject.SetFiletypeList();
+        }
+
+        public void RemoveFavoriteGroup(string group)
+        {
+            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
+
+            IEnumerable<FileData> FavFiles = FavProject.StoredFiles.Where(x => x.Uppdrag == group);
+
+            foreach (FileData file in FavFiles)
+            {
+                FavProject.RemoveFile(CurrentFile);
+            }
+
+            FavProject.SetFiletypeList();
+        }
+
+        public void FilterFavorite(string group)
+        {
+            Debug.WriteLine("Updating fav: " + group);
+
+            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
+            FilteredFav = FavProject.StoredFiles.Where(x=>x.Uppdrag == group);
         }
 
         public void UpdateFavorite()

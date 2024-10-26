@@ -52,7 +52,7 @@ namespace Avalon.ViewModels
         public string CurrentFavorite
         {
             get { return currentFavorite; }
-            set { currentFavorite = value; OnPropertyChanged("CurrentFavorite"); }
+            set { currentFavorite = value; OnPropertyChanged("CurrentFavorite"); ProjectsVM.FilterFavorite(currentFavorite); }
         }
 
         public string ProjectMessage { get; set; } = "";
@@ -170,15 +170,31 @@ namespace Avalon.ViewModels
             ColorPopup = false;
         }
 
-        public void AddFavGroup()
+        public void AddFavGroup(string group)
         {
-            Favorites.Add(CurrentFavorite);
+            Favorites.Add(group);
+        }
+
+        public void RemoveFavGroup()
+        {
+            if (Favorites.Count > 1)
+            {
+                Favorites.Remove(CurrentFavorite);
+                CurrentFavorite = Favorites.First();
+                ProjectsVM.RemoveFavoriteGroup(CurrentFavorite);
+            }
+        }
+
+        public void RenameFavGroup()
+        {
+
         }
 
         public void OnAddFavorite()
         {
             ProjectsVM.AddFavorite(CurrentFavorite);
         }
+
 
 
         public async Task LoadFile(Avalonia.Visual window)
