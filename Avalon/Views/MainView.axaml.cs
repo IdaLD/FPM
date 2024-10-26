@@ -761,6 +761,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.select_files(files);
     }
 
+    private void OnAddFavorite(object sender, RoutedEventArgs e)
+    {
+        MenuItem source = e.Source as MenuItem;
+        ctx.ProjectsVM.AddFavorite(source.Header.ToString());
+    }
+
     private void select_files(object sender, RoutedEventArgs e)
     {
         IList<FileData> files = FileGrid.SelectedItems.Cast<FileData>().ToList();

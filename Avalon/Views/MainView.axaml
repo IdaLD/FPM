@@ -228,7 +228,9 @@
 								
 								<MenuItem Name="TypeMenu" Header="FileType" ItemsSource="{Binding FileTypeSelection}" Click="edit_type" Icon="{icxt:SymbolIconExtension Symbol=QuestionCircle}"/>
 
-								<MenuItem Name="AddFavorite" Header="Favorite" Icon="{icxt:SymbolIconExtension Symbol=StarAdd}" Command="{Binding ProjectsVM.AddFavorite}"/>
+								<MenuItem Name="AddFavorite" Header="Favorite" ItemsSource="{Binding Favorites}" Icon="{icxt:SymbolIconExtension Symbol=StarAdd}" Click="OnAddFavorite">
+
+								</MenuItem>
 								
 								<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{icxt:SymbolIconExtension Symbol=ClipboardSettings}">
 									<MenuItem Name="FilenameCopyMenu" Header="List" Click="on_copy_filename" Icon="{icxt:SymbolIconExtension Symbol=TextBulletListAdd}"/>
@@ -265,16 +267,36 @@
 
 				<GridSplitter Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns"/>
 
-				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1">
-					<Border BorderBrush="Gray" BorderThickness="0.5" Margin="5" CornerRadius="5">
-						<DataGrid Name="TrayGrid" Padding="0" ItemsSource="{Binding ProjectsVM.TrayFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
+				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,*">
+					<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+						<TextBox Text="{Binding CurrentFavorite}"/>
+						<Button Content="Add" Command="{Binding AddFavGroup}"/>
+					</StackPanel>
+
+					<Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0.5" Margin="5" CornerRadius="5">
+						<DataGrid Padding="0" RowHeight="22" SelectionMode="Extended" Binding="{Binding Favorites}"
 									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow">
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding Namn}" Header="Favorites" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding Favorites}" Header="Name" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
 							</DataGrid.Columns>
 							<DataGrid.ContextMenu>
 								<ContextMenu>
 									<MenuItem Name="Remove" Header="Remove" Command="{Binding ProjectsVM.RemoveFavorite}"/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
+						</DataGrid>
+					</Border>
+					
+					<Border Grid.Row="2" BorderBrush="Gray" BorderThickness="0.5" Margin="5" CornerRadius="5">
+						<DataGrid Name="TrayGrid" Padding="0" ItemsSource="{Binding ProjectsVM.TrayFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
+									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow">
+							<DataGrid.Columns>
+								<DataGridTextColumn Binding="{Binding Namn}" Header="Favorites" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding Uppdrag}" Header="Project" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+							</DataGrid.Columns>
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem Header="Remove" Command="{Binding ProjectsVM.RemoveFavorite}"/>
 								</ContextMenu>
 							</DataGrid.ContextMenu>
 						</DataGrid>

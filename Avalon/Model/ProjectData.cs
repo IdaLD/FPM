@@ -75,6 +75,15 @@ namespace Avalon.Model
             SetFiletypeList();
         }
 
+        public void AddFile(FileData file)
+        {
+            if (!StoredFiles.Contains(file))
+            {
+                StoredFiles.Add(file);
+            }
+            SetFiletypeList();
+        }
+
         public void Newfile(string filepath, string type="New")
         {
             if (!StoredFiles.Any(x => x.Sökväg == filepath))

@@ -41,6 +41,20 @@ namespace Avalon.ViewModels
         public List<string[]> metastore = new List<string[]>();
         public List<string> PathStore = new List<string>();
 
+        private ObservableCollection<string> favorites = new ObservableCollection<string>() { "Default" };
+        public ObservableCollection<string> Favorites
+        {
+            get { return favorites; }
+            set { favorites = value; OnPropertyChanged("Favorites"); }
+        }
+
+        private string currentFavorite = string.Empty;
+        public string CurrentFavorite
+        {
+            get { return currentFavorite; }
+            set { currentFavorite = value; OnPropertyChanged("CurrentFavorite"); }
+        }
+
         public string ProjectMessage { get; set; } = "";
 
         private Color color1 = Color.Parse("#333333");
@@ -154,6 +168,16 @@ namespace Avalon.ViewModels
         public void CloseColorPopup()
         {
             ColorPopup = false;
+        }
+
+        public void AddFavGroup()
+        {
+            Favorites.Add(CurrentFavorite);
+        }
+
+        public void OnAddFavorite()
+        {
+            ProjectsVM.AddFavorite(CurrentFavorite);
         }
 
 

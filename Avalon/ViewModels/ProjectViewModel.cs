@@ -45,12 +45,20 @@ namespace Avalon.ViewModels
             set { currentProject = value; OnPropertyChanged("CurrentProject"); UpdateFilter(); UpdateMetaCheck(); }
         }
 
+        private string[] projectColor = null;
+        public string[] ProjectColor
+        {
+            get { return projectColor; }
+            set { projectColor = value; OnPropertyChanged("ProjectColor"); }
+        }
+
         private string type = null;
         public string Type
         {
             get { return type; }
             set { type = value; OnPropertyChanged("Type"); UpdateFilter(); }
         }
+
 
         private ObservableCollection<FileData> filteredFiles = new ObservableCollection<FileData>();
         public ObservableCollection<FileData> FilteredFiles
@@ -201,7 +209,7 @@ namespace Avalon.ViewModels
         {
             if (!StoredProjects.Any(x => x.Namn == name))
             {
-                ProjectData newProject = new ProjectData { Namn = name };
+                ProjectData newProject = new ProjectData { Namn = name, Colors = ProjectColor };
                 newProject.MetaCheckStore = MetaCheckDefault;
 
                 StoredProjects.Add(newProject);
@@ -528,7 +536,7 @@ namespace Avalon.ViewModels
             }
         }
 
-        public void AddFavorite()
+        public void AddFavorite(string group)
         {
             ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
 
@@ -541,7 +549,12 @@ namespace Avalon.ViewModels
                 SortProjects();
             }
 
-            FavProject.AddFiles(CurrentFiles);
+            foreach(FileData file in CurrentFiles)
+            {
+                FileData currentFav = new FileData() { Namn = file.Namn, Sökväg = file.Sökväg, Uppdrag = group };
+                FavProject.AddFile(currentFav);
+            }
+
             FavProject.SetFiletypeList();
         }
 
@@ -573,12 +586,11 @@ namespace Avalon.ViewModels
 
         public void SetProjectColor(Color color1, Color color2, Color color3, Color color4)
         {
-            foreach(ProjectData project in StoredProjects)
+            ProjectColor = [color1.ToString(), color2.ToString(), color3.ToString(), color4.ToString()];
+
+            foreach (ProjectData project in StoredProjects)
             {
-                project.Colors[0] = color1.ToString();
-                project.Colors[1] = color2.ToString();
-                project.Colors[2] = color3.ToString();
-                project.Colors[3] = color4.ToString();
+                project.Colors = ProjectColor;
             }
         }
 
