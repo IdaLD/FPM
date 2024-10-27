@@ -56,6 +56,13 @@ namespace Avalon.ViewModels
             set { currentFavorite = value; OnPropertyChanged("CurrentFavorite"); ProjectsVM.FilterFavorite(currentFavorite); }
         }
 
+        private ObservableCollection<string> groups = new ObservableCollection<string>() {};
+        public ObservableCollection<string> Groups
+        {
+            get { return groups; }
+            set { groups = value; OnPropertyChanged("groups"); }
+        }
+
         public string ProjectMessage { get; set; } = "";
 
         private Color color1 = Color.Parse("#333333");
@@ -121,6 +128,13 @@ namespace Avalon.ViewModels
             set { colorPopup = value; OnPropertyChanged("ColorPopup"); }
         }
 
+        private bool groupPopup = false;
+        public bool GroupPopup
+        {
+            get { return groupPopup; }
+            set { groupPopup = value; OnPropertyChanged("GroupPopup"); }
+        }
+
         public List<string> FileTypes { get; set; } = new List<string>();
 
         private List<MenuItem> fileTypeSelection = new List<MenuItem>()
@@ -169,6 +183,16 @@ namespace Avalon.ViewModels
         public void CloseColorPopup()
         {
             ColorPopup = false;
+        }
+
+        public void OpenGroupPop()
+        {
+            GroupPopup = true;
+        }
+
+        public void CloseGroupPop()
+        {
+            GroupPopup = false;
         }
 
         public void AddFavGroup(string group)
@@ -249,6 +273,7 @@ namespace Avalon.ViewModels
                 ProjectsVM.SetDefaultSelection();
                 SetCurrentColor();
                 SetAllowedTypes();
+                GetGroups();
 
             }
         }
@@ -264,6 +289,7 @@ namespace Avalon.ViewModels
                 ProjectsVM.SetDefaultSelection();
                 SetCurrentColor();
                 SetAllowedTypes();
+                GetGroups();
             }
         }
 
@@ -367,6 +393,19 @@ namespace Avalon.ViewModels
         public void SetAllowedTypes()
         {
             FileTypeSelection = ProjectsVM.GetAllowedTypes();
+        }
+
+        public void SetGroup(string group)
+        {
+            ProjectsVM.SetGroups(group);
+            GetGroups();
+        }
+
+        public void GetGroups()
+        {
+            Groups.Clear();
+            Groups = projectsVM.GetGroups();
+
         }
 
         public void CopyFilenameToClipboard(Avalonia.Visual window)

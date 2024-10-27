@@ -25,9 +25,9 @@
 
 		<Style Selector="TreeViewItem">
 			<Setter Property="Margin" Value="0"/>
-			<Setter Property="Padding" Value="0 5 0 0"/>
-			<Setter Property="MaxWidth" Value="180"/>
-			<Setter Property="MinHeight" Value="15"/>
+			<Setter Property="Padding" Value="0 0 0 0"/>
+			<Setter Property="MaxWidth" Value="250"/>
+			<Setter Property="MinHeight" Value="24"/>
 		</Style>
 
 		<Style Selector="ListBox">

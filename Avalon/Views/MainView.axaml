@@ -428,7 +428,10 @@
 										<MenuItem Header="Add Files" Click="on_add_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentAdd}"/>
 										
 										<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{icxt:SymbolIconExtension Symbol=FolderAdd}" Click="OpenAddPopup"/>
+										
 										<MenuItem Name="RenameMenu" Header="Rename" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Click="OpenRenamePopup"/>
+
+										<MenuItem Name="GroupMenu" Header="Group" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Click="OpenGroupPopup"/>
 										
 										<MenuItem Header="Type" Icon="{icxt:SymbolIconExtension Symbol=Tag}">
 											<MenuItem Header="P: Project" Tag="Project" Click="on_set_category"/>
@@ -437,7 +440,7 @@
 										</MenuItem>
 												
 										<Separator></Separator>
-										<MenuItem Name="RemoveProjectMenu" Header="Remove" Command="{Binding remove_project}" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
+										<MenuItem Name="RemoveProjectMenu" Header="Remove" Click="on_remove_project" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
 									</ContextMenu>
 								</TreeView.ContextMenu>
 								
@@ -445,6 +448,18 @@
 						</StackPanel>
 					</Border>
 				</Grid>
+
+				<Border IsVisible="{Binding GroupPopup}" IsHitTestVisible="{Binding GroupPopup}" Grid.ColumnSpan="5" Grid.RowSpan="3" HorizontalAlignment="Center"
+						VerticalAlignment="Center" Padding="10" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">
+					<StackPanel Orientation="Vertical" Spacing="10">
+						<Label Content="Set Project Group" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+						<TextBox Name="ProjectGroupInput" HorizontalContentAlignment="Center"  Width="160" />
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+							<Button Name="GroupAccept" Content="Accept" Width="70" BorderBrush="Gray" Click="on_group_project"/>
+							<Button Name="GroupCancel" Content="Cancel" Width="70" BorderBrush="Gray" Click="CloseGroupPopup"/>
+						</StackPanel>
+					</StackPanel>
+				</Border>
 				
 				<Border IsVisible="{Binding RenamePopup}" IsHitTestVisible="{Binding RenamePopup}" Grid.ColumnSpan="5" Grid.RowSpan="3" HorizontalAlignment="Center"
 						VerticalAlignment="Center" Padding="10" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">

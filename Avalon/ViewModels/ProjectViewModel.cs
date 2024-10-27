@@ -265,6 +265,16 @@ namespace Avalon.ViewModels
             }
         }
 
+        public ObservableCollection<string> GetGroups()
+        {
+            return new ObservableCollection<string>(StoredProjects.Select(x => x.Parent).Where(x=> x != null).Distinct().ToList());
+        }
+
+        public void SetGroups(string group)
+        {
+            CurrentProject.Parent = group;
+        }
+
         public List<MenuItem> GetAllowedTypes()
         {
 

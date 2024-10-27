@@ -94,7 +94,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             string path = "C:\\FIlePathManager\\Projects.json";
             ctx.read_savefile(path);
-            //OnColorStartup();
         }
         catch
         { }
@@ -166,10 +165,98 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                 }
             }
         }
+        SetupTreeview(null, null);
     }
 
     private void SetupTreeview(object sender, RoutedEventArgs e)
     {
+        MainTree.Items.Clear();
+
+        List<string> typeList = new List<string>() { "Archive", "Library", "Project" };
+
+
+        foreach (string type in typeList)
+        {
+            List<TreeViewItem> items = new List<TreeViewItem>();
+            IEnumerable<ProjectData> projects = ctx.ProjectsVM.StoredProjects.Where(x => x.Category == type);
+
+            if (projects.Count() != 0)
+            {
+                foreach (ProjectData project in projects)
+                {
+                    if (project.Parent == null)
+                    {
+                        List<TreeViewItem> fileTypeTree = new List<TreeViewItem>();
+                        foreach(string filetype in project.StoredFiles.Select(x => x.Filtyp).Distinct())
+                        {
+                            int nfiles = project.StoredFiles.Where(x => x.Filtyp == filetype).Count();
+                            fileTypeTree.Add(new TreeViewItem() { Header = filetype + " (" + nfiles + ")", Tag = project.Namn});
+                        }
+                        items.Add(
+                            new TreeViewItem()
+                            {
+                                Header = project.Namn,
+                                Tag = "All Types",
+                                ItemsSource = fileTypeTree
+                            }
+                        );
+                    }
+                }
+
+                if (type == "Project")
+                {
+                    foreach(string group in ctx.Groups)
+                    {
+                        IEnumerable<ProjectData> groupedProject = ctx.ProjectsVM.StoredProjects.Where(x => x.Parent == group);
+                        List<TreeViewItem> groupedTree = new List<TreeViewItem>();
+
+                        foreach (ProjectData project in groupedProject)
+                        {
+                            List<TreeViewItem> fileTypeTree = new List<TreeViewItem>();
+                            foreach (string filetype in project.StoredFiles.Select(x => x.Filtyp).Distinct())
+                            {
+                                int nfiles = project.StoredFiles.Where(x => x.Filtyp == filetype).Count();
+                                fileTypeTree.Add(new TreeViewItem() { Header = filetype + " (" + nfiles + ")", Tag = project.Namn });
+                            }
+
+                            groupedTree.Add(new TreeViewItem()
+                            {
+                                Header = project.Namn,
+                                Tag = "All Types",
+                                ItemsSource = fileTypeTree
+                            });
+                        }
+
+                        items.Add(
+                            new TreeViewItem()
+                            {
+                                Header = group,
+                                Tag = "Group",
+                                ItemsSource = groupedTree
+                            }
+                        );
+
+                    }
+                }
+
+                MainTree.Items.Add(
+                    new TreeViewItem()
+                    {
+                        Header = type,
+                        Tag = "Header",
+                        IsExpanded = true,
+                        ItemsSource = items
+                    }
+                );
+            }
+
+        }
+    }
+
+    private void SetupTreeviewFunc(object sender, RoutedEventArgs e)
+    {
+        MainTree.Items.Clear();
+
         foreach(ProjectData project in ctx.ProjectsVM.StoredProjects)
         {
             MainTree.Items.Add(
@@ -200,7 +287,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         if (treeview)
         {
-            MainGrid.ColumnDefinitions[0] = new ColumnDefinition(200, GridUnitType.Pixel);
+            MainGrid.ColumnDefinitions[0] = new ColumnDefinition(250, GridUnitType.Pixel);
         }
         else
         {
@@ -227,46 +314,39 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    public void on_treeview_selected_OLD(object sender, SelectionChangedEventArgs e)
-    {
-        Debug.WriteLine("TW selected");
-
-        Debug.WriteLine(MainTree.SelectedItem);
-
-    }
-
     public void on_treeview_selected(object sender, SelectionChangedEventArgs e)
     {
-
         object selected = MainTree.SelectedItem;
+
 
         if (selected != null)
         {
-            Type selectedtype = selected.GetType();
+    
+            TreeViewItem selectedTree = (TreeViewItem)selected;
 
-            if (selectedtype == typeof(TreeViewItem))
+            if(selectedTree.Tag == "Header" || selectedTree.Tag == "Group")
             {
-                TreeViewItem selectedTw = (TreeViewItem) selected;
-                string projectName = selectedTw.Header.ToString().Split(": ")[1];
-                    
-                ctx.select_type("All Types");
-                ctx.select_project(projectName);
+                return;
+            }
+            else
+            {
+                if (selectedTree.Tag == "All Types")
+                {
+                    ctx.select_type("All Types");
+                    ctx.select_project(selectedTree.Header.ToString());
+                }
+                else
+                {
+                    ctx.select_type(selectedTree.Header.ToString().Split(" ")[0]);
+                    ctx.select_project(selectedTree.Tag.ToString());
+                }
             }
 
-            if (selectedtype == typeof(string))
-            {
 
-                string[] split = selected.ToString().Split("\t");
+            Debug.WriteLine(selectedTree.Header);
+            Debug.WriteLine(selectedTree.Tag);
 
-                ctx.select_type(split[0]);
-
-                TreeViewItem item = (TreeViewItem)MainTree.TreeContainerFromItem(MainTree.SelectedItem);
-                TreeViewItem parent = item.GetLogicalParent() as TreeViewItem;
-                ProjectData project = MainTree.ItemFromContainer(parent) as ProjectData;
-
-                ctx.select_project(project.Namn);
-
-            }
+            
             on_update_columns();
         }
     }
@@ -690,6 +770,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
 
         CloseAddPopup(null, null);
+        SetupTreeview(null, null);
     }
 
     private void OpenRenamePopup(object sender, RoutedEventArgs e)
@@ -721,6 +802,51 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
 
         CloseRenamePopup(null,null);
+        SetupTreeview(null, null);
+    }
+
+    private void on_group_project(object sender, RoutedEventArgs e)
+    {
+        if (ProjectGroupInput.Text != null)
+        {
+            ctx.SetGroup(ProjectGroupInput.Text.ToString());
+            ProjectGroupInput.Text = null;
+        }
+
+        CloseGroupPopup(null, null);
+        SetupTreeview(null, null);
+    }
+
+    private void OpenGroupPopup(object sender, RoutedEventArgs e)
+    {
+        ctx.OpenGroupPop();
+        ProjectGroupInput.Text = ctx.ProjectsVM.CurrentProject.Parent;
+
+        HotKeyManager.SetHotKey(GroupAccept, new KeyGesture(Key.Enter));
+        HotKeyManager.SetHotKey(GroupCancel, new KeyGesture(Key.Escape));
+
+        ProjectGroupInput.Focus();
+
+        if (ProjectGroupInput.Text != null)
+        {
+            ProjectGroupInput.CaretIndex = ProjectGroupInput.Text.Length;
+        }
+        
+    }
+
+    private void CloseGroupPopup(object sender, RoutedEventArgs e)
+    {
+        ctx.CloseGroupPop();
+
+        HotKeyManager.SetHotKey(GroupAccept, null);
+        HotKeyManager.SetHotKey(GroupCancel, null);
+    }
+
+
+    private void on_remove_project(object sender, RoutedEventArgs e)
+    {
+        ctx.remove_project();
+        SetupTreeview(null, null);
     }
 
 
@@ -728,6 +854,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         StatusLabel.Content = "Adding Files";
         ctx.AddFile(this);
+        SetupTreeview(null, null);
         StatusLabel.Content = "Ready";
     }
 

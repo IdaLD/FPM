@@ -39,6 +39,13 @@ namespace Avalon.Model
             set { notes = value; RaisePropertyChanged("Notes"); }
         }
 
+        private string parent = null;
+        public string Parent
+        {
+            get { return parent; }
+            set { parent = value; RaisePropertyChanged("Parent"); }
+        }
+
         private string[] colors;
 
         public string[] Colors
