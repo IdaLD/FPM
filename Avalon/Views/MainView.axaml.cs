@@ -168,6 +168,20 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
+    private void SetupTreeview(object sender, RoutedEventArgs e)
+    {
+        foreach(ProjectData project in ctx.ProjectsVM.StoredProjects)
+        {
+            MainTree.Items.Add(
+                new TreeViewItem() 
+                {   
+                    Header = project.Category.ToString()[0] + ": " + project.Namn,
+                    ItemsSource = project.FiletypesTree
+                }
+            );
+        }
+    }
+
     public void on_set_category(object sender, RoutedEventArgs e)
     {
         MenuItem menuitem = sender as MenuItem;
@@ -213,19 +227,30 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
+    public void on_treeview_selected_OLD(object sender, SelectionChangedEventArgs e)
+    {
+        Debug.WriteLine("TW selected");
+
+        Debug.WriteLine(MainTree.SelectedItem);
+
+    }
+
     public void on_treeview_selected(object sender, SelectionChangedEventArgs e)
-    {  
+    {
+
         object selected = MainTree.SelectedItem;
 
         if (selected != null)
         {
             Type selectedtype = selected.GetType();
 
-            if (selectedtype == typeof(ProjectData))
+            if (selectedtype == typeof(TreeViewItem))
             {
-                ProjectData project = (ProjectData)selected;
+                TreeViewItem selectedTw = (TreeViewItem) selected;
+                string projectName = selectedTw.Header.ToString().Split(": ")[1];
+                    
                 ctx.select_type("All Types");
-                ctx.select_project(project.Namn);
+                ctx.select_project(projectName);
             }
 
             if (selectedtype == typeof(string))

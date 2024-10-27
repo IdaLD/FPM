@@ -420,17 +420,8 @@
 							<Border BorderBrush="Gray" BorderThickness="0 0 0 1">
 								<TextBlock Text="Storage" Height="23" Margin="14 8 0 0"/>
 							</Border>
-							<TreeView Name="MainTree" ItemsSource="{Binding ProjectsVM.StoredProjects}" SelectionChanged="on_treeview_selected">
-								<TreeView.ItemTemplate>
-									<TreeDataTemplate x:DataType="model:ProjectData" ItemsSource="{Binding FiletypesTree}">
-										<StackPanel Orientation="Horizontal">
-											<TextBlock Text="{Binding Category, Converter={StaticResource ShortenStringConverter}}"/>
-											<TextBlock Text=": "/>
-											<TextBlock Text="{Binding Namn}"/>
-										</StackPanel>
-									</TreeDataTemplate>
-								
-								</TreeView.ItemTemplate>
+							<TreeView Name="MainTree" Loaded="SetupTreeview" SelectionChanged="on_treeview_selected">
+
 								
 								<TreeView.ContextMenu>
 									<ContextMenu Name="TreeMenu">
