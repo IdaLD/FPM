@@ -189,18 +189,17 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                 {
                     if (project.Parent == null || project.Parent == "")
                     {
-                        Debug.WriteLine(project.Parent);
-                        Debug.WriteLine(project.Namn);
                         List<TreeViewItem> fileTypeTree = new List<TreeViewItem>();
-                        foreach(string filetype in project.StoredFiles.Select(x => x.Filtyp).Distinct())
+                        foreach (string filetype in project.StoredFiles.Select(x => x.Filtyp).Distinct())
                         {
                             int nfiles = project.StoredFiles.Where(x => x.Filtyp == filetype).Count();
-                            fileTypeTree.Add(new TreeViewItem() { Header = filetype + " (" + nfiles + ")", Tag = project.Namn});
+                            fileTypeTree.Add(new TreeViewItem() { Header = filetype + " (" + nfiles + ")", Tag = project.Namn });
                         }
                         items.Add(
                             new TreeViewItem()
                             {
                                 Header = project.Namn,
+                                IsExpanded = (project == ctx.ProjectsVM.CurrentProject),
                                 Tag = "All Types",
                                 ItemsSource = fileTypeTree
                             }
@@ -210,7 +209,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
                 if (type == "Project")
                 {
-                    foreach(string group in ctx.Groups)
+                    foreach (string group in ctx.Groups)
                     {
                         IEnumerable<ProjectData> groupedProject = ctx.ProjectsVM.StoredProjects.Where(x => x.Parent == group);
                         List<TreeViewItem> groupedTree = new List<TreeViewItem>();
@@ -227,6 +226,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                             groupedTree.Add(new TreeViewItem()
                             {
                                 Header = project.Namn,
+                                IsExpanded = (project == ctx.ProjectsVM.CurrentProject),
                                 Tag = "All Types",
                                 ItemsSource = fileTypeTree
                             });
@@ -236,6 +236,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                             new TreeViewItem()
                             {
                                 Header = group,
+                                IsExpanded = true,
                                 Tag = "Group",
                                 ItemsSource = groupedTree
                             }
@@ -255,22 +256,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                 );
             }
 
-        }
-    }
-
-    private void SetupTreeviewFunc(object sender, RoutedEventArgs e)
-    {
-        MainTree.Items.Clear();
-
-        foreach(ProjectData project in ctx.ProjectsVM.StoredProjects)
-        {
-            MainTree.Items.Add(
-                new TreeViewItem() 
-                {   
-                    Header = project.Category.ToString()[0] + ": " + project.Namn,
-                    ItemsSource = project.FiletypesTree
-                }
-            );
         }
     }
 
@@ -674,6 +659,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         MenuItem SelectedMenu = ctx.FileTypeSelection[menuItem.SelectedIndex];
 
         ctx.edit_type(SelectedMenu.Header.ToString());
+        SetupTreeview(null, null);
     }
 
     private void deselect_items()
@@ -1035,6 +1021,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         ctx.ProjectsVM.RemoveSelectedFiles();
         ctx.ProjectsVM.UpdateFilter();
+        SetupTreeview(null, null);
 
     }
 

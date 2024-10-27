@@ -404,6 +404,7 @@ namespace Avalon.ViewModels
         public void GetGroups()
         {
             Groups.Clear();
+
             Groups = projectsVM.GetGroups();
 
         }
@@ -588,8 +589,6 @@ namespace Avalon.ViewModels
         public async Task CheckProjectFiles()
         {
             await Task.Run(() => CheckFileAsync());
-
-            Debug.WriteLine("Complete");
         }
 
         public async Task CheckFileAsync()
