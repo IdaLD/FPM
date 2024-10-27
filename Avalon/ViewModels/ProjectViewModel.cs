@@ -267,7 +267,11 @@ namespace Avalon.ViewModels
 
         public ObservableCollection<string> GetGroups()
         {
-            return new ObservableCollection<string>(StoredProjects.Select(x => x.Parent).Where(x=> x != null).Distinct().ToList());
+            List<string> list = StoredProjects.Select(x => x.Parent).Where(x => x != null).Distinct().ToList();
+
+            list.Remove("");
+
+            return new ObservableCollection<string>(list);
         }
 
         public void SetGroups(string group)
@@ -388,6 +392,7 @@ namespace Avalon.ViewModels
             if (currentProject.Category != "Search" && currentProject.Category != "Favorites")
             {
                 CurrentProject.Category = name;
+                CurrentProject.Parent = null;
                 SortProjects();
             }
         }

@@ -172,6 +172,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void SetupTreeview(object sender, RoutedEventArgs e)
     {
         MainTree.Items.Clear();
+        ctx.GetGroups();
 
         List<string> typeList = new List<string>() { "Archive", "Library", "Project" };
 
@@ -186,8 +187,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             {
                 foreach (ProjectData project in projects)
                 {
-                    if (project.Parent == null)
+                    if (project.Parent == null || project.Parent == "")
                     {
+                        Debug.WriteLine(project.Parent);
+                        Debug.WriteLine(project.Namn);
                         List<TreeViewItem> fileTypeTree = new List<TreeViewItem>();
                         foreach(string filetype in project.StoredFiles.Select(x => x.Filtyp).Distinct())
                         {
@@ -290,6 +293,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         if (treeview)
         {
+            SetupTreeview(null, null);
             MainGrid.ColumnDefinitions[0] = new ColumnDefinition(250, GridUnitType.Pixel);
         }
         else
@@ -345,11 +349,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                     ctx.select_project(selectedTree.Tag.ToString());
                 }
             }
-
-
-            Debug.WriteLine(selectedTree.Header);
-            Debug.WriteLine(selectedTree.Tag);
-
             
             on_update_columns();
         }
