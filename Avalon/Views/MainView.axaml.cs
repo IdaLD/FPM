@@ -204,6 +204,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (trayview)
         {
             ctx.ProjectsVM.UpdateFavorite();
+            ctx.GetFavGroups();
             MainGrid.ColumnDefinitions[4] = new ColumnDefinition(300, GridUnitType.Pixel);
         }
         else
@@ -767,6 +768,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.AddFavGroup(NewFavGroupInput.Text);
         NewFavGroupInput.Clear();
     }
+
+    private void OnRenameFavGroup(object sender, RoutedEventArgs e)
+    {
+        ctx.RenameFavGroup(NewFavGroupInput.Text);
+        NewFavGroupInput.Clear();
+    }
+
 
     private void OnAddFavorite(object sender, RoutedEventArgs e)
     {

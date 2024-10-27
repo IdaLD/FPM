@@ -276,7 +276,7 @@
 						<Button BorderBrush="Gray" Width="35" Command="{Binding RemoveFavGroup}">
 							<ic:SymbolIcon Symbol="Delete" FontSize="20"/>
 						</Button>
-						<Button BorderBrush="Gray" Width="35" Command="{Binding RenameFavGroup}">
+						<Button BorderBrush="Gray" Width="35" Click="OnRenameFavGroup">
 							<ic:SymbolIcon Symbol="Rename" FontSize="20"/>
 						</Button>
 					</StackPanel>
@@ -298,7 +298,7 @@
 							</DataGrid.Columns>
 							<DataGrid.ContextMenu>
 								<ContextMenu>
-									<MenuItem Header="Remove" Command="{Binding ProjectsVM.RemoveFavorite}"/>
+									<MenuItem Header="Remove" Command="{Binding OnRemoveFavoriteFile}"/>
 								</ContextMenu>
 							</DataGrid.ContextMenu>
 						</DataGrid>

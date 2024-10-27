@@ -580,11 +580,24 @@ namespace Avalon.ViewModels
         {
             ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
 
-            IEnumerable<FileData> FavFiles = FavProject.StoredFiles.Where(x => x.Uppdrag == group);
+            List<FileData> FavFiles = FavProject.StoredFiles.Where(x => x.Uppdrag == group).ToList();
 
             foreach (FileData file in FavFiles)
             {
-                FavProject.RemoveFile(CurrentFile);
+                FavProject.RemoveFile(file);
+            }
+
+            FavProject.SetFiletypeList();
+        }
+
+        public void RenameFavoriteGroup(string oldGroup, string newGroup)
+        {
+            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
+            List<FileData> FavFiles = FavProject.StoredFiles.Where(x => x.Uppdrag == oldGroup).ToList();
+
+            foreach (FileData file in FavFiles)
+            {
+                file.Uppdrag = newGroup;
             }
 
             FavProject.SetFiletypeList();

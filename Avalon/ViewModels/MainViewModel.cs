@@ -15,6 +15,7 @@ using Avalonia.Media;
 using Org.BouncyCastle.Asn1.BC;
 using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
+using Avalonia.Interactivity;
 
 
 namespace Avalon.ViewModels
@@ -175,19 +176,37 @@ namespace Avalon.ViewModels
             Favorites.Add(group);
         }
 
+        public void RenameFavGroup(string group)
+        {
+            int currentIndex = Favorites.IndexOf(CurrentFavorite);
+            Favorites.Insert(currentIndex, group);
+
+            ProjectsVM.RenameFavoriteGroup(CurrentFavorite, group);
+            Favorites.Remove(CurrentFavorite);
+            CurrentFavorite = group;
+
+        }
+
         public void RemoveFavGroup()
         {
             if (Favorites.Count > 1)
             {
-                Favorites.Remove(CurrentFavorite);
-                CurrentFavorite = Favorites.First();
                 ProjectsVM.RemoveFavoriteGroup(CurrentFavorite);
+                Favorites.Remove(CurrentFavorite);
+
+                CurrentFavorite = Favorites.First();
             }
         }
 
-        public void RenameFavGroup()
+        public void GetFavGroups()
         {
+            Favorites.Clear();
 
+            ProjectData FavProject = ProjectsVM.StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
+
+            List<string> favList = FavProject.StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
+
+            Favorites = new ObservableCollection<string>(favList);
         }
 
         public void OnAddFavorite()
@@ -195,6 +214,11 @@ namespace Avalon.ViewModels
             ProjectsVM.AddFavorite(CurrentFavorite);
         }
 
+        public void OnRemoveFavoriteFile()
+        {
+            ProjectsVM.RemoveFavorite();
+            CurrentFavorite = CurrentFavorite;
+        }
 
 
         public async Task LoadFile(Avalonia.Visual window)
