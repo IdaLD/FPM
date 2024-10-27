@@ -384,7 +384,7 @@
 								</StackPanel>
 							</Button>
 
-							<ToggleButton ToolTip.Tip="Duak Page Mode, Ctrl + D" HotKey="Ctrl+D" FontWeight="Normal" ToolTip.Placement="Right" Name="DualMode" IsChecked="{Binding TwopageMode}" IsEnabled="{Binding TwopageModeAvail}" IsVisible="{Binding TwopageModeAvail}">
+							<ToggleButton ToolTip.Tip="Dual Page Mode, Ctrl + D" HotKey="Ctrl+D" FontWeight="Normal" ToolTip.Placement="Right" Name="DualMode" IsChecked="{Binding TwopageMode}" IsEnabled="{Binding TwopageModeAvail}" IsVisible="{Binding TwopageModeAvail}">
 								<StackPanel>
 									<ic:SymbolIcon Symbol="DocumentOnePage" IconVariant="Regular" FontSize="20" IsVisible="{Binding !TwopageMode}"/>
 									<ic:SymbolIcon Symbol="BookOpen" IconVariant="Regular" FontSize="20" IsVisible="{Binding TwopageMode}"/>
@@ -431,12 +431,12 @@
 										
 										<MenuItem Name="RenameMenu" Header="Rename" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Click="OpenRenamePopup"/>
 
-										<MenuItem Name="GroupMenu" Header="Group" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Click="OpenGroupPopup"/>
+										<MenuItem Name="GroupMenu" Header="Group" Icon="{icxt:SymbolIconExtension Symbol=Collections}" Click="OpenGroupPopup"/>
 										
 										<MenuItem Header="Type" Icon="{icxt:SymbolIconExtension Symbol=Tag}">
-											<MenuItem Header="P: Project" Tag="Project" Click="on_set_category"/>
-											<MenuItem Header="L: Library" Tag="Library" Click="on_set_category"/>
-											<MenuItem Header="A: Archive" Tag="Archive" Click="on_set_category"/>
+											<MenuItem Header="Project" Tag="Project" Click="on_set_category"/>
+											<MenuItem Header="Library" Tag="Library" Click="on_set_category"/>
+											<MenuItem Header="Archive" Tag="Archive" Click="on_set_category"/>
 										</MenuItem>
 												
 										<Separator></Separator>

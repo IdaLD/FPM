@@ -21,6 +21,7 @@ using Avalonia;
 using Avalonia.Layout;
 using Avalonia.VisualTree;
 using Avalonia.Markup.Xaml.MarkupExtensions;
+using iText.Commons.Bouncycastle.Asn1.X509;
 
 
 namespace Avalon.Views;
@@ -178,6 +179,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         foreach (string type in typeList)
         {
             List<TreeViewItem> items = new List<TreeViewItem>();
+
             IEnumerable<ProjectData> projects = ctx.ProjectsVM.StoredProjects.Where(x => x.Category == type);
 
             if (projects.Count() != 0)
@@ -276,6 +278,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         ctx.set_category(category);
         ctx.SetAllowedTypes();
+        SetupTreeview(null, null);
     }
 
     public void toggle_treeview(object sender, RoutedEventArgs e)
@@ -328,6 +331,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             {
                 return;
             }
+
             else
             {
                 if (selectedTree.Tag == "All Types")
@@ -994,6 +998,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private async void on_load_file(object sender, RoutedEventArgs e)
     {
         await ctx.LoadFile(this);
+        SetupTreeview(null, null);
     }
 
     private async void on_save_file(object sender, RoutedEventArgs e)
