@@ -273,7 +273,7 @@
 						<Button BorderBrush="Gray" Width="35" Click="OnAddFavGroup">
 							<ic:SymbolIcon Symbol="Add" FontSize="20"/>
 						</Button>
-						<Button BorderBrush="Gray" Width="35" Command="{Binding RemoveFavGroup}">
+						<Button Name="RemoveFavoriteGroup" BorderBrush="Gray" Width="35" Command="{Binding RemoveFavGroup}">
 							<ic:SymbolIcon Symbol="Delete" FontSize="20"/>
 						</Button>
 						<Button BorderBrush="Gray" Width="35" Click="OnRenameFavGroup">

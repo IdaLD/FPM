@@ -607,6 +607,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         if (Lockedstatus.IsChecked == true)
         {
+            RemoveFavoriteGroup.IsEnabled = false;
             RemoveProjectMenu.IsEnabled = false;
             RemoveFileMenu.IsEnabled = false;
             MoveFileMenu.IsEnabled = false;
@@ -615,6 +616,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
         if (Lockedstatus.IsChecked == false)
         {
+            RemoveFavoriteGroup.IsEnabled = true;
             RemoveProjectMenu.IsEnabled = true;
             RemoveFileMenu.IsEnabled = true;
             MoveFileMenu.IsEnabled = true;
@@ -906,12 +908,26 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void OnAddFavGroup(object sender, RoutedEventArgs e)
     {
+        string text = NewFavGroupInput.Text;
+
+        if(text == null || text.ToString().Length == 0)
+        {
+            return;
+        }
+
         ctx.AddFavGroup(NewFavGroupInput.Text);
         NewFavGroupInput.Clear();
     }
 
     private void OnRenameFavGroup(object sender, RoutedEventArgs e)
     {
+        string text = NewFavGroupInput.Text;
+
+        if (text == null || text.ToString().Length == 0)
+        {
+            return;
+        }
+
         ctx.RenameFavGroup(NewFavGroupInput.Text);
         NewFavGroupInput.Clear();
     }
@@ -920,6 +936,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void OnAddFavorite(object sender, RoutedEventArgs e)
     {
         MenuItem source = e.Source as MenuItem;
+
         ctx.ProjectsVM.AddFavorite(source.Header.ToString());
         ctx.CurrentFavorite = source.Header.ToString();
     }

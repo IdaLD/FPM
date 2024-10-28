@@ -621,7 +621,12 @@ namespace Avalon.ViewModels
         public void FilterFavorite(string group)
         {
             ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
-            FilteredFav = FavProject.StoredFiles.Where(x=>x.Uppdrag == group);
+
+            if(FavProject != null)
+            {
+                FilteredFav = FavProject.StoredFiles.Where(x => x.Uppdrag == group);
+            }
+            
         }
 
         public void UpdateFavorite()

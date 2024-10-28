@@ -228,8 +228,18 @@ namespace Avalon.ViewModels
 
             ProjectData FavProject = ProjectsVM.StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
 
-            List<string> favList = FavProject.StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
+            List<string> favList = new List<string>();
 
+            if(FavProject == null)
+            {
+                favList.Add("Default");
+            }
+
+            if (FavProject != null)
+            {
+                favList = FavProject.StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
+            }
+            
             Favorites = new ObservableCollection<string>(favList);
         }
 
