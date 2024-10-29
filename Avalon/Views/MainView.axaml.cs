@@ -105,6 +105,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         if (e.PropertyName == "FilteredFiles") { on_update_columns(); }
         if (e.PropertyName == "UpdateColumns") { on_update_columns(); }
+        if (e.PropertyName == "TreeViewUpdate") { SetupTreeview(null, null); }
     }
 
     private void on_binding_pwr(object sender, PropertyChangedEventArgs e)
@@ -663,44 +664,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         update_row_color();
     }
 
-    private void OpenTagPop(object sender, RoutedEventArgs e)
-    {
-        ctx.OpenTagPop();
-        TagMenuInput.Focus();
-
-        HotKeyManager.SetHotKey(TagAccept, new KeyGesture(Key.Enter));
-        HotKeyManager.SetHotKey(TagCancel, new KeyGesture(Key.Escape));
-    }
-
-    private void CloseTagPop(object sender, RoutedEventArgs e)
-    {
-        ctx.CloseTagPop();
-
-        HotKeyManager.SetHotKey(TagAccept, null);
-        HotKeyManager.SetHotKey(TagCancel, null);
-    }
-
-    private void on_add_tag(object sender, RoutedEventArgs e)
-    {
-        if (TagMenuInput.Text != null)
-        {
-            string tag = TagMenuInput.Text.ToString();
-            ctx.add_tag(tag);
-            ctx.add_tag(TagMenuInput.Text);
-        }
-
-        deselect_items();
-        CloseTagPop(null, null);
-    }
-
-    private void on_clear_tag(object sender, RoutedEventArgs e)
-    {
-        ctx.clear_tag();
-        TagMenuInput.Text = null;
-        deselect_items();
-        CloseTagPop(null, null);
-    }
-
     private void OnCheckStatusSingleFile(object sender, RoutedEventArgs e)
     {
         CheckStatusSingleFile();
@@ -719,104 +682,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         await ctx.CheckProjectFiles();
         deselect_items();
         update_row_color();
-    }
-
-    private void OpenAddPopup(object sender, RoutedEventArgs e)
-    {
-        ctx.OpenNewPop();
-        ProjectName.Focus();
-
-        HotKeyManager.SetHotKey(AddAccept, new KeyGesture(Key.Enter));
-        HotKeyManager.SetHotKey(AddCancel, new KeyGesture(Key.Escape));
-    }
-
-    private void CloseAddPopup(object sender, RoutedEventArgs e)
-    {
-        ctx.CloseNewPop();
-
-        HotKeyManager.SetHotKey(AddAccept, null);
-        HotKeyManager.SetHotKey(AddCancel, null);
-    }
-
-    private void on_add_project(object sender, RoutedEventArgs e)
-    {
-        var Name = ProjectName.Text;
-        if (Name != null)
-        {
-            ctx.new_project(Name.ToString());
-        }
-
-        CloseAddPopup(null, null);
-        SetupTreeview(null, null);
-    }
-
-    private void OpenRenamePopup(object sender, RoutedEventArgs e)
-    {
-        ctx.OpenRenamePop();
-        NewProjectName.Text = ctx.ProjectsVM.CurrentProject.Namn;
-
-        HotKeyManager.SetHotKey(RenameAccept, new KeyGesture(Key.Enter));
-        HotKeyManager.SetHotKey(RenameCancel, new KeyGesture(Key.Escape));
-
-        NewProjectName.Focus();
-        NewProjectName.CaretIndex = NewProjectName.Text.Length;
-    }
-
-    private void CloseRenamePopup(object sender, RoutedEventArgs e)
-    {
-        ctx.CloseRenamePop();
-
-        HotKeyManager.SetHotKey(RenameAccept, null);
-        HotKeyManager.SetHotKey(RenameCancel, null);
-    }
-
-    private void on_rename_project(object sender, RoutedEventArgs e)
-    {
-        if (NewProjectName.Text != null)
-        {
-            ctx.rename_project(NewProjectName.Text.ToString());
-            NewProjectName.Text = null;
-        }
-
-        CloseRenamePopup(null,null);
-        SetupTreeview(null, null);
-    }
-
-    private void on_group_project(object sender, RoutedEventArgs e)
-    {
-        if (ProjectGroupInput.Text != null)
-        {
-            ctx.SetGroup(ProjectGroupInput.Text.ToString());
-            ProjectGroupInput.Text = null;
-        }
-
-        CloseGroupPopup(null, null);
-        SetupTreeview(null, null);
-    }
-
-    private void OpenGroupPopup(object sender, RoutedEventArgs e)
-    {
-        ctx.OpenGroupPop();
-        ProjectGroupInput.Text = ctx.ProjectsVM.CurrentProject.Parent;
-
-        HotKeyManager.SetHotKey(GroupAccept, new KeyGesture(Key.Enter));
-        HotKeyManager.SetHotKey(GroupCancel, new KeyGesture(Key.Escape));
-
-        ProjectGroupInput.Focus();
-
-        if (ProjectGroupInput.Text != null)
-        {
-            ProjectGroupInput.CaretIndex = ProjectGroupInput.Text.Length;
-        }
-        
-    }
-
-    private void CloseGroupPopup(object sender, RoutedEventArgs e)
-    {
-        ctx.CloseGroupPop();
-
-        HotKeyManager.SetHotKey(GroupAccept, null);
-        HotKeyManager.SetHotKey(GroupCancel, null);
     }
 
 

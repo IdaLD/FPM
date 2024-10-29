@@ -146,12 +146,10 @@
 							</StackPanel>
 						</ToggleButton>
 
-						<ToggleButton Name="ColorMenu" ToolTip.Tip="UI Color" FontWeight="Normal" Height="33" Width="35" Margin="0,-5,0,0" IsChecked="{Binding ColorPopup}">
+						<Button Name="ColorMenu" ToolTip.Tip="UI Color" FontWeight="Normal" Height="33" Width="35" Margin="0,-5,0,0"  Command="{Binding OpenColorDia}" CommandParameter="{Binding $parent[Window]}">
 							<ic:SymbolIcon Symbol="Color" FontSize="20"/>
-						</ToggleButton>
-						
-						<Button Content="Tester" Command="{Binding OpenColorDia}" CommandParameter="{Binding $parent[Window]}"/>
-						
+						</Button>
+					
 
 						<Button Name="InfoText" ToolTip.Tip="Project Notepad: Ctrl + N" HotKey="Ctrl+N" Height="33" Width="35"  FontWeight="Normal" Margin="0,-5,0,0" Click="Border_PointerPressed">
 							<ic:SymbolIcon Symbol="Notebook" FontSize="20"/>
@@ -250,7 +248,7 @@
 									<MenuItem Name="MagentaMenu" Background="#57244a" Tag ="Magenta" Click="edit_color"/>
 								</MenuItem>
 								
-								<MenuItem Name="TagMenu" Header="User Tag" Click="OpenTagPop" Icon="{icxt:SymbolIconExtension Symbol=Tag}"/>
+								<MenuItem Name="TagMenu" Header="User Tag" Command="{Binding OpenTagDia}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=Tag}"/>
 
 								<MenuItem Name="ClearAllMenu" Header="Clear Tags" Click="on_clear_files" Icon="{icxt:SymbolIconExtension Symbol=TagDismiss}"/>
 
@@ -428,11 +426,11 @@
 									<ContextMenu Name="TreeMenu">
 										<MenuItem Header="Add Files" Click="on_add_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentAdd}"/>
 										
-										<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{icxt:SymbolIconExtension Symbol=FolderAdd}" Click="OpenAddPopup"/>
+										<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{icxt:SymbolIconExtension Symbol=FolderAdd}" Command="{Binding OpenProjectNewDia}" CommandParameter="{Binding $parent[Window]}"/>
 										
-										<MenuItem Name="RenameMenu" Header="Rename" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Click="OpenRenamePopup"/>
+										<MenuItem Name="RenameMenu" Header="Rename" Icon="{icxt:SymbolIconExtension Symbol=Rename}"  Command="{Binding OpenProjectRenameDia}" CommandParameter="{Binding $parent[Window]}"/>
 
-										<MenuItem Name="GroupMenu" Header="Group" Icon="{icxt:SymbolIconExtension Symbol=Collections}" Click="OpenGroupPopup"/>
+										<MenuItem Name="GroupMenu" Header="Group" Icon="{icxt:SymbolIconExtension Symbol=Collections}" Command="{Binding OpenGroupDia}" CommandParameter="{Binding $parent[Window]}"/>
 										
 										<MenuItem Header="Type" Icon="{icxt:SymbolIconExtension Symbol=Tag}">
 											<MenuItem Header="Project" Tag="Project" Click="on_set_category"/>
@@ -448,57 +446,7 @@
 							</TreeView>
 						</StackPanel>
 					</Border>
-				</Grid>
-
-				<Border IsVisible="{Binding GroupPopup}" IsHitTestVisible="{Binding GroupPopup}" Grid.ColumnSpan="5" Grid.RowSpan="3" HorizontalAlignment="Center"
-						VerticalAlignment="Center" Padding="10" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">
-					<StackPanel Orientation="Vertical" Spacing="10">
-						<Label Content="Set Project Group" FontWeight="Bold" HorizontalContentAlignment="Center"/>
-						<TextBox Name="ProjectGroupInput" HorizontalContentAlignment="Center"  Width="160" />
-						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
-							<Button Name="GroupAccept" Content="Accept" Width="70" BorderBrush="Gray" Click="on_group_project"/>
-							<Button Name="GroupCancel" Content="Cancel" Width="70" BorderBrush="Gray" Click="CloseGroupPopup"/>
-						</StackPanel>
-					</StackPanel>
-				</Border>
-				
-				<Border IsVisible="{Binding RenamePopup}" IsHitTestVisible="{Binding RenamePopup}" Grid.ColumnSpan="5" Grid.RowSpan="3" HorizontalAlignment="Center"
-						VerticalAlignment="Center" Padding="10" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">
-					<StackPanel Orientation="Vertical" Spacing="10">
-						<Label Content="Rename Project" FontWeight="Bold" HorizontalContentAlignment="Center"/>
-						<TextBox Name="NewProjectName" HorizontalContentAlignment="Center"  Width="160" />
-						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
-							<Button Name="RenameAccept" Content="Accept" Width="70" BorderBrush="Gray" Click="on_rename_project"/>
-							<Button Name="RenameCancel" Content="Cancel" Width="70" BorderBrush="Gray" Click="CloseRenamePopup"/>
-						</StackPanel>
-					</StackPanel>
-				</Border>
-
-				<Border IsVisible="{Binding NewPopup}" IsHitTestVisible="{Binding NewPopup}" Grid.ColumnSpan="5" Grid.RowSpan="3" HorizontalAlignment="Center"
-						VerticalAlignment="Center" Padding="10" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">
-					<StackPanel Orientation="Vertical" Spacing="10">
-						<Label Content="New Project" FontWeight="Bold" HorizontalContentAlignment="Center"/>
-						<TextBox Name="ProjectName" HorizontalContentAlignment="Center" Width="160" />
-						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
-							<Button Name="AddAccept" Content="Accept" Width="70" BorderBrush="Gray" Click="on_add_project"/>
-							<Button Name="AddCancel" Content="Cancel" Width="70" BorderBrush="Gray" Click="CloseAddPopup"/>
-						</StackPanel>
-					</StackPanel>
-				</Border>
-
-				<Border IsVisible="{Binding TagPopup}" IsHitTestVisible="{Binding TagPopup}" Grid.ColumnSpan="5" Grid.RowSpan="3" HorizontalAlignment="Center"
-						VerticalAlignment="Center" Padding="10" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderBrush="Gray" BorderThickness="1">
-					<StackPanel Orientation="Vertical" Spacing="10">
-						<Label Content="Set Tag" FontWeight="Bold" HorizontalContentAlignment="Center"/>
-						<TextBox Name="TagMenuInput" HorizontalContentAlignment="Center" Width="160" />
-						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
-							<Button Name="TagAccept" Content="Accept" Width="70" BorderBrush="Gray" Click="on_add_tag"/>
-							<Button Name="TagClear" Content="Clear" Width="70" BorderBrush="Gray" Click="on_clear_tag"/>
-							<Button Name="TagCancel" Content="Cancel" Width="70" BorderBrush="Gray" Click="CloseTagPop"/>
-						</StackPanel>
-					</StackPanel>
-				</Border>
-				
+				</Grid>		
 			</Grid>
 	
 </UserControl>

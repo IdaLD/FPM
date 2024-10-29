@@ -20,5 +20,12 @@ public partial class xColorDia : Window
 
         BackgroundColorPickerLight.Color = Color.Parse("#dfe6e9");
         AccentColorPickerLight.Color = Color.Parse("#999999");
+
+        this.Close();
+    }
+
+    public void OnClose(object sender, RoutedEventArgs e)
+    {
+        this.Close();
     }
 }

@@ -1,0 +1,37 @@
+using Avalon.ViewModels;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+
+namespace Avalon.Views;
+
+public partial class xTagDia : Window
+{
+    public xTagDia()
+    {
+        InitializeComponent();
+
+        KeyDown += CloseKey;
+
+    }
+
+    private void OnSetTag(object sender, RoutedEventArgs e)
+    {
+        if (TagMenuInput.Text != null)
+        {
+            MainViewModel ctx = (MainViewModel)this.DataContext;
+            ctx.add_tag(TagMenuInput.Text.ToString());
+        }
+
+        this.Close();
+    }
+
+    private void CloseKey(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Escape)
+        {
+            this.Close();
+        }
+    }
+
+}

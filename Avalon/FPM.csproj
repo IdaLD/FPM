@@ -37,6 +37,29 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaXaml Update="Views\xRenameDia.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+    <AvaloniaXaml Update="Views\xGroupDia.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\xNewDia.axaml.cs">
+      <DependentUpon>xNewDia.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\xGroupDia.axaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>xGroupDia.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\xTagDia.axaml.cs">
+      <DependentUpon>xTagDia.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\xRenameDia.axaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>xRenameDia.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\xColorDia.axaml.cs">
       <DependentUpon>xColorDia.axaml</DependentUpon>
     </Compile>

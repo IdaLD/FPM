@@ -157,53 +157,72 @@ namespace Avalon.ViewModels
             {
                 DataContext = this
             };
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
             window.ShowDialog(mainWindow);
         }
 
-        public void OpenRenamePop()
+        public void OpenProjectRenameDia(Window mainWindow)
         {
-            RenamePopup = true;
+            var window = new xRenameDia()
+            {
+                DataContext = this
+            };
+
+            window.NewProjectName.Text = ProjectsVM.CurrentProject.Namn;
+            window.NewProjectName.CaretIndex = window.NewProjectName.Text.Length;
+
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.ShowDialog(mainWindow);
+            window.NewProjectName.Focus();
         }
 
-        public void CloseRenamePop()
+        public void OpenProjectNewDia(Window mainWindow)
         {
-            RenamePopup = false;
+            var window = new xNewDia()
+            {
+                DataContext = this
+            };
+
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.ShowDialog(mainWindow);
+            window.ProjectName.Focus();
         }
 
-        public void OpenNewPop()
+        public void OpenTagDia(Window mainWindow)
         {
-            NewPopup = true;
+            var window = new xTagDia()
+            {
+                DataContext = this
+            };
+
+            window.TagMenuInput.Text = ProjectsVM.CurrentFile.Tagg;
+            window.TagMenuInput.CaretIndex = window.TagMenuInput.Text.Length;
+
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.ShowDialog(mainWindow);
+            window.TagMenuInput.Focus();
         }
 
-        public void CloseNewPop()
+        public void OpenGroupDia(Window mainWindow)
         {
-            NewPopup = false;
+            var window = new xGroupDia()
+            {
+                DataContext = this
+            };
+
+            window.ProjectGroupInput.Text = ProjectsVM.CurrentProject.Parent;
+
+
+            if (window.ProjectGroupInput.Text != null)
+            {
+                window.ProjectGroupInput.CaretIndex = window.ProjectGroupInput.Text.Length;
+            }
+
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.ShowDialog(mainWindow);
+            window.ProjectGroupInput.Focus();
         }
 
-        public void OpenTagPop()
-        {
-            TagPopup = true;
-        }
-
-        public void CloseTagPop()
-        {
-            TagPopup = false;
-        }
-
-        public void CloseColorPopup()
-        {
-            ColorPopup = false;
-        }
-
-        public void OpenGroupPop()
-        {
-            GroupPopup = true;
-        }
-
-        public void CloseGroupPop()
-        {
-            GroupPopup = false;
-        }
 
         public void AddFavGroup(string group)
         {
@@ -419,6 +438,7 @@ namespace Avalon.ViewModels
         {
             ProjectsVM.SetGroups(group);
             GetGroups();
+            OnPropertyChanged("TreeViewUpdate");
         }
 
         public void GetGroups()
@@ -808,6 +828,7 @@ namespace Avalon.ViewModels
         public void new_project(string name)
         {
             ProjectsVM.NewProject(name);
+            OnPropertyChanged("TreeViewUpdate");
         }
 
         public void remove_project()
@@ -819,6 +840,7 @@ namespace Avalon.ViewModels
         {
             ProjectsVM.RenameProject(newProjectName);
             ProjectsVM.SetProjectlist();
+            OnPropertyChanged("TreeViewUpdate");
         }
 
 
