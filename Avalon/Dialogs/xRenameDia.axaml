@@ -8,8 +8,8 @@
 		MaxWidth="190"
 		MaxHeight="110"
 
-        x:Class="Avalon.Views.xNewDia"
-        Title="xNewDia"
+        x:Class="Avalon.Dialog.xRenameDia"
+        Title="xRenameDia"
 		xmlns:vm="clr-namespace:Avalon.ViewModels"
 		CanResize="False"
 		WindowStartupLocation="CenterScreen"
@@ -18,10 +18,10 @@
 
 	<Border BorderBrush="Gray" BorderThickness="1">
 		<StackPanel Orientation="Vertical" Spacing="10" Margin="0 20 0 0" HorizontalAlignment="Center" VerticalAlignment="Center">
-			<Label Content="New Project" FontWeight="Bold" HorizontalContentAlignment="Center"/>
-			<TextBox Name="ProjectName" HorizontalContentAlignment="Center" Width="160" />
+			<Label Content="Rename Project" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+			<TextBox Name="NewProjectName" HorizontalContentAlignment="Center"  Width="160" />
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
-				<Button Name="AddAccept" HotKey="Enter" Content="Accept" Width="70" BorderBrush="Gray" Click="OnNewProject"/>
+				<Button Name="RenameAccept" HotKey="Enter" Content="Accept" Width="70" BorderBrush="Gray" Click="OnRenameProject"/>
 			</StackPanel>
 		</StackPanel>
 	</Border>

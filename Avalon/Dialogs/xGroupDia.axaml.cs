@@ -3,11 +3,11 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 
-namespace Avalon.Views;
+namespace Avalon.Dialog;
 
-public partial class xTagDia : Window
+public partial class xGroupDia : Window
 {
-    public xTagDia()
+    public xGroupDia()
     {
         InitializeComponent();
 
@@ -15,16 +15,18 @@ public partial class xTagDia : Window
 
     }
 
-    private void OnSetTag(object sender, RoutedEventArgs e)
+    private void OnGroupProject(object sender, RoutedEventArgs e)
     {
-        if (TagMenuInput.Text != null)
+        if (ProjectGroupInput.Text != null)
         {
             MainViewModel ctx = (MainViewModel)this.DataContext;
-            ctx.add_tag(TagMenuInput.Text.ToString());
+            ctx.SetGroup(ProjectGroupInput.Text.ToString());
         }
 
         this.Close();
+
     }
+
 
     private void CloseKey(object sender, KeyEventArgs e)
     {

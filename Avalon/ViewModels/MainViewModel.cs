@@ -12,11 +12,9 @@ using System;
 using System.ComponentModel;
 using Avalon.Model;
 using Avalonia.Media;
-using Org.BouncyCastle.Asn1.BC;
 using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
-using Avalonia.Interactivity;
-using Avalon.Views;
+using Avalon.Dialog;
 
 
 namespace Avalon.ViewModels
@@ -251,7 +249,7 @@ namespace Avalon.ViewModels
             }
         }
 
-        public void GetFavGroups()
+        public void OnGetFavGroups()
         {
             Favorites.Clear();
 
@@ -313,6 +311,7 @@ namespace Avalon.ViewModels
                 SetCurrentColor();
                 SetAllowedTypes();
                 GetGroups();
+                OnGetFavGroups();
 
             }
         }
@@ -329,6 +328,7 @@ namespace Avalon.ViewModels
                 SetCurrentColor();
                 SetAllowedTypes();
                 GetGroups();
+                OnGetFavGroups();
             }
         }
 
@@ -368,6 +368,8 @@ namespace Avalon.ViewModels
                 var data = JsonConvert.SerializeObject(ProjectsVM.StoredProjects);
                 await streamWriter.WriteLineAsync(data);
             }
+
+            Debug.WriteLine("Saved");
         }
 
         public async Task AddFile(Avalonia.Visual window)
@@ -444,9 +446,7 @@ namespace Avalon.ViewModels
         public void GetGroups()
         {
             Groups.Clear();
-
-            Groups = projectsVM.GetGroups();
-
+            Groups = ProjectsVM.GetGroups();
         }
 
         public void CopyFilenameToClipboard(Avalonia.Visual window)

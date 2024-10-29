@@ -8,7 +8,7 @@
 		MaxWidth="190"
 		MaxHeight="110"
 
-        x:Class="Avalon.Views.xGroupDia"
+        x:Class="Avalon.Dialog.xGroupDia"
         Title="xGroupDia"
 		xmlns:vm="clr-namespace:Avalon.ViewModels"
 		CanResize="False"

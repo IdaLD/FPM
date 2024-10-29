@@ -3,11 +3,11 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 
-namespace Avalon.Views;
+namespace Avalon.Dialog;
 
-public partial class xNewDia : Window
+public partial class xRenameDia : Window
 {
-    public xNewDia()
+    public xRenameDia()
     {
         InitializeComponent();
 
@@ -15,13 +15,12 @@ public partial class xNewDia : Window
 
     }
 
-    private void OnNewProject(object sender, RoutedEventArgs e)
+    private void OnRenameProject(object sender, RoutedEventArgs e)
     {
-        var Name = ProjectName.Text;
-        if (Name != null)
+        if (NewProjectName.Text != null)
         {
             MainViewModel ctx = (MainViewModel)this.DataContext;
-            ctx.new_project(Name.ToString());
+            ctx.rename_project(NewProjectName.Text.ToString());
         }
 
         this.Close();

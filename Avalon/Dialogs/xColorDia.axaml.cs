@@ -4,7 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 
-namespace Avalon.Views;
+namespace Avalon.Dialog;
 
 public partial class xColorDia : Window
 {

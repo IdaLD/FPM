@@ -274,6 +274,25 @@ namespace Avalon.ViewModels
             return new ObservableCollection<string>(list);
         }
 
+        public ObservableCollection<string> GetFavGroups()
+        {
+            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
+
+            List<string> favList = new List<string>();
+
+            if (FavProject == null)
+            {
+                favList.Add("Default");
+            }
+
+            if (FavProject != null)
+            {
+                favList = FavProject.StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
+            }
+
+            return new ObservableCollection<string>(favList);       
+        }
+
         public void SetGroups(string group)
         {
             CurrentProject.Parent = group;

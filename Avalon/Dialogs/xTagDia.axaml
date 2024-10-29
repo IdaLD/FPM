@@ -8,7 +8,7 @@
 		MaxWidth="190"
 		MaxHeight="110"
 
-        x:Class="Avalon.Views.xTagDia"
+        x:Class="Avalon.Dialog.xTagDia"
         Title="xTagDia"
 		xmlns:vm="clr-namespace:Avalon.ViewModels"
 		CanResize="False"
@@ -21,7 +21,7 @@
 			<Label Content="Set Tag" FontWeight="Bold" HorizontalContentAlignment="Center"/>
 			<TextBox Name="TagMenuInput" HorizontalContentAlignment="Center" Width="160" />
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
-				<Button Name="TagAccept" Content="Accept" Width="70" BorderBrush="Gray" Click="OnSetTag"/>
+				<Button Name="TagAccept" HotKey="Enter" Content="Accept" Width="70" BorderBrush="Gray" Click="OnSetTag"/>
 			</StackPanel>
 		</StackPanel>
 	</Border>

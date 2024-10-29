@@ -2,14 +2,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="180" d:DesignHeight="300"
+        mc:Ignorable="d" d:DesignWidth="190" d:DesignHeight="110"
 		MinWidth="190"
 		MinHeight="110"
 		MaxWidth="190"
 		MaxHeight="110"
 
-        x:Class="Avalon.Views.xRenameDia"
-        Title="xRenameDia"
+        x:Class="Avalon.Dialog.xNewDia"
+        Title="xNewDia"
 		xmlns:vm="clr-namespace:Avalon.ViewModels"
 		CanResize="False"
 		WindowStartupLocation="CenterScreen"
@@ -18,10 +18,10 @@
 
 	<Border BorderBrush="Gray" BorderThickness="1">
 		<StackPanel Orientation="Vertical" Spacing="10" Margin="0 20 0 0" HorizontalAlignment="Center" VerticalAlignment="Center">
-			<Label Content="Rename Project" FontWeight="Bold" HorizontalContentAlignment="Center"/>
-			<TextBox Name="NewProjectName" HorizontalContentAlignment="Center"  Width="160" />
+			<Label Content="New Project" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+			<TextBox Name="ProjectName" HorizontalContentAlignment="Center" Width="160" />
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
-				<Button Name="RenameAccept" HotKey="Enter" Content="Accept" Width="70" BorderBrush="Gray" Click="OnRenameProject"/>
+				<Button Name="AddAccept" HotKey="Enter" Content="Accept" Width="70" BorderBrush="Gray" Click="OnNewProject"/>
 			</StackPanel>
 		</StackPanel>
 	</Border>

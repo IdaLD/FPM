@@ -284,7 +284,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (trayview)
         {
             ctx.ProjectsVM.UpdateFavorite();
-            ctx.GetFavGroups();
+            ctx.OnGetFavGroups();
             MainGrid.ColumnDefinitions[4] = new ColumnDefinition(300, GridUnitType.Pixel);
         }
         else
