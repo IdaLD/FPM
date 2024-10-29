@@ -16,6 +16,7 @@ using Org.BouncyCastle.Asn1.BC;
 using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
 using Avalonia.Interactivity;
+using Avalon.Views;
 
 
 namespace Avalon.ViewModels
@@ -148,6 +149,15 @@ namespace Avalon.ViewModels
         {
             get { return fileTypeSelection; }
             set { fileTypeSelection = value; OnPropertyChanged("FileTypeSelection"); }
+        }
+
+        public void OpenColorDia(Window mainWindow)
+        {
+            var window = new xColorDia()
+            {
+                DataContext = this
+            };
+            window.ShowDialog(mainWindow);
         }
 
         public void OpenRenamePop()

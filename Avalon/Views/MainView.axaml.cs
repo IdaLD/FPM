@@ -10,18 +10,9 @@ using Avalonia.Input;
 using System.Threading;
 using System.Collections.Generic;
 using Avalon.Model;
-using Avalonia.LogicalTree;
 using System.IO;
 using Avalonia.Data;
 using Avalonia.Styling;
-using Avalonia.Themes.Fluent;
-using Org.BouncyCastle.Asn1.BC;
-using System.Diagnostics;
-using Avalonia;
-using Avalonia.Layout;
-using Avalonia.VisualTree;
-using Avalonia.Markup.Xaml.MarkupExtensions;
-using iText.Commons.Bouncycastle.Asn1.X509;
 
 
 namespace Avalon.Views;
@@ -121,14 +112,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     }
 
-    public void ResetThemeColors(object sender, RoutedEventArgs e)
-    {
-        BackgroundColorPickerDark.Color = Color.Parse("#333333");
-        AccentColorPickerDark.Color = Color.Parse("#444444");
 
-        BackgroundColorPickerLight.Color = Color.Parse("#dfe6e9");
-        AccentColorPickerLight.Color = Color.Parse("#999999");
-    }
+
+
 
     public void on_search(object sender, RoutedEventArgs e)
     {
