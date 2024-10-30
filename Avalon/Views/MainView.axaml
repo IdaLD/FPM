@@ -372,9 +372,11 @@
 								<ic:SymbolIcon Symbol="ArrowNext" IconVariant="Regular" FontSize="20"/>
 							</Button>
 
-							<Button ToolTip.Tip="Reset And Center, Ctrl+C" HotKey="Ctrl + C" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Click="ResetView">
-								<ic:SymbolIcon Symbol="ScaleFit" IconVariant="Regular" FontSize="20"/>
+							<Button ToolTip.Tip="Copy to clipboard, Ctrl+C" HotKey="Ctrl + C" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Command="{Binding CopyToClipboard}" CommandParameter="{Binding $parent[Window]}">
+								<ic:SymbolIcon Symbol="Clipboard" IconVariant="Regular" FontSize="20"/>
 							</Button>
+							
+							
 
 							<Button ToolTip.Tip="Toggle Dimmed Background, Ctrl + G" HotKey="Ctrl+G" FontWeight="Normal" Name="DimmedMode" Command="{Binding ToggleDimmed}" ToolTip.Placement="Right" IsEnabled="False">
 								<StackPanel>
