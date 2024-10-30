@@ -305,11 +305,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             if(selectedTree.Tag == "Header" || selectedTree.Tag == "Group")
             {
+                MainTree.SelectedItem = null;
+                MainTree.ContextMenu.IsEnabled = false;
                 return;
             }
 
             else
             {
+                MainTree.ContextMenu.IsEnabled = true;
+
                 if (selectedTree.Tag == "All Types")
                 {
                     ctx.select_type("All Types");
