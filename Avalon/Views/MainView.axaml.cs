@@ -13,6 +13,7 @@ using Avalon.Model;
 using System.IO;
 using Avalonia.Data;
 using Avalonia.Styling;
+using System.Diagnostics;
 
 
 namespace Avalon.Views;
@@ -312,6 +313,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             else
             {
+                GroupMenu.IsEnabled = false;
+
+                TreeViewItem parentTree = (TreeViewItem)selectedTree.Parent;
+                
+                if(parentTree.Header == "Project" || parentTree.Tag == "Group")
+                {
+                    GroupMenu.IsEnabled = true;
+                }
+
                 MainTree.ContextMenu.IsEnabled = true;
 
                 if (selectedTree.Tag == "All Types")
@@ -952,6 +962,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (darkmode == true)
         {
 
+
+
             YellowMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#646424");
             OrangeMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#643e24");
             BrownMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#3e3124");
@@ -975,6 +987,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void update_row_color()
     {
+        TopLevel window = Window.GetTopLevel(this);
+
+        foreach (Style style in window.Styles)
+        {
+            Debug.WriteLine(style.Setters[0]);
+        }
+
+
+
         foreach (DataGridRowEventArgs e in Args)
         {
             var dataObject = e.Row.DataContext as FileData;

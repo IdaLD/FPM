@@ -52,7 +52,8 @@
 				<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical" IsVisible="{Binding !FullScreenMode}">
 					<StackPanel Margin="8 -1 0 0" Orientation="Horizontal" >
 						<ic:SymbolIcon Symbol="Folder" IconVariant="Filled" Foreground="Gray" Width="25" FontSize="16"/>
-						<TextBlock Text="Filtered: " Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text="{Binding ProjectsVM.CurrentProject.Namn}" Foreground="Gray" FontStyle="Italic"/>
+						<TextBlock Text=" | Filtered: " Foreground="Gray" FontStyle="Italic"/>
 						<TextBlock Text="{Binding ProjectsVM.NrFilteredFiles}" Foreground="Gray" FontStyle="Italic"/>
 						<TextBlock Text=" | Selected: " Foreground="Gray" FontStyle="Italic"/>
 						<TextBlock Text="{Binding ProjectsVM.NrSelectedFiles}" Foreground="Gray" FontStyle="Italic"/>

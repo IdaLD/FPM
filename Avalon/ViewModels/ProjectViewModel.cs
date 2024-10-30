@@ -493,7 +493,7 @@ namespace Avalon.ViewModels
 
         public void SetDefaultSelection()
         {
-            string defaultProject = StoredProjects.Where(x => x.Category != "Search").FirstOrDefault().Namn;
+            string defaultProject = StoredProjects.Where(x => x.Category != "Search" && x.Category != "Favorites").FirstOrDefault().Namn;
             CurrentProject = GetProject(defaultProject);
             Type = "All Types";
         }
