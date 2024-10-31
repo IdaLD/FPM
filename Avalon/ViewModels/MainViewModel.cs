@@ -15,7 +15,6 @@ using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
 using Avalon.Dialog;
-using Avalonia.Interactivity;
 
 
 namespace Avalon.ViewModels

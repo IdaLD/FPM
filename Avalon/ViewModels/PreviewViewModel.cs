@@ -16,7 +16,6 @@ using Avalonia.Media;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Avalonia.Collections;
-using Avalonia.Controls;
 
 namespace Avalon.ViewModels
 {
@@ -661,12 +660,6 @@ namespace Avalon.ViewModels
             {
                 RequestPage2 = RequestPage1 + 1;
             }
-        }
-
-        public void CopyToClipboard(Avalonia.Visual window)
-        {
-            string selected = Renderer.GetSelectedText();
-            TopLevel.GetTopLevel(window).Clipboard.SetTextAsync(selected);
         }
 
         public void Search(string text)
