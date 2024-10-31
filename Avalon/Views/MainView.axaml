@@ -240,13 +240,13 @@
 								
 								<MenuItem Name="ColorMainMenu" Header="Color Tag" Icon="{icxt:SymbolIconExtension Symbol=Color}">
 									<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="edit_color"/>
-									<MenuItem Name="YellowMenu" Background="#646424" Tag ="Yellow" Click="edit_color"/>
-									<MenuItem Name="OrangeMenu" Background="#643e24" Tag ="Orange" Click="edit_color"/>
-									<MenuItem Name="BrownMenu" Background="#3e3124" Tag ="Brown" Click="edit_color"/>
-									<MenuItem Name="GreenMenu" Background="#244a24" Tag ="Green" Click="edit_color"/>
-									<MenuItem Name="BlueMenu" Background="#243e64" Tag ="Blue" Click="edit_color"/>
-									<MenuItem Name="RedMenu" Background="#642424" Tag ="Red" Click="edit_color"/>
-									<MenuItem Name="MagentaMenu" Background="#57244a" Tag ="Magenta" Click="edit_color"/>
+									<MenuItem Name="YellowMenu" Background="#FFFF00" Opacity="0.6" Tag ="Yellow" Click="edit_color"/>
+									<MenuItem Name="OrangeMenu" Background="#FFA500" Opacity="0.6" Tag ="Orange" Click="edit_color"/>
+									<MenuItem Name="BrownMenu" Background="#8B4513" Opacity="0.6" Tag ="Brown" Click="edit_color"/>
+									<MenuItem Name="GreenMenu" Background="#228B22" Opacity="0.6" Tag ="Green" Click="edit_color"/>
+									<MenuItem Name="BlueMenu" Background="#1E90FF" Opacity="0.6" Tag ="Blue" Click="edit_color"/>
+									<MenuItem Name="RedMenu" Background="#B22222" Opacity="0.6" Tag ="Red" Click="edit_color"/>
+									<MenuItem Name="MagentaMenu" Background="#9400D3" Opacity="0.6" Tag ="Magenta" Click="edit_color"/>
 								</MenuItem>
 								
 								<MenuItem Name="TagMenu" Header="User Tag" Command="{Binding OpenTagDia}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=Tag}"/>

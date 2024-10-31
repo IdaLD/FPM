@@ -358,8 +358,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             window.RequestedThemeVariant = ThemeVariant.Light;
         }
 
-        set_theme_colors();
-        update_row_color();
+        //set_theme_colors();
+        //update_row_color();
     }
 
 
@@ -676,7 +676,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.clear_all();
 
         deselect_items();
-        update_row_color();
+       update_row_color();
     }
 
     private void OnCheckStatusSingleFile(object sender, RoutedEventArgs e)
@@ -932,61 +932,17 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         var dataObject = e.Row.DataContext as FileData;
         e.Row.Classes.Clear();
 
-        double facDark = 0.6d;
-        double facLight = 0.4d;
-
-
         if (dataObject != null && dataObject.Färg == "") { e.Row.Classes.Clear(); }
 
         if (dataObject != null && dataObject.FileStatus == "Missing") { e.Row.Classes.Add("RedForeground"); }
 
-        if (darkmode == true)
-        {
-            if (dataObject != null && dataObject.Färg == "") { e.Row.Background = null; }
-            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color1, new Color(0, 255, 255, 0), facDark)); }
-            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color1, new Color(0, 255, 140, 0), facDark)); }
-            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color1, new Color(0, 139, 69, 19), facDark)); }
-            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color1, new Color(0, 34, 139, 34), facDark)); }
-            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color1, new Color(0, 30, 144, 255), facDark)); }
-            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color1, new Color(0, 178, 34, 34), facDark)); }
-            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color1, new Color(0, 139, 0, 139), facDark)); }
-        }
-        else
-        {
-            if (dataObject != null && dataObject.Färg == "") { e.Row.Background = null; }
-            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color3, new Color(0, 255, 255, 0), facLight)); }
-            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color3, new Color(0, 255, 140, 0), facLight)); }
-            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color3, new Color(0, 139, 69, 19), facLight)); }
-            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color3, new Color(0, 34, 139, 34), facLight)); }
-            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color3, new Color(0, 30, 144, 255), facLight)); }
-            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color3, new Color(0, 178, 34, 34), facLight)); }
-            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color3, new Color(0, 139, 0, 139), facLight)); }
-        }
-    }
-
-    private void set_theme_colors()
-    {
-        if (darkmode == true)
-        {
-            YellowMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#646424");
-            OrangeMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#643e24");
-            BrownMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#3e3124");
-            GreenMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#244a24");
-            BlueMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#243e64");
-            RedMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#642424");
-            MagentaMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#57244a");
-        }
-
-        if (darkmode == false)
-        {
-            YellowMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#ffff99");
-            OrangeMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#ffd699");
-            BrownMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#c2ad99");
-            GreenMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#8cd1a3");
-            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#a3a3ff");
-            RedMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#ff8c8c");
-            MagentaMenu.Background = (IBrush)new BrushConverter().ConvertFrom("#eb99eb");
-        }
+        if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("Yellow"); }
+        if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("Orange"); }
+        if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("Brown"); }
+        if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("Green"); }
+        if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("Blue"); }
+        if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("Red"); }
+        if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("Magenta"); }
     }
 
     private void update_row_color()
@@ -996,47 +952,18 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             var dataObject = e.Row.DataContext as FileData;
 
-            double facDark = 0.3d;
-            double facLight = 0d;
-
             e.Row.Classes.Clear();
 
             if (dataObject != null && dataObject.FileStatus == "Missing") { e.Row.Classes.Add("RedForeground"); }
 
-            if (darkmode == true)
-            {
-                if (dataObject != null && dataObject.Färg == "") { e.Row.Background = null; }
-                if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color1, new Color(0, 255, 255, 0), facDark)); }
-                if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color1, new Color(0, 255, 140, 0), facDark)); }
-                if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color1, new Color(0, 139, 69, 19), facDark)); }
-                if (dataObject != null && dataObject.Färg == "Green") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color1, new Color(0, 34, 139, 34), facDark)); }
-                if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color1, new Color(0, 30, 144, 255), facDark)); }
-                if (dataObject != null && dataObject.Färg == "Red") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color1, new Color(0, 178, 34, 34), facDark)); }
-                if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color1, new Color(0, 139, 0, 139), facDark)); }
-            }
-            else
-            {
-                if (dataObject != null && dataObject.Färg == "") { e.Row.Background = null; }
-                if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color3, new Color(0, 255, 255, 0), facLight)); }
-                if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color3, new Color(0, 255, 140, 0), facLight)); }
-                if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color3, new Color(0, 139, 69, 19), facLight)); }
-                if (dataObject != null && dataObject.Färg == "Green") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color3, new Color(0, 34, 139, 34), facLight)); }
-                if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color3, new Color(0, 30, 144, 255), facLight)); }
-                if (dataObject != null && dataObject.Färg == "Red") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color3, new Color(0, 178, 34, 34), facLight)); }
-                if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Background = (IBrush)new SolidColorBrush(NewColorConverter(ctx.Color3, new Color(0, 139, 0, 139), facLight)); }
-            }
+            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("Yellow"); }
+            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("Orange"); }
+            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("Brown"); }
+            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("Green"); }
+            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("Blue"); }
+            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("Red"); }
+            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("Magenta"); }
         }
-    }
-
-    private Color NewColorConverter(Color color1, Color color2, double fac)
-    {
-        double a = color1.A;
-        double r = color1.R * fac + color2.R * (1 - fac);
-        double g = color1.G * fac + color2.G * (1 - fac);
-        double b = color1.B * fac + color2.B * (1 - fac);
-
-        return new Color((byte)a, (byte)r, (byte)g, (byte)b);
-
     }
 
     private void RaisePropertyChanged(string propName)
