@@ -240,7 +240,7 @@
 								
 								<MenuItem Name="ColorMainMenu" Header="Color Tag" Icon="{icxt:SymbolIconExtension Symbol=Color}">
 									<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="edit_color"/>
-									<MenuItem Name="YellowMenu" Background="#FFFF00" Opacity="0.6" Tag ="Yellow" Click="edit_color"/>
+									<MenuItem Name="YellowMenu" Background="#FFD700" Opacity="0.6" Tag ="Yellow" Click="edit_color"/>
 									<MenuItem Name="OrangeMenu" Background="#FFA500" Opacity="0.6" Tag ="Orange" Click="edit_color"/>
 									<MenuItem Name="BrownMenu" Background="#8B4513" Opacity="0.6" Tag ="Brown" Click="edit_color"/>
 									<MenuItem Name="GreenMenu" Background="#228B22" Opacity="0.6" Tag ="Green" Click="edit_color"/>

@@ -24,7 +24,7 @@
 		<Style Selector="DataGridRow.Yellow">
 			<Setter Property="Background">
 				<Setter.Value>
-					<SolidColorBrush Color="#FFFF00" Opacity="0.7"/>
+					<SolidColorBrush Color="#FFD700" Opacity="0.7"/>
 				</Setter.Value>
 			</Setter>
 		</Style>
