@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalon.Dialog;
 using System.ComponentModel;
+using Org.BouncyCastle.Crypto.Signers;
 
 
 namespace Avalon.Views;
@@ -21,15 +22,22 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         if(confirmLeave)
         {
             e.Cancel = true;
-            OpenColorDia();
+            OpenClosingDia();
         }
         else
         {
+            MainViewModel ctx = (MainViewModel)this.DataContext;
+
+            if (ctx.PreviewWindowOpen)
+            {
+                ctx.PreviewWindow.Close();
+            }
+
             e.Cancel = false;
         }
     }
 
-    public void OpenColorDia()
+    public void OpenClosingDia()
     {
 
         var window = new xCloseDia()

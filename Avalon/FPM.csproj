@@ -66,5 +66,11 @@
     <Compile Update="Dialogs\xColorDia.axaml.cs">
       <DependentUpon>xColorDia.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\PreView.axaml.cs">
+      <DependentUpon>PreView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\PreWindow.axaml.cs">
+      <DependentUpon>PreWindow.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

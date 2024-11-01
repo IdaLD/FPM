@@ -32,8 +32,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_files);
         FileGrid.AddHandler(DragDrop.DropEvent, on_drop);
 
-        ScrollSlider.AddHandler(Slider.ValueChangedEvent, PageNrSlider);
-
         TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, select_favorite);
         TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_tray);
         FavoriteGroups.AddHandler(ListBox.SelectionChangedEvent, OnFavoriteGroupChanged);
@@ -41,7 +39,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
         FileGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
-        PreviewGrid.AddHandler(Grid.SizeChangedEvent, PreviewSizeChanged);
 
         init_MetaWorker();
 
@@ -72,12 +69,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private bool PreviewTaskBusy = false;
     private bool PreviewReady = false;
     private double BitmapRes = 0.5;
-    private bool ZoomMode = false;
 
     private void init_startup(object sender, RoutedEventArgs e)
     {
         get_datacontext();
-        pwr.GetRenderControl(MuPDFRenderer);
 
         Lockedstatus.IsChecked = true;
         TreeStatus.IsChecked = true;
@@ -116,7 +111,25 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     }
 
 
+    public void OnTogglePreviewWindow(object sender, RoutedEventArgs e)
+    {
+        
+        if (!ctx.PreviewWindowOpen)
+        {
+            if (previewMode)
+            {
+                PreviewToggle.IsChecked = false;
+            }
 
+            ctx.OpenPreviewWindow();
+        }
+
+        else
+        {
+            ctx.PreviewWindow.Close();
+        }
+
+    }
 
 
     public void on_search(object sender, RoutedEventArgs e)
@@ -262,9 +275,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         treeview = !treeview;
 
-        TreeviewOn.IsVisible = !TreeviewOn.IsVisible;
-        TreeviewOff.IsVisible = !TreeviewOff.IsVisible;
-
         if (treeview)
         {
             SetupTreeview(null, null);
@@ -279,9 +289,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     public void toggle_tray(object sender, RoutedEventArgs e)
     {
         trayview = !trayview;
-
-        TrayOn.IsVisible = !TrayOn.IsVisible;
-        TrayOff.IsVisible = !TrayOff.IsVisible;
 
         if (trayview)
         {
@@ -347,6 +354,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         ModeDayIcon.IsVisible = !ModeDayIcon.IsVisible;
         ModeNightIcon.IsVisible = !ModeNightIcon.IsVisible;
+
         var window = Window.GetTopLevel(this);
 
         if (darkmode)
@@ -358,8 +366,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             window.RequestedThemeVariant = ThemeVariant.Light;
         }
 
-        //set_theme_colors();
-        //update_row_color();
     }
 
 
@@ -374,22 +380,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private async void on_toggle_preview(object sender, RoutedEventArgs e)
     {
-        if (previewMode)
+        if (ctx.PreviewWindowOpen)
         {
-            if(ctx.FullScreenMode)
-            {
-                OnFullscreenMode(null, null);
-            }
+            OnTogglePreviewWindow(null, null);
         }
+
         previewMode = !previewMode;
-
-        SearchMode.IsEnabled = previewMode;
-        FullScreen.IsEnabled = previewMode;
-
-        EyeOnIcon.IsVisible = previewMode;
-        EyeOffIcon.IsVisible = !previewMode;
-
-        DimmedMode.IsEnabled = previewMode;
 
         float val1 = 0f;
         float val2 = 0f;
@@ -398,9 +394,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             val1 = 5f;
             val2 = 3.2f;
+            PreviewArea.IsVisible = true;
+
         }
         if (previewMode == false)
         {
+            PreviewArea.IsVisible = false;
             await pwr.CloseRenderer();
         }
 
@@ -412,13 +411,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             MainGrid.ColumnDefinitions[3].MinWidth = 300f;
             FileGrid.SelectedItems.Clear();
+            EmbeddedPreview.SetRenderer();
         }
 
-        if (pwr.SearchMode)
-        {
-            pwr.SearchMode = false;
-            ToggleSearchMode(null, null);
-        }
     }
 
     private void set_preview_request_main(object sender, RoutedEventArgs r)
@@ -436,7 +431,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void set_preview_request(FileData file)
     {
-        if (previewMode == true)
+        if (previewMode || ctx.PreviewWindowOpen)
         {
             CheckStatusSingleFile();
 
@@ -452,157 +447,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void PageNrSlider(object sender, RoutedEventArgs e)
-    {
-        if (ScrollSlider.IsFocused)
-        {
-            if((int)ScrollSlider.Value - 1 != pwr.RequestPage1)
-            {
-                pwr.RequestPage1 = (int)ScrollSlider.Value - 1;
-            }
-        }
-    }
-
-
-    private void ModifiedControlPointerWheelChanged(object sender, PointerWheelEventArgs e)
-    {
-        if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
-        {
-            ZoomMode = true;
-        }
-        else
-        {
-            ZoomMode = false;
-        }
-
-        MuPDFRenderer.ZoomEnabled = ZoomMode;
-
-        if (!ZoomMode && pwr.Pagecount >  0)
-        {
-            if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))
-            {
-                Avalonia.Vector mode = e.Delta;
-
-                if (mode.Y > 0)
-                {
-                    pwr.PrevPage();
-                }
-
-                if (mode.Y < 0)
-                {
-                    pwr.NextPage();
-                }
-            }
-        }
-    }
-
-    private void PreviewSizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        if (previewMode)
-        {
-            ResetView(null, null);
-        }
-    }
-
-    private void ResetView(object sender, RoutedEventArgs e)
-    {
-        MuPDFRenderer.Contain();
-    }
-
-    private void OnFullscreenMode(object sender, RoutedEventArgs e)
-    {
-        if (previewMode)
-        {
-
-            ctx.FullScreenMode = !ctx.FullScreenMode;
-             
-            if (ctx.FullScreenMode)
-            {
-                if (pwr.SearchMode)
-                {
-                    pwr.SearchMode = !pwr.SearchMode;
-                    ToggleSearchMode(null, null);
-                }
-
-                a = MainGrid.ColumnDefinitions[0];
-                b = MainGrid.ColumnDefinitions[1];
-                c = MainGrid.ColumnDefinitions[2];
-                d = MainGrid.ColumnDefinitions[3];
-
-                MainGrid.RowDefinitions[0] = new RowDefinition(15f, GridUnitType.Pixel);
-                MainGrid.RowDefinitions[1] = new RowDefinition(0f, GridUnitType.Pixel);
-                MainGrid.RowDefinitions[2] = new RowDefinition(1f, GridUnitType.Star);
-
-                MainGrid.ColumnDefinitions[0] = new ColumnDefinition(0f, GridUnitType.Pixel);
-                MainGrid.ColumnDefinitions[1] = new ColumnDefinition(0f, GridUnitType.Pixel);
-                MainGrid.ColumnDefinitions[2] = new ColumnDefinition(0f, GridUnitType.Pixel);
-                MainGrid.ColumnDefinitions[3] = new ColumnDefinition(1f, GridUnitType.Star);
-
-                ZoomMode = false;
-                MuPDFRenderer.ZoomEnabled = ZoomMode;
-            }
-
-            else
-            {
-                MainGrid.RowDefinitions[0] = new RowDefinition(35f, GridUnitType.Pixel);
-                MainGrid.RowDefinitions[1] = new RowDefinition(30f, GridUnitType.Pixel);
-                MainGrid.RowDefinitions[2] = new RowDefinition(1f, GridUnitType.Star);
-
-                MainGrid.ColumnDefinitions[0] = a;
-                MainGrid.ColumnDefinitions[1] = b;
-                MainGrid.ColumnDefinitions[2] = c;
-                MainGrid.ColumnDefinitions[3] = d;
-
-                ZoomMode = false;
-                MuPDFRenderer.ZoomEnabled = ZoomMode;
-            }
-        }
-    }
-
-    private void ToggleSearchMode(object sender, RoutedEventArgs e)
-    {
-
-        if (pwr.SearchMode)
-        {
-            MainPreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
-            MainPreviewGrid.ColumnDefinitions[1] = new ColumnDefinition(200f, GridUnitType.Pixel);
-            SearchRegex.Focus();
-        }
-        else
-        {
-            SearchRegex.Text = "";
-
-            MainPreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
-            MainPreviewGrid.ColumnDefinitions[1] = new ColumnDefinition(0f, GridUnitType.Pixel);
-        }
-    }
-
-    private void OnSeachRegex(object sender, RoutedEventArgs e)
-    {
-        string text = SearchRegex.Text;
-        pwr.Search(text);
-    }
-
-    private void OnClearSearch(object sender, RoutedEventArgs e)
-    {
-        if(pwr.SearchBusy)
-        {
-            pwr.StopSearch();
-        }
-        else
-        {
-            pwr.ClearSearch();
-            SearchRegex.Clear();
-        }
-    }
-
-    private void OnStartSearhRegex(object sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.Enter)
-        {
-            OnSeachRegex(null, null);
-        }
-    }
+    
 
 
     private void on_lock(object sender, EventArgs e)
@@ -613,8 +458,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             RemoveProjectMenu.IsEnabled = false;
             RemoveFileMenu.IsEnabled = false;
             MoveFileMenu.IsEnabled = false;
-            LockIcon.IsVisible = true;
-            UnlockedIcon.IsVisible = false;
         }
         if (Lockedstatus.IsChecked == false)
         {
@@ -622,8 +465,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             RemoveProjectMenu.IsEnabled = true;
             RemoveFileMenu.IsEnabled = true;
             MoveFileMenu.IsEnabled = true;
-            LockIcon.IsVisible = false;
-            UnlockedIcon.IsVisible = true;
         }
     }
 

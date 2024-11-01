@@ -16,6 +16,7 @@ using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
 using Avalon.Dialog;
 using Avalonia.Interactivity;
+using Avalon.Views;
 
 
 namespace Avalon.ViewModels
@@ -48,6 +49,16 @@ namespace Avalon.ViewModels
             get { return favorites; }
             set { favorites = value; OnPropertyChanged("Favorites"); }
         }
+
+        private bool previewWindowOpen = false;
+        public bool PreviewWindowOpen
+        {
+            get { return previewWindowOpen; }
+            set { previewWindowOpen = value; OnPropertyChanged("PreviewWindowOpen"); }
+        }
+
+
+        public Window PreviewWindow;
 
         private string currentFavorite = string.Empty;
         public string CurrentFavorite
@@ -93,48 +104,6 @@ namespace Avalon.ViewModels
             set { color4 = value; OnPropertyChanged("Color4"); ColorChanged(); }
         }
 
-        private bool fullScreenMode = false;
-        public bool FullScreenMode
-        {
-            get { return fullScreenMode; }
-            set { fullScreenMode = value; OnPropertyChanged("FullScreenMode"); }
-        }
-
-        private bool renamePopup = false;
-        public bool RenamePopup
-        {
-            get { return renamePopup; }
-            set { renamePopup = value; OnPropertyChanged("RenamePopup"); }
-        }
-
-        private bool newPopup = false;
-        public bool NewPopup
-        {
-            get { return newPopup; }
-            set { newPopup = value; OnPropertyChanged("NewPopup"); }
-        }
-
-        private bool tagPopup = false;
-        public bool TagPopup
-        {
-            get { return tagPopup; }
-            set { tagPopup = value; OnPropertyChanged("TagPopup"); }
-        }
-
-        private bool colorPopup = false;
-        public bool ColorPopup
-        {
-            get { return colorPopup; }
-            set { colorPopup = value; OnPropertyChanged("ColorPopup"); }
-        }
-
-        private bool groupPopup = false;
-        public bool GroupPopup
-        {
-            get { return groupPopup; }
-            set { groupPopup = value; OnPropertyChanged("GroupPopup"); }
-        }
-
         public List<string> FileTypes { get; set; } = new List<string>();
 
         private List<MenuItem> fileTypeSelection = new List<MenuItem>()
@@ -148,6 +117,32 @@ namespace Avalon.ViewModels
         {
             get { return fileTypeSelection; }
             set { fileTypeSelection = value; OnPropertyChanged("FileTypeSelection"); }
+        }
+
+        public void OpenPreviewWindow()
+        {
+            if (PreviewWindowOpen == true)
+            {
+                return;
+            }
+
+            PreviewWindow = new PreWindow()
+            {
+                DataContext = this
+            };
+
+            PreviewWindow.AddHandler(Window.WindowClosedEvent, PreviewWindowClosed);
+
+            PreviewWindow.Show();
+
+            PreviewWindowOpen = true;
+
+        }
+
+        public void PreviewWindowClosed(object sender, RoutedEventArgs e)
+        {
+            PreviewVM.CloseRenderer();
+            PreviewWindowOpen = false;
         }
 
         public void OpenColorDia(Window mainWindow)
