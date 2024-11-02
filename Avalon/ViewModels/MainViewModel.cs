@@ -17,6 +17,7 @@ using Avalonia.Themes.Fluent;
 using Avalon.Dialog;
 using Avalonia.Interactivity;
 using Avalon.Views;
+using Org.BouncyCastle.Crypto.Signers;
 
 
 namespace Avalon.ViewModels
@@ -119,7 +120,7 @@ namespace Avalon.ViewModels
             set { fileTypeSelection = value; OnPropertyChanged("FileTypeSelection"); }
         }
 
-        public void OpenPreviewWindow()
+        public void OpenPreviewWindow(ThemeVariant theme)
         {
             if (PreviewWindowOpen == true)
             {
@@ -131,6 +132,8 @@ namespace Avalon.ViewModels
                 DataContext = this
             };
 
+            PreviewWindow.RequestedThemeVariant = theme;
+
             PreviewWindow.AddHandler(Window.WindowClosedEvent, PreviewWindowClosed);
 
             PreviewWindow.Show();
@@ -141,7 +144,7 @@ namespace Avalon.ViewModels
 
         public void PreviewWindowClosed(object sender, RoutedEventArgs e)
         {
-            PreviewVM.CloseRenderer();
+            //PreviewVM.CloseRenderer();
             PreviewWindowOpen = false;
         }
 

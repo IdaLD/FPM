@@ -225,7 +225,22 @@ namespace Avalon.ViewModels
 
         public void GetRenderControl(PDFRenderer renderer)
         {
+
+            IBrush background = new SolidColorBrush(Colors.White);
+
+            if (Renderer != null)
+            {
+                background = Renderer.PageBackground;
+                Renderer.ReleaseResources();
+            }
+
             Renderer = renderer;
+            Renderer.PageBackground = background;
+
+            if(CurrentFile != null)
+            {
+                SetPage();
+            }
         }
 
         public void SetupPage(int page = 0)
@@ -502,6 +517,7 @@ namespace Avalon.ViewModels
                 RenderPage(RequestPage1);
             }
         }
+
 
         public void RenderPage(int pagenr)
         {

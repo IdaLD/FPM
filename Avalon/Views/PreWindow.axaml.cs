@@ -15,34 +15,4 @@ public partial class PreWindow : Window
 
     }
 
-    private bool dispose = false;
-    private MainViewModel ctx;
-
-    protected override void OnClosing(WindowClosingEventArgs e)
-    {
-        e.Cancel = true;
-
-        if (!dispose)
-        {
-            ctx = (MainViewModel)this.DataContext;
-            WaitToClose();
-        }
-        else
-        {
-            e.Cancel = false;
-        }
-    }
-
-
-    private async Task WaitToClose()
-    {
-        while (ctx.PreviewVM.FileWorkerBusy)
-        {
-            await Task.Delay(300);
-        }
-
-        dispose = true;
-        this.Close();
-    }
-
 }

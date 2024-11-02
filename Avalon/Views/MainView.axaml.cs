@@ -13,6 +13,8 @@ using Avalon.Model;
 using System.IO;
 using Avalonia.Data;
 using Avalonia.Styling;
+using System.Diagnostics;
+using System.Net.Http.Headers;
 
 
 namespace Avalon.Views;
@@ -121,7 +123,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                 PreviewToggle.IsChecked = false;
             }
 
-            ctx.OpenPreviewWindow();
+            var window = Window.GetTopLevel(this);
+
+            ThemeVariant theme = window.RequestedThemeVariant;
+
+
+            ctx.OpenPreviewWindow(theme);
         }
 
         else
@@ -378,7 +385,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private async void on_toggle_preview(object sender, RoutedEventArgs e)
+    private void on_toggle_preview(object sender, RoutedEventArgs e)
     {
         if (ctx.PreviewWindowOpen)
         {
@@ -394,13 +401,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             val1 = 5f;
             val2 = 3.2f;
+
             PreviewArea.IsVisible = true;
 
         }
         if (previewMode == false)
         {
             PreviewArea.IsVisible = false;
-            await pwr.CloseRenderer();
         }
 
         MainGrid.ColumnDefinitions[1] = new ColumnDefinition(1f, GridUnitType.Star);
@@ -411,6 +418,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             MainGrid.ColumnDefinitions[3].MinWidth = 300f;
             FileGrid.SelectedItems.Clear();
+
+            EmbeddedPreview.UpdateLayout();
+            EmbeddedPreview.IsVisible = true;
+
             EmbeddedPreview.SetRenderer();
         }
 
