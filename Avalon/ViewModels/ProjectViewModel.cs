@@ -7,9 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalon.Model;
 using Avalonia.Controls;
-using Material.Icons;
-using Material.Icons.Avalonia;
-using Org.BouncyCastle.Asn1.BC;
+using Avalonia.Media;
 
 namespace Avalon.ViewModels
 {
@@ -47,6 +45,13 @@ namespace Avalon.ViewModels
             set { currentProject = value; OnPropertyChanged("CurrentProject"); UpdateFilter(); UpdateMetaCheck(); }
         }
 
+        private string[] projectColor = null;
+        public string[] ProjectColor
+        {
+            get { return projectColor; }
+            set { projectColor = value; OnPropertyChanged("ProjectColor"); }
+        }
+
         private string type = null;
         public string Type
         {
@@ -54,11 +59,19 @@ namespace Avalon.ViewModels
             set { type = value; OnPropertyChanged("Type"); UpdateFilter(); }
         }
 
+
         private ObservableCollection<FileData> filteredFiles = new ObservableCollection<FileData>();
         public ObservableCollection<FileData> FilteredFiles
         {
             get { return filteredFiles; }
             set { filteredFiles = value; OnPropertyChanged("FilteredFiles"); }
+        }
+
+        private IEnumerable<FileData> filteredFav;
+        public IEnumerable<FileData> FilteredFav
+        {
+            get { return filteredFav; }
+            set { filteredFav = value; OnPropertyChanged("FilteredFav"); }
         }
 
         private ObservableCollection<FileData> trayFiles = new ObservableCollection<FileData>();
@@ -203,7 +216,7 @@ namespace Avalon.ViewModels
         {
             if (!StoredProjects.Any(x => x.Namn == name))
             {
-                ProjectData newProject = new ProjectData { Namn = name };
+                ProjectData newProject = new ProjectData { Namn = name, Colors = ProjectColor };
                 newProject.MetaCheckStore = MetaCheckDefault;
 
                 StoredProjects.Add(newProject);
@@ -252,32 +265,67 @@ namespace Avalon.ViewModels
             }
         }
 
+        public ObservableCollection<string> GetGroups()
+        {
+            List<string> list = StoredProjects.Select(x => x.Parent).Where(x => x != null).Distinct().ToList();
+
+            list.Remove("");
+
+            return new ObservableCollection<string>(list);
+        }
+
+        public ObservableCollection<string> GetFavGroups()
+        {
+            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
+
+            List<string> favList = new List<string>();
+
+            if (FavProject == null)
+            {
+                favList.Add("Default");
+            }
+
+            if (FavProject != null)
+            {
+                favList = FavProject.StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
+            }
+
+            return new ObservableCollection<string>(favList);       
+        }
+
+        public void SetGroups(string group)
+        {
+            CurrentProject.Parent = group;
+        }
+
         public List<MenuItem> GetAllowedTypes()
         {
+
             if (CurrentProject.Category == "Project")
             {
-                return new List<MenuItem>() 
+                return new List<MenuItem>()
                 {
-                    new MenuItem(){Header="Drawing", Icon=new MaterialIcon(){Kind=MaterialIconKind.FilePdfBox } },
-                    new MenuItem(){Header="Document", Icon=new MaterialIcon(){Kind=MaterialIconKind.FileDocument } },
-                    new MenuItem(){Header="Other", Icon=new MaterialIcon(){Kind=MaterialIconKind.FileQuestion } }
+                    new MenuItem(){Header="Drawing", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Document", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Other", Icon=new Label(){Content="○" } }
                 };
             }
+
             if (CurrentProject.Category == "Library")
             {
 
                 return new List<MenuItem>()
                 {
-                    new MenuItem(){Header="General", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaLBoxOutline } },
-                    new MenuItem(){Header="Loads", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaLBoxOutline } },
-                    new MenuItem(){Header="Concrete", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaCBoxOutline } },
-                    new MenuItem(){Header="Steel", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
-                    new MenuItem(){Header="Timber", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaTBoxOutline } },
-                    new MenuItem(){Header="FEM", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaFBoxOutline } },
-                    new MenuItem(){Header="Mechanics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaMBoxOutline } },
-                    new MenuItem(){Header="Dynamics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaDBoxOutline } },
-                    new MenuItem(){Header="Geotechnics", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaGBoxOutline } },
-                    new MenuItem(){Header="Other", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaGBoxOutline } },
+                    new MenuItem(){Header="General", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Loads", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Concrete", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Steel", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Timber", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="FEM", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Mechanics", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Dynamics", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Geotechnics", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Other", Icon=new Label(){Content="○" } }
                 };
             }
 
@@ -285,22 +333,25 @@ namespace Avalon.ViewModels
             {
                 return new List<MenuItem>()
                 {
-                    new MenuItem(){Header="Portal Frame", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaPBoxOutline } },
-                    new MenuItem(){Header="Slab", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
-                    new MenuItem(){Header="Beam", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaBBoxOutline } },
-                    new MenuItem(){Header="Composite", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaCBoxOutline } },
-                    new MenuItem(){Header="Concrete deck", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaCBoxOutline } },
-                    new MenuItem(){Header="Integral", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaIBoxOutline } },
-                    new MenuItem(){Header="Steel", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
-                    new MenuItem(){Header="Post tension", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
-                    new MenuItem(){Header="Substructure", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaSBoxOutline } },
-                    new MenuItem(){Header="Other", Icon=new MaterialIcon(){Kind=MaterialIconKind.AlphaLBoxOutline } }
+                    new MenuItem(){Header="Portal Frame", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Slab", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Beam", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Composite", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Concrete deck", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Integral", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Steel", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Post tension", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Substructure", Icon=new Label(){Content="○" } },
+                    new MenuItem(){Header="Other", Icon=new Label(){Content="○" } }
                 };
             }
 
             else
             {
-                return null;
+                return new List<MenuItem>()
+                {
+                    new MenuItem(){Header="" }
+                };
             }
         }
 
@@ -360,6 +411,7 @@ namespace Avalon.ViewModels
             if (currentProject.Category != "Search" && currentProject.Category != "Favorites")
             {
                 CurrentProject.Category = name;
+                CurrentProject.Parent = null;
                 SortProjects();
             }
         }
@@ -441,7 +493,7 @@ namespace Avalon.ViewModels
 
         public void SetDefaultSelection()
         {
-            string defaultProject = StoredProjects.Where(x => x.Category != "Search").FirstOrDefault().Namn;
+            string defaultProject = StoredProjects.Where(x => x.Category != "Search" && x.Category != "Favorites").FirstOrDefault().Namn;
             CurrentProject = GetProject(defaultProject);
             Type = "All Types";
         }
@@ -488,7 +540,7 @@ namespace Avalon.ViewModels
 
         public ProjectData GetDefaultProject()
         {
-            return StoredProjects.FirstOrDefault();
+            return StoredProjects.Where(x => x.Category != "Search").Where(x=>x.Category != "Favorites").FirstOrDefault();
         }
 
         public void TransferFiles(string toProjectName)
@@ -525,7 +577,7 @@ namespace Avalon.ViewModels
             }
         }
 
-        public void AddFavorite()
+        public void AddFavorite(string group)
         {
             ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
 
@@ -538,7 +590,12 @@ namespace Avalon.ViewModels
                 SortProjects();
             }
 
-            FavProject.AddFiles(CurrentFiles);
+            foreach(FileData file in CurrentFiles)
+            {
+                FileData currentFav = new FileData() { Namn = file.Namn, Sökväg = file.Sökväg, Filtyp = file.Filtyp, Uppdrag = group };
+                FavProject.AddFile(currentFav);
+            }
+
             FavProject.SetFiletypeList();
         }
 
@@ -553,6 +610,44 @@ namespace Avalon.ViewModels
             FavProject.SetFiletypeList();
         }
 
+        public void RemoveFavoriteGroup(string group)
+        {
+            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
+
+            List<FileData> FavFiles = FavProject.StoredFiles.Where(x => x.Uppdrag == group).ToList();
+
+            foreach (FileData file in FavFiles)
+            {
+                FavProject.RemoveFile(file);
+            }
+
+            FavProject.SetFiletypeList();
+        }
+
+        public void RenameFavoriteGroup(string oldGroup, string newGroup)
+        {
+            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
+            List<FileData> FavFiles = FavProject.StoredFiles.Where(x => x.Uppdrag == oldGroup).ToList();
+
+            foreach (FileData file in FavFiles)
+            {
+                file.Uppdrag = newGroup;
+            }
+
+            FavProject.SetFiletypeList();
+        }
+
+        public void FilterFavorite(string group)
+        {
+            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
+
+            if(FavProject != null)
+            {
+                FilteredFav = FavProject.StoredFiles.Where(x => x.Uppdrag == group);
+            }
+            
+        }
+
         public void UpdateFavorite()
         {
             ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
@@ -562,7 +657,20 @@ namespace Avalon.ViewModels
                 TrayFiles = FavProject.StoredFiles;
             }
 
-            FavProject.SetFiletypeList();
+            if (FavProject != null)
+            {
+                FavProject.SetFiletypeList();
+            }
+        }
+
+        public void SetProjectColor(Color color1, Color color2, Color color3, Color color4)
+        {
+            ProjectColor = [color1.ToString(), color2.ToString(), color3.ToString(), color4.ToString()];
+
+            foreach (ProjectData project in StoredProjects)
+            {
+                project.Colors = ProjectColor;
+            }
         }
 
         public void SeachFiles(string searchtext)

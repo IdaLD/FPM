@@ -11,6 +11,13 @@ using System.Text;
 using System;
 using System.ComponentModel;
 using Avalon.Model;
+using Avalonia.Media;
+using Avalonia.Styling;
+using Avalonia.Themes.Fluent;
+using Avalon.Dialog;
+using Avalonia.Interactivity;
+using Avalon.Views;
+using Org.BouncyCastle.Crypto.Signers;
 
 
 namespace Avalon.ViewModels
@@ -37,21 +44,240 @@ namespace Avalon.ViewModels
         public List<string[]> metastore = new List<string[]>();
         public List<string> PathStore = new List<string>();
 
+        private ObservableCollection<string> favorites = new ObservableCollection<string>() { "Default" };
+        public ObservableCollection<string> Favorites
+        {
+            get { return favorites; }
+            set { favorites = value; OnPropertyChanged("Favorites"); }
+        }
+
+        private bool previewWindowOpen = false;
+        public bool PreviewWindowOpen
+        {
+            get { return previewWindowOpen; }
+            set { previewWindowOpen = value; OnPropertyChanged("PreviewWindowOpen"); }
+        }
+
+
+        public Window PreviewWindow;
+
+        private string currentFavorite = string.Empty;
+        public string CurrentFavorite
+        {
+            get { return currentFavorite; }
+            set { currentFavorite = value; OnPropertyChanged("CurrentFavorite"); ProjectsVM.FilterFavorite(currentFavorite); }
+        }
+
+        private ObservableCollection<string> groups = new ObservableCollection<string>() {};
+        public ObservableCollection<string> Groups
+        {
+            get { return groups; }
+            set { groups = value; OnPropertyChanged("groups"); }
+        }
+
         public string ProjectMessage { get; set; } = "";
 
-        private bool fullScreenMode = false;
-        public bool FullScreenMode
+        private Color color1 = Color.Parse("#333333");
+        public Color Color1
         {
-            get { return fullScreenMode; }
-            set { fullScreenMode = value; OnPropertyChanged("FullScreenMode"); }
+            get { return color1; }
+            set { color1 = value; OnPropertyChanged("Color1"); ColorChanged(); }
         }
+
+        private Color color2 = Color.Parse("#444444");
+        public Color Color2
+        {
+            get { return color2; }
+            set { color2 = value; OnPropertyChanged("Color2"); ColorChanged(); }
+        }
+
+        private Color color3 = Color.Parse("#dfe6e9");
+        public Color Color3
+        {
+            get { return color3; }
+            set { color3 = value; OnPropertyChanged("Color3"); ColorChanged(); }
+        }
+
+        private Color color4 = Color.Parse("#999999");
+        public Color Color4
+        {
+            get { return color4; }
+            set { color4 = value; OnPropertyChanged("Color4"); ColorChanged(); }
+        }
+
         public List<string> FileTypes { get; set; } = new List<string>();
 
-        private List<MenuItem> fileTypeSelection = new List<MenuItem>();
+        private List<MenuItem> fileTypeSelection = new List<MenuItem>()
+        {
+            new MenuItem() { Header = "Drawing", Icon = new Label() { Content = "○" } },
+            new MenuItem() { Header = "Document", Icon = new Label() { Content = "○" } },
+            new MenuItem() { Header = "Other", Icon = new Label() { Content = "○" } }
+        };
+
         public List<MenuItem> FileTypeSelection
         {
             get { return fileTypeSelection; }
             set { fileTypeSelection = value; OnPropertyChanged("FileTypeSelection"); }
+        }
+
+        public void OpenPreviewWindow(ThemeVariant theme)
+        {
+            if (PreviewWindowOpen == true)
+            {
+                return;
+            }
+
+            PreviewWindow = new PreWindow()
+            {
+                DataContext = this
+            };
+
+            PreviewWindow.RequestedThemeVariant = theme;
+
+            PreviewWindow.AddHandler(Window.WindowClosedEvent, PreviewWindowClosed);
+
+            PreviewWindow.Show();
+
+            PreviewWindowOpen = true;
+
+        }
+
+        public void PreviewWindowClosed(object sender, RoutedEventArgs e)
+        {
+            //PreviewVM.CloseRenderer();
+            PreviewWindowOpen = false;
+        }
+
+        public void OpenColorDia(Window mainWindow)
+        {
+            var window = new xColorDia()
+            {
+                DataContext = this
+            };
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.ShowDialog(mainWindow);
+        }
+
+        public void OpenProjectRenameDia(Window mainWindow)
+        {
+            var window = new xRenameDia()
+            {
+                DataContext = this
+            };
+
+            window.NewProjectName.Text = ProjectsVM.CurrentProject.Namn;
+            window.NewProjectName.CaretIndex = window.NewProjectName.Text.Length;
+
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.ShowDialog(mainWindow);
+            window.NewProjectName.Focus();
+        }
+
+        public void OpenProjectNewDia(Window mainWindow)
+        {
+            var window = new xNewDia()
+            {
+                DataContext = this
+            };
+
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.ShowDialog(mainWindow);
+            window.ProjectName.Focus();
+        }
+
+        public void OpenTagDia(Window mainWindow)
+        {
+            var window = new xTagDia()
+            {
+                DataContext = this
+            };
+
+            window.TagMenuInput.Text = ProjectsVM.CurrentFile.Tagg;
+            window.TagMenuInput.CaretIndex = window.TagMenuInput.Text.Length;
+
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.ShowDialog(mainWindow);
+            window.TagMenuInput.Focus();
+        }
+
+        public void OpenGroupDia(Window mainWindow)
+        {
+            var window = new xGroupDia()
+            {
+                DataContext = this
+            };
+
+            window.ProjectGroupInput.Text = ProjectsVM.CurrentProject.Parent;
+
+
+            if (window.ProjectGroupInput.Text != null)
+            {
+                window.ProjectGroupInput.CaretIndex = window.ProjectGroupInput.Text.Length;
+            }
+
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.ShowDialog(mainWindow);
+            window.ProjectGroupInput.Focus();
+        }
+
+
+        public void AddFavGroup(string group)
+        {
+            Favorites.Add(group);
+        }
+
+        public void RenameFavGroup(string group)
+        {
+            int currentIndex = Favorites.IndexOf(CurrentFavorite);
+            Favorites.Insert(currentIndex, group);
+
+            ProjectsVM.RenameFavoriteGroup(CurrentFavorite, group);
+            Favorites.Remove(CurrentFavorite);
+            CurrentFavorite = group;
+
+        }
+
+        public void RemoveFavGroup()
+        {
+            if (Favorites.Count > 1)
+            {
+                ProjectsVM.RemoveFavoriteGroup(CurrentFavorite);
+                Favorites.Remove(CurrentFavorite);
+
+                CurrentFavorite = Favorites.First();
+            }
+        }
+
+        public void OnGetFavGroups()
+        {
+            Favorites.Clear();
+
+            ProjectData FavProject = ProjectsVM.StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
+
+            List<string> favList = new List<string>();
+
+            if(FavProject == null)
+            {
+                favList.Add("Default");
+            }
+
+            if (FavProject != null)
+            {
+                favList = FavProject.StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
+            }
+            
+            Favorites = new ObservableCollection<string>(favList);
+        }
+
+        public void OnAddFavorite()
+        {
+            ProjectsVM.AddFavorite(CurrentFavorite);
+        }
+
+        public void OnRemoveFavoriteFile()
+        {
+            ProjectsVM.RemoveFavorite();
+            CurrentFavorite = CurrentFavorite;
         }
 
 
@@ -81,7 +307,10 @@ namespace Avalon.ViewModels
                 ProjectsVM.StoredProjects = JsonConvert.DeserializeObject<ObservableCollection<ProjectData>>(fileContent);
                 ProjectsVM.SetProjectlist();
                 ProjectsVM.SetDefaultSelection();
-                FileTypeSelection = ProjectsVM.GetAllowedTypes();
+                SetCurrentColor();
+                SetAllowedTypes();
+                GetGroups();
+                OnGetFavGroups();
 
             }
         }
@@ -95,12 +324,17 @@ namespace Avalon.ViewModels
                 ProjectsVM.StoredProjects = JsonConvert.DeserializeObject<ObservableCollection<ProjectData>>(json);
                 ProjectsVM.SetProjectlist();
                 ProjectsVM.SetDefaultSelection();
-                FileTypeSelection = ProjectsVM.GetAllowedTypes();
+                SetCurrentColor();
+                SetAllowedTypes();
+                GetGroups();
+                OnGetFavGroups();
             }
         }
 
         public async Task SaveFile(Avalonia.Visual window)
         {
+            ProjectsVM.SetProjectColor(Color1, Color2, Color3, Color4);
+
             var topLevel = TopLevel.GetTopLevel(window);
 
             var jsonformat = new FilePickerFileType("Json format") { Patterns = new[] { "*.json" } };
@@ -126,12 +360,15 @@ namespace Avalon.ViewModels
 
         public async Task SaveFileAuto(string path)
         {
+            ProjectsVM.SetProjectColor(Color1, Color2, Color3, Color4);
+
             using (StreamWriter streamWriter = new StreamWriter(path))
             {
                 var data = JsonConvert.SerializeObject(ProjectsVM.StoredProjects);
                 await streamWriter.WriteLineAsync(data);
-
             }
+
+            Debug.WriteLine("Saved");
         }
 
         public async Task AddFile(Avalonia.Visual window)
@@ -155,6 +392,33 @@ namespace Avalon.ViewModels
             }
         }
 
+        public void SetCurrentColor()
+        {
+            string[] hexColors = ProjectsVM.GetDefaultProject().Colors;
+
+            if (hexColors != null)
+            {
+                Color1 = Color.Parse(hexColors[0]);
+                Color2 = Color.Parse(hexColors[1]);
+                Color3 = Color.Parse(hexColors[2]);
+                Color4 = Color.Parse(hexColors[3]);
+            }
+        }
+
+        public void ColorChanged()
+        {           
+            var theme = new FluentTheme()
+            {
+                Palettes =
+                {
+                    [ThemeVariant.Dark] = new ColorPaletteResources() {RegionColor = Color1, Accent = Color2 },
+                    [ThemeVariant.Light] = new ColorPaletteResources() {RegionColor = Color3, Accent = Color4 }
+                }
+            };
+
+            App.Current.Resources = theme.Resources;   
+        }
+
         public void AddFilesDrag(string path)
         {
             ProjectsVM.CurrentProject.Newfile(path);
@@ -164,6 +428,24 @@ namespace Avalon.ViewModels
         public void set_category(string category)
         {
             ProjectsVM.SetProjecCategory(category);
+        }
+
+        public void SetAllowedTypes()
+        {
+            FileTypeSelection = ProjectsVM.GetAllowedTypes();
+        }
+
+        public void SetGroup(string group)
+        {
+            ProjectsVM.SetGroups(group);
+            GetGroups();
+            OnPropertyChanged("TreeViewUpdate");
+        }
+
+        public void GetGroups()
+        {
+            Groups.Clear();
+            Groups = ProjectsVM.GetGroups();
         }
 
         public void CopyFilenameToClipboard(Avalonia.Visual window)
@@ -346,8 +628,6 @@ namespace Avalon.ViewModels
         public async Task CheckProjectFiles()
         {
             await Task.Run(() => CheckFileAsync());
-
-            Debug.WriteLine("Complete");
         }
 
         public async Task CheckFileAsync()
@@ -532,14 +812,22 @@ namespace Avalon.ViewModels
             if (currentProjectName != name)
             {
                 ProjectsVM.SetProject(name);
-                FileTypeSelection = ProjectsVM.GetAllowedTypes();
+                SetAllowedTypes();
             }
+            OnPropertyChanged("UpdateColumns");
+        }
+
+        public void ReselectProject()
+        {
+            ProjectsVM.SetProject(ProjectsVM.CurrentProject.Namn);
+            SetAllowedTypes();
             OnPropertyChanged("UpdateColumns");
         }
 
         public void new_project(string name)
         {
             ProjectsVM.NewProject(name);
+            OnPropertyChanged("TreeViewUpdate");
         }
 
         public void remove_project()
@@ -551,7 +839,10 @@ namespace Avalon.ViewModels
         {
             ProjectsVM.RenameProject(newProjectName);
             ProjectsVM.SetProjectlist();
+            OnPropertyChanged("TreeViewUpdate");
         }
+
+
 
         public void move_files(string projectname)
         {

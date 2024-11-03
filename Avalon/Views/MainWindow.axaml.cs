@@ -1,57 +1,54 @@
 ﻿using Avalon.ViewModels;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
+using Avalon.Dialog;
 using System.ComponentModel;
+using Org.BouncyCastle.Crypto.Signers;
+
 
 namespace Avalon.Views;
 
 public partial class MainWindow : Window, INotifyPropertyChanged
 {
+
+    public bool confirmLeave = true;
+
     public MainWindow()
     {
         InitializeComponent();
     }
 
-    bool confirmClose = false;
-
     protected override void OnClosing(WindowClosingEventArgs e)
     {
-        if (!confirmClose)
+        if(confirmLeave)
         {
             e.Cancel = true;
-            ConfirmLeave.IsVisible = true;
+            OpenClosingDia();
         }
         else
         {
+            MainViewModel ctx = (MainViewModel)this.DataContext;
+
+            if (ctx.PreviewWindowOpen)
+            {
+                ctx.PreviewWindow.Close();
+            }
+
             e.Cancel = false;
         }
-
     }
 
-
-    public async void on_save_before_close(object sender, RoutedEventArgs args)
+    public void OpenClosingDia()
     {
-        confirmClose = true;
-        MainViewModel ctx = (MainViewModel)this.DataContext;
-        string path = "C:\\FIlePathManager\\Projects.json";
 
-        await ctx.SaveFileAuto(path);
+        var window = new xCloseDia()
+        {
+            DataContext = (MainViewModel)this.DataContext
+        };
 
-        on_leave(null, null);
+        window.SetMainWindow(this);
 
-    }
-
-    public void on_leave(object sender, RoutedEventArgs args)
-    {
-        confirmClose = true;
-        
-        Close();
-    }
-
-
-    public void on_cancel(object sender, RoutedEventArgs args)
-    {
-        ConfirmLeave.IsVisible = false;
+        window.RequestedThemeVariant = this.ActualThemeVariant;
+        window.ShowDialog(this);
     }
 
 

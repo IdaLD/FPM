@@ -16,9 +16,7 @@ using Avalonia.Media;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Avalonia.Collections;
-using iText.Kernel.Pdf.Annot;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using Avalonia.Controls;
 
 namespace Avalon.ViewModels
 {
@@ -140,7 +138,7 @@ namespace Avalon.ViewModels
         public bool DimmedBackground
         {
             get { return dimmedBackground; }
-            set { dimmedBackground = value; SetDimmedMode(); OnPropertyChanged("DimmedBackground"); }
+            set { if (FileAvailable) { dimmedBackground = value; SetDimmedMode(); OnPropertyChanged("DimmedBackground"); } }
         }
 
         private bool fileWorkerBusy = false;
@@ -227,7 +225,22 @@ namespace Avalon.ViewModels
 
         public void GetRenderControl(PDFRenderer renderer)
         {
+
+            IBrush background = new SolidColorBrush(Colors.White);
+
+            if (Renderer != null)
+            {
+                background = Renderer.PageBackground;
+                Renderer.ReleaseResources();
+            }
+
             Renderer = renderer;
+            Renderer.PageBackground = background;
+
+            if(CurrentFile != null)
+            {
+                SetPage();
+            }
         }
 
         public void SetupPage(int page = 0)
@@ -505,6 +518,7 @@ namespace Avalon.ViewModels
             }
         }
 
+
         public void RenderPage(int pagenr)
         {
 
@@ -565,8 +579,14 @@ namespace Avalon.ViewModels
             }
         }
 
+        public void ToggleDimmed()
+        {
+            DimmedBackground = !DimmedBackground;
+        }
+
         public void SetDimmedMode()
         {
+
             if (DimmedBackground)
             {
                 Renderer.PageBackground = new SolidColorBrush(Colors.AntiqueWhite);
@@ -575,8 +595,9 @@ namespace Avalon.ViewModels
             {
                 Renderer.PageBackground = new SolidColorBrush(Colors.White);
             }
-           
+
             SetPage();
+            
         }
 
         public void PrevPage(bool SecondPage = false)
@@ -656,6 +677,12 @@ namespace Avalon.ViewModels
             {
                 RequestPage2 = RequestPage1 + 1;
             }
+        }
+
+        public void CopyToClipboard(Avalonia.Visual window)
+        {
+            string selected = Renderer.GetSelectedText();
+            TopLevel.GetTopLevel(window).Clipboard.SetTextAsync(selected);
         }
 
         public void Search(string text)

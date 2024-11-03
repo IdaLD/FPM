@@ -3,21 +3,18 @@ using System;
 using Avalonia.Interactivity;
 using System.Linq;
 using Avalon.ViewModels;
-using Avalonia;
 using System.ComponentModel;
 using Avalonia.Controls.Primitives;
 using Avalonia.Media;
 using Avalonia.Input;
-using Material.Styles.Themes;
 using System.Threading;
 using System.Collections.Generic;
 using Avalon.Model;
-using Avalonia.LogicalTree;
 using System.IO;
 using Avalonia.Data;
-using iText.Kernel.Geom;
-using Org.BouncyCastle.Asn1.BC;
+using Avalonia.Styling;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 
 
 namespace Avalon.Views;
@@ -37,15 +34,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_files);
         FileGrid.AddHandler(DragDrop.DropEvent, on_drop);
 
-        ScrollSlider.AddHandler(Slider.ValueChangedEvent, PageNrSlider);
-
         TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, select_favorite);
         TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_tray);
+        FavoriteGroups.AddHandler(ListBox.SelectionChangedEvent, OnFavoriteGroupChanged);
 
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
         FileGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
-        PreviewGrid.AddHandler(Grid.SizeChangedEvent, PreviewSizeChanged);
 
         init_MetaWorker();
 
@@ -76,13 +71,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private bool PreviewTaskBusy = false;
     private bool PreviewReady = false;
     private double BitmapRes = 0.5;
-    private bool ZoomMode = false;
 
     private void init_startup(object sender, RoutedEventArgs e)
     {
         get_datacontext();
-        pwr.GetRenderControl(MuPDFRenderer);
-        
+
         Lockedstatus.IsChecked = true;
         TreeStatus.IsChecked = true;
 
@@ -109,12 +102,42 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         if (e.PropertyName == "FilteredFiles") { on_update_columns(); }
         if (e.PropertyName == "UpdateColumns") { on_update_columns(); }
+        if (e.PropertyName == "Color1") { update_row_color(); }
+        if (e.PropertyName == "Color3") { update_row_color(); }
+        if (e.PropertyName == "TreeViewUpdate") { SetupTreeview(null, null); }
     }
 
     private void on_binding_pwr(object sender, PropertyChangedEventArgs e)
     {
 
     }
+
+
+    public void OnTogglePreviewWindow(object sender, RoutedEventArgs e)
+    {
+        
+        if (!ctx.PreviewWindowOpen)
+        {
+            if (previewMode)
+            {
+                PreviewToggle.IsChecked = false;
+            }
+
+            var window = Window.GetTopLevel(this);
+
+            ThemeVariant theme = window.RequestedThemeVariant;
+
+
+            ctx.OpenPreviewWindow(theme);
+        }
+
+        else
+        {
+            ctx.PreviewWindow.Close();
+        }
+
+    }
+
 
     public void on_search(object sender, RoutedEventArgs e)
     {
@@ -152,26 +175,117 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                 }
             }
         }
+        SetupTreeview(null, null);
+    }
+
+    private void SetupTreeview(object sender, RoutedEventArgs e)
+    {
+        MainTree.Items.Clear();
+        ctx.GetGroups();
+
+        List<string> typeList = new List<string>() { "Archive", "Library", "Project" };
+
+
+        foreach (string type in typeList)
+        {
+            List<TreeViewItem> items = new List<TreeViewItem>();
+
+            IEnumerable<ProjectData> projects = ctx.ProjectsVM.StoredProjects.Where(x => x.Category == type);
+
+            if (projects.Count() != 0)
+            {
+                foreach (ProjectData project in projects)
+                {
+                    if (project.Parent == null || project.Parent == "")
+                    {
+                        List<TreeViewItem> fileTypeTree = new List<TreeViewItem>();
+                        foreach (string filetype in project.StoredFiles.Select(x => x.Filtyp).Distinct())
+                        {
+                            int nfiles = project.StoredFiles.Where(x => x.Filtyp == filetype).Count();
+                            fileTypeTree.Add(new TreeViewItem() { Header = filetype + " (" + nfiles + ")", Tag = project.Namn });
+                        }
+                        items.Add(
+                            new TreeViewItem()
+                            {
+                                Header = project.Namn,
+                                IsExpanded = (project == ctx.ProjectsVM.CurrentProject),
+                                Tag = "All Types",
+                                ItemsSource = fileTypeTree
+                            }
+                        );
+                    }
+                }
+
+                if (type == "Project")
+                {
+                    foreach (string group in ctx.Groups)
+                    {
+                        IEnumerable<ProjectData> groupedProject = ctx.ProjectsVM.StoredProjects.Where(x => x.Parent == group);
+                        List<TreeViewItem> groupedTree = new List<TreeViewItem>();
+
+                        foreach (ProjectData project in groupedProject)
+                        {
+                            List<TreeViewItem> fileTypeTree = new List<TreeViewItem>();
+                            foreach (string filetype in project.StoredFiles.Select(x => x.Filtyp).Distinct())
+                            {
+                                int nfiles = project.StoredFiles.Where(x => x.Filtyp == filetype).Count();
+                                fileTypeTree.Add(new TreeViewItem() { Header = filetype + " (" + nfiles + ")", Tag = project.Namn });
+                            }
+
+                            groupedTree.Add(new TreeViewItem()
+                            {
+                                Header = project.Namn,
+                                IsExpanded = (project == ctx.ProjectsVM.CurrentProject),
+                                Tag = "All Types",
+                                ItemsSource = fileTypeTree
+                            });
+                        }
+
+                        items.Add(
+                            new TreeViewItem()
+                            {
+                                Header = group,
+                                IsExpanded = true,
+                                Tag = "Group",
+                                ItemsSource = groupedTree
+                            }
+                        );
+
+                    }
+                }
+
+                MainTree.Items.Add(
+                    new TreeViewItem()
+                    {
+                        Header = type,
+                        Tag = "Header",
+                        IsExpanded = true,
+                        ItemsSource = items
+                    }
+                );
+            }
+
+        }
     }
 
     public void on_set_category(object sender, RoutedEventArgs e)
     {
         MenuItem menuitem = sender as MenuItem;
-        string category = menuitem.Header.ToString();
+        string category = menuitem.Tag.ToString();
 
         ctx.set_category(category);
+        ctx.SetAllowedTypes();
+        SetupTreeview(null, null);
     }
 
     public void toggle_treeview(object sender, RoutedEventArgs e)
     {
         treeview = !treeview;
 
-        TreeviewOn.IsVisible = !TreeviewOn.IsVisible;
-        TreeviewOff.IsVisible = !TreeviewOff.IsVisible;
-
         if (treeview)
         {
-            MainGrid.ColumnDefinitions[0] = new ColumnDefinition(200, GridUnitType.Pixel);
+            SetupTreeview(null, null);
+            MainGrid.ColumnDefinitions[0] = new ColumnDefinition(250, GridUnitType.Pixel);
         }
         else
         {
@@ -183,12 +297,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         trayview = !trayview;
 
-        TrayOn.IsVisible = !TrayOn.IsVisible;
-        TrayOff.IsVisible = !TrayOff.IsVisible;
-
         if (trayview)
         {
             ctx.ProjectsVM.UpdateFavorite();
+            ctx.OnGetFavGroups();
             MainGrid.ColumnDefinitions[4] = new ColumnDefinition(300, GridUnitType.Pixel);
         }
         else
@@ -198,34 +310,47 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     }
 
     public void on_treeview_selected(object sender, SelectionChangedEventArgs e)
-    {  
+    {
         object selected = MainTree.SelectedItem;
+
 
         if (selected != null)
         {
-            Type selectedtype = selected.GetType();
+    
+            TreeViewItem selectedTree = (TreeViewItem)selected;
 
-            if (selectedtype == typeof(ProjectData))
+            if(selectedTree.Tag == "Header" || selectedTree.Tag == "Group")
             {
-                ProjectData project = (ProjectData)selected;
-                ctx.select_type("All Types");
-                ctx.select_project(project.Namn);
+                MainTree.SelectedItem = null;
+                MainTree.ContextMenu.IsEnabled = false;
+                return;
             }
 
-            if (selectedtype == typeof(string))
+            else
             {
+                GroupMenu.IsEnabled = false;
 
-                string[] split = selected.ToString().Split("\t");
+                TreeViewItem parentTree = (TreeViewItem)selectedTree.Parent;
+                
+                if(parentTree.Header == "Project" || parentTree.Tag == "Group")
+                {
+                    GroupMenu.IsEnabled = true;
+                }
 
-                ctx.select_type(split[0]);
+                MainTree.ContextMenu.IsEnabled = true;
 
-                TreeViewItem item = (TreeViewItem)MainTree.TreeContainerFromItem(MainTree.SelectedItem);
-                TreeViewItem parent = item.GetLogicalParent() as TreeViewItem;
-                ProjectData project = MainTree.ItemFromContainer(parent) as ProjectData;
-
-                ctx.select_project(project.Namn);
-
+                if (selectedTree.Tag == "All Types")
+                {
+                    ctx.select_type("All Types");
+                    ctx.select_project(selectedTree.Header.ToString());
+                }
+                else
+                {
+                    ctx.select_type(selectedTree.Header.ToString().Split(" ")[0]);
+                    ctx.select_project(selectedTree.Tag.ToString());
+                }
             }
+            
             on_update_columns();
         }
     }
@@ -237,21 +362,17 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ModeDayIcon.IsVisible = !ModeDayIcon.IsVisible;
         ModeNightIcon.IsVisible = !ModeNightIcon.IsVisible;
 
+        var window = Window.GetTopLevel(this);
+
         if (darkmode)
         {
-            var MaterialThemeStyles = Avalonia.Application.Current!.LocateMaterialTheme<MaterialTheme>();
-            MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Dark;
-            MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Grey;
+            window.RequestedThemeVariant = ThemeVariant.Dark;
         }
         else
         {
-            var MaterialThemeStyles = Avalonia.Application.Current!.LocateMaterialTheme<MaterialTheme>();
-            MaterialThemeStyles.BaseTheme = Material.Styles.Themes.Base.BaseThemeMode.Light;
-            MaterialThemeStyles.PrimaryColor = Material.Colors.PrimaryColor.Blue;
+            window.RequestedThemeVariant = ThemeVariant.Light;
         }
 
-        set_theme_colors();
-        update_row_color();
     }
 
 
@@ -264,24 +385,14 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private async void on_toggle_preview(object sender, RoutedEventArgs e)
+    private void on_toggle_preview(object sender, RoutedEventArgs e)
     {
-        if (previewMode)
+        if (ctx.PreviewWindowOpen)
         {
-            if(ctx.FullScreenMode)
-            {
-                OnFullscreenMode(null, null);
-            }
+            OnTogglePreviewWindow(null, null);
         }
+
         previewMode = !previewMode;
-
-        SearchMode.IsEnabled = previewMode;
-        FullScreen.IsEnabled = previewMode;
-
-        EyeOnIcon.IsVisible = previewMode;
-        EyeOffIcon.IsVisible = !previewMode;
-
-        DimmedMode.IsEnabled = previewMode;
 
         float val1 = 0f;
         float val2 = 0f;
@@ -290,12 +401,14 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             val1 = 5f;
             val2 = 3.2f;
+
+            PreviewArea.IsVisible = true;
+
         }
         if (previewMode == false)
         {
-            await pwr.CloseRenderer();
+            PreviewArea.IsVisible = false;
         }
-
 
         MainGrid.ColumnDefinitions[1] = new ColumnDefinition(1f, GridUnitType.Star);
         MainGrid.ColumnDefinitions[2] = new ColumnDefinition(val1, GridUnitType.Pixel);
@@ -304,6 +417,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (previewMode)
         {
             MainGrid.ColumnDefinitions[3].MinWidth = 300f;
+            FileGrid.SelectedItems.Clear();
+
+            EmbeddedPreview.UpdateLayout();
+            EmbeddedPreview.IsVisible = true;
+
+            EmbeddedPreview.SetRenderer();
         }
 
     }
@@ -323,7 +442,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void set_preview_request(FileData file)
     {
-        if (previewMode == true)
+        if (previewMode || ctx.PreviewWindowOpen)
         {
             CheckStatusSingleFile();
 
@@ -339,181 +458,24 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void PageNrSlider(object sender, RoutedEventArgs e)
-    {
-        if (ScrollSlider.IsFocused)
-        {
-            if((int)ScrollSlider.Value - 1 != pwr.RequestPage1)
-            {
-                pwr.RequestPage1 = (int)ScrollSlider.Value - 1;
-                Debug.WriteLine(ScrollSlider.Value);
-            }
-        }
-    }
-
-
-    private void ModifiedControlPointerWheelChanged(object sender, PointerWheelEventArgs e)
-    {
-        if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
-        {
-            ZoomMode = true;
-        }
-        else
-        {
-            ZoomMode = false;
-        }
-
-        MuPDFRenderer.ZoomEnabled = ZoomMode;
-
-        if (!ZoomMode && pwr.Pagecount >  0)
-        {
-            if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))
-            {
-                Avalonia.Vector mode = e.Delta;
-
-                if (mode.Y > 0)
-                {
-                    pwr.PrevPage();
-                }
-
-                if (mode.Y < 0)
-                {
-                    pwr.NextPage();
-                }
-            }
-        }
-    }
-
-
-    private void PreviewSizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        if (previewMode)
-        {
-            ResetView(null, null);
-        }
-    }
-
-    private void ResetView(object sender, RoutedEventArgs e)
-    {
-        MuPDFRenderer.Contain();
-    }
-
-    private void OnFullscreenMode(object sender, RoutedEventArgs e)
-    {
-        if (previewMode)
-        {
-
-            ctx.FullScreenMode = !ctx.FullScreenMode;
-             
-            if (ctx.FullScreenMode)
-            {
-                if (pwr.SearchMode)
-                {
-                    pwr.SearchMode = !pwr.SearchMode;
-                    ToggleSearchMode(null, null);
-                }
-
-                a = MainGrid.ColumnDefinitions[0];
-                b = MainGrid.ColumnDefinitions[1];
-                c = MainGrid.ColumnDefinitions[2];
-                d = MainGrid.ColumnDefinitions[3];
-
-                MainGrid.RowDefinitions[0] = new RowDefinition(15f, GridUnitType.Pixel);
-                MainGrid.RowDefinitions[1] = new RowDefinition(0f, GridUnitType.Pixel);
-                MainGrid.RowDefinitions[2] = new RowDefinition(1f, GridUnitType.Star);
-
-                MainGrid.ColumnDefinitions[0] = new ColumnDefinition(0f, GridUnitType.Pixel);
-                MainGrid.ColumnDefinitions[1] = new ColumnDefinition(0f, GridUnitType.Pixel);
-                MainGrid.ColumnDefinitions[2] = new ColumnDefinition(0f, GridUnitType.Pixel);
-                MainGrid.ColumnDefinitions[3] = new ColumnDefinition(1f, GridUnitType.Star);
-
-                ZoomMode = false;
-                MuPDFRenderer.ZoomEnabled = ZoomMode;
-            }
-
-            else
-            {
-                MainGrid.RowDefinitions[0] = new RowDefinition(35f, GridUnitType.Pixel);
-                MainGrid.RowDefinitions[1] = new RowDefinition(30f, GridUnitType.Pixel);
-                MainGrid.RowDefinitions[2] = new RowDefinition(1f, GridUnitType.Star);
-
-                MainGrid.ColumnDefinitions[0] = a;
-                MainGrid.ColumnDefinitions[1] = b;
-                MainGrid.ColumnDefinitions[2] = c;
-                MainGrid.ColumnDefinitions[3] = d;
-
-                ZoomMode = false;
-                MuPDFRenderer.ZoomEnabled = ZoomMode;
-            }
-        }
-    }
-
-    private void ToggleSearchMode(object sender, RoutedEventArgs e)
-    {
-        Debug.WriteLine("SEARCH TOGGLE");
-
-        
-
-        if (pwr.SearchMode)
-        {
-            MainPreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
-            MainPreviewGrid.ColumnDefinitions[1] = new ColumnDefinition(200f, GridUnitType.Pixel);
-            SearchRegex.Focus();
-        }
-        else
-        {
-            SearchRegex.Text = "";
-
-            MainPreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
-            MainPreviewGrid.ColumnDefinitions[1] = new ColumnDefinition(0f, GridUnitType.Pixel);
-        }
-    }
-
-    private void OnSeachRegex(object sender, RoutedEventArgs e)
-    {
-        string text = SearchRegex.Text;
-        pwr.Search(text);
-    }
-
-    private void OnClearSearch(object sender, RoutedEventArgs e)
-    {
-        if(pwr.SearchBusy)
-        {
-            pwr.StopSearch();
-        }
-        else
-        {
-            pwr.ClearSearch();
-            SearchRegex.Clear();
-        }
-    }
-
-    private void OnStartSearhRegex(object sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.Enter)
-        {
-            OnSeachRegex(null, null);
-        }
-    }
+    
 
 
     private void on_lock(object sender, EventArgs e)
     {
         if (Lockedstatus.IsChecked == true)
         {
+            RemoveFavoriteGroup.IsEnabled = false;
             RemoveProjectMenu.IsEnabled = false;
             RemoveFileMenu.IsEnabled = false;
             MoveFileMenu.IsEnabled = false;
-            LockIcon.IsVisible = true;
-            UnlockedIcon.IsVisible = false;
         }
         if (Lockedstatus.IsChecked == false)
         {
+            RemoveFavoriteGroup.IsEnabled = true;
             RemoveProjectMenu.IsEnabled = true;
             RemoveFileMenu.IsEnabled = true;
             MoveFileMenu.IsEnabled = true;
-            LockIcon.IsVisible = false;
-            UnlockedIcon.IsVisible = true;
         }
     }
 
@@ -553,6 +515,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         MenuItem SelectedMenu = ctx.FileTypeSelection[menuItem.SelectedIndex];
 
         ctx.edit_type(SelectedMenu.Header.ToString());
+        SetupTreeview(null, null);
     }
 
     private void deselect_items()
@@ -565,25 +528,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.clear_all();
 
         deselect_items();
-        update_row_color();
-    }
-
-    private void on_add_tag(object sender, RoutedEventArgs e)
-    {
-        if (TagMenuInput.Text != null)
-        {
-            string tag = TagMenuInput.Text.ToString();
-            ctx.add_tag(tag);
-            ctx.add_tag(TagMenuInput.Text);
-        }
-
-        deselect_items();
-    }
-
-    private void on_clear_tag(object sender, RoutedEventArgs e)
-    {
-        ctx.clear_tag();
-        deselect_items();
+       update_row_color();
     }
 
     private void OnCheckStatusSingleFile(object sender, RoutedEventArgs e)
@@ -606,28 +551,19 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         update_row_color();
     }
 
-    private void on_add_project(object sender, RoutedEventArgs e)
+
+    private void on_remove_project(object sender, RoutedEventArgs e)
     {
-        var Name = ProjectName.Text;
-        if (Name != null)
-        {
-            ctx.new_project(Name.ToString());
-        }
+        ctx.remove_project();
+        SetupTreeview(null, null);
     }
 
-    private void on_rename_project(object sender, RoutedEventArgs e)
-    {
-        if (NewProjectName.Text != null)
-        {
-            ctx.rename_project(NewProjectName.Text.ToString());
-            NewProjectName.Text = null;
-        }
-    }
 
     private void on_add_file(object sender, RoutedEventArgs e)
     {
         StatusLabel.Content = "Adding Files";
         ctx.AddFile(this);
+        SetupTreeview(null, null);
         StatusLabel.Content = "Ready";
     }
 
@@ -688,6 +624,50 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.select_files(files);
     }
 
+    private void OnAddFavGroup(object sender, RoutedEventArgs e)
+    {
+        string text = NewFavGroupInput.Text;
+
+        if(text == null || text.ToString().Length == 0)
+        {
+            return;
+        }
+
+        ctx.AddFavGroup(NewFavGroupInput.Text);
+        NewFavGroupInput.Clear();
+    }
+
+    private void OnRenameFavGroup(object sender, RoutedEventArgs e)
+    {
+        string text = NewFavGroupInput.Text;
+
+        if (text == null || text.ToString().Length == 0)
+        {
+            return;
+        }
+
+        ctx.RenameFavGroup(NewFavGroupInput.Text);
+        NewFavGroupInput.Clear();
+    }
+
+
+    private void OnAddFavorite(object sender, RoutedEventArgs e)
+    {
+        MenuItem source = e.Source as MenuItem;
+
+        ctx.ProjectsVM.AddFavorite(source.Header.ToString());
+        ctx.CurrentFavorite = source.Header.ToString();
+    }
+
+    private void OnFavoriteGroupChanged(object sender, RoutedEventArgs e)
+    {
+        ListBox source = e.Source as ListBox;
+        if (source.SelectedItem != null)
+        {
+            ctx.CurrentFavorite = source.SelectedItem.ToString();
+        }
+    }
+
     private void select_files(object sender, RoutedEventArgs e)
     {
         IList<FileData> files = FileGrid.SelectedItems.Cast<FileData>().ToList();
@@ -738,6 +718,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private async void on_load_file(object sender, RoutedEventArgs e)
     {
         await ctx.LoadFile(this);
+        SetupTreeview(null, null);
     }
 
     private async void on_save_file(object sender, RoutedEventArgs e)
@@ -773,9 +754,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void OnRemoveFiles(object sender, RoutedEventArgs e)
     {
-        Debug.WriteLine("REMOVING FILES");
         ctx.ProjectsVM.RemoveSelectedFiles();
         ctx.ProjectsVM.UpdateFilter();
+        SetupTreeview(null, null);
 
     }
 
@@ -798,7 +779,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void DataGrid_OnLoadingRow(object? sender, DataGridRowEventArgs e)
     {
-
         Args.Add(e);
 
         var dataObject = e.Row.DataContext as FileData;
@@ -808,56 +788,18 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         if (dataObject != null && dataObject.FileStatus == "Missing") { e.Row.Classes.Add("RedForeground"); }
 
-        if (darkmode == true)
-        {
-            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowDark"); }
-            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeDark"); }
-            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownDark"); }
-            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenDark"); }
-            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueDark"); }
-            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedDark"); }
-            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaDark"); }
-        }
-        else
-        {
-            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowLight"); }
-            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeLight"); }
-            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownLight"); }
-            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenLight"); }
-            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueLight"); }
-            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedLight"); }
-            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaLight"); }
-        }
-    }
-
-    private void set_theme_colors()
-    {
-        if (darkmode == true)
-        {
-
-            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#646424");
-            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#643e24");
-            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#3e3124");
-            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#244a24");
-            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#243e64");
-            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#642424");
-            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#57244a");
-        }
-
-        if (darkmode == false)
-        {
-            YellowMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffff99");
-            OrangeMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ffd699");
-            BrownMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#c2ad99");
-            GreenMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#8cd1a3");
-            BlueMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#a3a3ff");
-            RedMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#ff8c8c");
-            MagentaMenu.Foreground = (IBrush)new BrushConverter().ConvertFrom("#eb99eb");
-        }
+        if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("Yellow"); }
+        if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("Orange"); }
+        if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("Brown"); }
+        if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("Green"); }
+        if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("Blue"); }
+        if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("Red"); }
+        if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("Magenta"); }
     }
 
     private void update_row_color()
     {
+
         foreach (DataGridRowEventArgs e in Args)
         {
             var dataObject = e.Row.DataContext as FileData;
@@ -866,26 +808,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             if (dataObject != null && dataObject.FileStatus == "Missing") { e.Row.Classes.Add("RedForeground"); }
 
-            if (darkmode == true)
-            {
-                if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowDark"); }
-                if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeDark"); }
-                if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownDark"); }
-                if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenDark"); }
-                if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueDark"); }
-                if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedDark"); }
-                if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaDark"); }
-            }
-            else
-            {
-                if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("YellowLight"); }
-                if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("OrangeLight"); }
-                if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("BrownLight"); }
-                if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("GreenLight"); }
-                if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("BlueLight"); }
-                if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("RedLight"); }
-                if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("MagentaLight"); }
-            }
+            if (dataObject != null && dataObject.Färg == "Yellow") { e.Row.Classes.Add("Yellow"); }
+            if (dataObject != null && dataObject.Färg == "Orange") { e.Row.Classes.Add("Orange"); }
+            if (dataObject != null && dataObject.Färg == "Brown") { e.Row.Classes.Add("Brown"); }
+            if (dataObject != null && dataObject.Färg == "Green") { e.Row.Classes.Add("Green"); }
+            if (dataObject != null && dataObject.Färg == "Blue") { e.Row.Classes.Add("Blue"); }
+            if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("Red"); }
+            if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("Magenta"); }
         }
     }
 

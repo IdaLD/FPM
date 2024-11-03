@@ -18,22 +18,59 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.1.0" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.1.0" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.0" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.0" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="Avalonia" Version="11.1.4" />
+    <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.1.4" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.1.4" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.4" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
 
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.0" />
-    <PackageReference Include="itext7" Version="8.0.4" />
-    <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.4" />
-    <PackageReference Include="Material.Avalonia" Version="3.6.0" />
-    <PackageReference Include="Material.Avalonia.DataGrid" Version="3.6.0" />
-    <PackageReference Include="Material.Icons.Avalonia" Version="2.1.10" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.4" />
+    <PackageReference Include="FluentIcons.Avalonia" Version="1.1.261" />
+    <PackageReference Include="itext7" Version="8.0.5" />
+    <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.5" />
     <PackageReference Include="MuPDFCore" Version="1.10.2" />
     <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.10.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.7" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Dialogs\xRenameDia.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+    <AvaloniaXaml Update="Dialogs\xGroupDia.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Dialogs\xNewDia.axaml.cs">
+      <DependentUpon>xNewDia.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Dialogs\xGroupDia.axaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>xGroupDia.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Dialogs\xCloseDia.axaml.cs">
+      <DependentUpon>xCloseDia.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Dialogs\xTagDia.axaml.cs">
+      <DependentUpon>xTagDia.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Dialogs\xRenameDia.axaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>xRenameDia.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Dialogs\xColorDia.axaml.cs">
+      <DependentUpon>xColorDia.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\PreView.axaml.cs">
+      <DependentUpon>PreView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\PreWindow.axaml.cs">
+      <DependentUpon>PreWindow.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>
