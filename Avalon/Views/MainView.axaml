@@ -141,19 +141,13 @@
 								<ic:SymbolIcon Name="ModeDayIcon" Symbol="WeatherSunny" IconVariant="Regular" FontSize="20"/>
 							</StackPanel>
 						</ToggleButton>
-						
-						<ToggleButton Name="Lockedstatus" ToolTip.Tip="Lock Files: Ctrl + L" HotKey="Ctrl+L" FontWeight="Normal" Margin="0,-5,0,0" VerticalAlignment="Center">
-							<StackPanel>
-								<ic:SymbolIcon Name="LockIcon" Symbol="LockClosed" IconVariant="Regular" FontSize="20"/>
-							</StackPanel>
-						</ToggleButton>
 
-						<Button Name="ColorMenu" ToolTip.Tip="UI Color" FontWeight="Normal" Height="33" Width="35" Margin="0,-5,0,0"  Command="{Binding OpenColorDia}" CommandParameter="{Binding $parent[Window]}">
+						<Button Name="ColorMenu" ToolTip.Tip="UI Color" FontWeight="Normal" Height="33" Width="35" Margin="0,-5,0,0" Command="{Binding OpenColorDia}" CommandParameter="{Binding $parent[Window]}">
 							<ic:SymbolIcon Symbol="Color" FontSize="20"/>
 						</Button>
 					
 
-						<Button Name="InfoText" ToolTip.Tip="Project Notepad: Ctrl + N" HotKey="Ctrl+N" Height="33" Width="35"  FontWeight="Normal" Margin="0,-5,0,0" Click="Border_PointerPressed">
+						<Button Name="InfoText" ToolTip.Tip="Project Notepad: Ctrl + N" HotKey="Ctrl+N" Height="33" Width="35" FontWeight="Normal" Margin="0,-5,0,0" IsVisible="False" Click="Border_PointerPressed">
 							<ic:SymbolIcon Symbol="Notebook" FontSize="20"/>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-110" VerticalOffset="45" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
@@ -168,6 +162,12 @@
 								</Flyout>
 							</Button.Flyout>
 						</Button>
+
+						<ToggleButton Name="Lockedstatus" ToolTip.Tip="Lock Files: Ctrl + L" HotKey="Ctrl+L" FontWeight="Normal" Margin="0,-5,0,0" VerticalAlignment="Center">
+							<StackPanel>
+								<ic:SymbolIcon Name="LockIcon" Symbol="LockClosed" IconVariant="Regular" FontSize="20"/>
+							</StackPanel>
+						</ToggleButton>
 
 						
 						

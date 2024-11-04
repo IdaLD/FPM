@@ -681,8 +681,11 @@ namespace Avalon.ViewModels
 
         public void CopyToClipboard(Avalonia.Visual window)
         {
-            string selected = Renderer.GetSelectedText();
-            TopLevel.GetTopLevel(window).Clipboard.SetTextAsync(selected);
+            if (CurrentFile != null)
+            {
+                string selected = Renderer.GetSelectedText();
+                TopLevel.GetTopLevel(window).Clipboard.SetTextAsync(selected);
+            }
         }
 
         public void Search(string text)
