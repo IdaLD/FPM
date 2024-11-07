@@ -321,7 +321,7 @@
 					</Grid>
 
 					<Border Grid.Row="4" BorderBrush="Gray" BorderThickness="0.5" Margin="5" CornerRadius="5">
-						<DataGrid Name="PageGrid" Padding="0" ItemsSource="{Binding ProjectsVM.CurrentFile.FavPages, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
+						<DataGrid Name="PageGrid" Padding="0" ItemsSource="{Binding PreviewVM.CurrentFile.FavPages, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
 									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
@@ -330,7 +330,7 @@
 							</DataGrid.Styles>
 							
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding PageNr}" Header="Page" Width="75" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding PageNr, Converter={StaticResource AddOneConverter}}" Header="Page" Width="75" FontFamily="UbuntuMono"/>
 								<DataGridTextColumn Binding="{Binding PageName}" Header="Name" Width="*" FontFamily="UbuntuMono"/>
 							</DataGrid.Columns>
 							
@@ -360,13 +360,7 @@
 										
 										<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{icxt:SymbolIconExtension Symbol=FolderAdd}" Command="{Binding OpenProjectNewDia}" CommandParameter="{Binding $parent[Window]}"/>
 										
-										<MenuItem Name="EditMenu" Header="Edit" Icon="{icxt:SymbolIconExtension Symbol=Edit}"  Command="{Binding OpenProjectEditDia}" CommandParameter="{Binding $parent[Window]}"/>
-
-										<MenuItem Header="Type" Icon="{icxt:SymbolIconExtension Symbol=Tag}">
-											<MenuItem Header="Project" Tag="Project" Click="on_set_category"/>
-											<MenuItem Header="Library" Tag="Library" Click="on_set_category"/>
-											<MenuItem Header="Archive" Tag="Archive" Click="on_set_category"/>
-										</MenuItem>
+										<MenuItem Name="EditMenu" Header="Edit Project" Icon="{icxt:SymbolIconExtension Symbol=Edit}"  Command="{Binding OpenProjectEditDia}" CommandParameter="{Binding $parent[Window]}"/>
 												
 										<Separator></Separator>
 										<MenuItem Name="RemoveProjectMenu" Header="Remove" Click="on_remove_project" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>

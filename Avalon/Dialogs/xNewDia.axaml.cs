@@ -15,13 +15,26 @@ public partial class xNewDia : Window
 
     }
 
-    private void OnNewProject(object sender, RoutedEventArgs e)
+    private void OnAddProject(object sender, RoutedEventArgs e)
     {
         var Name = ProjectName.Text;
         if (Name != null)
         {
             MainViewModel ctx = (MainViewModel)this.DataContext;
-            ctx.new_project(Name.ToString());
+
+            ComboBoxItem selectedCombo = (ComboBoxItem)ProjectCategory.SelectedItem;
+            string cat = selectedCombo.Content.ToString();
+
+            string group = null;
+
+            if (ProjectGroup.Text != null && cat == "Project") 
+            {
+                group = ProjectGroup.Text.ToString();
+            }
+
+            ctx.ProjectsVM.NewProject(Name, group, cat);
+
+            ctx.UpdateTreeview();
         }
 
         this.Close();

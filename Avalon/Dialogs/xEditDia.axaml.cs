@@ -37,12 +37,27 @@ public partial class xEditDia : Window
 
     }
 
-    private void OnRenameProject(object sender, RoutedEventArgs e)
+    private void OnEditProject(object sender, RoutedEventArgs e)
     {
         if (ProjectName.Text != null)
         {
             MainViewModel ctx = (MainViewModel)this.DataContext;
             ctx.rename_project(ProjectName.Text.ToString());
+
+            string group = null;
+
+            if (ProjectGroup.Text != null)
+            {
+                group = ProjectGroup.Text.ToString();
+            }
+
+            ctx.SetGroup(group);
+
+            ComboBoxItem selectedCombo = (ComboBoxItem)ProjectCategory.SelectedItem;
+
+            ctx.SetCategory(selectedCombo.Content.ToString());
+
+            ctx.UpdateTreeview();
         }
 
         this.Close();

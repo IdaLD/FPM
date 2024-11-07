@@ -221,7 +221,11 @@ namespace Avalon.ViewModels
         {
             int pageNr = PreviewVM.CurrentPage1;
             PageData page = new PageData() { PageNr = pageNr, PageName = pageName };
-            ProjectsVM.CurrentFile.FavPages.Add(page);
+
+            if (PreviewVM.CurrentFile != null)
+            {
+                PreviewVM.CurrentFile.FavPages.Add(page);
+            }
         }
 
         public void RenameFavPage(string pageName)
@@ -231,7 +235,7 @@ namespace Avalon.ViewModels
 
         public void RemoveFavPage(PageData page)
         {
-            ProjectsVM.CurrentFile.FavPages.Remove(page);
+            PreviewVM.CurrentFile.FavPages.Remove(page);
 
             //CurrentFavorite = Favorites.First();
         }
@@ -441,9 +445,10 @@ namespace Avalon.ViewModels
             ProjectsVM.SetDefaultType();
         }
 
-        public void set_category(string category)
+        public void SetCategory(string category)
         {
             ProjectsVM.SetProjecCategory(category);
+            SetAllowedTypes();
         }
 
         public void SetAllowedTypes()
@@ -455,7 +460,6 @@ namespace Avalon.ViewModels
         {
             ProjectsVM.SetGroups(group);
             GetGroups();
-            OnPropertyChanged("TreeViewUpdate");
         }
 
         public void GetGroups()
@@ -840,12 +844,6 @@ namespace Avalon.ViewModels
             OnPropertyChanged("UpdateColumns");
         }
 
-        public void new_project(string name)
-        {
-            ProjectsVM.NewProject(name);
-            OnPropertyChanged("TreeViewUpdate");
-        }
-
         public void remove_project()
         {
             ProjectsVM.RemoveProject();
@@ -855,6 +853,10 @@ namespace Avalon.ViewModels
         {
             ProjectsVM.RenameProject(newProjectName);
             ProjectsVM.SetProjectlist();
+        }
+
+        public void UpdateTreeview()
+        {
             OnPropertyChanged("TreeViewUpdate");
         }
 

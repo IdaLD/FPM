@@ -59,7 +59,7 @@ namespace Avalon.ViewModels
             set { linkedPageMode = value; OnPropertyChanged("LinkedPageMode"); }
         }
 
-        public FileData currentFile = null;
+        private FileData currentFile = null;
         public FileData CurrentFile
         {
             get { return currentFile; }

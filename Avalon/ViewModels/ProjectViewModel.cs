@@ -212,11 +212,11 @@ namespace Avalon.ViewModels
 
         public bool[] MetaCheckDefault = { true, true, true, true, true, false, false, false, true, true, true, false, false, false, false, false };
 
-        public void NewProject(string name)
+        public void NewProject(string name, string group = null, string category = "Project")
         {
             if (!StoredProjects.Any(x => x.Namn == name))
             {
-                ProjectData newProject = new ProjectData { Namn = name, Colors = ProjectColor };
+                ProjectData newProject = new ProjectData { Namn = name, Parent = group, Category = category, Colors = ProjectColor };
                 newProject.MetaCheckStore = MetaCheckDefault;
 
                 StoredProjects.Add(newProject);
@@ -411,7 +411,12 @@ namespace Avalon.ViewModels
             if (currentProject.Category != "Search" && currentProject.Category != "Favorites")
             {
                 CurrentProject.Category = name;
-                CurrentProject.Parent = null;
+
+                if (name != "Project")
+                {
+                    CurrentProject.Parent = null;
+                }
+                
                 SortProjects();
             }
         }

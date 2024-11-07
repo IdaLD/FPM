@@ -270,16 +270,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    public void on_set_category(object sender, RoutedEventArgs e)
-    {
-        MenuItem menuitem = sender as MenuItem;
-        string category = menuitem.Tag.ToString();
-
-        ctx.set_category(category);
-        ctx.SetAllowedTypes();
-        SetupTreeview(null, null);
-    }
-
     public void toggle_treeview(object sender, RoutedEventArgs e)
     {
         treeview = !treeview;
@@ -330,14 +320,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             else
             {
-                EditMenu.IsEnabled = false;
 
                 TreeViewItem parentTree = (TreeViewItem)selectedTree.Parent;
                 
-                if(parentTree.Tag == "Group")
-                {
-                    EditMenu.IsEnabled = true;
-                }
 
                 MainTree.ContextMenu.IsEnabled = true;
 
