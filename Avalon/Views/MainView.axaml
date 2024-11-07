@@ -268,7 +268,7 @@
 
 				<GridSplitter Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns"/>
 
-				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,2*">
+				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,*,35,*">
 					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
 						<TextBox Name="NewFavGroupInput" Width="170"/>
 						<Button BorderBrush="Gray" Width="35" Click="OnAddFavGroup">
@@ -302,6 +302,38 @@
 									<MenuItem Header="Remove" Command="{Binding OnRemoveFavoriteFile}"/>
 								</ContextMenu>
 							</DataGrid.ContextMenu>
+						</DataGrid>
+					</Border>
+
+					<Grid Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,*,35,*">
+						<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
+							<TextBox Name="NewFavPageInput" Width="170"/>
+							<Button BorderBrush="Gray" Width="35" Click="OnAddFavPage">
+								<ic:SymbolIcon Symbol="Add" FontSize="20"/>
+							</Button>
+							<Button Name="RemoveFavoritePage" BorderBrush="Gray" Width="35" Click="OnRemoveFavPage">
+								<ic:SymbolIcon Symbol="Delete" FontSize="20"/>
+							</Button>
+							<Button BorderBrush="Gray" Width="35" Click="OnRenameFavPage">
+								<ic:SymbolIcon Symbol="Rename" FontSize="20"/>
+							</Button>
+						</StackPanel>
+					</Grid>
+
+					<Border Grid.Row="4" BorderBrush="Gray" BorderThickness="0.5" Margin="5" CornerRadius="5">
+						<DataGrid Name="PageGrid" Padding="0" ItemsSource="{Binding ProjectsVM.CurrentFile.FavPages, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
+									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow">
+							<DataGrid.Styles>
+								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
+									<Setter Property="IsVisible" Value="false"/>
+								</Style>
+							</DataGrid.Styles>
+							
+							<DataGrid.Columns>
+								<DataGridTextColumn Binding="{Binding PageNr}" Header="Page" Width="75" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding PageName}" Header="Name" Width="*" FontFamily="UbuntuMono"/>
+							</DataGrid.Columns>
+							
 						</DataGrid>
 					</Border>
 				</Grid>

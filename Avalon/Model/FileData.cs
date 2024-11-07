@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace Avalon.Model
 {
@@ -122,6 +124,13 @@ namespace Avalon.Model
         {
             get { return defaultPage; }
             set { defaultPage = value; RaisePropertyChanged("DefaultPage"); }
+        }
+
+        private ObservableCollection<PageData> favPages = new ObservableCollection<PageData>();
+        public ObservableCollection<PageData> FavPages
+        {
+            get { return favPages; }
+            set { favPages = value; RaisePropertyChanged("FavPages"); }
         }
 
         private string info = string.Empty;

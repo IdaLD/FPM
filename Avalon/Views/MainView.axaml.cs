@@ -38,6 +38,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_tray);
         FavoriteGroups.AddHandler(ListBox.SelectionChangedEvent, OnFavoriteGroupChanged);
 
+        PageGrid.AddHandler(DataGrid.SelectionChangedEvent, FavPageSelected);
+
         Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
         FileGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
@@ -614,6 +616,36 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.set_meta();
         ProgressStatus.Content = "";
         ProgressBar.Value = 0;
+    }
+
+    private void FavPageSelected(object sender, RoutedEventArgs e)
+    {
+        if (previewMode || ctx.PreviewWindowOpen)
+        {
+            PageData page = (PageData)PageGrid.SelectedItem;
+            ctx.SetFavPage(page);
+        }
+    }
+
+    private void OnAddFavPage(object sender, RoutedEventArgs e)
+    {
+        if (previewMode || ctx.PreviewWindowOpen)
+        {
+            ctx.AddFavPage(NewFavPageInput.Text);
+            NewFavPageInput.Clear();
+        }
+    }
+
+    private void OnRenameFavPage(object sender, RoutedEventArgs e)
+    {
+        ctx.RenameFavPage(NewFavPageInput.Text);
+        NewFavPageInput.Clear();
+    }
+
+    private void OnRemoveFavPage(object sender, RoutedEventArgs e)
+    {
+        PageData page = (PageData)PageGrid.SelectedItem;
+        ctx.RemoveFavPage(page);
     }
 
     private void select_favorite(object sender, RoutedEventArgs e)

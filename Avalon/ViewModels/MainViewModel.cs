@@ -18,6 +18,7 @@ using Avalon.Dialog;
 using Avalonia.Interactivity;
 using Avalon.Views;
 using Org.BouncyCastle.Crypto.Signers;
+using Org.BouncyCastle.Crypto.Operators;
 
 
 namespace Avalon.ViewModels
@@ -73,6 +74,13 @@ namespace Avalon.ViewModels
         {
             get { return groups; }
             set { groups = value; OnPropertyChanged("groups"); }
+        }
+
+        private PageData favPage;
+        public PageData FavPage
+        {
+            get { return favPage; }
+            set { favPage = value; OnPropertyChanged("FavPage"); TrySetPage(); }
         }
 
         public string ProjectMessage { get; set; } = "";
@@ -218,6 +226,38 @@ namespace Avalon.ViewModels
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
             window.ShowDialog(mainWindow);
             window.ProjectGroupInput.Focus();
+        }
+
+        public void TrySetPage()
+        {
+            if(FavPage != null)
+            {
+                PreviewVM.RequestPage1 = FavPage.PageNr;
+            }
+        }
+
+        public void SetFavPage(PageData page)
+        {
+            FavPage = page;
+        }
+
+        public void AddFavPage(string pageName)
+        {
+            int pageNr = PreviewVM.CurrentPage1;
+            PageData page = new PageData() { PageNr = pageNr, PageName = pageName };
+            ProjectsVM.CurrentFile.FavPages.Add(page);
+        }
+
+        public void RenameFavPage(string pageName)
+        {
+            FavPage.PageName = pageName;
+        }
+
+        public void RemoveFavPage(PageData page)
+        {
+            ProjectsVM.CurrentFile.FavPages.Remove(page);
+
+            //CurrentFavorite = Favorites.First();
         }
 
 
