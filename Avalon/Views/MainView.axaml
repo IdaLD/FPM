@@ -360,10 +360,8 @@
 										
 										<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{icxt:SymbolIconExtension Symbol=FolderAdd}" Command="{Binding OpenProjectNewDia}" CommandParameter="{Binding $parent[Window]}"/>
 										
-										<MenuItem Name="RenameMenu" Header="Rename" Icon="{icxt:SymbolIconExtension Symbol=Rename}"  Command="{Binding OpenProjectRenameDia}" CommandParameter="{Binding $parent[Window]}"/>
+										<MenuItem Name="EditMenu" Header="Edit" Icon="{icxt:SymbolIconExtension Symbol=Edit}"  Command="{Binding OpenProjectEditDia}" CommandParameter="{Binding $parent[Window]}"/>
 
-										<MenuItem Name="GroupMenu" Header="Group" Icon="{icxt:SymbolIconExtension Symbol=Collections}" Command="{Binding OpenGroupDia}" CommandParameter="{Binding $parent[Window]}"/>
-										
 										<MenuItem Header="Type" Icon="{icxt:SymbolIconExtension Symbol=Tag}">
 											<MenuItem Header="Project" Tag="Project" Click="on_set_category"/>
 											<MenuItem Header="Library" Tag="Library" Click="on_set_category"/>

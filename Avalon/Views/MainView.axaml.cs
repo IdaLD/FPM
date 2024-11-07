@@ -330,13 +330,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
             else
             {
-                GroupMenu.IsEnabled = false;
+                EditMenu.IsEnabled = false;
 
                 TreeViewItem parentTree = (TreeViewItem)selectedTree.Parent;
                 
-                if(parentTree.Header == "Project" || parentTree.Tag == "Group")
+                if(parentTree.Tag == "Group")
                 {
-                    GroupMenu.IsEnabled = true;
+                    EditMenu.IsEnabled = true;
                 }
 
                 MainTree.ContextMenu.IsEnabled = true;

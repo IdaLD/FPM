@@ -152,7 +152,6 @@ namespace Avalon.ViewModels
 
         public void PreviewWindowClosed(object sender, RoutedEventArgs e)
         {
-            //PreviewVM.CloseRenderer();
             PreviewWindowOpen = false;
         }
 
@@ -166,19 +165,15 @@ namespace Avalon.ViewModels
             window.ShowDialog(mainWindow);
         }
 
-        public void OpenProjectRenameDia(Window mainWindow)
+        public void OpenProjectEditDia(Window mainWindow)
         {
-            var window = new xRenameDia()
+            var window = new xEditDia()
             {
                 DataContext = this
             };
 
-            window.NewProjectName.Text = ProjectsVM.CurrentProject.Namn;
-            window.NewProjectName.CaretIndex = window.NewProjectName.Text.Length;
-
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
             window.ShowDialog(mainWindow);
-            window.NewProjectName.Focus();
         }
 
         public void OpenProjectNewDia(Window mainWindow)
@@ -208,25 +203,6 @@ namespace Avalon.ViewModels
             window.TagMenuInput.Focus();
         }
 
-        public void OpenGroupDia(Window mainWindow)
-        {
-            var window = new xGroupDia()
-            {
-                DataContext = this
-            };
-
-            window.ProjectGroupInput.Text = ProjectsVM.CurrentProject.Parent;
-
-
-            if (window.ProjectGroupInput.Text != null)
-            {
-                window.ProjectGroupInput.CaretIndex = window.ProjectGroupInput.Text.Length;
-            }
-
-            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
-            window.ShowDialog(mainWindow);
-            window.ProjectGroupInput.Focus();
-        }
 
         public void TrySetPage()
         {
