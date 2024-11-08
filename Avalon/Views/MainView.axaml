@@ -173,7 +173,7 @@
 						
 					</StackPanel>
 
-					<DataGrid Name="FileGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended" VerticalScrollBarVisibility="Visible"
+					<DataGrid Name="FileGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible"
 							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 						<DataGrid.Styles>
 							<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
@@ -219,6 +219,7 @@
 								<MenuItem Name="MetaMenu" Header="Metadata" Icon="{icxt:SymbolIconExtension Symbol=Database}">
 									<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta" Icon="{icxt:SymbolIconExtension Symbol=DatabaseSearch}"/>
 									<MenuItem Name="FetchMetadata" Header="Fetch All" Click="on_fetch_full_meta" Icon="{icxt:SymbolIconExtension Symbol=DatabaseLink}"/>
+									<MenuItem Name="EditMetadata" Header="Edit" Command="{Binding OpenMetaEditDia}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=Edit}"/>
 									<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding clear_meta}" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
 								</MenuItem>
 
@@ -347,28 +348,27 @@
 
 				<Grid Grid.Row="2" Grid.Column="0">
 					<Border BorderBrush="Gray" BorderThickness="1" Margin="5" Background="{DynamicResource TextControlBackground}">
-						<StackPanel Orientation="Vertical">
-							<Border BorderBrush="Gray" BorderThickness="0 0 0 1">
-								<TextBlock Text="Storage" Height="23" Margin="14 8 0 0"/>
-							</Border>
-							<TreeView Name="MainTree" Loaded="SetupTreeview" SelectionChanged="on_treeview_selected">
-
-								
-								<TreeView.ContextMenu>
-									<ContextMenu Name="TreeMenu">
-										<MenuItem Header="Add Files" Click="on_add_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentAdd}"/>
+						<ScrollViewer>
+							<StackPanel Orientation="Vertical">
+								<Border BorderBrush="Gray" BorderThickness="0 0 0 1">
+									<TextBlock Text="Storage" Height="23" Margin="14 8 0 0"/>
+								</Border>
+								<TreeView Name="MainTree" Loaded="SetupTreeview" SelectionChanged="on_treeview_selected">
+									<TreeView.ContextMenu>
+										<ContextMenu Name="TreeMenu">
+											<MenuItem Header="Add Files" Click="on_add_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentAdd}"/>
 										
-										<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{icxt:SymbolIconExtension Symbol=FolderAdd}" Command="{Binding OpenProjectNewDia}" CommandParameter="{Binding $parent[Window]}"/>
+											<MenuItem Name="NewProjectMenu" Header="New Project" Icon="{icxt:SymbolIconExtension Symbol=FolderAdd}" Command="{Binding OpenProjectNewDia}" CommandParameter="{Binding $parent[Window]}"/>
 										
-										<MenuItem Name="EditMenu" Header="Edit Project" Icon="{icxt:SymbolIconExtension Symbol=Edit}"  Command="{Binding OpenProjectEditDia}" CommandParameter="{Binding $parent[Window]}"/>
+											<MenuItem Name="EditMenu" Header="Edit Project" Icon="{icxt:SymbolIconExtension Symbol=Edit}"  Command="{Binding OpenProjectEditDia}" CommandParameter="{Binding $parent[Window]}"/>
 												
-										<Separator></Separator>
-										<MenuItem Name="RemoveProjectMenu" Header="Remove" Click="on_remove_project" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
-									</ContextMenu>
-								</TreeView.ContextMenu>
-								
-							</TreeView>
-						</StackPanel>
+											<Separator></Separator>
+											<MenuItem Name="RemoveProjectMenu" Header="Remove" Click="on_remove_project" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
+										</ContextMenu>
+									</TreeView.ContextMenu>
+								</TreeView>
+							</StackPanel>
+						</ScrollViewer>
 					</Border>
 				</Grid>		
 			</Grid>

@@ -37,12 +37,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaXaml Update="Dialogs\xMetaDia.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
     <AvaloniaXaml Update="Dialogs\xEditDia.axaml">
       <SubType>Designer</SubType>
     </AvaloniaXaml>
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Dialogs\xMetaDia.axaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>xMetaDia.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Dialogs\xNewDia.axaml.cs">
       <DependentUpon>xNewDia.axaml</DependentUpon>
     </Compile>

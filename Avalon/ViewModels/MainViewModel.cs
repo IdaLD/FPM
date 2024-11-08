@@ -165,6 +165,17 @@ namespace Avalon.ViewModels
             window.ShowDialog(mainWindow);
         }
 
+        public void OpenMetaEditDia(Window mainWindow)
+        {
+            var window = new xMetaDia()
+            {
+                DataContext = this
+            };
+
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.ShowDialog(mainWindow);
+        }
+
         public void OpenProjectEditDia(Window mainWindow)
         {
             var window = new xEditDia()
