@@ -40,7 +40,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         PageGrid.AddHandler(DataGrid.SelectionChangedEvent, FavPageSelected);
 
-        Lockedstatus.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_lock);
         FileGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
 
@@ -78,7 +77,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         get_datacontext();
 
-        Lockedstatus.IsChecked = true;
         TreeStatus.IsChecked = true;
 
         try
@@ -445,27 +443,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    
-
-
-    private void on_lock(object sender, EventArgs e)
-    {
-        if (Lockedstatus.IsChecked == true)
-        {
-            RemoveFavoriteGroup.IsEnabled = false;
-            RemoveProjectMenu.IsEnabled = false;
-            RemoveFileMenu.IsEnabled = false;
-            MoveFileMenu.IsEnabled = false;
-        }
-        if (Lockedstatus.IsChecked == false)
-        {
-            RemoveFavoriteGroup.IsEnabled = true;
-            RemoveProjectMenu.IsEnabled = true;
-            RemoveFileMenu.IsEnabled = true;
-            MoveFileMenu.IsEnabled = true;
-        }
-    }
-
     private void on_copy_filepath(object sender, RoutedEventArgs e)
     {
         ctx.CopyFilepathToClipboard(this);
@@ -539,10 +516,17 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     }
 
 
-    private void on_remove_project(object sender, RoutedEventArgs e)
+    async void OnRemoveProject(object sender, RoutedEventArgs e)
     {
-        ctx.remove_project();
-        SetupTreeview(null, null);
+
+        Window window = (MainWindow)Window.GetTopLevel(this);
+        await ctx.ConfirmDeleteDia(window);
+
+        if (ctx.Confirmed)
+        {
+            ctx.remove_project();
+            SetupTreeview(null, null);
+        }
     }
 
 
@@ -667,6 +651,17 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         NewFavGroupInput.Clear();
     }
 
+    async void OnRemoveFavGroup(object sender, RoutedEventArgs e)
+    {
+        Window window = (MainWindow)Window.GetTopLevel(this);
+        await ctx.ConfirmDeleteDia(window);
+
+        if (ctx.Confirmed)
+        {
+            ctx.RemoveFavGroup();
+        }
+    }
+
 
     private void OnAddFavorite(object sender, RoutedEventArgs e)
     {
@@ -769,12 +764,17 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.ProjectsVM.UpdateFilter();
     }
 
-    private void OnRemoveFiles(object sender, RoutedEventArgs e)
+    async void OnRemoveFiles(object sender, RoutedEventArgs e)
     {
-        ctx.ProjectsVM.RemoveSelectedFiles();
-        ctx.ProjectsVM.UpdateFilter();
-        SetupTreeview(null, null);
+        Window window = (MainWindow)Window.GetTopLevel(this);
+        await ctx.ConfirmDeleteDia(window);
 
+        if (ctx.Confirmed)
+        {
+            ctx.ProjectsVM.RemoveSelectedFiles();
+            ctx.ProjectsVM.UpdateFilter();
+            SetupTreeview(null, null);
+        }
     }
 
     private void on_update_columns()

@@ -163,12 +163,6 @@
 							</Button.Flyout>
 						</Button>
 
-						<ToggleButton Name="Lockedstatus" ToolTip.Tip="Lock Files: Ctrl + L" HotKey="Ctrl+L" FontWeight="Normal" Margin="0,-5,0,0" VerticalAlignment="Center">
-							<StackPanel>
-								<ic:SymbolIcon Name="LockIcon" Symbol="LockClosed" IconVariant="Regular" FontSize="20"/>
-							</StackPanel>
-						</ToggleButton>
-
 						
 						
 					</StackPanel>
@@ -257,7 +251,7 @@
 
 								<Separator></Separator>
 
-								<MenuItem Name="MoveFileMenu" Header="Move Files To" Icon="{icxt:SymbolIconExtension Symbol=ArrowRight}">
+								<MenuItem Name="MoveFileMenu" IsVisible="False" Header="Move Files To" Icon="{icxt:SymbolIconExtension Symbol=ArrowRight}">
 									<TextBox Name="MoveFileToProjectName" Width="160" FlowDirection="LeftToRight"/>
 									<MenuItem Name="MoveMenu" Header="Move" Click="on_move_files"/>
 								</MenuItem>
@@ -275,7 +269,7 @@
 						<Button BorderBrush="Gray" Width="35" Click="OnAddFavGroup">
 							<ic:SymbolIcon Symbol="Add" FontSize="20"/>
 						</Button>
-						<Button Name="RemoveFavoriteGroup" BorderBrush="Gray" Width="35" Command="{Binding RemoveFavGroup}">
+						<Button Name="RemoveFavoriteGroup" BorderBrush="Gray" Width="35" Click="OnRemoveFavGroup">
 							<ic:SymbolIcon Symbol="Delete" FontSize="20"/>
 						</Button>
 						<Button BorderBrush="Gray" Width="35" Click="OnRenameFavGroup">
@@ -363,7 +357,7 @@
 											<MenuItem Name="EditMenu" Header="Edit Project" Icon="{icxt:SymbolIconExtension Symbol=Edit}"  Command="{Binding OpenProjectEditDia}" CommandParameter="{Binding $parent[Window]}"/>
 												
 											<Separator></Separator>
-											<MenuItem Name="RemoveProjectMenu" Header="Remove" Click="on_remove_project" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
+											<MenuItem Name="RemoveProjectMenu" Header="Remove" Click="OnRemoveProject" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
 										</ContextMenu>
 									</TreeView.ContextMenu>
 								</TreeView>

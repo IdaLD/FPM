@@ -113,6 +113,8 @@ namespace Avalon.ViewModels
             set { color4 = value; OnPropertyChanged("Color4"); ColorChanged(); }
         }
 
+        public bool Confirmed = false;
+
         public List<string> FileTypes { get; set; } = new List<string>();
 
         private List<MenuItem> fileTypeSelection = new List<MenuItem>()
@@ -212,6 +214,17 @@ namespace Avalon.ViewModels
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
             window.ShowDialog(mainWindow);
             window.TagMenuInput.Focus();
+        }
+
+        public async Task ConfirmDeleteDia(Window mainWindow)
+        {
+            var window = new xDeleteDia()
+            {
+                DataContext = this
+            };
+
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            await window.ShowDialog(mainWindow);
         }
 
 
