@@ -3,10 +3,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="180" d:DesignHeight="280"
-		MinWidth="190"
-		MinHeight="280"
-		MaxWidth="190"
-		MaxHeight="280"
+		MinWidth="210"
+		MinHeight="334"
+		MaxWidth="210"
+		MaxHeight="340"
+		xmlns:ic="using:FluentIcons.Avalonia"
         x:Class="Avalon.Dialog.xColorDia"
         Title="xColorDia"
 		xmlns:vm="clr-namespace:Avalon.ViewModels"
@@ -19,26 +20,32 @@
 
 
 
-	<Border BorderBrush="Gray" BorderThickness="1" Padding="0 40 0 0">
-		<Grid ColumnDefinitions="90,80" RowDefinitions="30,40,40,30,40,40,40" HorizontalAlignment="Center" VerticalAlignment="Center">
+	<Border BorderBrush="Gray" BorderThickness="1">
+		<StackPanel Orientation="Vertical" Spacing="10" Margin="0 30 0 0" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="0">
+				<ic:SymbolIcon Symbol="ColorBackground" VerticalAlignment="Center" HorizontalAlignment="Center" IconVariant="Regular" FontSize="30"/>
+				<Label Content="Edit Theme Colors" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+			</StackPanel>
+			<Grid ColumnDefinitions="90,80" RowDefinitions="30,40,40,30,40,40,40" HorizontalAlignment="Center" VerticalAlignment="Center">
 		
-			<Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" FontWeight="Bold" Content="Dark theme" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-			<Label Grid.Column="0" Grid.Row="1" Content="Background" VerticalAlignment="Center"/>
-			<Label Grid.Column="0" Grid.Row="2" Content="Accent" VerticalAlignment="Center"/>
+				<Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" FontWeight="Bold" Content="Dark" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<Label Grid.Column="0" Grid.Row="1" Content="Background" VerticalAlignment="Center"/>
+				<Label Grid.Column="0" Grid.Row="2" Content="Accent" VerticalAlignment="Center"/>
 
-			<Label Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" FontWeight="Bold" Content="Light theme" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-			<Label Grid.Column="0" Grid.Row="4" Content="Background" VerticalAlignment="Center"/>
-			<Label Grid.Column="0" Grid.Row="5" Content="Accent" VerticalAlignment="Center"/>
+				<Label Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" FontWeight="Bold" Content="Light" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<Label Grid.Column="0" Grid.Row="4" Content="Background" VerticalAlignment="Center"/>
+				<Label Grid.Column="0" Grid.Row="5" Content="Accent" VerticalAlignment="Center"/>
 
-			<ColorPicker Grid.Column="1" Grid.Row="1" Color="{Binding Color1}" HorizontalAlignment="Right" Name="BackgroundColorPickerDark"/>
-			<ColorPicker Grid.Column="1" Grid.Row="2" Color="{Binding Color2}" HorizontalAlignment="Right" Name="AccentColorPickerDark"/>
+				<ColorPicker Grid.Column="1" Grid.Row="1" Color="{Binding Color1}" HorizontalAlignment="Right" Name="BackgroundColorPickerDark"/>
+				<ColorPicker Grid.Column="1" Grid.Row="2" Color="{Binding Color2}" HorizontalAlignment="Right" Name="AccentColorPickerDark"/>
 
-			<ColorPicker Grid.Column="1" Grid.Row="4" Color="{Binding Color3}" HorizontalAlignment="Right" Name="BackgroundColorPickerLight"/>
-			<ColorPicker Grid.Column="1" Grid.Row="5" Color="{Binding Color4}" HorizontalAlignment="Right" Name="AccentColorPickerLight"/>
+				<ColorPicker Grid.Column="1" Grid.Row="4" Color="{Binding Color3}" HorizontalAlignment="Right" Name="BackgroundColorPickerLight"/>
+				<ColorPicker Grid.Column="1" Grid.Row="5" Color="{Binding Color4}" HorizontalAlignment="Right" Name="AccentColorPickerLight"/>
 
-			<Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6" Width="80" BorderBrush="Gray" Content="Reset" Click="ResetThemeColors" HorizontalAlignment="Center"/>
+				<Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6" Width="80" BorderBrush="Gray" Content="Reset" Click="ResetThemeColors" HorizontalAlignment="Center"/>
 
-		</Grid>
+			</Grid>
+		</StackPanel>
 	</Border>
     
 </Window>

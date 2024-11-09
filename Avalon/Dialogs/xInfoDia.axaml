@@ -3,11 +3,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="270" d:DesignHeight="200"
-		MinWidth="400"
-		MinHeight="235"
-		MaxWidth="400"
-		MaxHeight="235"
-
+		MinWidth="420"
+		MinHeight="270"
+		MaxWidth="420"
+		MaxHeight="270"
+		xmlns:ic="using:FluentIcons.Avalonia"
         x:Class="Avalon.Dialog.xInfoDia"
         Title="xInfoDia"
 		xmlns:vm="clr-namespace:Avalon.ViewModels"
@@ -17,8 +17,11 @@
 		x:DataType="vm:MainViewModel">
 
 	<Border BorderBrush="Gray" BorderThickness="1">
-		<StackPanel Orientation="Vertical" Spacing="10" Margin="0 20 0 0" HorizontalAlignment="Center" VerticalAlignment="Center">
-			<Label Content="File info" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+		<StackPanel Orientation="Vertical" Spacing="10" Margin="0 30 0 0" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="0">
+				<ic:SymbolIcon Symbol="Question" VerticalAlignment="Center" HorizontalAlignment="Center" IconVariant="Regular" FontSize="30"/>
+				<Label Content="File Info" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+			</StackPanel>
 			<Grid Name="InfoGrid" ColumnDefinitions="80,300" RowDefinitions="35,35,35,35,35">
 				<Label Grid.Row="0" Grid.Column="0" Content="Name" VerticalAlignment="Center"/>
 				<Label Grid.Row="1" Grid.Column="0" Content="Created" VerticalAlignment="Center"/>

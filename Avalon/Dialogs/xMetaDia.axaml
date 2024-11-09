@@ -4,10 +4,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="270" d:DesignHeight="200"
 		MinWidth="590"
-		MinHeight="620"
+		MinHeight="650"
 		MaxWidth="590"
-		MaxHeight="620"
-
+		MaxHeight="650"
+		xmlns:ic="using:FluentIcons.Avalonia"
         x:Class="Avalon.Dialog.xMetaDia"
         Title="xMetaDia"
 		xmlns:vm="clr-namespace:Avalon.ViewModels"
@@ -17,8 +17,11 @@
 		x:DataType="vm:MainViewModel">
 
 	<Border BorderBrush="Gray" BorderThickness="1">
-		<StackPanel Orientation="Vertical" Spacing="10" Margin="0 20 0 0" HorizontalAlignment="Center" VerticalAlignment="Center">
-			<Label Content="Edit Local Metadata" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+		<StackPanel Orientation="Vertical" Spacing="10" Margin="0 30 0 0" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="0">
+				<ic:SymbolIcon Symbol="ColorBackground" VerticalAlignment="Center" HorizontalAlignment="Center" IconVariant="Regular" FontSize="30"/>
+				<Label Content="Edit Metadata" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+			</StackPanel>
 			<Grid Name="MainGrid" ColumnDefinitions="30,110,*" RowDefinitions="35,35,35,35,35,35,35,35,35,35,35,35,35,35,35">
 
 				<CheckBox Grid.Row="5" Grid.Column="0" Name="HandlingCheck" VerticalAlignment="Center" HorizontalAlignment="Center"/>

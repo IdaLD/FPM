@@ -4,10 +4,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="180" d:DesignHeight="300"
 		MinWidth="190"
-		MinHeight="80"
+		MinHeight="110"
 		MaxWidth="190"
-		MaxHeight="80"
-
+		MaxHeight="110"
+		xmlns:ic="using:FluentIcons.Avalonia"
         x:Class="Avalon.Dialog.xDeleteDia"
         Title="xDeleteDia"
 		xmlns:vm="clr-namespace:Avalon.ViewModels"
@@ -17,9 +17,12 @@
 		x:DataType="vm:MainViewModel">
 
 	<Border BorderBrush="Gray" BorderThickness="1">
-		<StackPanel Orientation="Vertical" Spacing="10" Margin="0 20 0 0" HorizontalAlignment="Center" VerticalAlignment="Center">
-			<Label Content="Delete?" FontWeight="Bold" HorizontalContentAlignment="Center"/>
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+		<StackPanel Orientation="Vertical" Spacing="10" Margin="0 30 0 0" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="0">
+				<ic:SymbolIcon Symbol="Warning" VerticalAlignment="Center" HorizontalAlignment="Center" IconVariant="Regular" FontSize="30"/>
+				<Label Content="Delete?" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
 				<Button Name="ConfirmButton" HotKey="Enter" Content="Confirm" Click="OnConfirm" Width="70" BorderBrush="Gray"/>
 				<Button Name="CancelButton" HotKey="Enter" Content="Cancel" Click="OnCancel" Width="70" BorderBrush="Gray"/>
 			</StackPanel>

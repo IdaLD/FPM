@@ -24,15 +24,19 @@ public partial class xInfoDia : Window
     {
 
         MainViewModel ctx = (MainViewModel)this.DataContext;
-        string path = ctx.ProjectsVM.CurrentFile.Sökväg;
 
-        FileInfo fileInfo = new FileInfo(path);
+        if(ctx.ProjectsVM.CurrentFile != null)
+        {
+            string path = ctx.ProjectsVM.CurrentFile.Sökväg;
 
-        NameLabel.Content = fileInfo.Name;
-        CreationLabel.Content = fileInfo.CreationTime;
-        ReadLabel.Content = fileInfo.LastAccessTime;
-        WriteLabel.Content = fileInfo.LastWriteTime;
-        SizeLabel.Content = Math.Round((decimal)fileInfo.Length / 1000000,2) + " Mb";
+            FileInfo fileInfo = new FileInfo(path);
+
+            NameLabel.Content = fileInfo.Name;
+            CreationLabel.Content = fileInfo.CreationTime;
+            ReadLabel.Content = fileInfo.LastAccessTime;
+            WriteLabel.Content = fileInfo.LastWriteTime;
+            SizeLabel.Content = Math.Round((decimal)fileInfo.Length / 1000000, 2) + " Mb";
+        }
     }
 
 

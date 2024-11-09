@@ -4,9 +4,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="230" d:DesignHeight="90"
 		MinWidth="240"
-		MinHeight="70"
+		MinHeight="115"
 		MaxWidth="240"
-		MaxHeight="70"
+		MaxHeight="115"
+		xmlns:ic="using:FluentIcons.Avalonia"
         x:Class="Avalon.Dialog.xCloseDia"
         Title="xCloseDia"
 		xmlns:vm="clr-namespace:Avalon.ViewModels"
@@ -15,9 +16,12 @@
         ExtendClientAreaToDecorationsHint="True"
 		x:DataType="vm:MainViewModel">
 
-	<Border BorderBrush="Gray" BorderThickness="1" Padding="0 20 0 0">
-		<StackPanel Orientation="Vertical" VerticalAlignment="Center" >
-			<Label FontSize="18" FontFamily="Ubuntu" HorizontalAlignment="Center" VerticalContentAlignment="Center" Content="Save before close?"/>
+	<Border BorderBrush="Gray" BorderThickness="1" Padding="0 30 0 0">
+		<StackPanel Orientation="Vertical" VerticalAlignment="Center" Spacing="10">
+			<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="0">
+				<ic:SymbolIcon Symbol="Save" VerticalAlignment="Center" HorizontalAlignment="Center" IconVariant="Regular" FontSize="30"/>
+				<Label Content="Save before close?" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+			</StackPanel>
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
 				<Button Name="SaveYes" HotKey="Enter" BorderBrush="Gray" Width="70" Content="Yes" Click="SaveBeforeClose"/>
 				<Button Name="SaveNo" BorderBrush="Gray" Width="70" Content="No" Click="OnLeave"/>

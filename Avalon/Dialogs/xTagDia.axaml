@@ -4,10 +4,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="180" d:DesignHeight="300"
 		MinWidth="190"
-		MinHeight="110"
+		MinHeight="150"
 		MaxWidth="190"
-		MaxHeight="110"
-
+		MaxHeight="150"
+		xmlns:ic="using:FluentIcons.Avalonia"
         x:Class="Avalon.Dialog.xTagDia"
         Title="xTagDia"
 		xmlns:vm="clr-namespace:Avalon.ViewModels"
@@ -17,8 +17,11 @@
 		x:DataType="vm:MainViewModel">
 
 	<Border BorderBrush="Gray" BorderThickness="1">
-		<StackPanel Orientation="Vertical" Spacing="10" Margin="0 20 0 0" HorizontalAlignment="Center" VerticalAlignment="Center">
-			<Label Content="Set Tag" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+		<StackPanel Orientation="Vertical" Spacing="10" Margin="0 30 0 0" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="0">
+				<ic:SymbolIcon Symbol="TagQuestionMark" VerticalAlignment="Center" HorizontalAlignment="Center" IconVariant="Regular" FontSize="30"/>
+				<Label Content="Edit Tag" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+			</StackPanel>
 			<TextBox Name="TagMenuInput" HorizontalContentAlignment="Center" Width="160" />
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
 				<Button Name="TagAccept" HotKey="Enter" Content="Accept" Width="70" BorderBrush="Gray" Click="OnSetTag"/>
