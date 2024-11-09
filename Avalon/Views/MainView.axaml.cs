@@ -213,7 +213,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                         items.Add(
                             new TreeViewItem()
                             {
-                                FontSize = 14,
+                                FontSize = 15,
                                 FontWeight = FontWeight.Normal,
                                 FontStyle = FontStyle.Normal,
                                 Header = project.Namn,
@@ -249,7 +249,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
                             groupedTree.Add(new TreeViewItem()
                             {
-                                FontSize = 14,
+                                FontSize = 15,
                                 FontWeight = FontWeight.Normal,
                                 FontStyle = FontStyle.Normal,
                                 Header = project.Namn,

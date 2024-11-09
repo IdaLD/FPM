@@ -265,13 +265,18 @@ namespace Avalon.ViewModels
 
         public void RenameFavPage(string pageName)
         {
-            FavPage.PageName = pageName;
+            if (FavPage != null)
+            {
+                FavPage.PageName = pageName;
+            }
         }
 
         public void RemoveFavPage(PageData page)
         {
-            PreviewVM.CurrentFile.FavPages.Remove(page);
-
+            if (PreviewVM.CurrentFile != null)
+            {
+                PreviewVM.CurrentFile.FavPages.Remove(page);
+            }
             //CurrentFavorite = Favorites.First();
         }
 
