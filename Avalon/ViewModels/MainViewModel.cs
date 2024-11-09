@@ -227,6 +227,17 @@ namespace Avalon.ViewModels
             await window.ShowDialog(mainWindow);
         }
 
+        public void OnInfoDia(Window mainWindow)
+        {
+            var window = new xInfoDia()
+            {
+                DataContext = this
+            };
+
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.ShowDialog(mainWindow);
+        }
+
 
         public void TrySetPage()
         {

@@ -1,0 +1,39 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="270" d:DesignHeight="200"
+		MinWidth="400"
+		MinHeight="235"
+		MaxWidth="400"
+		MaxHeight="235"
+
+        x:Class="Avalon.Dialog.xInfoDia"
+        Title="xInfoDia"
+		xmlns:vm="clr-namespace:Avalon.ViewModels"
+		CanResize="False"
+		WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+		x:DataType="vm:MainViewModel">
+
+	<Border BorderBrush="Gray" BorderThickness="1">
+		<StackPanel Orientation="Vertical" Spacing="10" Margin="0 20 0 0" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<Label Content="File info" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+			<Grid Name="InfoGrid" ColumnDefinitions="80,300" RowDefinitions="35,35,35,35,35">
+				<Label Grid.Row="0" Grid.Column="0" Content="Name" VerticalAlignment="Center"/>
+				<Label Grid.Row="1" Grid.Column="0" Content="Created" VerticalAlignment="Center"/>
+				<Label Grid.Row="2" Grid.Column="0" Content="Last Read" VerticalAlignment="Center"/>
+				<Label Grid.Row="3" Grid.Column="0" Content="Last Write" VerticalAlignment="Center"/>
+				<Label Grid.Row="4" Grid.Column="0" Content="Size" VerticalAlignment="Center"/>
+
+				<Label Name="NameLabel" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+				<Label Name="CreationLabel" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
+				<Label Name="ReadLabel" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
+				<Label Name="WriteLabel" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"/>
+				<Label Name="SizeLabel" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center"/>
+			</Grid>
+		</StackPanel>
+	</Border>
+	
+	
+</Window>

@@ -209,6 +209,8 @@
 									<MenuItem Name="OpenDocMenu" Header="Open Docx" Click="on_open_doc" Icon="{icxt:SymbolIconExtension Symbol=DocumentEdit}"/>
 									<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg" Icon="{icxt:SymbolIconExtension Symbol=DocumentTableCube}"/>
 								</MenuItem>
+
+								<MenuItem Name="TypeMenu" Header="FileType" ItemsSource="{Binding FileTypeSelection}" Click="edit_type" Icon="{icxt:SymbolIconExtension Symbol=Folder}"/>
 								
 								<MenuItem Name="MetaMenu" Header="Metadata" Icon="{icxt:SymbolIconExtension Symbol=Database}">
 									<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta" Icon="{icxt:SymbolIconExtension Symbol=DatabaseSearch}"/>
@@ -216,23 +218,18 @@
 									<MenuItem Name="EditMetadata" Header="Edit" Command="{Binding OpenMetaEditDia}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=Edit}"/>
 									<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding clear_meta}" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
 								</MenuItem>
-
-								<MenuItem Name="StatusMenu" Header="Status" Icon="{icxt:SymbolIconExtension Symbol=CheckmarkCircle}">
-									<MenuItem Name="CheckSingleFile" Header="Check File" Click="OnCheckStatusSingleFile" Icon="{icxt:SymbolIconExtension Symbol=CheckboxChecked}"/>
-									<MenuItem Name="CheckProjectFiles" Header="Check All" Click="OnCheckProjectFiles" Icon="{icxt:SymbolIconExtension Symbol=CheckboxChecked}"/>
-								</MenuItem>
 								
-								<MenuItem Name="TypeMenu" Header="FileType" ItemsSource="{Binding FileTypeSelection}" Click="edit_type" Icon="{icxt:SymbolIconExtension Symbol=QuestionCircle}"/>
-
-								<MenuItem Name="AddFavorite" Header="Favorite" ItemsSource="{Binding Favorites}" Icon="{icxt:SymbolIconExtension Symbol=StarAdd}" Click="OnAddFavorite">
+								<MenuItem Name="AddFavorite" Header="Favorite" ItemsSource="{Binding Favorites}" Icon="{icxt:SymbolIconExtension Symbol=Star}" Click="OnAddFavorite">
 
 								</MenuItem>
 								
-								<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{icxt:SymbolIconExtension Symbol=ClipboardSettings}">
+								<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{icxt:SymbolIconExtension Symbol=Clipboard}">
 									<MenuItem Name="FilenameCopyMenu" Header="List" Click="on_copy_filename" Icon="{icxt:SymbolIconExtension Symbol=TextBulletListAdd}"/>
 									<MenuItem Name="FilepathCopyMenu" Header="Path" Click="on_copy_filepath" Icon="{icxt:SymbolIconExtension Symbol=AppsList}"/>
 									<MenuItem Name="ListviewCopyMenu" Header="Table" Click="on_copy_listview" Icon="{icxt:SymbolIconExtension Symbol=TableLightning}"/>
 								</MenuItem>
+
+								<Separator></Separator>
 								
 								<MenuItem Name="ColorMainMenu" Header="Color Tag" Icon="{icxt:SymbolIconExtension Symbol=Color}">
 									<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="edit_color"/>
@@ -248,6 +245,16 @@
 								<MenuItem Name="TagMenu" Header="User Tag" Command="{Binding OpenTagDia}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=Tag}"/>
 
 								<MenuItem Name="ClearAllMenu" Header="Clear Tags" Click="on_clear_files" Icon="{icxt:SymbolIconExtension Symbol=TagDismiss}"/>
+
+								<Separator></Separator>
+
+								<MenuItem Name="StatusMenu" Header="Status" Icon="{icxt:SymbolIconExtension Symbol=Checkmark}">
+									<MenuItem Name="CheckSingleFile" Header="Check File" Click="OnCheckStatusSingleFile" Icon="{icxt:SymbolIconExtension Symbol=CheckboxChecked}"/>
+									<MenuItem Name="CheckProjectFiles" Header="Check All" Click="OnCheckProjectFiles" Icon="{icxt:SymbolIconExtension Symbol=CheckboxChecked}"/>
+								</MenuItem>
+
+								<MenuItem Name="InfoMenu" Header="File info" Command="{Binding OnInfoDia}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=Question}"/>
+
 
 								<Separator></Separator>
 

@@ -23,7 +23,12 @@ public partial class xNewDia : Window
             MainViewModel ctx = (MainViewModel)this.DataContext;
 
             ComboBoxItem selectedCombo = (ComboBoxItem)ProjectCategory.SelectedItem;
-            string cat = selectedCombo.Content.ToString();
+            string cat = "Project";
+
+            if (selectedCombo != null)
+            {
+                cat = selectedCombo.Content.ToString();
+            }
 
             string group = null;
 
