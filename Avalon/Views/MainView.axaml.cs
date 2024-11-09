@@ -202,11 +202,20 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                         foreach (string filetype in project.StoredFiles.Select(x => x.Filtyp).Distinct())
                         {
                             int nfiles = project.StoredFiles.Where(x => x.Filtyp == filetype).Count();
-                            fileTypeTree.Add(new TreeViewItem() { Header = filetype + " (" + nfiles + ")", Tag = project.Namn });
+                            fileTypeTree.Add(new TreeViewItem() 
+                            {
+                                FontSize = 13,
+                                FontWeight = FontWeight.Light,
+                                Header = filetype + " (" + nfiles + ")", 
+                                Tag = project.Namn 
+                            });
                         }
                         items.Add(
                             new TreeViewItem()
                             {
+                                FontSize = 14,
+                                FontWeight = FontWeight.Normal,
+                                FontStyle = FontStyle.Normal,
                                 Header = project.Namn,
                                 IsExpanded = (project == ctx.ProjectsVM.CurrentProject),
                                 Tag = "All Types",
@@ -229,11 +238,20 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                             foreach (string filetype in project.StoredFiles.Select(x => x.Filtyp).Distinct())
                             {
                                 int nfiles = project.StoredFiles.Where(x => x.Filtyp == filetype).Count();
-                                fileTypeTree.Add(new TreeViewItem() { Header = filetype + " (" + nfiles + ")", Tag = project.Namn });
+                                fileTypeTree.Add(new TreeViewItem() 
+                                {
+                                    FontSize = 13,
+                                    FontWeight = FontWeight.Light,
+                                    Header = filetype + " (" + nfiles + ")", 
+                                    Tag = project.Namn 
+                                });
                             }
 
                             groupedTree.Add(new TreeViewItem()
                             {
+                                FontSize = 14,
+                                FontWeight = FontWeight.Normal,
+                                FontStyle = FontStyle.Normal,
                                 Header = project.Namn,
                                 IsExpanded = (project == ctx.ProjectsVM.CurrentProject),
                                 Tag = "All Types",
@@ -244,6 +262,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                         items.Add(
                             new TreeViewItem()
                             {
+                                FontSize = 15,
+                                FontWeight = FontWeight.Bold,
+                                FontStyle = FontStyle.Normal,
                                 Header = group,
                                 IsExpanded = true,
                                 Tag = "Group",
@@ -257,6 +278,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                 MainTree.Items.Add(
                     new TreeViewItem()
                     {
+                        FontSize = 16,
+                        FontWeight = FontWeight.Bold,
+                        FontStyle = FontStyle.Italic,
                         Header = type,
                         Tag = "Header",
                         IsExpanded = true,
