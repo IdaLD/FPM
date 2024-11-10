@@ -76,7 +76,10 @@
 				</Setter.Value>
 			</Setter>
 		</Style>
-		
+
+		<Style Selector="DataGridRow.RedForeground">
+			<Setter Property="Foreground" Value="Red"/>
+		</Style>
 		
 	</Window.Styles>
 
