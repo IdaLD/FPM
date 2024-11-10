@@ -17,25 +17,28 @@
 		x:DataType="vm:MainViewModel">
 
 	<Border BorderBrush="Gray" BorderThickness="1">
-		<StackPanel Orientation="Vertical" Spacing="10" Margin="0 30 0 0" HorizontalAlignment="Center" VerticalAlignment="Center">
-			<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="0">
-				<ic:SymbolIcon Symbol="Question" VerticalAlignment="Center" HorizontalAlignment="Center" IconVariant="Regular" FontSize="30"/>
-				<Label Content="File Info" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
-			</StackPanel>
-			<Grid Name="InfoGrid" ColumnDefinitions="80,300" RowDefinitions="35,35,35,35,35">
-				<Label Grid.Row="0" Grid.Column="0" Content="Name" VerticalAlignment="Center"/>
-				<Label Grid.Row="1" Grid.Column="0" Content="Created" VerticalAlignment="Center"/>
-				<Label Grid.Row="2" Grid.Column="0" Content="Last Read" VerticalAlignment="Center"/>
-				<Label Grid.Row="3" Grid.Column="0" Content="Last Write" VerticalAlignment="Center"/>
-				<Label Grid.Row="4" Grid.Column="0" Content="Size" VerticalAlignment="Center"/>
+		<Grid RowDefinitions="30,*" ColumnDefinitions="*" VerticalAlignment="Top" Margin="0">
+			<Panel Grid.Row="0" Background="{DynamicResource TextControlBackground}" IsHitTestVisible="False"/>
+			<StackPanel Grid.Row="1" Width="440" Height="290" Background="{DynamicResource TextControlBackground}" Orientation="Vertical" Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+				<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="0" Margin="10">
+					<ic:SymbolIcon Symbol="Question" VerticalAlignment="Center" HorizontalAlignment="Center" IconVariant="Regular" FontSize="30"/>
+					<Label Content="File Info" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+				</StackPanel>
+				<Grid Name="InfoGrid" HorizontalAlignment="Center" ColumnDefinitions="80,300" RowDefinitions="35,35,35,35,35">
+					<Label Grid.Row="0" Grid.Column="0" Content="Name" VerticalAlignment="Center"/>
+					<Label Grid.Row="1" Grid.Column="0" Content="Created" VerticalAlignment="Center"/>
+					<Label Grid.Row="2" Grid.Column="0" Content="Last Read" VerticalAlignment="Center"/>
+					<Label Grid.Row="3" Grid.Column="0" Content="Last Write" VerticalAlignment="Center"/>
+					<Label Grid.Row="4" Grid.Column="0" Content="Size" VerticalAlignment="Center"/>
 
-				<Label Name="NameLabel" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
-				<Label Name="CreationLabel" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
-				<Label Name="ReadLabel" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
-				<Label Name="WriteLabel" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"/>
-				<Label Name="SizeLabel" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center"/>
-			</Grid>
-		</StackPanel>
+					<Label Name="NameLabel" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+					<Label Name="CreationLabel" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
+					<Label Name="ReadLabel" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
+					<Label Name="WriteLabel" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"/>
+					<Label Name="SizeLabel" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center"/>
+				</Grid>
+			</StackPanel>
+		</Grid>
 	</Border>
 	
 	
