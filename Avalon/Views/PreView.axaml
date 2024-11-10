@@ -57,7 +57,7 @@
 						</StackPanel>
 					</Border>
 
-					<ListBox Grid.Row="3" ItemsSource="{Binding SearchPagesText}" Background="Transparent" SelectedIndex="{Binding SearchPageIndex}"/>
+					<ListBox Grid.Row="3" ItemsSource="{Binding SearchPagesText}" Background="Transparent" SelectedIndex="{Binding SearchPageIndex}" FontSize="13"/>
 
 				</Grid>
 			</Border>

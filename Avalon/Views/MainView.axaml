@@ -268,7 +268,7 @@
 						</DataGrid.ContextMenu>
 					</DataGrid>
 
-				<GridSplitter Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns"/>
+				<GridSplitter Name="PreviewSplitter" Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns" IsEnabled="False"/>
 
 				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,*,35,*">
 					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
@@ -354,7 +354,7 @@
 								<Border BorderBrush="Gray" BorderThickness="0 0 0 1">
 									<TextBlock Text="Storage" Height="23" Margin="14 8 0 0"/>
 								</Border>
-								<TreeView Name="MainTree" Loaded="SetupTreeview" SelectionChanged="on_treeview_selected">
+								<TreeView Name="MainTree" Loaded="SetupTreeview" Height="650" SelectionChanged="on_treeview_selected">
 									<TreeView.ContextMenu>
 										<ContextMenu Name="TreeMenu">
 											<MenuItem Header="Add Files" Click="on_add_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentAdd}"/>

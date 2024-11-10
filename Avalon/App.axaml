@@ -36,7 +36,8 @@
 
 		<Style Selector="ListBoxItem">
 			<Setter Property="Height" Value="25"/>
-			<Setter Property="Padding" Value="5 5 0 5"/>
+			<Setter Property="Padding" Value="10 0 0 0"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
 		</Style>
 
 		<Style Selector="Button">

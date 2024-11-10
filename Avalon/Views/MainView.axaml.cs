@@ -410,12 +410,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             val1 = 5f;
             val2 = 3.2f;
-
+            PreviewSplitter.IsEnabled = true;
             PreviewArea.IsVisible = true;
 
         }
         if (previewMode == false)
         {
+            PreviewSplitter.IsEnabled = false;
             PreviewArea.IsVisible = false;
         }
 
@@ -542,14 +543,16 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     async void OnRemoveProject(object sender, RoutedEventArgs e)
     {
-
-        Window window = (MainWindow)Window.GetTopLevel(this);
-        await ctx.ConfirmDeleteDia(window);
-
-        if (ctx.Confirmed)
+        if (ctx.ProjectsVM.StoredProjects.Where(x => x.Category != "Search" && x.Category != "Favorites").Count() > 1)
         {
-            ctx.remove_project();
-            SetupTreeview(null, null);
+            Window window = (MainWindow)Window.GetTopLevel(this);
+            await ctx.ConfirmDeleteDia(window);
+
+            if (ctx.Confirmed)
+            {
+                ctx.remove_project();
+                SetupTreeview(null, null);
+            }
         }
     }
 
@@ -677,12 +680,15 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     async void OnRemoveFavGroup(object sender, RoutedEventArgs e)
     {
-        Window window = (MainWindow)Window.GetTopLevel(this);
-        await ctx.ConfirmDeleteDia(window);
-
-        if (ctx.Confirmed)
+        if(ctx.Favorites.Count > 1)
         {
-            ctx.RemoveFavGroup();
+            Window window = (MainWindow)Window.GetTopLevel(this);
+            await ctx.ConfirmDeleteDia(window);
+
+            if (ctx.Confirmed)
+            {
+                ctx.RemoveFavGroup();
+            }
         }
     }
 

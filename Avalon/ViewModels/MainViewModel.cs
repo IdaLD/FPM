@@ -299,13 +299,10 @@ namespace Avalon.ViewModels
 
         public void RemoveFavGroup()
         {
-            if (Favorites.Count > 1)
-            {
-                ProjectsVM.RemoveFavoriteGroup(CurrentFavorite);
-                Favorites.Remove(CurrentFavorite);
+            ProjectsVM.RemoveFavoriteGroup(CurrentFavorite);
+            Favorites.Remove(CurrentFavorite);
 
-                CurrentFavorite = Favorites.First();
-            }
+            CurrentFavorite = Favorites.First();
         }
 
         public void OnGetFavGroups()
