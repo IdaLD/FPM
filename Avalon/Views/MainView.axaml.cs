@@ -206,7 +206,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                             {
                                 FontSize = 13,
                                 FontWeight = FontWeight.Light,
-                                Header = filetype + " (" + nfiles + ")", 
+                                Header = filetype + "  (" + nfiles + ")", 
                                 Tag = project.Namn 
                             });
                         }
@@ -242,7 +242,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                                 {
                                     FontSize = 13,
                                     FontWeight = FontWeight.Light,
-                                    Header = filetype + " (" + nfiles + ")", 
+                                    Header = filetype + "  (" + nfiles + ")", 
                                     Tag = project.Namn 
                                 });
                             }
@@ -355,7 +355,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                 }
                 else
                 {
-                    ctx.select_type(selectedTree.Header.ToString().Split(" ")[0]);
+                    ctx.select_type(selectedTree.Header.ToString().Split("  ")[0]);
                     ctx.select_project(selectedTree.Tag.ToString());
                 }
             }
