@@ -260,6 +260,13 @@ namespace Avalon.ViewModels
             if (PreviewVM.CurrentFile != null)
             {
                 PreviewVM.CurrentFile.FavPages.Add(page);
+
+                List<PageData> tempList = PreviewVM.CurrentFile.FavPages.OrderBy(x => x.PageNr).ToList();
+
+                PreviewVM.CurrentFile.FavPages.Clear();
+
+                PreviewVM.CurrentFile.FavPages = new ObservableCollection<PageData>(tempList);
+
             }
         }
 
