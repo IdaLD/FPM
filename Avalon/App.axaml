@@ -69,6 +69,10 @@
 		<Style Selector="DataGridColumnHeader">
 			<Setter Property="Background" Value="Transparent"/>
 			<Setter Property="Height" Value="20"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
+			<Setter Property="FontStyle" Value="Italic"/>
+			
 		</Style>
 
 		<Style Selector="DataGrid">

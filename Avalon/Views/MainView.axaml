@@ -270,7 +270,7 @@
 
 				<GridSplitter Name="PreviewSplitter" Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns" IsEnabled="False"/>
 
-				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,*,35,*">
+				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,1.5*,35,2*">
 					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
 						<TextBox Name="NewFavGroupInput" Width="170"/>
 						<Button BorderBrush="Gray" Width="35" Click="OnAddFavGroup">
@@ -285,7 +285,17 @@
 					</StackPanel>
 
 					<Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0.5" Margin="5" CornerRadius="5">
-						<ListBox Name="FavoriteGroups" Padding="0" ItemsSource="{Binding Favorites}" BorderThickness="1" SelectedItem="{Binding CurrentFavorite}" BorderBrush="Gray"/>
+						<DataGrid Name="FavoriteGroups" Padding="0" ItemsSource="{Binding Favorites}" SelectedItem="{Binding CurrentFavorite}" RowHeight="22" SelectionMode="Extended"
+								AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow">
+							<DataGrid.Styles>
+								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
+									<Setter Property="IsVisible" Value="false" />
+								</Style>
+							</DataGrid.Styles>
+							<DataGrid.Columns>
+								<DataGridTextColumn Binding="{Binding}" Header="Favorites" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+							</DataGrid.Columns>
+						</DataGrid>						
 					</Border>
 					
 					<Border Grid.Row="2" BorderBrush="Gray" BorderThickness="0.5" Margin="5" CornerRadius="5">
@@ -297,7 +307,7 @@
 								</Style>
 							</DataGrid.Styles>
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding Namn}" Header="Favorites" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding Namn}" Header="Files" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
 							</DataGrid.Columns>
 							<DataGrid.ContextMenu>
 								<ContextMenu>
@@ -332,7 +342,7 @@
 							</DataGrid.Styles>
 							
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding PageNr, Converter={StaticResource AddOneConverter}}" Header="Page" Width="75" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding PageNr, Converter={StaticResource AddOneConverter}}" Header="Page" Width="85" FontFamily="UbuntuMono"/>
 								<DataGridTextColumn Binding="{Binding PageName}" Header="Name" Width="*" FontFamily="UbuntuMono"/>
 							</DataGrid.Columns>
 							
@@ -352,7 +362,7 @@
 						<ScrollViewer>
 							<Grid RowDefinitions="31,*">
 								<Border Grid.Row="0" BorderBrush="Gray" BorderThickness="0 0 0 1">
-									<TextBlock Text="Project Tree" Height="23" FontSize="15" FontWeight="Bold" FontStyle="Italic" Margin="16 9 0 0"/>
+									<TextBlock Text="Project Tree" Height="23" FontSize="14" FontWeight="Normal" FontStyle="Italic" Margin="16 6 0 0"/>
 								</Border>
 								<TreeView Grid.Row="1" Name="MainTree" Loaded="SetupTreeview" SelectionChanged="on_treeview_selected">
 									<TreeView.ContextMenu>
