@@ -350,11 +350,11 @@
 				<Grid Grid.Row="2" Grid.Column="0">
 					<Border BorderBrush="Gray" BorderThickness="1" Margin="5" Background="{DynamicResource TextControlBackground}">
 						<ScrollViewer>
-							<StackPanel Orientation="Vertical">
-								<Border BorderBrush="Gray" BorderThickness="0 0 0 1">
-									<TextBlock Text="Storage" Height="23" Margin="14 8 0 0"/>
+							<Grid RowDefinitions="31,*">
+								<Border Grid.Row="0" BorderBrush="Gray" BorderThickness="0 0 0 1">
+									<TextBlock Text="Project Tree" Height="23" FontSize="15" FontWeight="Bold" FontStyle="Italic" Margin="16 9 0 0"/>
 								</Border>
-								<TreeView Name="MainTree" Loaded="SetupTreeview" Height="650" SelectionChanged="on_treeview_selected">
+								<TreeView Grid.Row="1" Name="MainTree" Loaded="SetupTreeview" SelectionChanged="on_treeview_selected">
 									<TreeView.ContextMenu>
 										<ContextMenu Name="TreeMenu">
 											<MenuItem Header="Add Files" Click="on_add_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentAdd}"/>
@@ -368,7 +368,7 @@
 										</ContextMenu>
 									</TreeView.ContextMenu>
 								</TreeView>
-							</StackPanel>
+							</Grid>
 						</ScrollViewer>
 					</Border>
 				</Grid>		
