@@ -362,7 +362,7 @@
 						<ScrollViewer>
 							<Grid RowDefinitions="31,*">
 								<Border Grid.Row="0" BorderBrush="Gray" BorderThickness="0 0 0 1">
-									<TextBlock Text="Project Tree" Height="23" FontSize="14" FontWeight="Normal" FontStyle="Italic" Margin="16 6 0 0"/>
+									<TextBlock Text="Project Tree" Height="23" FontSize="14" FontWeight="Normal" FontStyle="Italic" Margin="16 8 0 0"/>
 								</Border>
 								<TreeView Grid.Row="1" Name="MainTree" Loaded="SetupTreeview" SelectionChanged="on_treeview_selected">
 									<TreeView.ContextMenu>

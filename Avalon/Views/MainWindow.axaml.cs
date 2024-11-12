@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalon.Dialog;
 using System.ComponentModel;
-using Org.BouncyCastle.Crypto.Signers;
 
 
 namespace Avalon.Views;
