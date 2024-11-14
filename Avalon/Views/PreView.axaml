@@ -57,7 +57,15 @@
 						</StackPanel>
 					</Border>
 
-					<ListBox Grid.Row="3" ItemsSource="{Binding SearchPagesText}" Background="Transparent" SelectedIndex="{Binding SearchPageIndex}" FontSize="13"/>
+					<ListBox Grid.Row="3" ItemsSource="{Binding SearchPagesText}" Background="Transparent" SelectedIndex="{Binding SearchPageIndex}" FontSize="13">
+						<ListBox.Styles>
+							<Style Selector="ListBoxItem">
+								<Setter Property="Height" Value="25"/>
+								<Setter Property="Padding" Value="10 0 0 0"/>
+								<Setter Property="VerticalContentAlignment" Value="Center"/>
+							</Style>
+						</ListBox.Styles>
+					</ListBox>
 
 				</Grid>
 			</Border>
