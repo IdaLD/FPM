@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using System.Diagnostics;
 
 namespace Avalon.Views;
@@ -22,6 +23,7 @@ public partial class PreView : UserControl
 
     public MainViewModel ctx = null;
     public PreviewViewModel pwr = null;
+    public RotateTransform rotation = new RotateTransform(0);
     private bool ZoomMode = false;
 
     public void InitSetup(object sender, RoutedEventArgs e)
@@ -106,6 +108,24 @@ public partial class PreView : UserControl
     private void ResetView(object sender, RoutedEventArgs e)
     {
         MuPDFRenderer.Contain();
+    }
+
+    private void RotateRight(object sender, RoutedEventArgs e)
+    {
+        rotation.Angle = rotation.Angle + 90;
+        MuPDFRenderer.RenderTransform = rotation;
+        MuPDFRenderer.UpdateLayout(); 
+        ResetView(null, null);
+
+        Debug.WriteLine(MuPDFRenderer.Bounds);
+    }
+
+    private void RotateLeft(object sender, RoutedEventArgs e)
+    {
+        rotation.Angle = rotation.Angle - 90;
+        MuPDFRenderer.RenderTransform = rotation;
+        MuPDFRenderer.UpdateLayout();
+        ResetView(null, null);
     }
 
     private void ModifiedControlPointerWheelChanged(object sender, PointerWheelEventArgs e)
