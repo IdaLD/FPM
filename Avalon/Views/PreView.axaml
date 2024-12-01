@@ -18,10 +18,15 @@
 	</UserControl.Resources>
 
 	<Grid Name="MainPreviewGrid" RowDefinitions="*,35" ColumnDefinitions="*,0">
-		<Grid Name="PreviewGrid" ClipToBounds="True" ColumnDefinitions="*" Grid.Row="0" Grid.Column="0">				
-				<mupdf:PDFRenderer Name="MuPDFRenderer" Grid.Column="0" Background="Yellow" PageBackground="White" ZoomEnabled="False" PointerWheelChanged="ModifiedControlPointerWheelChanged"
-					ZoomIncrement="1.3" ClipToBounds="True" PointerEventHandlersType="PanHighlight"/>
-
+		<Grid Name="PreviewGrid" ClipToBounds="True" ColumnDefinitions="*" RowDefinitions="*" Grid.Row="0" Grid.Column="0">
+			<LayoutTransformControl Name="Tester">
+				<LayoutTransformControl.LayoutTransform>
+					<RotateTransform Angle="{Binding PreviewVM.Rotation}"/>
+				</LayoutTransformControl.LayoutTransform>
+			<mupdf:PDFRenderer Name="MuPDFRenderer" Grid.Column="0" Grid.Row="0" Background="Yellow" PageBackground="White" 
+							   ZoomEnabled="False" PointerWheelChanged="ModifiedControlPointerWheelChanged"
+							   ZoomIncrement="1.3" ClipToBounds="True" PointerEventHandlersType="PanHighlight"/>
+			</LayoutTransformControl>
 		</Grid>
 
 		<Grid Name="SearchGrid" Grid.Column="1" ClipToBounds="True" DataContext="{Binding PreviewVM}">
@@ -96,11 +101,11 @@
 				<ic:SymbolIcon Symbol="Clipboard" IconVariant="Regular" FontSize="20"/>
 			</Button>
 
-			<Button ToolTip.Tip="Rotate Page, counter clockwise" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Click="RotateLeft">
+			<Button ToolTip.Tip="Rotate Page, counter clockwise" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Command="{Binding RotateLeft}">
 				<ic:SymbolIcon Symbol="RotateLeft" IconVariant="Regular" FontSize="20"/>
 			</Button>
 
-			<Button ToolTip.Tip="Rotate Page, clockwise" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Click="RotateRight">
+			<Button ToolTip.Tip="Rotate Page, clockwise" FontWeight="Normal" ToolTip.Placement="Right" BorderThickness="0" Command="{Binding RotateRight}">
 				<ic:SymbolIcon Symbol="RotateRight" IconVariant="Regular" FontSize="20"/>
 			</Button>
 

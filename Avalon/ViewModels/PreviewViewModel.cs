@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace Avalon.ViewModels
 {
@@ -208,6 +209,13 @@ namespace Avalon.ViewModels
             set { searchBusy = value; OnPropertyChanged("SearchBusy"); }
         }
 
+        public double rotation = 0;
+        public double Rotation
+        {
+            get { return rotation; }
+            set { rotation = value; OnPropertyChanged("Rotation"); }
+        }
+
         private CancellationTokenSource MainCts = new CancellationTokenSource();
 
         private CancellationTokenSource DualCts = new CancellationTokenSource();
@@ -359,6 +367,7 @@ namespace Avalon.ViewModels
 
             Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 1, RequestPage1, 1); });
             Dispatcher.UIThread.Invoke(() => { Renderer.IsVisible = true; });
+
         }
 
         private async void SetDualFile()
@@ -686,6 +695,18 @@ namespace Avalon.ViewModels
                 string selected = Renderer.GetSelectedText();
                 TopLevel.GetTopLevel(window).Clipboard.SetTextAsync(selected);
             }
+        }
+
+        public void RotateRight()
+        {
+            Rotation = Rotation + 90;
+            Renderer.Contain();
+        }
+
+        public void RotateLeft()
+        {
+            Rotation = Rotation - 90;
+            Renderer.Contain();
         }
 
         public void Search(string text)
