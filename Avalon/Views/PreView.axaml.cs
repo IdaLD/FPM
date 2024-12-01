@@ -110,6 +110,27 @@ public partial class PreView : UserControl
         MuPDFRenderer.Contain();
     }
 
+    public void RotateRight(object sender, RoutedEventArgs e)
+    {
+        pwr.Rotation = pwr.Rotation + 90;
+        MuPDFRenderer.UpdateLayout();
+        MuPDFRenderer.Contain();
+    }
+
+    public void RotateLeft(object sender, RoutedEventArgs e)
+    {
+        pwr.Rotation = pwr.Rotation - 90;
+        MuPDFRenderer.UpdateLayout();
+        MuPDFRenderer.Contain();
+    }
+
+    public void RotateNull()
+    {
+        pwr.Rotation = 0;
+        MuPDFRenderer.UpdateLayout();
+        MuPDFRenderer.Contain();
+    }
+
     private void ModifiedControlPointerWheelChanged(object sender, PointerWheelEventArgs e)
     {
         if (e.KeyModifiers.HasFlag(KeyModifiers.Control))

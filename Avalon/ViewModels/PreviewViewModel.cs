@@ -295,6 +295,7 @@ namespace Avalon.ViewModels
                 OnPropertyChanged("RequestPage1");
 
                 CurrentPage1 = RequestPage1;
+                Rotation = 0;
                
                 FileWorkerBusy = false;
                 FileAvailable = true;
@@ -695,18 +696,6 @@ namespace Avalon.ViewModels
                 string selected = Renderer.GetSelectedText();
                 TopLevel.GetTopLevel(window).Clipboard.SetTextAsync(selected);
             }
-        }
-
-        public void RotateRight()
-        {
-            Rotation = Rotation + 90;
-            Renderer.Contain();
-        }
-
-        public void RotateLeft()
-        {
-            Rotation = Rotation - 90;
-            Renderer.Contain();
         }
 
         public void Search(string text)
