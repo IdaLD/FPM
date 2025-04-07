@@ -46,6 +46,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Dialogs\xProgDia.axaml.cs">
+      <DependentUpon>xProgDia.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Dialogs\xMetaDia.axaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>xMetaDia.axaml</DependentUpon>

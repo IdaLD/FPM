@@ -244,6 +244,7 @@ namespace Avalon.ViewModels
             }
 
             Renderer = renderer;
+            
             Renderer.PageBackground = background;
 
             if(CurrentFile != null)
@@ -367,7 +368,7 @@ namespace Avalon.ViewModels
             Pagecount = PreviewFile.Pages.Count;
             CurrentFile = RequestFile;
 
-            Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 1, RequestPage1, 1); });
+            Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 4, RequestPage1, 1); });
             Dispatcher.UIThread.Invoke(() => { Renderer.IsVisible = true; });
 
         }
@@ -539,11 +540,11 @@ namespace Avalon.ViewModels
 
             if (TwopageMode)
             {
-                Renderer.Initialize(PreviewFileDual, 1, pagenr / 2, 0.2);
+                Renderer.Initialize(PreviewFileDual, 4, pagenr / 2, 0.2);
             }
             else
             {
-                Renderer.Initialize(PreviewFile, 1, pagenr, 0.2);
+                Renderer.Initialize(PreviewFile, 4, pagenr, 0.2);
             }
 
             if (SearchPages != null)

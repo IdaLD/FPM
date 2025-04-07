@@ -159,6 +159,17 @@ namespace Avalon.ViewModels
             PreviewWindowOpen = false;
         }
 
+        public void OpenInfoDia(Window mainWindow)
+        {
+            var window = new xProgDia()
+            {
+                DataContext = this
+            };
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.ShowDialog(mainWindow);
+        }
+
+
         public void OpenColorDia(Window mainWindow)
         {
             var window = new xColorDia()

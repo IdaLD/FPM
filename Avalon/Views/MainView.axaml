@@ -145,6 +145,10 @@
 						<Button Name="ColorMenu" ToolTip.Tip="UI Color" FontWeight="Normal" Height="33" Width="35" Margin="0,-5,0,0" Command="{Binding OpenColorDia}" CommandParameter="{Binding $parent[Window]}">
 							<ic:SymbolIcon Symbol="Color" FontSize="18"/>
 						</Button>
+
+						<Button Name="ProgMenu" ToolTip.Tip="Info" FontWeight="Normal" Height="33" Width="35" Margin="0,-5,0,0" Command="{Binding OpenInfoDia}" CommandParameter="{Binding $parent[Window]}">
+							<ic:SymbolIcon Symbol="Info" FontSize="18"/>
+						</Button>
 					
 
 						<Button Name="InfoText" ToolTip.Tip="Project Notepad: Ctrl + N" HotKey="Ctrl+N" Height="33" Width="35" FontWeight="Normal" Margin="0,-5,0,0" IsVisible="False" Click="Border_PointerPressed">
