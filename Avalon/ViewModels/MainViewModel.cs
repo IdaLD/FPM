@@ -150,8 +150,6 @@ namespace Avalon.ViewModels
 
             PreviewWindowOpen = true;
 
-
-            Debug.WriteLine("opened");
         }
 
         public void PreviewWindowClosed(object sender, RoutedEventArgs e)

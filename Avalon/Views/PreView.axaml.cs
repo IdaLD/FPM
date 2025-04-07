@@ -38,6 +38,7 @@ public partial class PreView : UserControl
     public void SetRenderer()
     {
         MuPDFRenderer.ActivateLinks = false;
+        MuPDFRenderer.DrawLinks = false;
 
         pwr.GetRenderControl(MuPDFRenderer);
     }

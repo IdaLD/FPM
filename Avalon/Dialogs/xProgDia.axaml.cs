@@ -28,9 +28,6 @@ public partial class xProgDia : Window
         LastSaved.Content = File.GetLastWriteTime("C:\\FIlePathManager\\Projects.json");
 
 
-        NrProjects.Content = ctx.ProjectsVM.StoredProjects.Count;
-
-
         int nrFiles = 0;
 
         foreach (ProjectData project in ctx.ProjectsVM.StoredProjects)
