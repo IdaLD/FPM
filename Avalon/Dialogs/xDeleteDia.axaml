@@ -18,8 +18,8 @@
 
 	<Border BorderBrush="Gray" BorderThickness="1">
 		<Grid RowDefinitions="30,*" ColumnDefinitions="*" VerticalAlignment="Top" Margin="0">
-			<Panel Grid.Row="0" Background="{DynamicResource TextControlBackground}" IsHitTestVisible="False"/>
-			<StackPanel Grid.Row="1" Width="210" Height="140" Background="{DynamicResource TextControlBackground}" Orientation="Vertical" Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<Panel Grid.Row="0" IsHitTestVisible="False"/>
+			<StackPanel Grid.Row="1" Width="210" Height="140" Orientation="Vertical" Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Top">
 				<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10" Spacing="0">
 					<ic:SymbolIcon Symbol="Warning" VerticalAlignment="Center" HorizontalAlignment="Center" IconVariant="Regular" FontSize="30"/>
 					<Label Content="Delete?" VerticalAlignment="Center"  HorizontalAlignment="Center"/>

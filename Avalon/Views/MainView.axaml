@@ -51,18 +51,18 @@
 					</StackPanel>
 
 				<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical">
-					<StackPanel Margin="8 -1 0 0" Orientation="Horizontal" >
-						<ic:SymbolIcon Symbol="Folder" IconVariant="Filled" Foreground="Gray" Width="25" FontSize="16"/>
-						<TextBlock Text="{Binding ProjectsVM.CurrentProject.Namn}" Foreground="Gray" FontStyle="Italic"/>
-						<TextBlock Text=" | Filtered: " Foreground="Gray" FontStyle="Italic"/>
-						<TextBlock Text="{Binding ProjectsVM.NrFilteredFiles}" Foreground="Gray" FontStyle="Italic"/>
-						<TextBlock Text=" | Selected: " Foreground="Gray" FontStyle="Italic"/>
-						<TextBlock Text="{Binding ProjectsVM.NrSelectedFiles}" Foreground="Gray" FontStyle="Italic"/>
+					<StackPanel Margin="8 -1 0 0" Orientation="Horizontal" Spacing="3">
+						<ic:SymbolIcon Symbol="Folder" IconVariant="Filled" Foreground="Gray" Width="25" FontSize="14"/>
+						<TextBlock Text="{Binding ProjectsVM.CurrentProject.Namn}" Foreground="Gray" FontStyle="Italic" Padding="1,0,1,0"/>
+						<TextBlock Text=" | Filtered: " Foreground="Gray" FontStyle="Italic" Padding="1,0,1,0"/>
+						<TextBlock Text="{Binding ProjectsVM.NrFilteredFiles}" Foreground="Gray" FontStyle="Italic" Padding="1,0,1,0"/>
+						<TextBlock Text=" | Selected: " Foreground="Gray" FontStyle="Italic" Padding="1,0,1,0"/>
+						<TextBlock Text="{Binding ProjectsVM.NrSelectedFiles}" Foreground="Gray" FontStyle="Italic" Padding="1,0,1,0"/>
 
 					</StackPanel>
 					<StackPanel Margin="8 0 0 0" Orientation="Horizontal">
-						<ic:SymbolIcon Symbol="Document" IconVariant="Filled" Foreground="Gray" Width="25" FontSize="16"/>
-						<TextBlock Text="{Binding ProjectsVM.CurrentFile.Namn}" Foreground="Gray" FontStyle="Italic"/>
+						<ic:SymbolIcon Symbol="Document" IconVariant="Filled" Foreground="Gray" Width="25" FontSize="14"/>
+						<TextBlock Text="{Binding ProjectsVM.CurrentFile.Namn}" Foreground="Gray" FontStyle="Italic" Padding="1,0,1,0"/>
 					</StackPanel>
 				</StackPanel>
 				
@@ -115,13 +115,13 @@
 
 						<ToggleButton Name="TreeStatus" ToolTip.Tip="Treeview: Ctrl + T" HotKey="Ctrl+T" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_treeview">
 							<StackPanel>
-								<ic:SymbolIcon Name="Treeview" Symbol="DataTreemap" IconVariant="Regular" FontSize="20"/>
+								<ic:SymbolIcon Name="Treeview" Symbol="DataTreemap" IconVariant="Regular" FontSize="18"/>
 							</StackPanel>
 						</ToggleButton>
 						
 						<ToggleButton Name="TrayStatus" ToolTip.Tip="Tray: Ctrl + R" HotKey="Ctrl+R" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_tray">
 							<StackPanel>
-								<ic:SymbolIcon Name="TrayOn" Symbol="Star" IconVariant="Regular" FontSize="20"/>
+								<ic:SymbolIcon Name="TrayOn" Symbol="Star" IconVariant="Regular" FontSize="18"/>
 							</StackPanel>
 						</ToggleButton>
 
@@ -131,24 +131,24 @@
 
 						<ToggleButton Name="PreviewToggle" ToolTip.Tip="Preview: Ctrl + P" HotKey="Ctrl+P" FontWeight="Normal" Margin="0,-5,0,0">
 							<StackPanel>
-								<ic:SymbolIcon Name="EyeOnIcon" Symbol="Eye" IconVariant="Regular" FontSize="20"/>
+								<ic:SymbolIcon Name="EyeOnIcon" Symbol="Eye" IconVariant="Regular" FontSize="18"/>
 							</StackPanel>
 						</ToggleButton>	
 
 						<ToggleButton Name="ThemeToggle" ToolTip.Tip="Mode: Ctrl + M" HotKey="Ctrl+M" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_theme">
 							<StackPanel>
-								<ic:SymbolIcon Name="ModeNightIcon" Symbol="WeatherMoon" IconVariant="Regular" FontSize="20" IsVisible="False"/>
-								<ic:SymbolIcon Name="ModeDayIcon" Symbol="WeatherSunny" IconVariant="Regular" FontSize="20"/>
+								<ic:SymbolIcon Name="ModeNightIcon" Symbol="WeatherMoon" IconVariant="Regular" FontSize="18" IsVisible="False"/>
+								<ic:SymbolIcon Name="ModeDayIcon" Symbol="WeatherSunny" IconVariant="Regular" FontSize="18"/>
 							</StackPanel>
 						</ToggleButton>
 
 						<Button Name="ColorMenu" ToolTip.Tip="UI Color" FontWeight="Normal" Height="33" Width="35" Margin="0,-5,0,0" Command="{Binding OpenColorDia}" CommandParameter="{Binding $parent[Window]}">
-							<ic:SymbolIcon Symbol="Color" FontSize="20"/>
+							<ic:SymbolIcon Symbol="Color" FontSize="18"/>
 						</Button>
 					
 
 						<Button Name="InfoText" ToolTip.Tip="Project Notepad: Ctrl + N" HotKey="Ctrl+N" Height="33" Width="35" FontWeight="Normal" Margin="0,-5,0,0" IsVisible="False" Click="Border_PointerPressed">
-							<ic:SymbolIcon Symbol="Notebook" FontSize="20"/>
+							<ic:SymbolIcon Symbol="Notebook" FontSize="18"/>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-110" VerticalOffset="45" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
 									<StackPanel Orientation="Vertical">

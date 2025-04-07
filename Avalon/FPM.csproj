@@ -18,22 +18,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.2.0" />
-    <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.2.0" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.2.0" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.0" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.0" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="Avalonia" Version="11.2.6" />
+    <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.2.6" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.2.6" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.6" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.6" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.0" />
-    <PackageReference Include="FluentIcons.Avalonia" Version="1.1.265" />
-    <PackageReference Include="itext7" Version="8.0.5" />
-    <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.5" />
-    <PackageReference Include="MuPDFCore" Version="1.10.2" />
-    <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="1.10.2" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.6" />
+    <PackageReference Include="FluentIcons.Avalonia" Version="1.1.293" />
+    <PackageReference Include="itext7" Version="9.1.0" />
+    <PackageReference Include="itext7.bouncy-castle-adapter" Version="9.1.0" />
+    <PackageReference Include="MuPDFCore" Version="2.0.1" />
+    <PackageReference Include="MuPDFCore.MuPDFRenderer" Version="2.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.10" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.3" />
   </ItemGroup>
 
   <ItemGroup>

@@ -18,6 +18,7 @@ using System.Linq;
 using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using MuPDFCore.StructuredText;
 
 namespace Avalon.ViewModels
 {
