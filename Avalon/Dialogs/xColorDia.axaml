@@ -4,9 +4,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="180" d:DesignHeight="280"
 		MinWidth="210"
-		MinHeight="340"
+		MinHeight="380"
 		MaxWidth="210"
-		MaxHeight="340"
+		MaxHeight="380"
 		xmlns:ic="using:FluentIcons.Avalonia"
         x:Class="Avalon.Dialog.xColorDia"
         Title="xColorDia"
@@ -19,19 +19,19 @@
 
 
 
-	<Border BorderBrush="Gray" BorderThickness="1">
+	<Border BorderThickness="1" BorderBrush="{DynamicResource MenuFlyoutPresenterBackground}">
 		<Grid RowDefinitions="30,*" ColumnDefinitions="*" VerticalAlignment="Top" Margin="0">
 			
 			<Panel Grid.Row="0" IsHitTestVisible="False"/>
 
-			<StackPanel Grid.Row="1" Width="230" Height="350" Orientation="Vertical" Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Top">
+			<StackPanel Grid.Row="1" Width="230" Height="380" Orientation="Vertical" Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Top">
 				
 				<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10" Spacing="0">
 					<ic:SymbolIcon Symbol="ColorBackground" VerticalAlignment="Center" HorizontalAlignment="Center" IconVariant="Regular" FontSize="30"/>
 					<Label Content="Edit Theme Colors" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
 				</StackPanel>
 				
-				<Grid ColumnDefinitions="90,80" RowDefinitions="30,40,40,30,40,40,40" HorizontalAlignment="Center" VerticalAlignment="Center">
+				<Grid ColumnDefinitions="90,80" RowDefinitions="30,40,40,30,40,40,30,40" HorizontalAlignment="Center" VerticalAlignment="Center">
 
 					<Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" FontWeight="Bold" Content="Dark" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 					<Label Grid.Column="0" Grid.Row="1" Content="Background" VerticalAlignment="Center"/>
@@ -47,7 +47,8 @@
 					<ColorPicker Grid.Column="1" Grid.Row="4" Color="{Binding Color3}" HorizontalAlignment="Right" Name="BackgroundColorPickerLight"/>
 					<ColorPicker Grid.Column="1" Grid.Row="5" Color="{Binding Color4}" HorizontalAlignment="Right" Name="AccentColorPickerLight"/>
 
-					<Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6" Width="80" BorderBrush="Gray" Content="Reset" Click="ResetThemeColors" HorizontalAlignment="Center"/>
+					<Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="7" Width="80" Content="Reset" Click="ResetThemeColors" HorizontalAlignment="Center" BorderBrush="{DynamicResource TextControlButtonForeground}"/>
+					
 
 				</Grid>
 			</StackPanel>

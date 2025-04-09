@@ -70,7 +70,7 @@
 		
 				
 					<StackPanel Grid.Row="1" Grid.ColumnSpan="5" MinHeight="0" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
-						<Button Name="Columns" Width="140" BorderBrush="Gray" BorderThickness="1" Click="Border_PointerPressed">
+						<Button Name="Columns" Width="140" Click="Border_PointerPressed">
 							<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="140">
 								<ic:SymbolIcon Grid.Column="0" Symbol="Database" IconVariant="Regular" FontSize="20"/>
 								<Label Grid.Column="1" Content="Metadata" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -125,8 +125,8 @@
 							</StackPanel>
 						</ToggleButton>
 
-						<ToggleButton Name="PreviewWindow" FontWeight="Normal" ToolTip.Tip="Preview Window, Ctrl + W" HotKey="Ctrl+W" Height="33" Width="35" Margin="0,-5,0,0" IsChecked="{Binding PreviewWindowOpen, Mode=OneWay}" Click="OnTogglePreviewWindow">
-							<ic:SymbolIcon Symbol="Window" FontSize="20"/>
+						<ToggleButton Name="PreviewWindow" FontWeight="Normal" ToolTip.Tip="Preview Window, Ctrl + W" HotKey="Ctrl+W" Height="30" Width="35" Margin="0,-5,0,0" IsChecked="{Binding PreviewWindowOpen, Mode=OneWay}" Click="OnTogglePreviewWindow">
+							<ic:SymbolIcon Symbol="Window" FontSize="18"/>
 						</ToggleButton>
 
 						<ToggleButton Name="PreviewToggle" ToolTip.Tip="Preview: Ctrl + P" HotKey="Ctrl+P" FontWeight="Normal" Margin="0,-5,0,0">
@@ -142,7 +142,7 @@
 							</StackPanel>
 						</ToggleButton>
 
-						<Button Name="ColorMenu" ToolTip.Tip="UI Color" FontWeight="Normal" Height="33" Width="35" Margin="0,-5,0,0" Command="{Binding OpenColorDia}" CommandParameter="{Binding $parent[Window]}">
+						<Button Name="ColorMenu" ToolTip.Tip="UI Color" FontWeight="Normal" Height="30" Width="35" Margin="0,-5,0,0" Command="{Binding OpenColorDia}" CommandParameter="{Binding $parent[Window]}">
 							<ic:SymbolIcon Symbol="Color" FontSize="18"/>
 						</Button>
 
@@ -151,7 +151,7 @@
 						</Button>
 					
 
-						<Button Name="InfoText" ToolTip.Tip="Project Notepad: Ctrl + N" HotKey="Ctrl+N" Height="33" Width="35" FontWeight="Normal" Margin="0,-5,0,0" IsVisible="False" Click="Border_PointerPressed">
+						<Button Name="InfoText" ToolTip.Tip="Project Notepad: Ctrl + N" HotKey="Ctrl+N" Height="30" Width="35" FontWeight="Normal" Margin="0,-5,0,0" IsVisible="False" Click="Border_PointerPressed">
 							<ic:SymbolIcon Symbol="Notebook" FontSize="18"/>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="-110" VerticalOffset="45" Placement="Bottom" ShowMode="TransientWithDismissOnPointerMoveAway">
@@ -172,7 +172,7 @@
 					</StackPanel>
 
 					<DataGrid Name="FileGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible"
-							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
+							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" CornerRadius="10" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 						<DataGrid.Styles>
 							<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
 								<Setter Property="IsVisible" Value="false" />
@@ -277,20 +277,20 @@
 				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,1.5*,35,2*">
 					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
 						<TextBox Name="NewFavGroupInput" Width="170"/>
-						<Button BorderBrush="Gray" Width="35" Click="OnAddFavGroup">
-							<ic:SymbolIcon Symbol="Add" FontSize="20"/>
+						<Button Width="35" Click="OnAddFavGroup">
+							<ic:SymbolIcon Symbol="Add" FontSize="18"/>
 						</Button>
-						<Button Name="RemoveFavoriteGroup" BorderBrush="Gray" Width="35" Click="OnRemoveFavGroup">
-							<ic:SymbolIcon Symbol="Delete" FontSize="20"/>
+						<Button Name="RemoveFavoriteGroup" Width="35" Click="OnRemoveFavGroup">
+							<ic:SymbolIcon Symbol="Delete" FontSize="18"/>
 						</Button>
-						<Button BorderBrush="Gray" Width="35" Click="OnRenameFavGroup">
-							<ic:SymbolIcon Symbol="Rename" FontSize="20"/>
+						<Button Width="35" Click="OnRenameFavGroup">
+							<ic:SymbolIcon Symbol="Rename" FontSize="18"/>
 						</Button>
 					</StackPanel>
 
-					<Border Grid.Row="1" BorderBrush="Gray" BorderThickness="0.5" Margin="5" CornerRadius="5">
+					<Border Grid.Row="1" Margin="5" CornerRadius="5">
 						<DataGrid Name="FavoriteGroups" Padding="0" ItemsSource="{Binding Favorites}" SelectedItem="{Binding CurrentFavorite}" RowHeight="22" SelectionMode="Extended"
-								AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow">
+								AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="10">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
 									<Setter Property="IsVisible" Value="false" />
@@ -302,9 +302,9 @@
 						</DataGrid>						
 					</Border>
 					
-					<Border Grid.Row="2" BorderBrush="Gray" BorderThickness="0.5" Margin="5" CornerRadius="5">
+					<Border Grid.Row="2" Margin="5">
 						<DataGrid Name="TrayGrid" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFav, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
-									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Vertical" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow">
+									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="10">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
 									<Setter Property="IsVisible" Value="false" />
@@ -324,32 +324,32 @@
 					<Grid Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,*,35,*">
 						<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
 							<TextBox Name="NewFavPageInput" Width="170"/>
-							<Button BorderBrush="Gray" Width="35" Click="OnAddFavPage">
-								<ic:SymbolIcon Symbol="Add" FontSize="20"/>
+							<Button Width="35" Click="OnAddFavPage">
+								<ic:SymbolIcon Symbol="Add" FontSize="18"/>
 							</Button>
-							<Button Name="RemoveFavoritePage" BorderBrush="Gray" Width="35" Click="OnRemoveFavPage">
-								<ic:SymbolIcon Symbol="Delete" FontSize="20"/>
+							<Button Name="RemoveFavoritePage" Width="35" Click="OnRemoveFavPage">
+								<ic:SymbolIcon Symbol="Delete" FontSize="18"/>
 							</Button>
-							<Button BorderBrush="Gray" Width="35" Click="OnRenameFavPage">
-								<ic:SymbolIcon Symbol="Rename" FontSize="20"/>
+							<Button Width="35" Click="OnRenameFavPage">
+								<ic:SymbolIcon Symbol="Rename" FontSize="18"/>
 							</Button>
 						</StackPanel>
 					</Grid>
 
-					<Border Grid.Row="4" BorderBrush="Gray" BorderThickness="0.5" Margin="5" CornerRadius="5">
+					<Border Grid.Row="4" Margin="5">
 						<DataGrid Name="PageGrid" Padding="0" ItemsSource="{Binding PreviewVM.CurrentFile.FavPages, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
-									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" BorderThickness="1" BorderBrush="Gray" LoadingRow="DataGrid_OnLoadingRow">
+									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="10">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
 									<Setter Property="IsVisible" Value="false"/>
 								</Style>
 							</DataGrid.Styles>
-							
+
 							<DataGrid.Columns>
 								<DataGridTextColumn Binding="{Binding PageNr, Converter={StaticResource AddOneConverter}}" Header="Page" Width="85" FontFamily="UbuntuMono"/>
 								<DataGridTextColumn Binding="{Binding PageName}" Header="Name" Width="*" FontFamily="UbuntuMono"/>
 							</DataGrid.Columns>
-							
+
 						</DataGrid>
 					</Border>
 				</Grid>
@@ -362,12 +362,10 @@
 
 
 				<Grid Grid.Row="2" Grid.Column="0">
-					<Border BorderBrush="Gray" BorderThickness="1" Margin="5" Background="{DynamicResource TextControlBackground}">
+					<Border Margin="5" Background="{DynamicResource TextControlBackground}" CornerRadius="10">
 						<ScrollViewer>
 							<Grid RowDefinitions="31,*">
-								<Border Grid.Row="0" BorderBrush="Gray" BorderThickness="0 0 0 1">
-									<TextBlock Text="Project Tree" Height="23" FontSize="14" FontWeight="Normal" FontStyle="Italic" Margin="16 8 0 0"/>
-								</Border>
+								<TextBlock Text="Project Tree" Height="23" FontSize="14" FontWeight="Normal" FontStyle="Italic" Margin="16 8 0 0"/>
 								<TreeView Grid.Row="1" Name="MainTree" Loaded="SetupTreeview" SelectionChanged="on_treeview_selected">
 									<TreeView.ContextMenu>
 										<ContextMenu Name="TreeMenu">

@@ -15,6 +15,10 @@ using Avalonia.Data;
 using Avalonia.Styling;
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using Avalonia;
+using Org.BouncyCastle.Asn1.BC;
+using Avalonia.VisualTree;
+using MuPDFCore;
 
 
 namespace Avalon.Views;
@@ -83,6 +87,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             string path = "C:\\FIlePathManager\\Projects.json";
             ctx.read_savefile(path);
+
         }
         catch
         { }
@@ -105,6 +110,9 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (e.PropertyName == "Color1") { update_row_color(); }
         if (e.PropertyName == "Color3") { update_row_color(); }
         if (e.PropertyName == "TreeViewUpdate") { SetupTreeview(null, null); }
+
+        if (e.PropertyName == "NewCornerRadius") { UpdateCornerRadius(); }
+        if (e.PropertyName == "BorderColor") { UpdateBorderColor(); }
     }
 
     private void on_binding_pwr(object sender, PropertyChangedEventArgs e)
@@ -863,6 +871,46 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             if (dataObject != null && dataObject.Färg == "Red") { e.Row.Classes.Add("Red"); }
             if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("Magenta"); }
         }
+    }
+
+    private void UpdateCornerRadius()
+    {
+        
+        foreach(DataGrid grid in this.GetVisualDescendants().OfType<DataGrid>())
+        {
+            grid.CornerRadius = new CornerRadius(ctx.NewCornerRadius);
+            grid.BorderThickness = new Thickness(0);
+            
+            
+        }
+
+        foreach (Border border in this.GetVisualDescendants().OfType<Border>())
+        {
+            border.CornerRadius = new CornerRadius(ctx.NewCornerRadius);
+            border.BorderThickness = new Thickness(0);
+   
+        }
+
+        foreach (Button button in this.GetVisualDescendants().OfType<Button>())
+        {
+            button.CornerRadius = new CornerRadius(ctx.NewCornerRadius);
+            button.BorderThickness = new Thickness(0);
+
+        }
+
+    }
+
+    private void UpdateBorderColor()
+    {
+        foreach (DataGrid grid in this.GetVisualDescendants().OfType<DataGrid>())
+        {
+            Debug.WriteLine(grid.Name);
+            grid.BorderThickness = new Thickness(1);
+            grid.BorderBrush = new SolidColorBrush(ctx.BorderColor);
+
+
+        }
+
     }
 
     private void RaisePropertyChanged(string propName)

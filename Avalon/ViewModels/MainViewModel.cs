@@ -113,6 +113,20 @@ namespace Avalon.ViewModels
             set { color4 = value; OnPropertyChanged("Color4"); ColorChanged(); }
         }
 
+        private Color borderColor = Color.Parse("#808080");
+        public Color BorderColor
+        {
+            get { return borderColor; }
+            set { borderColor = value; OnPropertyChanged("BorderColor"); }
+        }
+
+        private double newCornerRadius = 5;
+        public double NewCornerRadius
+        {
+            get { return newCornerRadius; }
+            set { newCornerRadius = value; OnPropertyChanged("NewCornerRadius"); }
+        }
+
         public bool Confirmed = false;
 
         public List<string> FileTypes { get; set; } = new List<string>();
@@ -482,16 +496,20 @@ namespace Avalon.ViewModels
 
         public void ColorChanged()
         {           
+
             var theme = new FluentTheme()
             {
                 Palettes =
                 {
-                    [ThemeVariant.Dark] = new ColorPaletteResources() {RegionColor = Color1, Accent = Color2 },
+                    [ThemeVariant.Dark] = new ColorPaletteResources() {RegionColor = Color1, Accent = Color2},
                     [ThemeVariant.Light] = new ColorPaletteResources() {RegionColor = Color3, Accent = Color4 }
                 }
+
             };
 
+            
             App.Current.Resources = theme.Resources;   
+
         }
 
         public void AddFilesDrag(string path)
