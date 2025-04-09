@@ -113,20 +113,6 @@ namespace Avalon.ViewModels
             set { color4 = value; OnPropertyChanged("Color4"); ColorChanged(); }
         }
 
-        private Color borderColor = Color.Parse("#808080");
-        public Color BorderColor
-        {
-            get { return borderColor; }
-            set { borderColor = value; OnPropertyChanged("BorderColor"); }
-        }
-
-        private double newCornerRadius = 5;
-        public double NewCornerRadius
-        {
-            get { return newCornerRadius; }
-            set { newCornerRadius = value; OnPropertyChanged("NewCornerRadius"); }
-        }
-
         public bool Confirmed = false;
 
         public List<string> FileTypes { get; set; } = new List<string>();
