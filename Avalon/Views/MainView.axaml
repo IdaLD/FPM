@@ -106,7 +106,7 @@
 					<Grid ColumnDefinitions="*,30">
 						<TextBox Grid.Column="0" Watermark="Seach All Files" Name="SearchText" Width="160" KeyDown="on_start_search"/>
 						<Button Grid.Column="2" Click="on_search" >
-							<ic:SymbolIcon Symbol="Search" IconVariant="Regular" FontSize="20"/>
+							<ic:SymbolIcon Symbol="Search" IconVariant="Regular" FontSize="18"/>
 						</Button>
 					</Grid>
 				</StackPanel>
