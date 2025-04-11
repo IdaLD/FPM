@@ -104,7 +104,7 @@
 
 				<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="5" HorizontalAlignment="Center" Margin="30 0 0 0">
 					<Grid ColumnDefinitions="*,30">
-						<TextBox Grid.Column="0" Watermark="Seach All Files" Name="SearchText" Width="160" KeyDown="on_start_search"/>
+						<TextBox Grid.Column="0" Watermark="Seach All Files" Name="SearchText" Width="160" KeyDown="on_start_search" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
 						<Button Grid.Column="2" Click="on_search" >
 							<ic:SymbolIcon Symbol="Search" IconVariant="Regular" FontSize="18"/>
 						</Button>
@@ -113,7 +113,7 @@
 				
 					<StackPanel Orientation="Horizontal" Spacing="2" Height="35" HorizontalAlignment="Right" Grid.Row="0" Grid.ColumnSpan="5" Margin="0 0 155 0">
 
-						<ToggleButton Name="TreeStatus" ToolTip.Tip="Treeview: Ctrl + T" HotKey="Ctrl+T" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_treeview">
+						<ToggleButton Name="TreeStatus" ToolTip.Tip="Treeview: Ctrl + T" HotKey="Ctrl+T" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_treeview" >
 							<StackPanel>
 								<ic:SymbolIcon Name="Treeview" Symbol="DataTreemap" IconVariant="Regular" FontSize="18"/>
 							</StackPanel>
@@ -172,7 +172,7 @@
 					</StackPanel>
 
 					<DataGrid Name="FileGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible"
-							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" CornerRadius="10" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
+							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
 						<DataGrid.Styles>
 							<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
 								<Setter Property="IsVisible" Value="false" />
@@ -204,7 +204,7 @@
 						</DataGrid.Columns>
 						
 						<DataGrid.ContextMenu>
-							<ContextMenu Name="Menu" CornerRadius="0" ItemsPanel="">
+							<ContextMenu Name="Menu" ItemsPanel="">
 								
 								<MenuItem Name="OpenMenu" Header="Open" Icon="{icxt:SymbolIconExtension Symbol=Open}">
 									<MenuItem Name="OpenFileMenu" Header="Open PDF" Click="on_open_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentPdf}"/>
@@ -276,7 +276,7 @@
 
 				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,1.5*,35,2*">
 					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
-						<TextBox Name="NewFavGroupInput" Width="170"/>
+						<TextBox Name="NewFavGroupInput" Width="170" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
 						<Button Width="35" Click="OnAddFavGroup">
 							<ic:SymbolIcon Symbol="Add" FontSize="18"/>
 						</Button>
@@ -288,9 +288,9 @@
 						</Button>
 					</StackPanel>
 
-					<Border Grid.Row="1" Margin="5" CornerRadius="5">
+					<Border Grid.Row="1" Margin="5">
 						<DataGrid Name="FavoriteGroups" Padding="0" ItemsSource="{Binding Favorites}" SelectedItem="{Binding CurrentFavorite}" RowHeight="22" SelectionMode="Extended"
-								AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="10">
+								AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
 									<Setter Property="IsVisible" Value="false" />
@@ -304,7 +304,7 @@
 					
 					<Border Grid.Row="2" Margin="5">
 						<DataGrid Name="TrayGrid" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFav, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
-									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="10">
+									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
 									<Setter Property="IsVisible" Value="false" />
@@ -323,7 +323,7 @@
 
 					<Grid Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,*,35,*">
 						<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
-							<TextBox Name="NewFavPageInput" Width="170"/>
+							<TextBox Name="NewFavPageInput" Width="170" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
 							<Button Width="35" Click="OnAddFavPage">
 								<ic:SymbolIcon Symbol="Add" FontSize="18"/>
 							</Button>
@@ -338,7 +338,7 @@
 
 					<Border Grid.Row="4" Margin="5">
 						<DataGrid Name="PageGrid" Padding="0" ItemsSource="{Binding PreviewVM.CurrentFile.FavPages, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
-									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="10">
+									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}" CornerRadius="{Binding CornerRadius}">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
 									<Setter Property="IsVisible" Value="false"/>
@@ -362,11 +362,11 @@
 
 
 				<Grid Grid.Row="2" Grid.Column="0">
-					<Border Margin="5" Background="{DynamicResource TextControlBackground}" CornerRadius="10">
+					<Border Name="TreeBorder" Margin="5" Background="{DynamicResource TextControlBackground}" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}">
 						<ScrollViewer>
 							<Grid RowDefinitions="31,*">
 								<TextBlock Text="Project Tree" Height="23" FontSize="14" FontWeight="Normal" FontStyle="Italic" Margin="16 8 0 0"/>
-								<TreeView Grid.Row="1" Name="MainTree" Loaded="SetupTreeview" SelectionChanged="on_treeview_selected">
+								<TreeView Grid.Row="1" Name="MainTree" Loaded="SetupTreeview" SelectionChanged="on_treeview_selected" >
 									<TreeView.ContextMenu>
 										<ContextMenu Name="TreeMenu">
 											<MenuItem Header="Add Files" Click="on_add_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentAdd}"/>

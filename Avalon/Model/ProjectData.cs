@@ -51,6 +51,14 @@ namespace Avalon.Model
             set { colors = value; RaisePropertyChanged("Colors"); }
         }
 
+        private bool[] borders = [true, false];
+
+        public bool[] Borders
+        {
+            get { return borders; }
+            set { borders = value; RaisePropertyChanged("Borders"); }
+        }
+
         private List<string> filetypes = new List<string>();
         public List<string> Filetypes
         {

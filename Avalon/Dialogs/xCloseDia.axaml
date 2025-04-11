@@ -25,9 +25,9 @@
 					<Label Content="Save before close?" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 				</StackPanel>
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
-					<Button Name="SaveYes" HotKey="Enter" Width="70" Content="Yes" Click="SaveBeforeClose" BorderBrush="{DynamicResource TextControlButtonForeground}"/>
-					<Button Name="SaveNo" Width="70" Content="No" Click="OnLeave" BorderBrush="{DynamicResource TextControlButtonForeground}"/>
-					<Button Name="SaveCancel" HotKey="Escape" Width="70" Content="Cancel" Click="OnCancel" BorderBrush="{DynamicResource TextControlButtonForeground}"/>
+					<Button Name="SaveYes" HotKey="Enter" Width="70" Content="Yes" Click="SaveBeforeClose" BorderBrush="{DynamicResource TextControlBorderBrush}"/>
+					<Button Name="SaveNo" Width="70" Content="No" Click="OnLeave" BorderBrush="{DynamicResource TextControlBorderBrush}"/>
+					<Button Name="SaveCancel" HotKey="Escape" Width="70" Content="Cancel" Click="OnCancel" BorderBrush="{DynamicResource TextControlBorderBrush}"/>
 				</StackPanel>
 			</StackPanel>
 		</Grid>

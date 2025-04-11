@@ -667,14 +667,18 @@ namespace Avalon.ViewModels
             }
         }
 
-        public void SetProjectColor(Color color1, Color color2, Color color3, Color color4)
+        public void SetProjectColor(Color color1, Color color2, Color color3, Color color4, bool cornerRadiusVal, bool borderVal)
         {
             ProjectColor = [color1.ToString(), color2.ToString(), color3.ToString(), color4.ToString()];
 
             foreach (ProjectData project in StoredProjects)
             {
                 project.Colors = ProjectColor;
+
+                project.Borders = [cornerRadiusVal, borderVal];
             }
+
+
         }
 
         public void SeachFiles(string searchtext)
@@ -687,7 +691,7 @@ namespace Avalon.ViewModels
 
             ObservableCollection<FileData> results = new ObservableCollection<FileData>();
 
-            foreach (ProjectData project in StoredProjects.Where(x => x.Category != "Search"))
+            foreach (ProjectData project in StoredProjects.Where(x => x.Category != "Search").Where(x=>x.Category != "Favorites"))
             {
                 foreach (FileData file in project.StoredFiles)
                 {

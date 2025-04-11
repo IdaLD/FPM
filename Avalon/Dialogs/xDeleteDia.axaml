@@ -25,8 +25,8 @@
 					<Label Content="Delete?" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
 				</StackPanel>
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
-					<Button Name="ConfirmButton" HotKey="Enter" Content="Confirm" Click="OnConfirm" Width="70" BorderBrush="{DynamicResource TextControlButtonForeground}"/>
-					<Button Name="CancelButton" HotKey="Enter" Content="Cancel" Click="OnCancel" Width="70" BorderBrush="{DynamicResource TextControlButtonForeground}"/>
+					<Button Name="ConfirmButton" HotKey="Enter" Content="Confirm" Click="OnConfirm" Width="70" BorderBrush="{DynamicResource TextControlBorderBrush}"/>
+					<Button Name="CancelButton" HotKey="Enter" Content="Cancel" Click="OnCancel" Width="70" BorderBrush="{DynamicResource TextControlBorderBrush}"/>
 				</StackPanel>
 			</StackPanel>
 		</Grid>

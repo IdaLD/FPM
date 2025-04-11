@@ -17,6 +17,8 @@ using Avalonia.Themes.Fluent;
 using Avalon.Dialog;
 using Avalonia.Interactivity;
 using Avalon.Views;
+using Avalonia;
+using Org.BouncyCastle.Asn1.BC;
 
 
 namespace Avalon.ViewModels
@@ -110,6 +112,36 @@ namespace Avalon.ViewModels
             get { return color4; }
             set { color4 = value; OnPropertyChanged("Color4"); ColorChanged(); }
         }
+
+
+        private bool cornerRadiusVal = true;
+        public bool CornerRadiusVal
+        {
+            get { return cornerRadiusVal; }
+            set { cornerRadiusVal = value; OnPropertyChanged("CornerRadiusVal"); SetCornerRadius(); }
+        }
+
+        private CornerRadius cornerRadius = new CornerRadius(10);
+        public CornerRadius CornerRadius
+        {
+            get { return cornerRadius; }
+            set { cornerRadius = value; OnPropertyChanged("CornerRadius"); }
+        }
+
+        private bool borderVal = false;
+        public bool BorderVal
+        {
+            get { return borderVal; }
+            set { borderVal = value; OnPropertyChanged("BorderVal"); SetBorder(); }
+        }
+
+        private Thickness border = new Thickness(0);
+        public Thickness Border
+        {
+            get { return border; }
+            set { border = value; OnPropertyChanged("Border"); }
+        }
+
 
         public bool Confirmed = false;
 
@@ -245,6 +277,30 @@ namespace Avalon.ViewModels
 
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
             window.ShowDialog(mainWindow);
+        }
+
+        private void SetCornerRadius()
+        {
+            if (CornerRadiusVal)
+            {
+                CornerRadius = new CornerRadius(10);
+            }
+            else
+            {
+                CornerRadius = new CornerRadius(0);
+            }
+        }
+
+        private void SetBorder()
+        {
+            if (BorderVal)
+            {
+                Border = new Thickness(0.6);
+            }
+            else
+            {
+                Border = new Thickness(0);
+            }
         }
 
 
@@ -406,7 +462,7 @@ namespace Avalon.ViewModels
 
         public async Task SaveFile(Avalonia.Visual window)
         {
-            ProjectsVM.SetProjectColor(Color1, Color2, Color3, Color4);
+            ProjectsVM.SetProjectColor(Color1, Color2, Color3, Color4, CornerRadiusVal, BorderVal);
 
             var topLevel = TopLevel.GetTopLevel(window);
 
@@ -433,7 +489,7 @@ namespace Avalon.ViewModels
 
         public async Task SaveFileAuto(string path)
         {
-            ProjectsVM.SetProjectColor(Color1, Color2, Color3, Color4);
+            ProjectsVM.SetProjectColor(Color1, Color2, Color3, Color4, CornerRadiusVal, BorderVal);
 
             using (StreamWriter streamWriter = new StreamWriter(path))
             {
@@ -475,6 +531,14 @@ namespace Avalon.ViewModels
                 Color2 = Color.Parse(hexColors[1]);
                 Color3 = Color.Parse(hexColors[2]);
                 Color4 = Color.Parse(hexColors[3]);
+            }
+
+            bool[] borders = ProjectsVM.GetDefaultProject().Borders;
+
+            if (borders != null)
+            {
+                CornerRadiusVal = borders[0];
+                BorderVal = borders[1];
             }
         }
 

@@ -39,7 +39,7 @@
 				</Grid>
 
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
-					<Button Name="RenameAccept" HotKey="Enter" Content="Accept" Width="70" BorderBrush="{DynamicResource TextControlButtonForeground}" Click="OnAddProject"/>
+					<Button Name="RenameAccept" HotKey="Enter" Content="Accept" Width="70" BorderBrush="{DynamicResource TextControlBorderBrush}" Click="OnAddProject"/>
 				</StackPanel>
 			</StackPanel>
 		</Grid>
