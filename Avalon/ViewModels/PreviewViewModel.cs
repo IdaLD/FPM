@@ -17,7 +17,6 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using MuPDFCore.StructuredText;
 
 namespace Avalon.ViewModels
@@ -368,6 +367,11 @@ namespace Avalon.ViewModels
             Pagecount = PreviewFile.Pages.Count;
             CurrentFile = RequestFile;
 
+            if(RequestPage1 > PreviewFile.Pages.Count)
+            {
+                RequestPage1 = 0;
+            }
+  
             Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 4, RequestPage1, 1); });
             Dispatcher.UIThread.Invoke(() => { Renderer.IsVisible = true; });
 

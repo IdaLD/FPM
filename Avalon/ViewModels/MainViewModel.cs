@@ -17,8 +17,6 @@ using Avalonia.Themes.Fluent;
 using Avalon.Dialog;
 using Avalonia.Interactivity;
 using Avalon.Views;
-using Org.BouncyCastle.Crypto.Signers;
-using Org.BouncyCastle.Crypto.Operators;
 
 
 namespace Avalon.ViewModels

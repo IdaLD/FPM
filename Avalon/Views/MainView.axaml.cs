@@ -13,12 +13,6 @@ using Avalon.Model;
 using System.IO;
 using Avalonia.Data;
 using Avalonia.Styling;
-using System.Diagnostics;
-using System.Net.Http.Headers;
-using Avalonia;
-using Org.BouncyCastle.Asn1.BC;
-using Avalonia.VisualTree;
-using MuPDFCore;
 
 
 namespace Avalon.Views;
