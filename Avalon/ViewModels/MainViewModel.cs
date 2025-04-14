@@ -205,6 +205,7 @@ namespace Avalon.ViewModels
                 DataContext = this
             };
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.Focusable = true;
             window.ShowDialog(mainWindow);
         }
 
@@ -216,6 +217,7 @@ namespace Avalon.ViewModels
             };
 
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.Focusable = true;
             window.ShowDialog(mainWindow);
         }
 
@@ -227,6 +229,7 @@ namespace Avalon.ViewModels
             };
 
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.Focusable = true;
             window.ShowDialog(mainWindow);
         }
 
@@ -265,6 +268,7 @@ namespace Avalon.ViewModels
             };
 
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.Focusable = true;
             await window.ShowDialog(mainWindow);
         }
 

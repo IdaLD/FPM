@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -11,6 +12,8 @@ public partial class xColorDia : Window
     public xColorDia()
     {
         InitializeComponent();
+
+        KeyDown += CloseKey;
     }
 
     public void ResetThemeColors(object sender, RoutedEventArgs e)
@@ -24,8 +27,11 @@ public partial class xColorDia : Window
         this.Close();
     }
 
-    public void OnClose(object sender, RoutedEventArgs e)
+    private void CloseKey(object sender, KeyEventArgs e)
     {
-        this.Close();
+        if (e.Key == Key.Escape)
+        {
+            this.Close();
+        }
     }
 }

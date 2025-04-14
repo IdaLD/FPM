@@ -28,7 +28,7 @@
 	</UserControl.Resources>
 
 	
-			<Grid Name ="MainGrid" DragDrop.AllowDrop="True" ColumnDefinitions="0,*,0,0,0" RowDefinitions="35,30,*" Margin="5">
+			<Grid Name ="MainGrid" DragDrop.AllowDrop="True" ColumnDefinitions="0,*,0,0,0" RowDefinitions="35,33,*" Margin="5">
 				
 				<DockPanel Width="190" VerticalAlignment="Top" HorizontalAlignment="Left">
 					<Menu DockPanel.Dock="Top">
@@ -42,27 +42,27 @@
 				</DockPanel>
 
 					<StackPanel Grid.Row="0" Grid.ColumnSpan="5" Orientation="Vertical" Spacing="10" Margin="0">
-						<Label Name="StatusLabel" Height="40" Width="250" HorizontalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Foreground="Gray" Padding="10"/>
+						<Label Name="StatusLabel" Height="40" Width="250" HorizontalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Opacity="0.7" Padding="10"/>
 					</StackPanel>
 				
-					<StackPanel Grid.Row="0" Grid.ColumnSpan="5" Orientation="Horizontal" Margin="210,2,0,0">
+					<StackPanel Grid.Row="0" Grid.ColumnSpan="5" Orientation="Horizontal" Margin="60,2,0,0">
 						<ProgressBar Name="ProgressBar" Width="200" VerticalAlignment="Center" Value="{Binding PreviewVM.Progress}"/>
-						<Label Name="ProgressStatus" Width="200" Height="40" VerticalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Foreground="Gray" Padding="10"/>
+						<Label Name="ProgressStatus" Width="200" Height="40" VerticalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Opacity="0.7" Padding="10"/>
 					</StackPanel>
 
 				<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical">
 					<StackPanel Margin="8 -1 0 0" Orientation="Horizontal" Spacing="3">
-						<ic:SymbolIcon Symbol="Folder" IconVariant="Filled" Foreground="Gray" Width="25" FontSize="14"/>
-						<TextBlock Text="{Binding ProjectsVM.CurrentProject.Namn}" Foreground="Gray" FontStyle="Italic" Padding="1,0,1,0"/>
-						<TextBlock Text=" | Filtered: " Foreground="Gray" FontStyle="Italic" Padding="1,0,1,0"/>
-						<TextBlock Text="{Binding ProjectsVM.NrFilteredFiles}" Foreground="Gray" FontStyle="Italic" Padding="1,0,1,0"/>
-						<TextBlock Text=" | Selected: " Foreground="Gray" FontStyle="Italic" Padding="1,0,1,0"/>
-						<TextBlock Text="{Binding ProjectsVM.NrSelectedFiles}" Foreground="Gray" FontStyle="Italic" Padding="1,0,1,0"/>
+						<ic:SymbolIcon Symbol="Folder" IconVariant="Filled" Width="25" FontSize="14" Opacity="0.7"/>
+						<TextBlock Text="{Binding ProjectsVM.CurrentProject.Namn}" FontStyle="Italic" Opacity="0.7" Padding="1,0,1,0"/>
+						<TextBlock Text=" | Filtered: " FontStyle="Italic" Opacity="0.7" Padding="1,0,1,0"/>
+						<TextBlock Text="{Binding ProjectsVM.NrFilteredFiles}" FontStyle="Italic" Opacity="0.7" Padding="1,0,1,0"/>
+						<TextBlock Text=" | Selected: " FontStyle="Italic" Opacity="0.7" Padding="1,0,1,0"/>
+						<TextBlock Text="{Binding ProjectsVM.NrSelectedFiles}" FontStyle="Italic" Opacity="0.7" Padding="1,0,1,0"/>
 
 					</StackPanel>
 					<StackPanel Margin="8 0 0 0" Orientation="Horizontal">
-						<ic:SymbolIcon Symbol="Document" IconVariant="Filled" Foreground="Gray" Width="25" FontSize="14"/>
-						<TextBlock Text="{Binding ProjectsVM.CurrentFile.Namn}" Foreground="Gray" FontStyle="Italic" Padding="1,0,1,0"/>
+						<ic:SymbolIcon Symbol="Document" IconVariant="Filled" Width="25" FontSize="14" Opacity="0.7"/>
+						<TextBlock Text="{Binding ProjectsVM.CurrentFile.Namn}" FontStyle="Italic" Opacity="0.7" Padding="1,0,1,0"/>
 					</StackPanel>
 				</StackPanel>
 				
@@ -70,7 +70,7 @@
 		
 				
 					<StackPanel Grid.Row="1" Grid.ColumnSpan="5" MinHeight="0" Orientation="Horizontal" FlowDirection="RightToLeft" Spacing="10" Margin="5">
-						<Button Name="Columns" Width="140" Click="Border_PointerPressed">
+						<Button Name="Columns" Width="140" Click="Border_PointerPressed" BorderBrush="{DynamicResource TextControlBorderBrush}">
 							<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="140">
 								<ic:SymbolIcon Grid.Column="0" Symbol="Database" IconVariant="Regular" FontSize="20"/>
 								<Label Grid.Column="1" Content="Metadata" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -78,7 +78,7 @@
 							</Grid>
 							<Button.Flyout>
 								<Flyout FlyoutPresenterClasses="mySpecialClass" HorizontalOffset="0" VerticalOffset="2" Placement="Bottom" ShowMode="Transient">
-									<StackPanel Orientation="Vertical" FlowDirection="LeftToRight" Width="140" Margin="0">
+									<StackPanel Orientation="Vertical" FlowDirection="LeftToRight" Width="140" Margin="0,5,0,10">
 										<ListBoxItem Height="30"><CheckBox Content="Name" Height="30" IsChecked="{Binding ProjectsVM.Meta_1, Mode=TwoWay}"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="FileStatus" Height="30" IsChecked="{Binding ProjectsVM.Meta_2, Mode=TwoWay}"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="Filtyp" Height="30" IsChecked="{Binding ProjectsVM.Meta_3, Mode=TwoWay}"/></ListBoxItem>
@@ -95,7 +95,8 @@
 										<ListBoxItem Height="30"><CheckBox Content="Beskrivning 4" Height="30" IsChecked="{Binding ProjectsVM.Meta_14, Mode=TwoWay}"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="Revidering" Height="30" IsChecked="{Binding ProjectsVM.Meta_15, Mode=TwoWay}"/></ListBoxItem>
 										<ListBoxItem Height="30"><CheckBox Content="Sökväg" Height="30" IsChecked="{Binding ProjectsVM.Meta_16, Mode=TwoWay}"/></ListBoxItem>
-										<Button Content="Set as default" Theme="{DynamicResource MaterialButtonBase}" Command="{Binding ProjectsVM.SetAllMetaCheckState}"/>
+
+										<Button Content="Set as default" HorizontalAlignment="Center" Width="120" BorderBrush="{DynamicResource TextControlBorderBrush}" Command="{Binding ProjectsVM.SetAllMetaCheckState}"/>
 									</StackPanel>
 								</Flyout>
 							</Button.Flyout>

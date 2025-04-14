@@ -77,9 +77,9 @@
 			</Border>
 		</Grid>
 
-		<StackPanel ClipToBounds="True" Grid.Row="1" Grid.ColumnSpan="2" FlowDirection="LeftToRight" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Center" Margin="0 -5 0 0" DataContext="{Binding PreviewVM}">
+		<StackPanel ClipToBounds="True" Grid.Row="1" Grid.ColumnSpan="2" FlowDirection="LeftToRight" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Center" Margin="0 0 0 0" DataContext="{Binding PreviewVM}">
 
-			<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Width="200" Margin="0 0 10 0" Minimum="1" IsSnapToTickEnabled="True" 
+			<Slider Name="ScrollSlider" FlowDirection="LeftToRight" Width="200" Margin="0 -7 0 0" Minimum="1" IsSnapToTickEnabled="True" VerticalAlignment="Top"
 					TickFrequency="1" Maximum="{Binding Pagecount}" Value="{Binding RequestPage1, Mode=OneWay, Converter={StaticResource AddOneConverter}}"/>
 
 
