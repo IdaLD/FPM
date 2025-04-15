@@ -707,7 +707,7 @@ namespace Avalon.ViewModels
                     if (b1 != null && !finished) { if (b1.ToLower().Contains(searchtext.ToLower())) { results.Add(file); finished = true; } }
                     if (b2 != null && !finished) { if (b2.ToLower().Contains(searchtext.ToLower())) { results.Add(file); finished = true; } }
                     if (b3 != null && !finished) { if (b3.ToLower().Contains(searchtext.ToLower())) { results.Add(file); finished = true; } }
-                    if (b3 != null && !finished) { if (b4.ToLower().Contains(searchtext.ToLower())) { results.Add(file); finished = true; } }
+                    if (b4 != null && !finished) { if (b4.ToLower().Contains(searchtext.ToLower())) { results.Add(file); finished = true; } }
                 }
             }
 
