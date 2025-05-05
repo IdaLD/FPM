@@ -252,6 +252,11 @@ namespace Avalon.ViewModels
             }
         }
 
+        public void ClearRenderer()
+        {
+
+        }
+
         public void SetupPage(int page = 0)
         {
             requestPage1 = page; 
@@ -371,9 +376,16 @@ namespace Avalon.ViewModels
             {
                 RequestPage1 = 0;
             }
-  
-            Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 4, RequestPage1, 1); });
-            Dispatcher.UIThread.Invoke(() => { Renderer.IsVisible = true; });
+
+            try
+            {
+                Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 4, RequestPage1, 1); });
+                Dispatcher.UIThread.Invoke(() => { Renderer.IsVisible = true; });
+            }
+            catch
+            {
+                return;
+            }
 
         }
 

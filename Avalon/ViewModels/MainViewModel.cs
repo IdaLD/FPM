@@ -183,9 +183,9 @@ namespace Avalon.ViewModels
 
         }
 
-        public void RestartPreviewer()
+        public void ResetPreviewer()
         {
-            PreviewVM = null;
+            PreviewVM.FileWorkerBusy = false;
         }
 
         public void PreviewWindowClosed(object sender, RoutedEventArgs e)
@@ -407,7 +407,6 @@ namespace Avalon.ViewModels
             {
                 PreviewVM.CurrentFile.FavPages.Remove(page);
             }
-            //CurrentFavorite = Favorites.First();
         }
 
 

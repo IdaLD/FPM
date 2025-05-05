@@ -39,7 +39,7 @@
 							<MenuItem Header="Save As" Click="on_save_file" Icon="{icxt:SymbolIconExtension Symbol=SaveEdit}"/>
 							<Separator/>
 							<MenuItem Header="Backup" Command="{Binding BackupSaveFile}" Icon="{icxt:SymbolIconExtension Symbol=ArrowCircleUp}"/>
-							<MenuItem Header="Restart" Command="{Binding RestartPreviewer}" Icon="{icxt:SymbolIconExtension Symbol=ArrowReset}"/>
+							<MenuItem Header="Reset" Command="{Binding ResetPreviewer}" Icon="{icxt:SymbolIconExtension Symbol=ArrowReset}"/>
 						</MenuItem>
 					</Menu>
 					<TextBlock/>
@@ -272,9 +272,9 @@
 									<MenuItem Name="MoveMenu" Header="Move" Click="on_move_files"/>
 								</MenuItem>
 
-								<MenuItem Name="RenameOriginal" Header="Rename File" IsEnabled="{Binding ProjectsVM.CurrentFile.IsLocal}" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Command="{Binding TryOpenRenameDia}" CommandParameter="{Binding $parent[Window]}"/>
+								<MenuItem Name="RenameOriginal" Header="Rename" IsEnabled="{Binding ProjectsVM.CurrentFile.IsLocal}" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Command="{Binding TryOpenRenameDia}" CommandParameter="{Binding $parent[Window]}"/>
 								
-								<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="OnRemoveFiles" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
+								<MenuItem Name="RemoveFileMenu" Header="Remove" Click="OnRemoveFiles" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
 							</ContextMenu>
 						</DataGrid.ContextMenu>
 					</DataGrid>

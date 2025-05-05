@@ -455,7 +455,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             CheckStatusSingleFile();
 
-            if (file != null && System.IO.Path.Exists(file.Sökväg)) 
+            if (file != null && Path.Exists(file.Sökväg)) 
             {
                 int startPage = file.DefaultPage;
 
@@ -463,6 +463,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                 pwr.RequestFile = file;
 
                 pwr.SetFile();
+            }
+
+            else
+            {
+                pwr.ClearRenderer();
             }
         }
     }
