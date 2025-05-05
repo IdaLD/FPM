@@ -183,6 +183,11 @@ namespace Avalon.ViewModels
 
         }
 
+        public void RestartPreviewer()
+        {
+            PreviewVM = null;
+        }
+
         public void PreviewWindowClosed(object sender, RoutedEventArgs e)
         {
             PreviewWindowOpen = false;
@@ -549,8 +554,18 @@ namespace Avalon.ViewModels
                 var data = JsonConvert.SerializeObject(ProjectsVM.StoredProjects);
                 await streamWriter.WriteLineAsync(data);
             }
+        }
 
-            Debug.WriteLine("Saved");
+        public void BackupSaveFile()
+        {
+            string saveFile = "C:\\FIlePathManager\\Projects.json";
+            string backupDir = "C:\\FIlePathManager\\Backup_" + DateTime.Today.ToString("d");
+            string backupFile = backupDir + "\\Projects.json";
+
+            System.IO.Directory.CreateDirectory(backupDir);
+
+            File.Copy(saveFile, backupFile, true);
+
         }
 
         public async Task AddFile(Avalonia.Visual window)

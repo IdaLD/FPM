@@ -34,8 +34,12 @@
 					<Menu DockPanel.Dock="Top">
 						<MenuItem Header="File">
 							<MenuItem Header="Load" Click="on_load_file" Icon="{icxt:SymbolIconExtension Symbol=FolderOpen}"/>
+							<Separator/>
 							<MenuItem Header="Save" HotKey="Ctrl+S" Click="on_save_file_auto" Icon="{icxt:SymbolIconExtension Symbol=Save}"/>
 							<MenuItem Header="Save As" Click="on_save_file" Icon="{icxt:SymbolIconExtension Symbol=SaveEdit}"/>
+							<Separator/>
+							<MenuItem Header="Backup" Command="{Binding BackupSaveFile}" Icon="{icxt:SymbolIconExtension Symbol=ArrowCircleUp}"/>
+							<MenuItem Header="Restart" Command="{Binding RestartPreviewer}" Icon="{icxt:SymbolIconExtension Symbol=ArrowReset}"/>
 						</MenuItem>
 					</Menu>
 					<TextBlock/>
