@@ -267,6 +267,10 @@
 									<TextBox Name="MoveFileToProjectName" Width="160" FlowDirection="LeftToRight"/>
 									<MenuItem Name="MoveMenu" Header="Move" Click="on_move_files"/>
 								</MenuItem>
+
+								<MenuItem Name="EditFile" Header="Edit File" Icon="{icxt:SymbolIconExtension Symbol=Edit}">
+									<MenuItem Name="RenameOriginal" Header="Rename" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Command="{Binding TryOpenRenameDia}" CommandParameter="{Binding $parent[Window]}"/>
+								</MenuItem>
 								
 								<MenuItem Name="RemoveFileMenu" Header="Remove File" Click="OnRemoveFiles" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
 							</ContextMenu>

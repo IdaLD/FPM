@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalon.Model;
@@ -735,6 +737,44 @@ namespace Avalon.ViewModels
             Meta_14 = false;
             Meta_15 = false;
 
+        }
+
+        public void RenameOriginal(string newName)
+        {
+            string oldName = CurrentFile.Namn;
+            string oldPath = CurrentFile.Sökväg;
+
+            if (oldName != newName && newName.Length > 0 && IsFileLocal())
+            {
+                string newPath = CurrentFile.Sökväg.Replace(oldName, newName);
+                try
+                {
+                    System.IO.File.Move(oldPath, newPath);
+                }
+                catch
+                {
+                    return;
+                }
+
+
+                CurrentFile.Sökväg = newPath;
+                CurrentFile.Namn = newName;
+
+            }
+        }
+
+
+        public bool IsFileLocal()
+        {
+            if (CurrentFile.Sökväg[0].ToString() == "C")
+            {
+                return true;
+            }
+
+            else
+            {
+                return false;
+            }
         }
 
         private void SetupDefaultFolders()

@@ -43,6 +43,12 @@
     <AvaloniaXaml Update="Dialogs\xEditDia.axaml">
       <SubType>Designer</SubType>
     </AvaloniaXaml>
+    <AvaloniaXaml Update="Dialogs\xRenameDia.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+    <AvaloniaXaml Update="Dialogs\xTagDia.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
   </ItemGroup>
 
   <ItemGroup>
@@ -62,8 +68,16 @@
     <Compile Update="Dialogs\xDeleteDia.axaml.cs">
       <DependentUpon>xDeleteDia.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Dialogs\xRenameDia.axaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>xRenameDia.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Dialogs\xTagDia.axaml.cs">
+      <SubType>Code</SubType>
       <DependentUpon>xTagDia.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Dialogs\xMessageDia.axaml.cs">
+      <DependentUpon>xMessageDia.axaml</DependentUpon>
     </Compile>
     <Compile Update="Dialogs\xEditDia.axaml.cs">
       <SubType>Code</SubType>

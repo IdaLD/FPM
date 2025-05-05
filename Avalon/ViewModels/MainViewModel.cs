@@ -19,6 +19,7 @@ using Avalonia.Interactivity;
 using Avalon.Views;
 using Avalonia;
 using Org.BouncyCastle.Asn1.BC;
+using System.Drawing.Printing;
 
 
 namespace Avalon.ViewModels
@@ -259,6 +260,54 @@ namespace Avalon.ViewModels
             window.ShowDialog(mainWindow);
             window.TagMenuInput.Focus();
         }
+
+        public void TryOpenRenameDia(Window mainWindow)
+        {
+            if (!ProjectsVM.IsFileLocal())
+            {
+                OpenMessageDia(mainWindow);
+            }
+
+            else
+            {
+                OpenRenameDia(mainWindow);
+            }
+        }
+
+        public void OpenRenameDia(Window mainWindow)
+        {
+            var window = new xRenameDia()
+            {
+                DataContext = this
+            };
+
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.Focusable = true;
+
+            window.SetCurrentName(ProjectsVM.CurrentFile.Namn);
+
+            window.NewNameInput.CaretIndex = window.NewNameInput.Text.Length;
+            window.ShowDialog(mainWindow);
+
+            window.NewNameInput.Focus();
+
+
+        }
+
+        public async Task OpenMessageDia(Window mainWindow)
+        {
+            var window = new xMessageDia()
+            {
+                DataContext = this
+            };
+
+            window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.Focusable = true;
+            window.SetMessage("Only available for files stored on C:\\");
+
+            await window.ShowDialog(mainWindow);
+        }
+
 
         public async Task ConfirmDeleteDia(Window mainWindow)
         {
@@ -984,7 +1033,6 @@ namespace Avalon.ViewModels
         {
             OnPropertyChanged("TreeViewUpdate");
         }
-
 
 
         public void move_files(string projectname)
