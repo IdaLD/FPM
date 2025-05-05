@@ -744,7 +744,7 @@ namespace Avalon.ViewModels
             string oldName = CurrentFile.Namn;
             string oldPath = CurrentFile.Sökväg;
 
-            if (oldName != newName && newName.Length > 0 && IsFileLocal())
+            if (oldName != newName && newName.Length > 0 && CurrentFile.IsLocal)
             {
                 string newPath = CurrentFile.Sökväg.Replace(oldName, newName);
                 try
@@ -763,19 +763,6 @@ namespace Avalon.ViewModels
             }
         }
 
-
-        public bool IsFileLocal()
-        {
-            if (CurrentFile.Sökväg[0].ToString() == "C")
-            {
-                return true;
-            }
-
-            else
-            {
-                return false;
-            }
-        }
 
         private void SetupDefaultFolders()
         {

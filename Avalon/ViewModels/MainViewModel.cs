@@ -263,7 +263,7 @@ namespace Avalon.ViewModels
 
         public void TryOpenRenameDia(Window mainWindow)
         {
-            if (!ProjectsVM.IsFileLocal())
+            if (!ProjectsVM.CurrentFile.IsLocal)
             {
                 OpenMessageDia(mainWindow);
             }

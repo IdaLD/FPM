@@ -118,6 +118,22 @@ namespace Avalon.Model
             set { sökväg = value; RaisePropertyChanged("Sökväg"); }
         }
 
+        public bool IsLocal
+        {
+            get 
+            {
+                if (Sökväg[0].ToString() == "C")
+                {
+                    return true;
+                }
+
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         private int defaultPage;
         public int DefaultPage
         {
