@@ -131,6 +131,12 @@
 				</StackPanel>
 			</ToggleButton>
 
+			<ToggleButton ToolTip.Tip="Generate two page files" FontWeight="Normal" ToolTip.Placement="Right" Name="GenDualFiles" IsChecked="{Binding DualFiles}">
+				<StackPanel>
+					<ic:SymbolIcon Symbol="BookOpen" IconVariant="Regular" FontSize="16"/>
+				</StackPanel>
+			</ToggleButton>
+
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10 0 5 0">
 				<ic:SymbolIcon Symbol="Checkmark" IconVariant="Regular" FontSize="16" IsVisible="{Binding !FileWorkerBusy}"/>
 				<ic:SymbolIcon Symbol="ArrowClockwise" IconVariant="Regular" FontSize="16" IsVisible="{Binding FileWorkerBusy}"/>

@@ -42,8 +42,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
 
         init_MetaWorker();
-
-        StatusLabel.Content = "Ready";
     }
 
     public bool previewMode = false;
@@ -563,10 +561,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_add_file(object sender, RoutedEventArgs e)
     {
-        StatusLabel.Content = "Adding Files";
         ctx.AddFile(this);
         SetupTreeview(null, null);
-        StatusLabel.Content = "Ready";
     }
 
     private void on_fetch_single_meta(object sender, RoutedEventArgs e)
@@ -724,41 +720,30 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void on_open_path(object sender, RoutedEventArgs e)
     {
-        StatusLabel.Content = "Opening path";
         CheckStatusSingleFile();
         ctx.open_path();
-        StatusLabel.Content = "Ready";
     }
 
     private void on_open_file(object sender, RoutedEventArgs e)
     {
-        StatusLabel.Content = "Opening file";
-
         CheckStatusSingleFile();
         ctx.open_files();
-        
-        StatusLabel.Content = "Ready";   
     }
 
     private void on_open_metafile(object sender, RoutedEventArgs e)
     {
-        StatusLabel.Content = "Opening metafile";
         ctx.open_meta();
-        StatusLabel.Content = "Ready";   
     }
 
     private void on_open_dwg(object sender, RoutedEventArgs e)
     {
-        StatusLabel.Content = "Opening Drawing";
         ctx.open_dwg();
-        StatusLabel.Content = "Ready";       
+   
     }
 
     private void on_open_doc(object sender, RoutedEventArgs e)
     {
-        StatusLabel.Content = "Opening Document";
         ctx.open_doc();
-        StatusLabel.Content = "Ready";
     }
 
     private async void on_load_file(object sender, RoutedEventArgs e)
@@ -769,15 +754,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private async void on_save_file(object sender, RoutedEventArgs e)
     {
-        StatusLabel.Content = "Saving file";
         await ctx.SaveFile(this);
-        StatusLabel.Content = "Ready";
     }
 
     private async void on_save_file_auto(object sender, RoutedEventArgs e)
     {
-        StatusLabel.Content = "Saving file";
-
         if (!Directory.Exists("\\FIlePathManager"))
         {
             Directory.CreateDirectory("\\FIlePathManager");
@@ -785,10 +766,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         string path = "C:\\FIlePathManager\\Projects.json";
 
-        
-
         await ctx.SaveFileAuto(path);
-        StatusLabel.Content = "Ready";
     }
 
     private void on_move_files(object sender, RoutedEventArgs e)

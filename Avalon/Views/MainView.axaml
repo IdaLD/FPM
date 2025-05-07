@@ -45,8 +45,9 @@
 					<TextBlock/>
 				</DockPanel>
 
-					<StackPanel Grid.Row="0" Grid.ColumnSpan="5" Orientation="Vertical" Spacing="10" Margin="0">
-						<Label Name="StatusLabel" Height="40" Width="250" HorizontalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Opacity="0.7" Padding="10"/>
+					<StackPanel Grid.Row="0" Grid.ColumnSpan="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+						<ic:SymbolIcon Symbol="Status" IconVariant="Regular" IsHitTestVisible="False" Width="25" FontSize="14" Opacity="0.7"/>
+						<TextBlock Text="{Binding PreviewVM.StatusMessage}" VerticalAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Opacity="0.7" Padding="1,0,2,0"/>
 					</StackPanel>
 				
 					<StackPanel Grid.Row="0" Grid.ColumnSpan="5" Orientation="Horizontal" Margin="60,2,0,0">
@@ -177,7 +178,7 @@
 					</StackPanel>
 
 					<DataGrid Name="FileGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible"
-							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="true">
+							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="True" CanUserResizeColumns="True">
 						<DataGrid.Styles>
 							<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
 								<Setter Property="IsVisible" Value="false" />

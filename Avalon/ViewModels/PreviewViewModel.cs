@@ -216,6 +216,20 @@ namespace Avalon.ViewModels
             set { rotation = value; OnPropertyChanged("Rotation"); }
         }
 
+        private bool dualFiles = false;
+        public bool DualFiles
+        {
+            get { return dualFiles; }
+            set { dualFiles = value; OnPropertyChanged("DualFiles"); }
+        }
+
+        private string statusMessage = "Ready!";
+        public string StatusMessage
+        {
+            get { return statusMessage; }
+            set { statusMessage = value; OnPropertyChanged("StatusMessage"); }
+        }
+
         private CancellationTokenSource MainCts = new CancellationTokenSource();
 
         private CancellationTokenSource DualCts = new CancellationTokenSource();
@@ -264,6 +278,8 @@ namespace Avalon.ViewModels
 
         public async void SetFile(int defPagenr = 0)
         {
+            StatusMessage = "Setting File";
+
             FileAvailable = false;
             TwopageModeAvail = false;
 
@@ -306,7 +322,7 @@ namespace Avalon.ViewModels
                 FileWorkerBusy = false;
                 FileAvailable = true;
 
-                if (Pagecount > 1)
+                if (Pagecount > 1 && DualFiles)
                 {
                     SetDualFile();
                 }
@@ -330,6 +346,8 @@ namespace Avalon.ViewModels
                     {
                         long total = source.Length;
 
+                        StatusMessage = "Reading Bytes: " + (total/1000000).ToString() + " Mb";
+
                         byte[] buffer = new byte[4096];
                         int bytesRead;
 
@@ -341,13 +359,14 @@ namespace Avalon.ViewModels
                         while ((bytesRead = source.Read(buffer, 0, buffer.Length)) > 0)
                         {
                             Token.ThrowIfCancellationRequested();
+
                             ms.Write(buffer, 0, bytesRead);
 
                             if (leap > 20)
                             {
                                 if (i % leap == 0)
                                 {
-                                    Progress = 100 * i / steps;
+                                    Progress = 100 * (i+1) / steps;
                                 }
                             }
                             i++;
@@ -360,6 +379,7 @@ namespace Avalon.ViewModels
             }
             catch
             {
+                Debug.WriteLine("ReadBytesWithProgress anceled");
                 return null;
             }
         }
@@ -372,22 +392,27 @@ namespace Avalon.ViewModels
             Pagecount = PreviewFile.Pages.Count;
             CurrentFile = RequestFile;
 
-            if(RequestPage1 > PreviewFile.Pages.Count)
+            if (RequestPage1 > PreviewFile.Pages.Count)
             {
                 RequestPage1 = 0;
             }
 
-            try
-            {
-                Dispatcher.UIThread.Invoke(() => { Renderer.Initialize(PreviewFile, 4, RequestPage1, 1); });
-                Dispatcher.UIThread.Invoke(() => { Renderer.IsVisible = true; });
-            }
-            catch
-            {
-                return;
-            }
 
-        }
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                try
+                {
+                    Renderer.Initialize(PreviewFile, 4, RequestPage1, 1);
+                    Renderer.IsVisible = true;
+                }
+                catch
+                {
+                    Debug.WriteLine("INITIALIZE FAILED");
+                    return;
+                }
+            });
+        }    
+
 
         private async void SetDualFile()
         {
@@ -418,6 +443,7 @@ namespace Avalon.ViewModels
 
         private async Task GetDualPage(CancellationToken Token)
         {
+
             try
             {
                 using (MemoryStream ms = new MemoryStream())
@@ -484,12 +510,15 @@ namespace Avalon.ViewModels
             }
             catch
             {
+                Debug.WriteLine("GetDualPage Canceled");
                 DualWorkerBusy = false;
+                return;
             }
         }
 
         public async Task SafeDispose()
         {
+            StatusMessage = "Disposing File";
             StopSearch();
             ClearSearch();
 
@@ -498,7 +527,7 @@ namespace Avalon.ViewModels
             while (RenderWorkerBusy || DualWorkerBusy || SearchBusy)
             {
                 Debug.WriteLine("Waiting");
-                await Task.Delay(300);
+                await Task.Delay(100);
             }
 
             if (PreviewFile != null)
@@ -520,7 +549,7 @@ namespace Avalon.ViewModels
                 PreviewFileDual?.Dispose();
                 ContextDual?.Dispose();
             }
-            
+            StatusMessage = "File Disposed";
         }
 
         public async Task SafeDualDispose()
