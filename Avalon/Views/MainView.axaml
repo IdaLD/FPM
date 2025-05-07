@@ -131,6 +131,12 @@
 							</StackPanel>
 						</ToggleButton>
 
+						<ToggleButton Name="AttachedView" ToolTip.Tip="Attached Files: Ctrl + A" HotKey="Ctrl+A" FontWeight="Normal" Margin="0,-5,0,0" IsChecked="{Binding AttachedView}">
+							<StackPanel>
+								<ic:SymbolIcon Name="Attached" Symbol="Attach" IconVariant="Regular" FontSize="18"/>
+							</StackPanel>
+						</ToggleButton>
+
 						<ToggleButton Name="PreviewWindow" FontWeight="Normal" ToolTip.Tip="Preview Window, Ctrl + W" HotKey="Ctrl+W" Height="30" Width="35" Margin="0,-5,0,0" IsChecked="{Binding PreviewWindowOpen, Mode=OneWay}" Click="OnTogglePreviewWindow">
 							<ic:SymbolIcon Symbol="Window" FontSize="18"/>
 						</ToggleButton>
@@ -177,135 +183,142 @@
 						
 					</StackPanel>
 
-					<DataGrid Name="FileGrid" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible"
-							  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="True" CanUserResizeColumns="True">
-						<DataGrid.Styles>
-							<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
-								<Setter Property="IsVisible" Value="false" />
-							</Style>
-						</DataGrid.Styles>
-						
-						<DataGrid.Columns>
-							<DataGridTextColumn Binding="{Binding Namn}"							Header="Namn"           Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_1}"  FontFamily="UbuntuMono"/>
-							<DataGridTextColumn Binding="{Binding FileStatus, Mode=OneWay}"			Header="FileStatus"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_2}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_3}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Uppdrag, Mode=OneWay}"			Header="Uppdrag"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_4}"  FontFamily="Ubuntu"/>
-							
-							<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_5}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_6}"  FontFamily="Ubuntu"/>
-
-							<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_7}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_8}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_9}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_10}" FontFamily="Ubuntu"/>
-						
-							<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_11}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_12}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_13}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_14}"  FontFamily="Ubuntu"/>
-							<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_15}"  FontFamily="Ubuntu"/>
-
-							
-							<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_16}"  FontFamily="Ubuntu"/>
-						</DataGrid.Columns>
-						
-						<DataGrid.ContextMenu>
-							<ContextMenu Name="Menu" ItemsPanel="">
-								
-								<MenuItem Name="OpenMenu" Header="Open" Icon="{icxt:SymbolIconExtension Symbol=Open}">
-									<MenuItem Name="OpenFileMenu" Header="Open PDF" Click="on_open_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentPdf}"/>
-									<MenuItem Name="OpenPathMenu" Header="Open Folder" Click="on_open_path" Icon="{icxt:SymbolIconExtension Symbol=FolderOpen}"/>
-									<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile" Icon="{icxt:SymbolIconExtension Symbol=DocumentDataLink}"/>
-									<MenuItem Name="OpenDocMenu" Header="Open Docx" Click="on_open_doc" Icon="{icxt:SymbolIconExtension Symbol=DocumentEdit}"/>
-									<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg" Icon="{icxt:SymbolIconExtension Symbol=DocumentTableCube}"/>
-								</MenuItem>
-
-								<MenuItem Name="TypeMenu" Header="FileType" ItemsSource="{Binding FileTypeSelection}" Click="edit_type" Icon="{icxt:SymbolIconExtension Symbol=Folder}"/>
-								
-								<MenuItem Name="MetaMenu" Header="Metadata" Icon="{icxt:SymbolIconExtension Symbol=Database}">
-									<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta" Icon="{icxt:SymbolIconExtension Symbol=DatabaseSearch}"/>
-									<MenuItem Name="FetchMetadata" Header="Fetch All" Click="on_fetch_full_meta" Icon="{icxt:SymbolIconExtension Symbol=DatabaseLink}"/>
-									<MenuItem Name="EditMetadata" Header="Edit" Command="{Binding OpenMetaEditDia}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=Edit}"/>
-									<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding clear_meta}" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
-								</MenuItem>
-								
-								<MenuItem Name="AddFavorite" Header="Favorite" ItemsSource="{Binding Favorites}" Icon="{icxt:SymbolIconExtension Symbol=Star}" Click="OnAddFavorite">
-
-								</MenuItem>
-								
-								<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{icxt:SymbolIconExtension Symbol=Clipboard}">
-									<MenuItem Name="FilenameCopyMenu" Header="List" Click="on_copy_filename" Icon="{icxt:SymbolIconExtension Symbol=TextBulletListAdd}"/>
-									<MenuItem Name="FilepathCopyMenu" Header="Path" Click="on_copy_filepath" Icon="{icxt:SymbolIconExtension Symbol=AppsList}"/>
-									<MenuItem Name="ListviewCopyMenu" Header="Table" Click="on_copy_listview" Icon="{icxt:SymbolIconExtension Symbol=TableLightning}"/>
-								</MenuItem>
-
-								<Separator></Separator>
-								
-								<MenuItem Name="ColorMainMenu" Header="Color Tag" Icon="{icxt:SymbolIconExtension Symbol=Color}">
-									<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="edit_color"/>
-									<MenuItem Name="YellowMenu" Background="#FFD700" Opacity="0.6" Tag ="Yellow" Click="edit_color"/>
-									<MenuItem Name="OrangeMenu" Background="#FFA500" Opacity="0.6" Tag ="Orange" Click="edit_color"/>
-									<MenuItem Name="BrownMenu" Background="#8B4513" Opacity="0.6" Tag ="Brown" Click="edit_color"/>
-									<MenuItem Name="GreenMenu" Background="#228B22" Opacity="0.6" Tag ="Green" Click="edit_color"/>
-									<MenuItem Name="BlueMenu" Background="#1E90FF" Opacity="0.6" Tag ="Blue" Click="edit_color"/>
-									<MenuItem Name="RedMenu" Background="#B22222" Opacity="0.6" Tag ="Red" Click="edit_color"/>
-									<MenuItem Name="MagentaMenu" Background="#9400D3" Opacity="0.6" Tag ="Magenta" Click="edit_color"/>
-								</MenuItem>
-								
-								<MenuItem Name="TagMenu" Header="User Tag" Command="{Binding OpenTagDia}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=Tag}"/>
-
-								<MenuItem Name="ClearAllMenu" Header="Clear Tags" Click="on_clear_files" Icon="{icxt:SymbolIconExtension Symbol=TagDismiss}"/>
-
-								<Separator></Separator>
-
-								<MenuItem Name="StatusMenu" Header="Status" Icon="{icxt:SymbolIconExtension Symbol=Checkmark}">
-									<MenuItem Name="CheckSingleFile" Header="Check File" Click="OnCheckStatusSingleFile" Icon="{icxt:SymbolIconExtension Symbol=CheckboxChecked}"/>
-									<MenuItem Name="CheckProjectFiles" Header="Check All" Click="OnCheckProjectFiles" Icon="{icxt:SymbolIconExtension Symbol=CheckboxChecked}"/>
-								</MenuItem>
-
-								<MenuItem Name="InfoMenu" Header="File info" Command="{Binding OnInfoDia}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=Question}"/>
-
-
-								<Separator></Separator>
-
-								<MenuItem Name="MoveFileMenu" IsVisible="False" Header="Move Files To" Icon="{icxt:SymbolIconExtension Symbol=ArrowRight}">
-									<TextBox Name="MoveFileToProjectName" Width="160" FlowDirection="LeftToRight"/>
-									<MenuItem Name="MoveMenu" Header="Move" Click="on_move_files"/>
-								</MenuItem>
-
-								<MenuItem Name="RenameOriginal" Header="Rename" IsEnabled="{Binding ProjectsVM.CurrentFile.IsLocal}" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Command="{Binding TryOpenRenameDia}" CommandParameter="{Binding $parent[Window]}"/>
-								
-								<MenuItem Name="RemoveFileMenu" Header="Remove" Click="OnRemoveFiles" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
-							</ContextMenu>
-						</DataGrid.ContextMenu>
-					</DataGrid>
-
-				<GridSplitter Name="PreviewSplitter" Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns" IsEnabled="False"/>
-
-				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="2*,35,*,1.5*,35,*">
+					<Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" RowDefinitions="*,Auto">
 					
-					<Border Grid.Row="0" Margin="5">
-						<DataGrid Name="AppendixGrid" Padding="0" ItemsSource="{Binding ProjectsVM.CurrentFile.AppendedFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
-									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}" CornerRadius="{Binding CornerRadius}">
+						<DataGrid Name="FileGrid" Grid.Row="0" Margin="5" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible"
+								  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="True" CanUserResizeColumns="True">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
-									<Setter Property="IsVisible" Value="false"/>
+									<Setter Property="IsVisible" Value="false" />
 								</Style>
 							</DataGrid.Styles>
-
+						
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding Namn}" Header="Attached Files" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding Namn}"							Header="Namn"           Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_1}"  FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding FileStatus, Mode=OneWay}"			Header="FileStatus"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_2}"  FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_3}"  FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding Uppdrag, Mode=OneWay}"			Header="Uppdrag"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_4}"  FontFamily="Ubuntu"/>
+							
+								<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_5}"  FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_6}"  FontFamily="Ubuntu"/>
+
+								<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_7}"  FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_8}"  FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_9}"  FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_10}" FontFamily="Ubuntu"/>
+						
+								<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_11}"  FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_12}"  FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_13}"  FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_14}"  FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_15}"  FontFamily="Ubuntu"/>
+
+							
+								<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_16}"  FontFamily="Ubuntu"/>
 							</DataGrid.Columns>
+						
 							<DataGrid.ContextMenu>
-								<ContextMenu>
-									<MenuItem Header="Remove" Click="OnRemoveAttachedFile"/>
+								<ContextMenu Name="Menu" ItemsPanel="">
+								
+									<MenuItem Name="OpenMenu" Header="Open" Icon="{icxt:SymbolIconExtension Symbol=Open}">
+										<MenuItem Name="OpenFileMenu" Header="Open PDF" Click="on_open_file" Icon="{icxt:SymbolIconExtension Symbol=DocumentPdf}"/>
+										<MenuItem Name="OpenPathMenu" Header="Open Folder" Click="on_open_path" Icon="{icxt:SymbolIconExtension Symbol=FolderOpen}"/>
+										<MenuItem Name="OpenMetaMenu" Header="Open Metafile" Click="on_open_metafile" Icon="{icxt:SymbolIconExtension Symbol=DocumentDataLink}"/>
+										<MenuItem Name="OpenDocMenu" Header="Open Docx" Click="on_open_doc" Icon="{icxt:SymbolIconExtension Symbol=DocumentEdit}"/>
+										<MenuItem Name="OpenDwgMenu" Header="Open Dwg" Click="on_open_dwg" Icon="{icxt:SymbolIconExtension Symbol=DocumentTableCube}"/>
+									</MenuItem>
+
+									<MenuItem Name="TypeMenu" Header="FileType" ItemsSource="{Binding FileTypeSelection}" Click="edit_type" Icon="{icxt:SymbolIconExtension Symbol=Folder}"/>
+								
+									<MenuItem Name="MetaMenu" Header="Metadata" Icon="{icxt:SymbolIconExtension Symbol=Database}">
+										<MenuItem Name="FetchSingleMetadataMenu" Header="Fetch" Click="on_fetch_single_meta" Icon="{icxt:SymbolIconExtension Symbol=DatabaseSearch}"/>
+										<MenuItem Name="FetchMetadata" Header="Fetch All" Click="on_fetch_full_meta" Icon="{icxt:SymbolIconExtension Symbol=DatabaseLink}"/>
+										<MenuItem Name="EditMetadata" Header="Edit" Command="{Binding OpenMetaEditDia}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=Edit}"/>
+										<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding clear_meta}" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
+									</MenuItem>
+								
+									<MenuItem Name="AddFavorite" Header="Favorite" ItemsSource="{Binding Favorites}" Icon="{icxt:SymbolIconExtension Symbol=Star}" Click="OnAddFavorite">
+
+									</MenuItem>
+								
+									<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{icxt:SymbolIconExtension Symbol=Clipboard}">
+										<MenuItem Name="FilenameCopyMenu" Header="List" Click="on_copy_filename" Icon="{icxt:SymbolIconExtension Symbol=TextBulletListAdd}"/>
+										<MenuItem Name="FilepathCopyMenu" Header="Path" Click="on_copy_filepath" Icon="{icxt:SymbolIconExtension Symbol=AppsList}"/>
+										<MenuItem Name="ListviewCopyMenu" Header="Table" Click="on_copy_listview" Icon="{icxt:SymbolIconExtension Symbol=TableLightning}"/>
+									</MenuItem>
+
+									<Separator></Separator>
+								
+									<MenuItem Name="ColorMainMenu" Header="Color Tag" Icon="{icxt:SymbolIconExtension Symbol=Color}">
+										<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="edit_color"/>
+										<MenuItem Name="YellowMenu" Background="#FFD700" Opacity="0.6" Tag ="Yellow" Click="edit_color"/>
+										<MenuItem Name="OrangeMenu" Background="#FFA500" Opacity="0.6" Tag ="Orange" Click="edit_color"/>
+										<MenuItem Name="BrownMenu" Background="#8B4513" Opacity="0.6" Tag ="Brown" Click="edit_color"/>
+										<MenuItem Name="GreenMenu" Background="#228B22" Opacity="0.6" Tag ="Green" Click="edit_color"/>
+										<MenuItem Name="BlueMenu" Background="#1E90FF" Opacity="0.6" Tag ="Blue" Click="edit_color"/>
+										<MenuItem Name="RedMenu" Background="#B22222" Opacity="0.6" Tag ="Red" Click="edit_color"/>
+										<MenuItem Name="MagentaMenu" Background="#9400D3" Opacity="0.6" Tag ="Magenta" Click="edit_color"/>
+									</MenuItem>
+								
+									<MenuItem Name="TagMenu" Header="User Tag" Command="{Binding OpenTagDia}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=Tag}"/>
+
+									<MenuItem Name="ClearAllMenu" Header="Clear Tags" Click="on_clear_files" Icon="{icxt:SymbolIconExtension Symbol=TagDismiss}"/>
+
+									<Separator></Separator>
+
+									<MenuItem Name="StatusMenu" Header="Status" Icon="{icxt:SymbolIconExtension Symbol=Checkmark}">
+										<MenuItem Name="CheckSingleFile" Header="Check File" Click="OnCheckStatusSingleFile" Icon="{icxt:SymbolIconExtension Symbol=CheckboxChecked}"/>
+										<MenuItem Name="CheckProjectFiles" Header="Check All" Click="OnCheckProjectFiles" Icon="{icxt:SymbolIconExtension Symbol=CheckboxChecked}"/>
+									</MenuItem>
+
+									<MenuItem Name="InfoMenu" Header="File info" Command="{Binding OnInfoDia}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=Question}"/>
+
+
+									<Separator></Separator>
+
+									<MenuItem Name="MoveFileMenu" IsVisible="False" Header="Move Files To" Icon="{icxt:SymbolIconExtension Symbol=ArrowRight}">
+										<TextBox Name="MoveFileToProjectName" Width="160" FlowDirection="LeftToRight"/>
+										<MenuItem Name="MoveMenu" Header="Move" Click="on_move_files"/>
+									</MenuItem>
+
+									<MenuItem Name="RenameOriginal" Header="Rename" IsEnabled="{Binding ProjectsVM.CurrentFile.IsLocal}" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Command="{Binding TryOpenRenameDia}" CommandParameter="{Binding $parent[Window]}"/>
+								
+									<MenuItem Name="RemoveFileMenu" Header="Remove" Click="OnRemoveFiles" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
 								</ContextMenu>
 							</DataGrid.ContextMenu>
 						</DataGrid>
-					</Border>
+
+						<Grid Grid.Row="1" IsVisible="{Binding AttachedView}" MinHeight="200" MaxHeight="600">
+							<Border Margin="5">
+								<DataGrid Name="AppendixGrid" Padding="0" ItemsSource="{Binding ProjectsVM.CurrentFile.AppendedFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
+											AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}" CornerRadius="{Binding CornerRadius}">
+									<DataGrid.Styles>
+										<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
+											<Setter Property="IsVisible" Value="false"/>
+										</Style>
+									</DataGrid.Styles>
+
+									<DataGrid.Columns>
+										<DataGridTextColumn Binding="{Binding Namn}" Header="Attached Files" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+									</DataGrid.Columns>
+									<DataGrid.ContextMenu>
+										<ContextMenu>
+											<MenuItem Header="Remove" Click="OnRemoveAttachedFile"/>
+										</ContextMenu>
+									</DataGrid.ContextMenu>
+								</DataGrid>
+							</Border>
+						</Grid>
+						
+					</Grid>
+
+				<GridSplitter Name="PreviewSplitter" Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns" IsEnabled="False"/>
+
+				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,1.5*,35,*">
 					
-					<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="5" Margin="5">
-						<TextBox Name="NewFavGroupInput" Width="170" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
+					
+					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
+						<TextBox Name="NewFavGroupInput" Width="170" Watermark="Add Group" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
 						<Button Width="35" Click="OnAddFavGroup">
 							<ic:SymbolIcon Symbol="Add" FontSize="18"/>
 						</Button>
@@ -317,7 +330,7 @@
 						</Button>
 					</StackPanel>
 
-					<Border Grid.Row="2" Margin="5">
+					<Border Grid.Row="1" Margin="5">
 						<DataGrid Name="FavoriteGroups" Padding="0" ItemsSource="{Binding Favorites}" SelectedItem="{Binding CurrentFavorite}" RowHeight="22" SelectionMode="Extended"
 								AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}">
 							<DataGrid.Styles>
@@ -330,8 +343,9 @@
 							</DataGrid.Columns>
 						</DataGrid>						
 					</Border>
+
 					
-					<Border Grid.Row="3" Margin="5">
+					<Border Grid.Row="2" Margin="5">
 						<DataGrid Name="TrayGrid" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFav, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
 									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}">
 							<DataGrid.Styles>
@@ -350,9 +364,9 @@
 						</DataGrid>
 					</Border>
 
-					<Grid Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,*,35,*">
+					<Grid Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,*,35,*">
 						<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
-							<TextBox Name="NewFavPageInput" Width="170" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
+							<TextBox Name="NewFavPageInput" Watermark="Add Bookmark" Width="170" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
 							<Button Width="35" Click="OnAddFavPage">
 								<ic:SymbolIcon Symbol="Add" FontSize="18"/>
 							</Button>
@@ -365,7 +379,7 @@
 						</StackPanel>
 					</Grid>
 
-					<Border Grid.Row="5" Margin="5">
+					<Border Grid.Row="4" Margin="5">
 						<DataGrid Name="PageGrid" Padding="0" ItemsSource="{Binding PreviewVM.CurrentFile.FavPages, Mode=OneWay}" RowHeight="22" SelectionMode="Single"
 									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}" CornerRadius="{Binding CornerRadius}">
 							<DataGrid.Styles>
@@ -375,8 +389,8 @@
 							</DataGrid.Styles>
 
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding PageNr, Converter={StaticResource AddOneConverter}}" Header="Bookmark" Width="85" FontFamily="UbuntuMono"/>
-								<DataGridTextColumn Binding="{Binding PageName}" Header="Name" Width="*" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding PageNr, Converter={StaticResource AddOneConverter}}" Header="Page" Width="85" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding PageName}" Header="Bookmark" Width="*" FontFamily="UbuntuMono"/>
 							</DataGrid.Columns>
 
 						</DataGrid>

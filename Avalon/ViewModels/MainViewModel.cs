@@ -156,6 +156,13 @@ namespace Avalon.ViewModels
             new MenuItem() { Header = "Other", Icon = new Label() { Content = "○" } }
         };
 
+        private bool attachedView = false;
+        public bool AttachedView
+        {
+            get { return attachedView; }
+            set { attachedView = value; OnPropertyChanged("AttachedView"); }
+        }
+
         public List<MenuItem> FileTypeSelection
         {
             get { return fileTypeSelection; }
@@ -1010,6 +1017,23 @@ namespace Avalon.ViewModels
         public void select_files(IList<FileData> files)
         {
             ProjectsVM.CurrentFiles = files;
+
+            SetAttachedView();
+        }
+
+        private void SetAttachedView()
+        {
+            if (ProjectsVM.CurrentFile != null)
+            {
+                if (ProjectsVM.CurrentFile.AppendedFiles.Count > 0)
+                {
+                    AttachedView = true;
+                }
+                else
+                {
+                    AttachedView = false;
+                }
+            }
         }
 
         public void select_type(string name)

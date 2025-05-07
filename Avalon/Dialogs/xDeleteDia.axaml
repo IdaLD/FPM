@@ -22,7 +22,7 @@
 			<StackPanel Grid.Row="1" Width="210" Height="140" Orientation="Vertical" Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Top">
 				<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10" Spacing="0">
 					<ic:SymbolIcon Symbol="Warning" VerticalAlignment="Center" HorizontalAlignment="Center" IconVariant="Regular" FontSize="30"/>
-					<Label Content="Delete?" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+					<Label Content="Remove File?" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
 				</StackPanel>
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
 					<Button Name="ConfirmButton" HotKey="Enter" Content="Confirm" Click="OnConfirm" Width="70" BorderBrush="{DynamicResource TextControlBorderBrush}"/>
