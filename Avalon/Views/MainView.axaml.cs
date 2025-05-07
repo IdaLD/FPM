@@ -13,6 +13,8 @@ using Avalon.Model;
 using System.IO;
 using Avalonia.Data;
 using Avalonia.Styling;
+using Org.BouncyCastle.Asn1.BC;
+using System.Diagnostics;
 
 
 namespace Avalon.Views;
@@ -31,6 +33,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_main);
         FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_files);
         FileGrid.AddHandler(DragDrop.DropEvent, on_drop);
+
+        AppendixGrid.AddHandler(DragDrop.DropEvent, OnDropAppendedFiles);
+        //AppendixGrid.AddHandler(DataGrid.SelectionChangedEvent, SelectAppendedFiles);
+        AppendixGrid.AddHandler(DataGrid.SelectionChangedEvent, SetPreviewRequestAppendedFiles);
 
         TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, select_favorite);
         TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_tray);
@@ -161,7 +167,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         foreach(var item in items)
         {
-            if (item.Path.IsFile == true)
+            if (item.Path.IsFile)
             {
                 string path = item.Path.LocalPath;
                 string type = System.IO.Path.GetExtension(path);
@@ -173,6 +179,25 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             }
         }
         SetupTreeview(null, null);
+    }
+
+    public void OnDropAppendedFiles(object sender, DragEventArgs e)
+    {
+        var items = e.Data.GetFiles();
+
+        foreach(var item in items)
+        {
+            if (item.Path.IsFile)
+            {
+                string path = item.Path.LocalPath;
+                string type = System.IO.Path.GetExtension(path);
+
+                if (type == ".pdf")
+                {
+                    ctx.ProjectsVM.AddAppendedFile(path);
+                }
+            }
+        }
     }
 
     private void SetupTreeview(object sender, RoutedEventArgs e)
@@ -447,6 +472,12 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         set_preview_request(file);
     }
 
+    private void SetPreviewRequestAppendedFiles(object sender, RoutedEventArgs r)
+    {
+        FileData file = (FileData)AppendixGrid.SelectedItem;
+        set_preview_request(file);
+    }
+
     private void set_preview_request(FileData file)
     {
         if (previewMode || ctx.PreviewWindowOpen)
@@ -693,6 +724,20 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     }
 
 
+    async void OnRemoveAttachedFile(object sender, RoutedEventArgs e)
+    {
+        Window window = (MainWindow)Window.GetTopLevel(this);
+        await ctx.ConfirmDeleteDia(window);
+
+        if (ctx.Confirmed)
+        {
+            IList<FileData> files = AppendixGrid.SelectedItems.Cast<FileData>().ToList();
+
+            ctx.RemoveAttachedFile(files);
+        }
+    }
+
+
     private void OnAddFavorite(object sender, RoutedEventArgs e)
     {
         MenuItem source = e.Source as MenuItem;
@@ -714,6 +759,14 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         IList<FileData> files = FileGrid.SelectedItems.Cast<FileData>().ToList();
         TrayGrid.SelectedItem = null;
+
+        ctx.select_files(files);
+    }
+
+    private void SelectAppendedFiles(object sender, RoutedEventArgs e)
+    {
+        IList<FileData> files = AppendixGrid.SelectedItems.Cast<FileData>().ToList();
+        //AppendixGrid.SelectedItem = null;
 
         ctx.select_files(files);
     }

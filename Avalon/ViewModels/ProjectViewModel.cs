@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Avalon.Model;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace Avalon.ViewModels
 {
@@ -666,6 +667,23 @@ namespace Avalon.ViewModels
             if (FavProject != null)
             {
                 FavProject.SetFiletypeList();
+            }
+        }
+
+        public void AddAppendedFile(string filepath)
+        {
+            if (CurrentFile != null && CurrentFile.AppendedFiles.Where(x=>x.Sökväg == filepath).Count() == 0)
+            {
+                CurrentFile.AppendedFiles.Add(new FileData()
+                {
+                    Namn = System.IO.Path.GetFileNameWithoutExtension(filepath),
+                    Sökväg = filepath
+                });
+
+                List<FileData> tempList = CurrentFile.AppendedFiles.OrderBy(x => x.Namn).ToList();
+                CurrentFile.AppendedFiles.Clear();
+                CurrentFile.AppendedFiles = new ObservableCollection<FileData>(tempList);
+
             }
         }
 

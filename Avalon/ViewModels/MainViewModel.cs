@@ -20,6 +20,7 @@ using Avalon.Views;
 using Avalonia;
 using Org.BouncyCastle.Asn1.BC;
 using System.Drawing.Printing;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 
 
 namespace Avalon.ViewModels
@@ -432,6 +433,14 @@ namespace Avalon.ViewModels
             Favorites.Remove(CurrentFavorite);
 
             CurrentFavorite = Favorites.First();
+        }
+
+        public void RemoveAttachedFile(IList<FileData> files)
+        {
+            foreach(FileData file in files)
+            {
+                ProjectsVM.CurrentFile.AppendedFiles.Remove(file);
+            }
         }
 
         public void OnGetFavGroups()

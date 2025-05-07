@@ -148,6 +148,13 @@ namespace Avalon.Model
             set { favPages = value; RaisePropertyChanged("FavPages"); }
         }
 
+        private ObservableCollection<FileData> appendedFiles = new ObservableCollection<FileData>();
+        public ObservableCollection<FileData> AppendedFiles
+        {
+            get { return appendedFiles; }
+            set { appendedFiles = value; RaisePropertyChanged("AppendedFiles"); }
+        }
+
         private string info = string.Empty;
         public string Info
         {

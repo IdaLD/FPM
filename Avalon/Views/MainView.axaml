@@ -282,8 +282,29 @@
 
 				<GridSplitter Name="PreviewSplitter" Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns" IsEnabled="False"/>
 
-				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,1.5*,35,2*">
-					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
+				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="2*,35,*,1.5*,35,*">
+					
+					<Border Grid.Row="0" Margin="5">
+						<DataGrid Name="AppendixGrid" Padding="0" ItemsSource="{Binding ProjectsVM.CurrentFile.AppendedFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
+									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}" CornerRadius="{Binding CornerRadius}">
+							<DataGrid.Styles>
+								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
+									<Setter Property="IsVisible" Value="false"/>
+								</Style>
+							</DataGrid.Styles>
+
+							<DataGrid.Columns>
+								<DataGridTextColumn Binding="{Binding Namn}" Header="Attached Files" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+							</DataGrid.Columns>
+							<DataGrid.ContextMenu>
+								<ContextMenu>
+									<MenuItem Header="Remove" Click="OnRemoveAttachedFile"/>
+								</ContextMenu>
+							</DataGrid.ContextMenu>
+						</DataGrid>
+					</Border>
+					
+					<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="5" Margin="5">
 						<TextBox Name="NewFavGroupInput" Width="170" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
 						<Button Width="35" Click="OnAddFavGroup">
 							<ic:SymbolIcon Symbol="Add" FontSize="18"/>
@@ -296,7 +317,7 @@
 						</Button>
 					</StackPanel>
 
-					<Border Grid.Row="1" Margin="5">
+					<Border Grid.Row="2" Margin="5">
 						<DataGrid Name="FavoriteGroups" Padding="0" ItemsSource="{Binding Favorites}" SelectedItem="{Binding CurrentFavorite}" RowHeight="22" SelectionMode="Extended"
 								AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}">
 							<DataGrid.Styles>
@@ -305,12 +326,12 @@
 								</Style>
 							</DataGrid.Styles>
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding}" Header="Favorites" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding}" Header="Groups" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
 							</DataGrid.Columns>
 						</DataGrid>						
 					</Border>
 					
-					<Border Grid.Row="2" Margin="5">
+					<Border Grid.Row="3" Margin="5">
 						<DataGrid Name="TrayGrid" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFav, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
 									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}">
 							<DataGrid.Styles>
@@ -319,7 +340,7 @@
 								</Style>
 							</DataGrid.Styles>
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding Namn}" Header="Files" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding Namn}" Header="Favorites" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
 							</DataGrid.Columns>
 							<DataGrid.ContextMenu>
 								<ContextMenu>
@@ -329,7 +350,7 @@
 						</DataGrid>
 					</Border>
 
-					<Grid Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,*,35,*">
+					<Grid Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,*,35,*">
 						<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
 							<TextBox Name="NewFavPageInput" Width="170" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
 							<Button Width="35" Click="OnAddFavPage">
@@ -344,8 +365,8 @@
 						</StackPanel>
 					</Grid>
 
-					<Border Grid.Row="4" Margin="5">
-						<DataGrid Name="PageGrid" Padding="0" ItemsSource="{Binding PreviewVM.CurrentFile.FavPages, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
+					<Border Grid.Row="5" Margin="5">
+						<DataGrid Name="PageGrid" Padding="0" ItemsSource="{Binding PreviewVM.CurrentFile.FavPages, Mode=OneWay}" RowHeight="22" SelectionMode="Single"
 									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}" CornerRadius="{Binding CornerRadius}">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
@@ -354,7 +375,7 @@
 							</DataGrid.Styles>
 
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding PageNr, Converter={StaticResource AddOneConverter}}" Header="Page" Width="85" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding PageNr, Converter={StaticResource AddOneConverter}}" Header="Bookmark" Width="85" FontFamily="UbuntuMono"/>
 								<DataGridTextColumn Binding="{Binding PageName}" Header="Name" Width="*" FontFamily="UbuntuMono"/>
 							</DataGrid.Columns>
 
