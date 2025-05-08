@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Avalon.Model
 {
@@ -247,6 +249,14 @@ namespace Avalon.Model
         {
             get { return favorite; }
             set { favorite = value; RaisePropertyChanged("Favorite"); RaisePropertyChanged("NameWithAttributes"); }
+        }
+
+
+        private List<string> partOfCollections = new List<string>();
+        public List<string> PartOfCollections
+        {
+            get { return partOfCollections; }
+            set { partOfCollections = value; RaisePropertyChanged("PartOfCollections"); Debug.WriteLine(PartOfCollections.Count); }
         }
 
 

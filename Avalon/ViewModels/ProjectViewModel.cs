@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,10 +17,10 @@ namespace Avalon.ViewModels
 {
     public class ProjectViewModel : ViewModelBase, INotifyPropertyChanged
     {
-        public ProjectViewModel()
+        public ProjectViewModel() 
         {
             NewProject("New Project");
-
+            
             CurrentProject = StoredProjects.FirstOrDefault();
             SetProjectlist();
             SetProject("New Project");
@@ -48,6 +49,7 @@ namespace Avalon.ViewModels
             set { currentProject = value; OnPropertyChanged("CurrentProject"); UpdateFilter(); UpdateMetaCheck(); }
         }
 
+
         private string[] projectColor = null;
         public string[] ProjectColor
         {
@@ -68,20 +70,6 @@ namespace Avalon.ViewModels
         {
             get { return filteredFiles; }
             set { filteredFiles = value; OnPropertyChanged("FilteredFiles"); }
-        }
-
-        private IEnumerable<FileData> filteredFav;
-        public IEnumerable<FileData> FilteredFav
-        {
-            get { return filteredFav; }
-            set { filteredFav = value; OnPropertyChanged("FilteredFav"); }
-        }
-
-        private ObservableCollection<FileData> trayFiles = new ObservableCollection<FileData>();
-        public ObservableCollection<FileData> TrayFiles
-        {
-            get { return trayFiles; }
-            set { trayFiles = value; OnPropertyChanged("TrayFiles"); }
         }
 
         public int NrFilteredFiles
@@ -551,23 +539,6 @@ namespace Avalon.ViewModels
             return StoredProjects.Where(x => x.Category != "Search").Where(x=>x.Category != "Favorites").FirstOrDefault();
         }
 
-        public void TransferFiles(string toProjectName)
-        {
-            ProjectData toProject = GetProject(toProjectName);
-
-            if (toProject == null)
-            {
-                NewProject(toProjectName);
-                toProject = GetProject(toProjectName);
-            }
-
-            toProject.AddFiles(CurrentFiles);
-
-            RemoveSelectedFiles();
-
-            toProject.SetFiletypeList();
-            CurrentProject.SetFiletypeList();
-        }
 
         public void ClearSelectedMetadata()
         {
@@ -585,91 +556,6 @@ namespace Avalon.ViewModels
             }
         }
 
-        public void AddFavorite(string group)
-        {
-            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
-
-            if (FavProject == null)
-            {
-                FavProject = new ProjectData { Namn = "Favorites", Category = "Favorites" };
-                FavProject.MetaCheckStore = MetaCheckDefault;
-                StoredProjects.Add(FavProject);
-                
-                SortProjects();
-            }
-
-            foreach(FileData file in CurrentFiles)
-            {
-                FileData currentFav = new FileData() { Namn = file.Namn, Sökväg = file.Sökväg, Filtyp = file.Filtyp, Uppdrag = group };
-                FavProject.AddFile(currentFav);
-            }
-
-            FavProject.SetFiletypeList();
-        }
-
-        public void RemoveFavorite()
-        {
-            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
-            foreach(FileData file in CurrentFiles)
-            {
-                FavProject.RemoveFile(CurrentFile);
-            }
-
-            FavProject.SetFiletypeList();
-        }
-
-        public void RemoveFavoriteGroup(string group)
-        {
-            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
-
-            List<FileData> FavFiles = FavProject.StoredFiles.Where(x => x.Uppdrag == group).ToList();
-
-            foreach (FileData file in FavFiles)
-            {
-                FavProject.RemoveFile(file);
-            }
-
-            FavProject.SetFiletypeList();
-        }
-
-        public void RenameFavoriteGroup(string oldGroup, string newGroup)
-        {
-            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
-            List<FileData> FavFiles = FavProject.StoredFiles.Where(x => x.Uppdrag == oldGroup).ToList();
-
-            foreach (FileData file in FavFiles)
-            {
-                file.Uppdrag = newGroup;
-            }
-
-            FavProject.SetFiletypeList();
-        }
-
-        public void FilterFavorite(string group)
-        {
-            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
-
-            if(FavProject != null)
-            {
-                FilteredFav = FavProject.StoredFiles.Where(x => x.Uppdrag == group);
-            }
-            
-        }
-
-        public void UpdateFavorite()
-        {
-            ProjectData FavProject = StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
-
-            if (FavProject != null)
-            {
-                TrayFiles = FavProject.StoredFiles;
-            }
-
-            if (FavProject != null)
-            {
-                FavProject.SetFiletypeList();
-            }
-        }
 
         public void AddAppendedFile(string filepath)
         {

@@ -237,7 +237,7 @@
 										<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding clear_meta}" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
 									</MenuItem>
 								
-									<MenuItem Name="AddFavorite" Header="Collection" ItemsSource="{Binding Favorites}" Icon="{icxt:SymbolIconExtension Symbol=Folder}" Click="OnAddFavorite">
+									<MenuItem Name="AddToCollection" Header="Collection" ItemsSource="{Binding GeneralData.Collections}" Icon="{icxt:SymbolIconExtension Symbol=Folder}" Click="OnAddToCollection">
 									</MenuItem>
 								
 									<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{icxt:SymbolIconExtension Symbol=Clipboard}">
@@ -276,11 +276,6 @@
 
 
 									<Separator></Separator>
-
-									<MenuItem Name="MoveFileMenu" IsVisible="False" Header="Move Files To" Icon="{icxt:SymbolIconExtension Symbol=ArrowRight}">
-										<TextBox Name="MoveFileToProjectName" Width="160" FlowDirection="LeftToRight"/>
-										<MenuItem Name="MoveMenu" Header="Move" Click="on_move_files"/>
-									</MenuItem>
 									
 									<MenuItem Name="RenameOriginal" Header="Rename" IsEnabled="{Binding ProjectsVM.CurrentFile.IsLocal}" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Command="{Binding TryOpenRenameDia}" CommandParameter="{Binding $parent[Window]}"/>
 								
@@ -322,20 +317,20 @@
 					</Border>
 					
 					<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="5" Margin="5">
-						<TextBox Name="NewFavGroupInput" Width="170" Height="30" Watermark="Add Group" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
-						<Button Width="35" Click="OnAddFavGroup">
+						<TextBox Name="CollectionInput" Width="170" Height="30" Watermark="Add Group" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
+						<Button Width="35" Click="OnNewCollection">
 							<ic:SymbolIcon Symbol="Add" FontSize="18"/>
 						</Button>
-						<Button Name="RemoveFavoriteGroup" Width="35" Click="OnRemoveFavGroup">
+						<Button Name="RemoveCollection" Width="35" Command="{Binding RemoveCollection}">
 							<ic:SymbolIcon Symbol="Delete" FontSize="18"/>
 						</Button>
-						<Button Width="35" Click="OnRenameFavGroup">
+						<Button Width="35" Name="RenameCollection" Click="OnRenameCollection">
 							<ic:SymbolIcon Symbol="Rename" FontSize="18"/>
 						</Button>
 					</StackPanel>
 
 					<Border Grid.Row="2" Margin="5">
-						<DataGrid Name="FavoriteGroups" Padding="0" ItemsSource="{Binding Favorites}" SelectedItem="{Binding CurrentFavorite}" RowHeight="22" SelectionMode="Extended"
+						<DataGrid Name="Collections" Padding="0" ItemsSource="{Binding GeneralData.Collections}" SelectedItem="{Binding CurrentCollection}" RowHeight="22" SelectionMode="Extended"
 								AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
@@ -350,7 +345,7 @@
 
 					
 					<Border Grid.Row="3" Margin="5">
-						<DataGrid Name="TrayGrid" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFav, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
+						<DataGrid Name="CollectionContent" Padding="0" ItemsSource="{Binding CollectionContent, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
 									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
@@ -362,7 +357,7 @@
 							</DataGrid.Columns>
 							<DataGrid.ContextMenu>
 								<ContextMenu>
-									<MenuItem Header="Remove" Command="{Binding OnRemoveFavoriteFile}"/>
+									<MenuItem Header="Remove" Command="{Binding RemoveCollection}"/>
 								</ContextMenu>
 							</DataGrid.ContextMenu>
 						</DataGrid>
@@ -370,21 +365,21 @@
 
 					<Grid Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,*,35,*">
 						<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
-							<TextBox Name="NewFavPageInput" Watermark="Add Bookmark" Width="170" Height="30" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
-							<Button Width="35" Click="OnAddFavPage">
+							<TextBox Name="BookmarkInput" Watermark="Add Bookmark" Width="170" Height="30" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
+							<Button Width="35" Click="OnAddBookmark">
 								<ic:SymbolIcon Symbol="Add" FontSize="18"/>
 							</Button>
-							<Button Name="RemoveFavoritePage" Width="35" Click="OnRemoveFavPage">
+							<Button Name="RemoveFavoritePage" Width="35" Click="OnRemoveBookmark">
 								<ic:SymbolIcon Symbol="Delete" FontSize="18"/>
 							</Button>
-							<Button Width="35" Click="OnRenameFavPage">
+							<Button Width="35" Click="OnRenameBookmark">
 								<ic:SymbolIcon Symbol="Rename" FontSize="18"/>
 							</Button>
 						</StackPanel>
 					</Grid>
 
 					<Border Grid.Row="5" Margin="5">
-						<DataGrid Name="PageGrid" Padding="0" ItemsSource="{Binding PreviewVM.CurrentFile.FavPages, Mode=OneWay}" RowHeight="22" SelectionMode="Single"
+						<DataGrid Name="BookmarkGrid" Padding="0" ItemsSource="{Binding PreviewVM.CurrentFile.FavPages, Mode=OneWay}" RowHeight="22" SelectionMode="Single"
 									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}" CornerRadius="{Binding CornerRadius}">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">

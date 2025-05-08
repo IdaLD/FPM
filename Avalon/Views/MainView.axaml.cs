@@ -26,7 +26,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         InitializeComponent();
 
         FileGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
-        TrayGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
+        CollectionContent.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
 
         FetchMetadata.AddHandler(Button.ClickEvent, on_fetch_full_meta);
 
@@ -38,11 +38,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         //AppendixGrid.AddHandler(DataGrid.SelectionChangedEvent, SelectAppendedFiles);
         AppendixGrid.AddHandler(DataGrid.SelectionChangedEvent, SetPreviewRequestAppendedFiles);
 
-        TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, select_favorite);
-        TrayGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_tray);
-        FavoriteGroups.AddHandler(ListBox.SelectionChangedEvent, OnFavoriteGroupChanged);
+        CollectionContent.AddHandler(DataGrid.SelectionChangedEvent, select_favorite);
+        CollectionContent.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_tray);
 
-        PageGrid.AddHandler(DataGrid.SelectionChangedEvent, FavPageSelected);
+        BookmarkGrid.AddHandler(DataGrid.SelectionChangedEvent, BookmarkSelected);
 
         FileGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
         PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
@@ -335,8 +334,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         if (trayview)
         {
-            ctx.ProjectsVM.UpdateFavorite();
-            ctx.OnGetFavGroups();
             MainGrid.ColumnDefinitions[4] = new ColumnDefinition(300, GridUnitType.Pixel);
         }
         else
@@ -468,7 +465,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void set_preview_request_tray(object sender, RoutedEventArgs r)
     {
-        FileData file = (FileData)TrayGrid.SelectedItem;
+        FileData file = (FileData)CollectionContent.SelectedItem;
         set_preview_request(file);
     }
 
@@ -645,83 +642,74 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ProgressBar.Value = 0;
     }
 
-    private void FavPageSelected(object sender, RoutedEventArgs e)
+
+
+    private void BookmarkSelected(object sender, RoutedEventArgs e)
     {
         if (previewMode || ctx.PreviewWindowOpen)
         {
-            PageData page = (PageData)PageGrid.SelectedItem;
-            ctx.SetFavPage(page);
+            PageData page = (PageData)BookmarkGrid.SelectedItem;
+            ctx.SetBookmark(page);
         }
     }
 
-    private void OnAddFavPage(object sender, RoutedEventArgs e)
+    private void OnAddBookmark(object sender, RoutedEventArgs e)
     {
         if (previewMode || ctx.PreviewWindowOpen)
         {
-            ctx.AddFavPage(NewFavPageInput.Text);
-            NewFavPageInput.Clear();
+            ctx.AddBookmark(BookmarkInput.Text);
+            BookmarkInput.Clear();
         }
     }
 
-    private void OnRenameFavPage(object sender, RoutedEventArgs e)
+    private void OnRenameBookmark(object sender, RoutedEventArgs e)
     {
-        ctx.RenameFavPage(NewFavPageInput.Text);
-        NewFavPageInput.Clear();
+        ctx.RenameBookmark(BookmarkInput.Text);
+        BookmarkInput.Clear();
     }
 
-    private void OnRemoveFavPage(object sender, RoutedEventArgs e)
+    private void OnRemoveBookmark(object sender, RoutedEventArgs e)
     {
-        PageData page = (PageData)PageGrid.SelectedItem;
-        ctx.RemoveFavPage(page);
+        PageData page = (PageData)BookmarkGrid.SelectedItem;
+        ctx.RemoveBookmark(page);
     }
 
     private void select_favorite(object sender, RoutedEventArgs e)
     {
-        IList<FileData> files = TrayGrid.SelectedItems.Cast<FileData>().ToList();
+        IList<FileData> files = CollectionContent.SelectedItems.Cast<FileData>().ToList();
         
         deselect_items();
         ctx.select_files(files);
     }
 
-    private void OnAddFavGroup(object sender, RoutedEventArgs e)
+    private void OnNewCollection(object sender, RoutedEventArgs e)
     {
-        string text = NewFavGroupInput.Text;
+        string text = CollectionInput.Text;
 
-        if(text == null || text.ToString().Length == 0)
+        if(text != null && text.ToString().Length > 0)
         {
-            return;
-        }
-
-        ctx.AddFavGroup(NewFavGroupInput.Text);
-        NewFavGroupInput.Clear();
-    }
-
-    private void OnRenameFavGroup(object sender, RoutedEventArgs e)
-    {
-        string text = NewFavGroupInput.Text;
-
-        if (text == null || text.ToString().Length == 0)
-        {
-            return;
-        }
-
-        ctx.RenameFavGroup(NewFavGroupInput.Text);
-        NewFavGroupInput.Clear();
-    }
-
-    async void OnRemoveFavGroup(object sender, RoutedEventArgs e)
-    {
-        if(ctx.Favorites.Count > 1)
-        {
-            Window window = (MainWindow)Window.GetTopLevel(this);
-            await ctx.ConfirmDeleteDia(window);
-
-            if (ctx.Confirmed)
-            {
-                ctx.RemoveFavGroup();
-            }
+            ctx.NewCollection(CollectionInput.Text);
+            CollectionInput.Clear();
         }
     }
+
+    private void OnRenameCollection(object sender, RoutedEventArgs e)
+    {
+        string text = CollectionInput.Text;
+
+        if (text != null && text.ToString().Length > 0)
+        {
+            ctx.RenameCollection(CollectionInput.Text);
+            CollectionInput.Clear();
+        }
+    }
+
+    private void OnAddToCollection(object sender, RoutedEventArgs e)
+    {
+        MenuItem source = e.Source as MenuItem;
+        ctx.AddFileToCollection(source.Header.ToString());
+    }
+
 
 
     async void OnRemoveAttachedFile(object sender, RoutedEventArgs e)
@@ -737,28 +725,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-
-    private void OnAddFavorite(object sender, RoutedEventArgs e)
-    {
-        MenuItem source = e.Source as MenuItem;
-
-        ctx.ProjectsVM.AddFavorite(source.Header.ToString());
-        ctx.CurrentFavorite = source.Header.ToString();
-    }
-
-    private void OnFavoriteGroupChanged(object sender, RoutedEventArgs e)
-    {
-        ListBox source = e.Source as ListBox;
-        if (source.SelectedItem != null)
-        {
-            ctx.CurrentFavorite = source.SelectedItem.ToString();
-        }
-    }
-
     private void select_files(object sender, RoutedEventArgs e)
     {
         IList<FileData> files = FileGrid.SelectedItems.Cast<FileData>().ToList();
-        TrayGrid.SelectedItem = null;
+        CollectionContent.SelectedItem = null;
 
         ctx.select_files(files);
     }
@@ -766,7 +736,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void SelectAppendedFiles(object sender, RoutedEventArgs e)
     {
         IList<FileData> files = AppendixGrid.SelectedItems.Cast<FileData>().ToList();
-        //AppendixGrid.SelectedItem = null;
 
         ctx.select_files(files);
     }
@@ -820,13 +789,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         string path = "C:\\FIlePathManager\\Projects.json";
 
         await ctx.SaveFileAuto(path);
-    }
-
-    private void on_move_files(object sender, RoutedEventArgs e)
-    {
-        string projectname = MoveFileToProjectName.Text;
-        ctx.move_files(projectname);
-        ctx.ProjectsVM.UpdateFilter();
     }
 
     async void OnRemoveFiles(object sender, RoutedEventArgs e)

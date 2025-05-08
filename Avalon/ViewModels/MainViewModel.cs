@@ -29,6 +29,12 @@ namespace Avalon.ViewModels
     {
         public MainViewModel() { }
 
+        private GeneralData generalData = new GeneralData();
+        public GeneralData GeneralData
+        {
+            get { return generalData; }
+            set { generalData = value; OnPropertyChanged("GeneralData"); }
+        }
 
         private ProjectViewModel projectsVM = new ProjectViewModel();
         public ProjectViewModel ProjectsVM
@@ -61,15 +67,22 @@ namespace Avalon.ViewModels
             set { previewWindowOpen = value; OnPropertyChanged("PreviewWindowOpen"); }
         }
 
+        private string currentCollection = string.Empty;
+        public string CurrentCollection
+        {
+            get { return currentCollection; }
+            set { currentCollection = value; OnPropertyChanged("CurrentCollection"); SetCollectionContent(CurrentCollection); }
+        }
+
+        private ObservableCollection<FileData> collectionContent = new ObservableCollection<FileData>();
+        public ObservableCollection<FileData> CollectionContent
+        {
+            get { return collectionContent; }
+            set { collectionContent = value; OnPropertyChanged("CollectionContent"); }
+        }
 
         public Window PreviewWindow;
 
-        private string currentFavorite = string.Empty;
-        public string CurrentFavorite
-        {
-            get { return currentFavorite; }
-            set { currentFavorite = value; OnPropertyChanged("CurrentFavorite"); ProjectsVM.FilterFavorite(currentFavorite); }
-        }
 
         private ObservableCollection<string> groups = new ObservableCollection<string>() {};
         public ObservableCollection<string> Groups
@@ -378,12 +391,12 @@ namespace Avalon.ViewModels
             }
         }
 
-        public void SetFavPage(PageData page)
+        public void SetBookmark(PageData page)
         {
             FavPage = page;
         }
 
-        public void AddFavPage(string pageName)
+        public void AddBookmark(string pageName)
         {
             int pageNr = PreviewVM.CurrentPage1;
             PageData page = new PageData() { PageNr = pageNr, PageName = pageName };
@@ -396,7 +409,7 @@ namespace Avalon.ViewModels
             SortBookmarks();
         }
 
-        public void RenameFavPage(string pageName)
+        public void RenameBookmark(string pageName)
         {
             if (FavPage != null)
             {
@@ -404,7 +417,7 @@ namespace Avalon.ViewModels
             }
         }
 
-        public void RemoveFavPage(PageData page)
+        public void RemoveBookmark(PageData page)
         {
             if (PreviewVM.CurrentFile != null)
             {
@@ -429,61 +442,73 @@ namespace Avalon.ViewModels
             }
         }
 
-        public void AddFavGroup(string group)
+        public void NewCollection(string name)
         {
-            Favorites.Add(group);
+            GeneralData.Collections.Add(name);
         }
 
-        public void RenameFavGroup(string group)
+
+        public void RemoveCollection()
         {
-            int currentIndex = Favorites.IndexOf(CurrentFavorite);
-            Favorites.Insert(currentIndex, group);
-
-            ProjectsVM.RenameFavoriteGroup(CurrentFavorite, group);
-            Favorites.Remove(CurrentFavorite);
-            CurrentFavorite = group;
-
-        }
-
-        public void RemoveFavGroup()
-        {
-            ProjectsVM.RemoveFavoriteGroup(CurrentFavorite);
-            Favorites.Remove(CurrentFavorite);
-
-            CurrentFavorite = Favorites.First();
-        }
-
-        public void OnGetFavGroups()
-        {
-            Favorites.Clear();
-
-            ProjectData FavProject = ProjectsVM.StoredProjects.FirstOrDefault(x => x.Namn == "Favorites");
-
-            List<string> favList = new List<string>();
-
-            if(FavProject == null)
+            if (CollectionContent.Count() > 0)
             {
-                favList.Add("Default");
+                foreach (FileData file in CollectionContent)
+                {
+                    file.PartOfCollections.Remove(CurrentCollection);
+                }
             }
 
-            if (FavProject != null)
+            GeneralData.Collections.Remove(CurrentCollection);
+
+            //CurrentCollection = GeneralData.Collections.First();
+
+
+            // Cleanup old approach
+            Debug.WriteLine(ProjectsVM.StoredProjects.Where(x => x.Namn == "Favorites").Count());
+
+        }
+
+        public void AddFileToCollection(string collection)
+        {
+            ProjectsVM.CurrentFile.PartOfCollections.Add(collection);
+            CurrentCollection = collection;
+        }
+
+        public void RemoveFileFromCollection(string collection)
+        {
+            ProjectsVM.CurrentFile.PartOfCollections.Remove(collection);
+        }
+
+        public void SetCollectionContent(string collection)
+        {
+            CollectionContent.Clear();
+
+            foreach (ProjectData project in ProjectsVM.StoredProjects)
             {
-                favList = FavProject.StoredFiles.Select(x => x.Uppdrag).Distinct().ToList();
+                foreach(FileData file in project.StoredFiles.Where(x => x.PartOfCollections.Contains(collection)))
+                {
+                    CollectionContent.Add(file);
+                }
             }
-            
-            Favorites = new ObservableCollection<string>(favList);
         }
 
-        public void OnAddFavorite()
+        public void RenameCollection(string newName)
         {
-            ProjectsVM.AddFavorite(CurrentFavorite);
+            if (!GeneralData.Collections.Contains(newName))
+            {
+                foreach (FileData file in CollectionContent)
+                {
+                    file.PartOfCollections.Remove(CurrentCollection);
+                    file.PartOfCollections.Add(newName);
+                }
+
+                int index = GeneralData.Collections.IndexOf(CurrentCollection);
+                GeneralData.Collections[index] = newName;
+
+                CurrentCollection = newName;
+            }
         }
 
-        public void OnRemoveFavoriteFile()
-        {
-            ProjectsVM.RemoveFavorite();
-            CurrentFavorite = CurrentFavorite;
-        }
 
 
         public async Task LoadFile(Avalonia.Visual window)
@@ -515,7 +540,6 @@ namespace Avalon.ViewModels
                 SetCurrentColor();
                 SetAllowedTypes();
                 GetGroups();
-                OnGetFavGroups();
 
             }
         }
@@ -532,7 +556,6 @@ namespace Avalon.ViewModels
                 SetCurrentColor();
                 SetAllowedTypes();
                 GetGroups();
-                OnGetFavGroups();
             }
         }
 
@@ -1075,12 +1098,6 @@ namespace Avalon.ViewModels
         public void UpdateTreeview()
         {
             OnPropertyChanged("TreeViewUpdate");
-        }
-
-
-        public void move_files(string projectname)
-        {
-            ProjectsVM.TransferFiles(projectname);
         }
 
         public void UpdateLists(string selectedProject, string selectedType)
