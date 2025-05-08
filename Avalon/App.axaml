@@ -57,7 +57,6 @@
 
 		<Style Selector="TextBox">
 			<Setter Property="MinHeight" Value="25"/>
-			<Setter Property="Height" Value="30"/>
 			<Setter Property="CornerRadius" Value="10"/>
 			<Setter Property="BorderThickness" Value="0"/>
 		</Style>

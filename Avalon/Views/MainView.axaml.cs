@@ -733,7 +733,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             IList<FileData> files = AppendixGrid.SelectedItems.Cast<FileData>().ToList();
 
-            ctx.RemoveAttachedFile(files);
+            ctx.ProjectsVM.RemoveAttachedFile(files);
         }
     }
 

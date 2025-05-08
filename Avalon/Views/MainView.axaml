@@ -110,7 +110,7 @@
 
 				<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="5" HorizontalAlignment="Center" Margin="30 0 0 0">
 					<Grid ColumnDefinitions="*,30">
-						<TextBox Grid.Column="0" Watermark="Seach All Files" Name="SearchText" Width="160" KeyDown="on_start_search" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
+						<TextBox Grid.Column="0" Watermark="Seach All Files" Name="SearchText" Width="160" Height="30" KeyDown="on_start_search" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
 						<Button Grid.Column="2" Click="on_search" >
 							<ic:SymbolIcon Symbol="Search" IconVariant="Regular" FontSize="18"/>
 						</Button>
@@ -127,7 +127,7 @@
 						
 						<ToggleButton Name="TrayStatus" ToolTip.Tip="Tray: Ctrl + R" HotKey="Ctrl+R" FontWeight="Normal" Margin="0,-5,0,0" IsCheckedChanged="toggle_tray">
 							<StackPanel>
-								<ic:SymbolIcon Name="TrayOn" Symbol="Star" IconVariant="Regular" FontSize="18"/>
+								<ic:SymbolIcon Name="TrayOn" Symbol="Folder" IconVariant="Regular" FontSize="18"/>
 							</StackPanel>
 						</ToggleButton>
 
@@ -194,7 +194,7 @@
 							</DataGrid.Styles>
 						
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding Namn}"							Header="Namn"           Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_1}"  FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding NameWithAttributes}"				Header="Namn"           Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_1}"  FontFamily="UbuntuMono"/>
 								<DataGridTextColumn Binding="{Binding FileStatus, Mode=OneWay}"			Header="FileStatus"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_2}"  FontFamily="Ubuntu"/>
 								<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_3}"  FontFamily="Ubuntu"/>
 								<DataGridTextColumn Binding="{Binding Uppdrag, Mode=OneWay}"			Header="Uppdrag"		Width="Auto" MinWidth="120" IsVisible="{Binding ProjectsVM.Meta_4}"  FontFamily="Ubuntu"/>
@@ -237,8 +237,7 @@
 										<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding clear_meta}" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
 									</MenuItem>
 								
-									<MenuItem Name="AddFavorite" Header="Favorite" ItemsSource="{Binding Favorites}" Icon="{icxt:SymbolIconExtension Symbol=Star}" Click="OnAddFavorite">
-
+									<MenuItem Name="AddFavorite" Header="Collection" ItemsSource="{Binding Favorites}" Icon="{icxt:SymbolIconExtension Symbol=Folder}" Click="OnAddFavorite">
 									</MenuItem>
 								
 									<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{icxt:SymbolIconExtension Symbol=Clipboard}">
@@ -248,6 +247,8 @@
 									</MenuItem>
 
 									<Separator></Separator>
+									
+									<MenuItem Name="MarkFavorite" Header="Favorite" Icon="{icxt:SymbolIconExtension Symbol=Star}" Command="{Binding MarkFavorite}"/>
 								
 									<MenuItem Name="ColorMainMenu" Header="Color Tag" Icon="{icxt:SymbolIconExtension Symbol=Color}">
 										<MenuItem Name="WhiteMenu" Header="None" Tag ="" Click="edit_color"/>
@@ -280,7 +281,7 @@
 										<TextBox Name="MoveFileToProjectName" Width="160" FlowDirection="LeftToRight"/>
 										<MenuItem Name="MoveMenu" Header="Move" Click="on_move_files"/>
 									</MenuItem>
-
+									
 									<MenuItem Name="RenameOriginal" Header="Rename" IsEnabled="{Binding ProjectsVM.CurrentFile.IsLocal}" Icon="{icxt:SymbolIconExtension Symbol=Rename}" Command="{Binding TryOpenRenameDia}" CommandParameter="{Binding $parent[Window]}"/>
 								
 									<MenuItem Name="RemoveFileMenu" Header="Remove" Click="OnRemoveFiles" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
@@ -299,7 +300,7 @@
 									</DataGrid.Styles>
 
 									<DataGrid.Columns>
-										<DataGridTextColumn Binding="{Binding Namn}" Header="Attached Files" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+										<DataGridTextColumn Binding="{Binding NameWithAttributes}" Header="Attached Files" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
 									</DataGrid.Columns>
 									<DataGrid.ContextMenu>
 										<ContextMenu>
@@ -314,11 +315,14 @@
 
 				<GridSplitter Name="PreviewSplitter" Grid.Column="2" Grid.Row="2" Background="Transparent" ResizeDirection="Columns" IsEnabled="False"/>
 
-				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,1.5*,35,*">
+				<Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="*,35,*,1.5*,35,*">
+
+					<Border Grid.Row="0" Margin="5" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}">
+						<TextBox MinWidth="0" VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" Text="{Binding ProjectsVM.CurrentFile.Note}" Watermark="File Notepad" AcceptsReturn="True" AcceptsTab="True"/>
+					</Border>
 					
-					
-					<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
-						<TextBox Name="NewFavGroupInput" Width="170" Watermark="Add Group" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
+					<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="5" Margin="5">
+						<TextBox Name="NewFavGroupInput" Width="170" Height="30" Watermark="Add Group" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
 						<Button Width="35" Click="OnAddFavGroup">
 							<ic:SymbolIcon Symbol="Add" FontSize="18"/>
 						</Button>
@@ -330,7 +334,7 @@
 						</Button>
 					</StackPanel>
 
-					<Border Grid.Row="1" Margin="5">
+					<Border Grid.Row="2" Margin="5">
 						<DataGrid Name="FavoriteGroups" Padding="0" ItemsSource="{Binding Favorites}" SelectedItem="{Binding CurrentFavorite}" RowHeight="22" SelectionMode="Extended"
 								AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}">
 							<DataGrid.Styles>
@@ -345,7 +349,7 @@
 					</Border>
 
 					
-					<Border Grid.Row="2" Margin="5">
+					<Border Grid.Row="3" Margin="5">
 						<DataGrid Name="TrayGrid" Padding="0" ItemsSource="{Binding ProjectsVM.FilteredFav, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
 									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}">
 							<DataGrid.Styles>
@@ -364,9 +368,9 @@
 						</DataGrid>
 					</Border>
 
-					<Grid Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,*,35,*">
+					<Grid Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="1" RowDefinitions="35,*,*,35,*">
 						<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5" Margin="5">
-							<TextBox Name="NewFavPageInput" Watermark="Add Bookmark" Width="170" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
+							<TextBox Name="NewFavPageInput" Watermark="Add Bookmark" Width="170" Height="30" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}"/>
 							<Button Width="35" Click="OnAddFavPage">
 								<ic:SymbolIcon Symbol="Add" FontSize="18"/>
 							</Button>
@@ -379,7 +383,7 @@
 						</StackPanel>
 					</Grid>
 
-					<Border Grid.Row="4" Margin="5">
+					<Border Grid.Row="5" Margin="5">
 						<DataGrid Name="PageGrid" Padding="0" ItemsSource="{Binding PreviewVM.CurrentFile.FavPages, Mode=OneWay}" RowHeight="22" SelectionMode="Single"
 									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Border}" CornerRadius="{Binding CornerRadius}">
 							<DataGrid.Styles>

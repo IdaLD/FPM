@@ -10,7 +10,7 @@ namespace Avalon.Model
         public string Namn
         {
             get { return namn; }
-            set { namn = value; RaisePropertyChanged("Namn"); }
+            set { namn = value; RaisePropertyChanged("Namn"); RaisePropertyChanged("NameWithAttributes"); }
         }
 
         private string fileStatus = string.Empty;
@@ -145,21 +145,108 @@ namespace Avalon.Model
         public ObservableCollection<PageData> FavPages
         {
             get { return favPages; }
-            set { favPages = value; RaisePropertyChanged("FavPages"); }
+            set { favPages = value; RaisePropertyChanged("FavPages"); RaisePropertyChanged("NameWithAttributes"); }
+        }
+
+        public bool HasBookmarks
+        {
+            get
+            {
+                if (FavPages.Count > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
 
         private ObservableCollection<FileData> appendedFiles = new ObservableCollection<FileData>();
         public ObservableCollection<FileData> AppendedFiles
         {
             get { return appendedFiles; }
-            set { appendedFiles = value; RaisePropertyChanged("AppendedFiles"); }
+            set { appendedFiles = value; RaisePropertyChanged("AppendedFiles"); RaisePropertyChanged("NameWithAttributes"); }
         }
 
-        private string info = string.Empty;
-        public string Info
+        public bool HasAppendedFiles
         {
-            get { return info; }
-            set { info = value; RaisePropertyChanged("Info"); }
+            get
+            {
+                if (AppendedFiles.Count > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        public string NameWithAttributes
+        {
+            get
+            {
+                string nameWithAttributes = Namn;
+
+                if (Favorite)
+                {
+                    nameWithAttributes = "⭐ " + nameWithAttributes;
+                }
+
+                if (HasAppendedFiles || HasBookmarks || HasNote)
+                {
+                    nameWithAttributes = nameWithAttributes + "⠀";
+                }
+
+                if (HasAppendedFiles)
+                {
+                    nameWithAttributes = nameWithAttributes + "📎";
+                }
+
+                if (HasBookmarks)
+                {
+                    nameWithAttributes = nameWithAttributes + "🔖";
+                }
+
+                if (HasNote)
+                {
+                    nameWithAttributes = nameWithAttributes + " 📝";
+                }
+
+                return nameWithAttributes;
+            }
+        }
+
+        private string note = string.Empty;
+        public string Note
+        {
+            get { return note; }
+            set { note = value; RaisePropertyChanged("Note"); RaisePropertyChanged("NameWithAttributes"); }
+        }
+
+        public bool HasNote
+        {
+            get
+            {
+                if (Note.Length > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        private bool favorite = false;
+        public bool Favorite
+        {
+            get { return favorite; }
+            set { favorite = value; RaisePropertyChanged("Favorite"); RaisePropertyChanged("NameWithAttributes"); }
         }
 
 

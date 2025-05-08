@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalon.Model;
+using Avalon.Views;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Org.BouncyCastle.Bcpg.OpenPgp;
@@ -680,11 +681,26 @@ namespace Avalon.ViewModels
                     Sökväg = filepath
                 });
 
-                List<FileData> tempList = CurrentFile.AppendedFiles.OrderBy(x => x.Namn).ToList();
-                CurrentFile.AppendedFiles.Clear();
-                CurrentFile.AppendedFiles = new ObservableCollection<FileData>(tempList);
-
+                SortAttachedFiles();
             }
+        }
+
+        public void RemoveAttachedFile(IList<FileData> files)
+        {
+            foreach (FileData file in files)
+            {
+                CurrentFile.AppendedFiles.Remove(file);
+            }
+
+            SortAttachedFiles();
+        }
+
+
+        private void SortAttachedFiles()
+        {
+            List<FileData> tempList = CurrentFile.AppendedFiles.OrderBy(x => x.Namn).ToList();
+            CurrentFile.AppendedFiles.Clear();
+            CurrentFile.AppendedFiles = new ObservableCollection<FileData>(tempList);
         }
 
         public void SetProjectColor(Color color1, Color color2, Color color3, Color color4, bool cornerRadiusVal, bool borderVal)
@@ -697,8 +713,6 @@ namespace Avalon.ViewModels
 
                 project.Borders = [cornerRadiusVal, borderVal];
             }
-
-
         }
 
         public void SeachFiles(string searchtext)

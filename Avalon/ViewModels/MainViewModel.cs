@@ -391,14 +391,9 @@ namespace Avalon.ViewModels
             if (PreviewVM.CurrentFile != null)
             {
                 PreviewVM.CurrentFile.FavPages.Add(page);
-
-                List<PageData> tempList = PreviewVM.CurrentFile.FavPages.OrderBy(x => x.PageNr).ToList();
-
-                PreviewVM.CurrentFile.FavPages.Clear();
-
-                PreviewVM.CurrentFile.FavPages = new ObservableCollection<PageData>(tempList);
-
             }
+
+            SortBookmarks();
         }
 
         public void RenameFavPage(string pageName)
@@ -415,8 +410,24 @@ namespace Avalon.ViewModels
             {
                 PreviewVM.CurrentFile.FavPages.Remove(page);
             }
+
+            SortBookmarks();
         }
 
+        private void SortBookmarks()
+        {
+            List<PageData> tempList = PreviewVM.CurrentFile.FavPages.OrderBy(x => x.PageNr).ToList();
+            PreviewVM.CurrentFile.FavPages.Clear();
+            PreviewVM.CurrentFile.FavPages = new ObservableCollection<PageData>(tempList);
+        }
+
+        public void MarkFavorite()
+        {
+            foreach (FileData file in ProjectsVM.CurrentFiles)
+            {
+                file.Favorite = !file.Favorite;
+            }
+        }
 
         public void AddFavGroup(string group)
         {
@@ -440,14 +451,6 @@ namespace Avalon.ViewModels
             Favorites.Remove(CurrentFavorite);
 
             CurrentFavorite = Favorites.First();
-        }
-
-        public void RemoveAttachedFile(IList<FileData> files)
-        {
-            foreach(FileData file in files)
-            {
-                ProjectsVM.CurrentFile.AppendedFiles.Remove(file);
-            }
         }
 
         public void OnGetFavGroups()
@@ -1025,14 +1028,7 @@ namespace Avalon.ViewModels
         {
             if (ProjectsVM.CurrentFile != null)
             {
-                if (ProjectsVM.CurrentFile.AppendedFiles.Count > 0)
-                {
-                    AttachedView = true;
-                }
-                else
-                {
-                    AttachedView = false;
-                }
+                AttachedView = ProjectsVM.CurrentFile.HasAppendedFiles;
             }
         }
 
