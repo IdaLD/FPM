@@ -21,7 +21,7 @@ public partial class xEditDia : Window
     {
         MainViewModel ctx = (MainViewModel)this.DataContext;
 
-        string cat = ctx.ProjectsVM.CurrentProject.Category;
+        string cat = ctx.CurrentProject.Category;
 
         ComboBoxItem comboBoxItem = null;
 
@@ -42,7 +42,7 @@ public partial class xEditDia : Window
         if (ProjectName.Text != null)
         {
             MainViewModel ctx = (MainViewModel)this.DataContext;
-            ctx.rename_project(ProjectName.Text.ToString());
+            ctx.RenameProject(ProjectName.Text.ToString());
 
             string group = null;
 

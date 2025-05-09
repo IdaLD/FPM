@@ -23,9 +23,8 @@ public partial class xCloseDia : Window
     {
 
         MainViewModel ctx = (MainViewModel)this.DataContext;
-        string path = "C:\\FIlePathManager\\Projects.json";
 
-        await ctx.SaveFileAuto(path);
+        await ctx.SaveFileAuto();
 
         OnLeave(null, null);
 

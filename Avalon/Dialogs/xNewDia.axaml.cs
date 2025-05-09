@@ -37,7 +37,7 @@ public partial class xNewDia : Window
                 group = ProjectGroup.Text.ToString();
             }
 
-            ctx.ProjectsVM.NewProject(Name, group, cat);
+            ctx.NewProject(Name, group, cat);
 
             ctx.UpdateTreeview();
         }

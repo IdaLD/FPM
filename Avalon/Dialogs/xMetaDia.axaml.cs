@@ -25,36 +25,36 @@ public partial class xMetaDia : Window
     {
         MainViewModel ctx = (MainViewModel)this.DataContext;
 
-        string val1 = ctx.ProjectsVM.CurrentFile.Namn;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Namn == val1).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        string val1 = ctx.CurrentFile.Namn;
+        if (ctx.CurrentFiles.Where(x => x.Namn == val1).Count() == ctx.CurrentFiles.Count())
         { 
             FileNameInp.Text = val1; 
         }
 
-        string val2 = ctx.ProjectsVM.CurrentFile.Filtyp;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Filtyp == val2).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        string val2 = ctx.CurrentFile.Filtyp;
+        if (ctx.CurrentFiles.Where(x => x.Filtyp == val2).Count() == ctx.CurrentFiles.Count())
         { 
             FileTypeInp.Text = val2; 
         }
 
-        string val3 = ctx.ProjectsVM.CurrentFile.Uppdrag;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Uppdrag == val3).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        string val3 = ctx.CurrentFile.Uppdrag;
+        if (ctx.CurrentFiles.Where(x => x.Uppdrag == val3).Count() == ctx.CurrentFiles.Count())
         { 
             ProjectInp.Text = val3; }
 
-        string val4 = ctx.ProjectsVM.CurrentFile.Tagg;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Tagg == val4).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        string val4 = ctx.CurrentFile.Tagg;
+        if (ctx.CurrentFiles.Where(x => x.Tagg == val4).Count() == ctx.CurrentFiles.Count())
         { 
             TagInp.Text = val4; }
 
-        string val5 = ctx.ProjectsVM.CurrentFile.Färg;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Färg == val5).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        string val5 = ctx.CurrentFile.Färg;
+        if (ctx.CurrentFiles.Where(x => x.Färg == val5).Count() == ctx.CurrentFiles.Count())
         { 
             ColorInp.Text = val5; }
 
-        string val6 = ctx.ProjectsVM.CurrentFile.Handling; 
+        string val6 = ctx.CurrentFile.Handling; 
         HandlingCheck.IsChecked = false;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Handling == val6).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        if (ctx.CurrentFiles.Where(x => x.Handling == val6).Count() == ctx.CurrentFiles.Count())
         { 
             HandlingInp.Text = val6;
 
@@ -64,9 +64,9 @@ public partial class xMetaDia : Window
             }
         }
 
-        string val7 = ctx.ProjectsVM.CurrentFile.Status; 
+        string val7 = ctx.CurrentFile.Status; 
         StatusCheck.IsChecked = false;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Status == val7).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        if (ctx.CurrentFiles.Where(x => x.Status == val7).Count() == ctx.CurrentFiles.Count())
         {
             StatusInp.Text = val7; 
             if (val7 != null && val7 != "")
@@ -75,9 +75,9 @@ public partial class xMetaDia : Window
             }
         }
 
-        string val8 = ctx.ProjectsVM.CurrentFile.Datum; 
+        string val8 = ctx.CurrentFile.Datum; 
         DatumCheck.IsChecked = false;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Datum == val8).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        if (ctx.CurrentFiles.Where(x => x.Datum == val8).Count() == ctx.CurrentFiles.Count())
         { 
             DatumInp.Text = val8; 
             if (val8 != null && val8 != "")
@@ -86,9 +86,9 @@ public partial class xMetaDia : Window
             }
         }
 
-        string val9 = ctx.ProjectsVM.CurrentFile.Ritningstyp; 
+        string val9 = ctx.CurrentFile.Ritningstyp; 
         RitningCheck.IsChecked = false;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Ritningstyp == val9).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        if (ctx.CurrentFiles.Where(x => x.Ritningstyp == val9).Count() == ctx.CurrentFiles.Count())
         { 
             RitningInp.Text = val9; 
             if (val9 != null && val9 != "")
@@ -97,9 +97,9 @@ public partial class xMetaDia : Window
             }
         }
 
-        string val10 = ctx.ProjectsVM.CurrentFile.Beskrivning1; 
+        string val10 = ctx.CurrentFile.Beskrivning1; 
         Besk1Check.IsChecked = false;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Beskrivning1 == val10).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        if (ctx.CurrentFiles.Where(x => x.Beskrivning1 == val10).Count() == ctx.CurrentFiles.Count())
         { 
             Besk1Inp.Text = val10; 
             if (val10 != null && val10 != "")
@@ -108,9 +108,9 @@ public partial class xMetaDia : Window
             }
         }
 
-        string val11 = ctx.ProjectsVM.CurrentFile.Beskrivning2; 
+        string val11 = ctx.CurrentFile.Beskrivning2; 
         Besk2Check.IsChecked = false;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Beskrivning2 == val11).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        if (ctx.CurrentFiles.Where(x => x.Beskrivning2 == val11).Count() == ctx.CurrentFiles.Count())
         { 
             Besk2Inp.Text = val11; 
             if (val11 != null && val11 != "")
@@ -119,9 +119,9 @@ public partial class xMetaDia : Window
             }
         }
 
-        string val12 = ctx.ProjectsVM.CurrentFile.Beskrivning3; 
+        string val12 = ctx.CurrentFile.Beskrivning3; 
         Besk3Check.IsChecked = false;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Beskrivning3 == val12).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        if (ctx.CurrentFiles.Where(x => x.Beskrivning3 == val12).Count() == ctx.CurrentFiles.Count())
         { 
             Besk3Inp.Text = val12; 
             if (val12 != null && val12 != "")
@@ -130,9 +130,9 @@ public partial class xMetaDia : Window
             }
         }
 
-        string val13 = ctx.ProjectsVM.CurrentFile.Beskrivning4; 
+        string val13 = ctx.CurrentFile.Beskrivning4; 
         Besk4Check.IsChecked = false;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Beskrivning4 == val13).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        if (ctx.CurrentFiles.Where(x => x.Beskrivning4 == val13).Count() == ctx.CurrentFiles.Count())
         { 
             Besk4Inp.Text = val13; 
             if (val13 != null && val13 != "")
@@ -141,9 +141,9 @@ public partial class xMetaDia : Window
             }
         }
 
-        string val14 = ctx.ProjectsVM.CurrentFile.Revidering; 
+        string val14 = ctx.CurrentFile.Revidering; 
         RevCheck.IsChecked = false;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Revidering == val14).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        if (ctx.CurrentFiles.Where(x => x.Revidering == val14).Count() == ctx.CurrentFiles.Count())
         { 
             RevInp.Text = val14; 
             if (val14 != null && val14 != "")
@@ -152,8 +152,8 @@ public partial class xMetaDia : Window
             }
         }
 
-        string val15 = ctx.ProjectsVM.CurrentFile.Sökväg;
-        if (ctx.ProjectsVM.CurrentFiles.Where(x => x.Sökväg == val15).Count() == ctx.ProjectsVM.CurrentFiles.Count())
+        string val15 = ctx.CurrentFile.Sökväg;
+        if (ctx.CurrentFiles.Where(x => x.Sökväg == val15).Count() == ctx.CurrentFiles.Count())
         { 
             PathInp.Text = val15; 
         }
@@ -164,7 +164,7 @@ public partial class xMetaDia : Window
     {
         MainViewModel ctx = (MainViewModel)this.DataContext;
 
-        foreach (FileData file in ctx.ProjectsVM.CurrentFiles)
+        foreach (FileData file in ctx.CurrentFiles)
         {
             if(HandlingCheck.IsChecked == true)
             {

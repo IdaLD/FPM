@@ -30,7 +30,7 @@ public partial class xProgDia : Window
 
         int nrFiles = 0;
 
-        foreach (ProjectData project in ctx.ProjectsVM.StoredProjects)
+        foreach (ProjectData project in ctx.Storage.StoredProjects)
         {
             nrFiles = nrFiles + project.StoredFiles.Count;
         }

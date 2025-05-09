@@ -398,6 +398,10 @@ namespace Avalon.ViewModels
             }
 
 
+            Debug.WriteLine(Renderer);
+            Debug.WriteLine(PreviewFile);
+            Debug.WriteLine(RequestPage1);
+
             Dispatcher.UIThread.Invoke(() =>
             {
                 try
@@ -405,7 +409,7 @@ namespace Avalon.ViewModels
                     Renderer.Initialize(PreviewFile, 4, RequestPage1, 1);
                     Renderer.IsVisible = true;
                 }
-                catch
+                catch(NullReferenceException e)
                 {
                     Debug.WriteLine("INITIALIZE FAILED");
                     return;

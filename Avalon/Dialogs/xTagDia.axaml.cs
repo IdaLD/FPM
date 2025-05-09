@@ -20,7 +20,7 @@ public partial class xTagDia : Window
         if (TagMenuInput.Text != null)
         {
             MainViewModel ctx = (MainViewModel)this.DataContext;
-            ctx.add_tag(TagMenuInput.Text.ToString());
+            ctx.AddTag(TagMenuInput.Text.ToString());
         }
 
         this.Close();

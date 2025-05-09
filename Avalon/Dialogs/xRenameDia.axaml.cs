@@ -28,10 +28,8 @@ public partial class xRenameDia : Window
         if (NewNameInput.Text != null && NewNameInput.Text.Length > 0)
         {
             MainViewModel ctx = (MainViewModel)this.DataContext;
-            ctx.ProjectsVM.RenameOriginal(NewNameInput.Text.ToString());
-
-            string path = "C:\\FIlePathManager\\Projects.json";
-            ctx.SaveFileAuto(path);
+            ctx.RenameOriginal(NewNameInput.Text.ToString());
+            ctx.SaveFileAuto();
         }
 
         this.Close();

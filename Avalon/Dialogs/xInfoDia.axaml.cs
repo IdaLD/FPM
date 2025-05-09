@@ -1,13 +1,8 @@
-using Avalon.Model;
 using Avalon.ViewModels;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using System;
-using System.Drawing;
 using System.IO;
-using System.Xml;
 
 namespace Avalon.Dialog;
 
@@ -25,9 +20,9 @@ public partial class xInfoDia : Window
 
         MainViewModel ctx = (MainViewModel)this.DataContext;
 
-        if(ctx.ProjectsVM.CurrentFile != null)
+        if(ctx.CurrentFile != null)
         {
-            string path = ctx.ProjectsVM.CurrentFile.Sökväg;
+            string path = ctx.CurrentFile.Sökväg;
 
             FileInfo fileInfo = new FileInfo(path);
 

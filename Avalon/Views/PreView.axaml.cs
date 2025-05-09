@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using System.Diagnostics;
 
 namespace Avalon.Views;
 
@@ -39,24 +40,6 @@ public partial class PreView : UserControl
         MuPDFRenderer.DrawLinks = false;
 
         pwr.GetRenderControl(MuPDFRenderer);
-    }
-
-    private void ToggleSearchMode(object sender, RoutedEventArgs e)
-    {
-
-        if (pwr.SearchMode)
-        {
-            MainPreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
-            MainPreviewGrid.ColumnDefinitions[1] = new ColumnDefinition(200f, GridUnitType.Pixel);
-            SearchRegex.Focus();
-        }
-        else
-        {
-            SearchRegex.Text = "";
-
-            MainPreviewGrid.ColumnDefinitions[0] = new ColumnDefinition(1f, GridUnitType.Star);
-            MainPreviewGrid.ColumnDefinitions[1] = new ColumnDefinition(0f, GridUnitType.Pixel);
-        }
     }
 
     private void OnSeachRegex(object sender, RoutedEventArgs e)

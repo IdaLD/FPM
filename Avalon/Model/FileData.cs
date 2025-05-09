@@ -256,7 +256,7 @@ namespace Avalon.Model
         public List<string> PartOfCollections
         {
             get { return partOfCollections; }
-            set { partOfCollections = value; RaisePropertyChanged("PartOfCollections"); Debug.WriteLine(PartOfCollections.Count); }
+            set { partOfCollections = value; RaisePropertyChanged("PartOfCollections"); }
         }
 
 

@@ -15,6 +15,7 @@ using Avalonia.Data;
 using Avalonia.Styling;
 using Org.BouncyCastle.Asn1.BC;
 using System.Diagnostics;
+using iText.Kernel.Pdf.Xobject;
 
 
 namespace Avalon.Views;
@@ -25,34 +26,30 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         InitializeComponent();
 
-        FileGrid.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
-        CollectionContent.AddHandler(DataGrid.DoubleTappedEvent, on_open_file);
+        FileGrid.AddHandler(DataGrid.LoadedEvent, InitStartup);
 
-        FetchMetadata.AddHandler(Button.ClickEvent, on_fetch_full_meta);
+        FileGrid.AddHandler(DataGrid.DoubleTappedEvent, OnOpenFile);
+        CollectionContent.AddHandler(DataGrid.DoubleTappedEvent, OnOpenFile);
 
-        FileGrid.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_main);
-        FileGrid.AddHandler(DataGrid.SelectionChangedEvent, select_files);
-        FileGrid.AddHandler(DragDrop.DropEvent, on_drop);
+        FetchMetadata.AddHandler(Button.ClickEvent, OnFetchFullMeta);
+
+        FileGrid.AddHandler(DataGrid.SelectionChangedEvent, SetPreviewRequestMain);
+        FileGrid.AddHandler(DataGrid.SelectionChangedEvent, SelectFiles);
+        FileGrid.AddHandler(DragDrop.DropEvent, OnDrop);
 
         AppendixGrid.AddHandler(DragDrop.DropEvent, OnDropAppendedFiles);
         //AppendixGrid.AddHandler(DataGrid.SelectionChangedEvent, SelectAppendedFiles);
         AppendixGrid.AddHandler(DataGrid.SelectionChangedEvent, SetPreviewRequestAppendedFiles);
 
-        CollectionContent.AddHandler(DataGrid.SelectionChangedEvent, select_favorite);
-        CollectionContent.AddHandler(DataGrid.SelectionChangedEvent, set_preview_request_tray);
+        CollectionContent.AddHandler(DataGrid.SelectionChangedEvent, SelectFavorite);
+        CollectionContent.AddHandler(DataGrid.SelectionChangedEvent, SetPreviewRequestCollection);
 
         BookmarkGrid.AddHandler(DataGrid.SelectionChangedEvent, BookmarkSelected);
 
-        FileGrid.AddHandler(DataGrid.LoadedEvent, init_startup);
-        PreviewToggle.AddHandler(ToggleSwitch.IsCheckedChangedEvent, on_toggle_preview);
-
-        init_MetaWorker();
+        InitMetaworker();
     }
 
-    public bool previewMode = false;
     public bool darkmode = true;
-    public bool treeview = false;
-    public bool trayview = false;
 
     private BackgroundWorker MetaWorker = new BackgroundWorker();
 
@@ -62,6 +59,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     public MainViewModel ctx = null;
     public PreviewViewModel pwr = null;
+    public GeneralData gnr = null;
 
     public List<DataGridRowEventArgs> Args = new List<DataGridRowEventArgs>();
 
@@ -74,62 +72,48 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private bool PreviewReady = false;
     private double BitmapRes = 0.5;
 
-    private void init_startup(object sender, RoutedEventArgs e)
+    private void InitStartup(object sender, RoutedEventArgs e)
     {
-        get_datacontext();
-
-        TreeStatus.IsChecked = true;
+        GetDatacontext();
 
         try
         {
-            string path = "C:\\FIlePathManager\\Projects.json";
-            ctx.read_savefile(path);
+            ctx.LoadFileAuto();
 
         }
         catch
         { }
     }
 
-    public void get_datacontext()
+    public void GetDatacontext()
     {
         ctx = (MainViewModel)this.DataContext;
         pwr = ctx.PreviewVM;
         
-        ctx.PropertyChanged += on_binding_ctx;
-        pwr.PropertyChanged += on_binding_pwr;
+        
+        ctx.PropertyChanged += OnBindingCtx;
     }
 
 
-    public void on_binding_ctx(object sender, PropertyChangedEventArgs e)
+    public void OnBindingCtx(object sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == "FilteredFiles") { on_update_columns(); }
-        if (e.PropertyName == "UpdateColumns") { on_update_columns(); }
-        if (e.PropertyName == "Color1") { update_row_color(); }
-        if (e.PropertyName == "Color3") { update_row_color(); }
+        if (e.PropertyName == "FilteredFiles") { OnUpdateColumns(); }
+        if (e.PropertyName == "UpdateColumns") { OnUpdateColumns(); }
+        if (e.PropertyName == "Color1") { UpdateRowColor(); }
+        if (e.PropertyName == "Color3") { UpdateRowColor(); }
         if (e.PropertyName == "TreeViewUpdate") { SetupTreeview(null, null); }
-    }
 
-    private void on_binding_pwr(object sender, PropertyChangedEventArgs e)
-    {
+        if (e.PropertyName == "PreviewEmbeddedOpen") { UpdateMainGrid(); }
 
     }
-
 
     public void OnTogglePreviewWindow(object sender, RoutedEventArgs e)
     {
         
-        if (!ctx.PreviewWindowOpen)
+        if (ctx.PreviewWindowOpen)
         {
-            if (previewMode)
-            {
-                PreviewToggle.IsChecked = false;
-            }
-
             var window = Window.GetTopLevel(this);
-
             ThemeVariant theme = window.RequestedThemeVariant;
-
-
             ctx.OpenPreviewWindow(theme);
         }
 
@@ -137,30 +121,49 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             ctx.PreviewWindow.Close();
         }
-
     }
 
+    public void UpdateMainGrid()
+    {
+        if (ctx.PreviewEmbeddedOpen)
+        {
+            MainGrid.ColumnDefinitions[2] = new ColumnDefinition(5, GridUnitType.Pixel);
+            MainGrid.ColumnDefinitions[3] = new ColumnDefinition(2.5, GridUnitType.Star);
+            FileGrid.SelectedItems.Clear();
+            if (ctx.PreviewWindow != null)
+            {
+                ctx.PreviewWindow.Close();
+            }
+        }
+        else
+        {
+            MainGrid.ColumnDefinitions[2] = new ColumnDefinition(0, GridUnitType.Star);
+            MainGrid.ColumnDefinitions[3] = new ColumnDefinition(0, GridUnitType.Star);
+        }
 
-    public void on_search(object sender, RoutedEventArgs e)
+        MainGrid.ColumnDefinitions[1] = new ColumnDefinition(1, GridUnitType.Star);
+    }
+
+    public void OnSearch(object sender, RoutedEventArgs e)
     {
         string searchtext = SearchText.Text;
 
         if (searchtext != null)
         {
-            ctx.search(searchtext);
+            ctx.Search(searchtext);
         }
-        on_update_columns();
+        OnUpdateColumns();
     }
 
-    public void on_start_search(object sender, KeyEventArgs e)
+    public void OnStartSearch(object sender, KeyEventArgs e)
     {
         if(e.Key == Key.Enter)
         {
-            on_search(null, null);
+            OnSearch(null, null);
         }
     }
 
-    public void on_drop(object sender, DragEventArgs e)
+    public void OnDrop(object sender, DragEventArgs e)
     {
         var items = e.Data.GetFiles();
 
@@ -169,7 +172,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             if (item.Path.IsFile)
             {
                 string path = item.Path.LocalPath;
-                string type = System.IO.Path.GetExtension(path);
+                string type = Path.GetExtension(path);
 
                 if (type == ".pdf")
                 {
@@ -189,11 +192,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
             if (item.Path.IsFile)
             {
                 string path = item.Path.LocalPath;
-                string type = System.IO.Path.GetExtension(path);
+                string type = Path.GetExtension(path);
 
                 if (type == ".pdf")
                 {
-                    ctx.ProjectsVM.AddAppendedFile(path);
+                    ctx.AddAppendedFile(path);
                 }
             }
         }
@@ -202,7 +205,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void SetupTreeview(object sender, RoutedEventArgs e)
     {
         MainTree.Items.Clear();
-        ctx.GetGroups();
+        ctx.GetGroups();     
 
         List<string> typeList = new List<string>() { "Archive", "Library", "Project" };
 
@@ -211,12 +214,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             List<TreeViewItem> items = new List<TreeViewItem>();
 
-            IEnumerable<ProjectData> projects = ctx.ProjectsVM.StoredProjects.Where(x => x.Category == type);
+            IEnumerable<ProjectData> projects = ctx.Storage.StoredProjects.Where(x => x.Category == type);
 
             if (projects.Count() != 0)
             {
                 foreach (ProjectData project in projects)
                 {
+
                     if (project.Parent == null || project.Parent == "")
                     {
                         List<TreeViewItem> fileTypeTree = new List<TreeViewItem>();
@@ -238,7 +242,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                                 FontWeight = FontWeight.Normal,
                                 FontStyle = FontStyle.Normal,
                                 Header = project.Namn,
-                                IsExpanded = (project == ctx.ProjectsVM.CurrentProject),
+                                IsExpanded = (project == ctx.CurrentProject),
                                 Tag = "All Types",
                                 ItemsSource = fileTypeTree
                             }
@@ -250,7 +254,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                 {
                     foreach (string group in ctx.Groups)
                     {
-                        IEnumerable<ProjectData> groupedProject = ctx.ProjectsVM.StoredProjects.Where(x => x.Parent == group);
+                        IEnumerable<ProjectData> groupedProject = ctx.Storage.StoredProjects.Where(x => x.Parent == group);
                         List<TreeViewItem> groupedTree = new List<TreeViewItem>();
 
                         foreach (ProjectData project in groupedProject)
@@ -274,7 +278,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
                                 FontWeight = FontWeight.Normal,
                                 FontStyle = FontStyle.Normal,
                                 Header = project.Namn,
-                                IsExpanded = (project == ctx.ProjectsVM.CurrentProject),
+                                IsExpanded = (project == ctx.CurrentProject),
                                 Tag = "All Types",
                                 ItemsSource = fileTypeTree
                             });
@@ -313,36 +317,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    public void toggle_treeview(object sender, RoutedEventArgs e)
-    {
-        treeview = !treeview;
-
-        if (treeview)
-        {
-            SetupTreeview(null, null);
-            MainGrid.ColumnDefinitions[0] = new ColumnDefinition(250, GridUnitType.Pixel);
-        }
-        else
-        {
-            MainGrid.ColumnDefinitions[0] = new ColumnDefinition(0, GridUnitType.Pixel);
-        }
-    }
-
-    public void toggle_tray(object sender, RoutedEventArgs e)
-    {
-        trayview = !trayview;
-
-        if (trayview)
-        {
-            MainGrid.ColumnDefinitions[4] = new ColumnDefinition(300, GridUnitType.Pixel);
-        }
-        else
-        {
-            MainGrid.ColumnDefinitions[4] = new ColumnDefinition(0, GridUnitType.Pixel);
-        }
-    }
-
-    public void on_treeview_selected(object sender, SelectionChangedEventArgs e)
+    public void OnTreeviewSelected(object sender, SelectionChangedEventArgs e)
     {
         object selected = MainTree.SelectedItem;
 
@@ -369,21 +344,21 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
                 if (selectedTree.Tag == "All Types")
                 {
-                    ctx.select_type("All Types");
-                    ctx.select_project(selectedTree.Header.ToString());
+                    ctx.SelectType("All Types");
+                    ctx.SelectProject(selectedTree.Header.ToString());
                 }
                 else
                 {
-                    ctx.select_type(selectedTree.Header.ToString().Split("  ")[0]);
-                    ctx.select_project(selectedTree.Tag.ToString());
+                    ctx.SelectType(selectedTree.Header.ToString().Split("  ")[0]);
+                    ctx.SelectProject(selectedTree.Tag.ToString());
                 }
             }
-            
-            on_update_columns();
+
+            OnUpdateColumns();
         }
     }
 
-    public void toggle_theme(object sender, RoutedEventArgs e)
+    public void ToggleTheme(object sender, RoutedEventArgs e)
     {
         darkmode = !darkmode;
 
@@ -413,71 +388,28 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void on_toggle_preview(object sender, RoutedEventArgs e)
-    {
-        if (ctx.PreviewWindowOpen)
-        {
-            OnTogglePreviewWindow(null, null);
-        }
-
-        previewMode = !previewMode;
-
-        float val1 = 0f;
-        float val2 = 0f;
-
-        if (previewMode == true)
-        {
-            val1 = 5f;
-            val2 = 3.2f;
-            PreviewSplitter.IsEnabled = true;
-            PreviewArea.IsVisible = true;
-
-        }
-        if (previewMode == false)
-        {
-            PreviewSplitter.IsEnabled = false;
-            PreviewArea.IsVisible = false;
-        }
-
-        MainGrid.ColumnDefinitions[1] = new ColumnDefinition(1f, GridUnitType.Star);
-        MainGrid.ColumnDefinitions[2] = new ColumnDefinition(val1, GridUnitType.Pixel);
-        MainGrid.ColumnDefinitions[3] = new ColumnDefinition(val2, GridUnitType.Star);
-
-        if (previewMode)
-        {
-            MainGrid.ColumnDefinitions[3].MinWidth = 300f;
-            FileGrid.SelectedItems.Clear();
-
-            EmbeddedPreview.UpdateLayout();
-            EmbeddedPreview.IsVisible = true;
-
-            EmbeddedPreview.SetRenderer();
-        }
-
-    }
-
-    private void set_preview_request_main(object sender, RoutedEventArgs r)
+    private void SetPreviewRequestMain(object sender, RoutedEventArgs r)
     {
         FileData file = (FileData)FileGrid.SelectedItem;
-        set_preview_request(file);
+        SetPreviewRequest(file);
 
     }
 
-    private void set_preview_request_tray(object sender, RoutedEventArgs r)
+    private void SetPreviewRequestCollection(object sender, RoutedEventArgs r)
     {
         FileData file = (FileData)CollectionContent.SelectedItem;
-        set_preview_request(file);
+        SetPreviewRequest(file);
     }
 
     private void SetPreviewRequestAppendedFiles(object sender, RoutedEventArgs r)
     {
         FileData file = (FileData)AppendixGrid.SelectedItem;
-        set_preview_request(file);
+        SetPreviewRequest(file);
     }
 
-    private void set_preview_request(FileData file)
+    private void SetPreviewRequest(FileData file)
     {
-        if (previewMode || ctx.PreviewWindowOpen)
+        if (ctx.PreviewEmbeddedOpen || ctx.PreviewWindowOpen)
         {
             CheckStatusSingleFile();
 
@@ -498,102 +430,90 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void on_copy_filepath(object sender, RoutedEventArgs e)
-    {
-        ctx.CopyFilepathToClipboard(this);
-    }
-
-    private void on_copy_filename(object sender, RoutedEventArgs e)
-    {
-        ctx.CopyFilenameToClipboard(this);
-    }
-
-    private void on_copy_listview(object sender, RoutedEventArgs e)
-    {
-        ctx.CopyListviewToClipboard(this);
-    }
-
-    private void edit_color(object sender, RoutedEventArgs e)
+    private void EditColor(object sender, RoutedEventArgs e)
     {
         var menuItem = sender as MenuItem;
         string color = menuItem.Tag.ToString();
 
         if (color != "None")
         {
-            ctx.add_color(color);
+            ctx.AddColor(color);
         }
 
-        deselect_items();
-        update_row_color();
+        DeselectItems();
+        UpdateRowColor();
     }
 
-    private void edit_type(object sender, RoutedEventArgs e)
+    private void EditType(object sender, RoutedEventArgs e)
     {
         var menuItem = sender as MenuItem;
 
         MenuItem SelectedMenu = ctx.FileTypeSelection[menuItem.SelectedIndex];
 
-        ctx.edit_type(SelectedMenu.Header.ToString());
+        ctx.EditType(SelectedMenu.Header.ToString());
         SetupTreeview(null, null);
     }
 
-    private void deselect_items()
+    private void DeselectItems()
     {
         FileGrid.SelectedItem = null;
     }
 
-    private void on_clear_files(object sender, RoutedEventArgs e)
-    {
-        ctx.clear_all();
 
-        deselect_items();
-       update_row_color();
+    private void OnClearFiles(object sender, RoutedEventArgs e)
+    {
+        ctx.ClearAll();
+
+       DeselectItems();
+       UpdateRowColor();
     }
+
 
     private void OnCheckStatusSingleFile(object sender, RoutedEventArgs e)
     {
         CheckStatusSingleFile();
     }
 
+
     private void CheckStatusSingleFile()
     {
         ctx.CheckSingleFile();
-        update_row_color();
+        UpdateRowColor();
     }
-
 
 
     private async void OnCheckProjectFiles(object sender, RoutedEventArgs e)
     {
         await ctx.CheckProjectFiles();
-        deselect_items();
-        update_row_color();
+        DeselectItems();
+        UpdateRowColor();
     }
 
 
     async void OnRemoveProject(object sender, RoutedEventArgs e)
     {
-        if (ctx.ProjectsVM.StoredProjects.Where(x => x.Category != "Search" && x.Category != "Favorites").Count() > 1)
+        if (ctx.Storage.StoredProjects.Count() > 1)
         {
             Window window = (MainWindow)Window.GetTopLevel(this);
             await ctx.ConfirmDeleteDia(window);
 
             if (ctx.Confirmed)
             {
-                ctx.remove_project();
+                ctx.RemoveProject();
                 SetupTreeview(null, null);
             }
         }
     }
 
 
-    private void on_add_file(object sender, RoutedEventArgs e)
+    private void OnAddFiles(object sender, RoutedEventArgs e)
     {
         ctx.AddFile(this);
         SetupTreeview(null, null);
     }
 
-    private void on_fetch_single_meta(object sender, RoutedEventArgs e)
+
+    private void OnFetchSingleMeta(object sender, RoutedEventArgs e)
     {
         ProgressStatus.Content = "Fetching Metadata";
 
@@ -601,7 +521,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         MetaWorker.RunWorkerAsync();
     }
 
-    private void on_fetch_full_meta(object sender, RoutedEventArgs e)
+
+    private void OnFetchFullMeta(object sender, RoutedEventArgs e)
     {
         ProgressStatus.Content = "Fetching Metadata";
 
@@ -609,15 +530,17 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         MetaWorker.RunWorkerAsync();
     }
 
-    private void init_MetaWorker()
+
+    private void InitMetaworker()
     {
-        MetaWorker.DoWork += MetaWorker_DoWork;
+        MetaWorker.DoWork += MetaWorkerDoWork;
         MetaWorker.WorkerReportsProgress = true;
-        MetaWorker.ProgressChanged += MetaWorker_progress;
-        MetaWorker.RunWorkerCompleted += MetaWorker_RunWorkerCompleted;
+        MetaWorker.ProgressChanged += MetaWorkerProgress;
+        MetaWorker.RunWorkerCompleted += MetaWorkerRunWorkerCompleted;
     }
 
-    private void MetaWorker_DoWork(object sender, DoWorkEventArgs e)
+
+    private void MetaWorkerDoWork(object sender, DoWorkEventArgs e)
     {
         int nPaths = ctx.GetNrSelectedFiles();
 
@@ -630,23 +553,24 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void MetaWorker_progress(object sender, ProgressChangedEventArgs e)
+
+    private void MetaWorkerProgress(object sender, ProgressChangedEventArgs e)
     {
         ProgressBar.Value = e.ProgressPercentage;
     }
 
-    private void MetaWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+
+    private void MetaWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
-        ctx.set_meta();
+        ctx.SetMeta();
         ProgressStatus.Content = "";
         ProgressBar.Value = 0;
     }
 
 
-
     private void BookmarkSelected(object sender, RoutedEventArgs e)
     {
-        if (previewMode || ctx.PreviewWindowOpen)
+        if (ctx.PreviewEmbeddedOpen || ctx.PreviewWindowOpen)
         {
             PageData page = (PageData)BookmarkGrid.SelectedItem;
             ctx.SetBookmark(page);
@@ -655,12 +579,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
     private void OnAddBookmark(object sender, RoutedEventArgs e)
     {
-        if (previewMode || ctx.PreviewWindowOpen)
+        if (ctx.PreviewEmbeddedOpen || ctx.PreviewWindowOpen)
         {
             ctx.AddBookmark(BookmarkInput.Text);
             BookmarkInput.Clear();
         }
     }
+
 
     private void OnRenameBookmark(object sender, RoutedEventArgs e)
     {
@@ -668,17 +593,18 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         BookmarkInput.Clear();
     }
 
+
     private void OnRemoveBookmark(object sender, RoutedEventArgs e)
     {
         PageData page = (PageData)BookmarkGrid.SelectedItem;
         ctx.RemoveBookmark(page);
     }
 
-    private void select_favorite(object sender, RoutedEventArgs e)
+    private void SelectFavorite(object sender, RoutedEventArgs e)
     {
         IList<FileData> files = CollectionContent.SelectedItems.Cast<FileData>().ToList();
         
-        deselect_items();
+        DeselectItems();
         ctx.select_files(files);
     }
 
@@ -721,11 +647,16 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             IList<FileData> files = AppendixGrid.SelectedItems.Cast<FileData>().ToList();
 
-            ctx.ProjectsVM.RemoveAttachedFile(files);
+            ctx.RemoveAttachedFile(files);
         }
     }
 
-    private void select_files(object sender, RoutedEventArgs e)
+    private void OnOpenFile(object sender, RoutedEventArgs e)
+    {
+        ctx.OpenFile();
+    }
+
+    private void SelectFiles(object sender, RoutedEventArgs e)
     {
         IList<FileData> files = FileGrid.SelectedItems.Cast<FileData>().ToList();
         CollectionContent.SelectedItem = null;
@@ -740,55 +671,20 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         ctx.select_files(files);
     }
 
-    private void on_open_path(object sender, RoutedEventArgs e)
-    {
-        CheckStatusSingleFile();
-        ctx.open_path();
-    }
-
-    private void on_open_file(object sender, RoutedEventArgs e)
-    {
-        CheckStatusSingleFile();
-        ctx.open_files();
-    }
-
-    private void on_open_metafile(object sender, RoutedEventArgs e)
-    {
-        ctx.open_meta();
-    }
-
-    private void on_open_dwg(object sender, RoutedEventArgs e)
-    {
-        ctx.open_dwg();
-   
-    }
-
-    private void on_open_doc(object sender, RoutedEventArgs e)
-    {
-        ctx.open_doc();
-    }
-
-    private async void on_load_file(object sender, RoutedEventArgs e)
+    private async void OnLoadFile(object sender, RoutedEventArgs e)
     {
         await ctx.LoadFile(this);
         SetupTreeview(null, null);
     }
 
-    private async void on_save_file(object sender, RoutedEventArgs e)
+    private async void OnSaveFile(object sender, RoutedEventArgs e)
     {
         await ctx.SaveFile(this);
     }
 
-    private async void on_save_file_auto(object sender, RoutedEventArgs e)
+    private async void OnSaveFileAuto(object sender, RoutedEventArgs e)
     {
-        if (!Directory.Exists("\\FIlePathManager"))
-        {
-            Directory.CreateDirectory("\\FIlePathManager");
-        }
-
-        string path = "C:\\FIlePathManager\\Projects.json";
-
-        await ctx.SaveFileAuto(path);
+        await ctx.SaveFileAuto();
     }
 
     async void OnRemoveFiles(object sender, RoutedEventArgs e)
@@ -798,13 +694,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         if (ctx.Confirmed)
         {
-            ctx.ProjectsVM.RemoveSelectedFiles();
-            ctx.ProjectsVM.UpdateFilter();
+            ctx.RemoveSelectedFiles();
+            ctx.UpdateFilter();
             SetupTreeview(null, null);
         }
     }
 
-    private void on_update_columns()
+    private void OnUpdateColumns()
     {
         FileGrid.Columns[0].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
         FileGrid.Columns[1].Width = new DataGridLength(1.0, DataGridLengthUnitType.SizeToCells);
@@ -841,7 +737,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (dataObject != null && dataObject.Färg == "Magenta") { e.Row.Classes.Add("Magenta"); }
     }
 
-    private void update_row_color()
+    private void UpdateRowColor()
     {
 
         foreach (DataGridRowEventArgs e in Args)
@@ -862,7 +758,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         }
     }
 
-
     private void RaisePropertyChanged(string propName)
     {
         if (PropertyChanged != null)
@@ -870,5 +765,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     }
     public event PropertyChangedEventHandler PropertyChanged;
 
+    private void Binding(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+    }
 }
 
