@@ -27,10 +27,10 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             MainViewModel ctx = (MainViewModel)this.DataContext;
 
-            //if (PreviewWindowOpen)
-            //{
-            //    ctx.PreviewWindow.Close();
-            //}
+            if (ctx.PreviewWindowOpen)
+            {
+                ctx.PreviewWindowOpen = false;
+            }
 
             e.Cancel = false;
         }

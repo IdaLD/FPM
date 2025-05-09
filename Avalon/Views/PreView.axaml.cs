@@ -27,7 +27,7 @@ public partial class PreView : UserControl
 
     public void InitSetup(object sender, RoutedEventArgs e)
     {
-
+        Debug.WriteLine("Pre View initialized");
         ctx = (MainViewModel)this.DataContext;
         pwr = ctx.PreviewVM;
 

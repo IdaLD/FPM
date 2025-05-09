@@ -397,11 +397,6 @@ namespace Avalon.ViewModels
                 RequestPage1 = 0;
             }
 
-
-            Debug.WriteLine(Renderer);
-            Debug.WriteLine(PreviewFile);
-            Debug.WriteLine(RequestPage1);
-
             Dispatcher.UIThread.Invoke(() =>
             {
                 try

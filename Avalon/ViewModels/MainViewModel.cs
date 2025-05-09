@@ -193,10 +193,10 @@ namespace Avalon.ViewModels
         public bool PreviewWindowOpen
         {
             get { return previewWindowOpen; }
-            set { previewWindowOpen = value; OnPropertyChanged("PreviewWindowOpen"); if (PreviewWindowOpen) { PreviewEmbeddedOpen = false; }; Debug.WriteLine(PreviewWindowOpen); }
+            set { previewWindowOpen = value; OnPropertyChanged("PreviewWindowOpen"); if (PreviewWindowOpen) { PreviewEmbeddedOpen = false; }; }
         }
 
-        private bool previewEmbeddedOpen = false;
+        private bool previewEmbeddedOpen = true;
         public bool PreviewEmbeddedOpen
         {
             get { return previewEmbeddedOpen; }
@@ -217,6 +217,11 @@ namespace Avalon.ViewModels
             set { trayViewOpen = value; OnPropertyChanged("TrayViewOpen"); }
         }
 
+        public void ResetPreviewer()
+        {
+            PreviewVM.FileWorkerBusy = false;
+        }
+
         public void OpenPreviewWindow(ThemeVariant theme)
         {
             PreviewWindow = new PreWindow()
@@ -226,11 +231,6 @@ namespace Avalon.ViewModels
 
             PreviewWindow.RequestedThemeVariant = theme;
             PreviewWindow.Show();
-        }
-
-        public void ResetPreviewer()
-        {
-            PreviewVM.FileWorkerBusy = false;
         }
 
         public void OpenInfoDia(Window mainWindow)
@@ -254,16 +254,6 @@ namespace Avalon.ViewModels
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
             window.Focusable = true;
             window.ShowDialog(mainWindow);
-        }
-
-        private void OnGeneralChanged(object sender, PropertyChangedEventArgs e)
-        {
-            string val = e.PropertyName;
-
-            if (val == "Color1" || val == "Color2" || val == "Color3" || val == "Color4") 
-            {
-                SetWindowColors();
-            }
         }
 
         public void OpenMetaEditDia(Window mainWindow)
@@ -388,6 +378,15 @@ namespace Avalon.ViewModels
             window.ShowDialog(mainWindow);
         }
 
+        private void OnGeneralChanged(object sender, PropertyChangedEventArgs e)
+        {
+            string val = e.PropertyName;
+
+            if (val == "Color1" || val == "Color2" || val == "Color3" || val == "Color4")
+            {
+                SetWindowColors();
+            }
+        }
 
         public void TrySetPage()
         {

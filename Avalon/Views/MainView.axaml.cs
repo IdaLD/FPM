@@ -16,6 +16,7 @@ using Avalonia.Styling;
 using Org.BouncyCastle.Asn1.BC;
 using System.Diagnostics;
 using iText.Kernel.Pdf.Xobject;
+using MuPDFCore.MuPDFRenderer;
 
 
 namespace Avalon.Views;
@@ -75,6 +76,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void InitStartup(object sender, RoutedEventArgs e)
     {
         GetDatacontext();
+        ctx.PreviewEmbeddedOpen = false;
 
         try
         {
@@ -104,10 +106,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         if (e.PropertyName == "TreeViewUpdate") { SetupTreeview(null, null); }
 
         if (e.PropertyName == "PreviewEmbeddedOpen") { UpdateMainGrid(); }
+        if (e.PropertyName == "PreviewWindowOpen") { OnTogglePreviewWindow(); }
 
     }
 
-    public void OnTogglePreviewWindow(object sender, RoutedEventArgs e)
+    public void OnTogglePreviewWindow()
     {
         
         if (ctx.PreviewWindowOpen)
@@ -119,7 +122,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         else
         {
-            ctx.PreviewWindow.Close();
+            if (ctx.PreviewWindow != null)
+            {
+                ctx.PreviewWindow.Close();
+            }
         }
     }
 
@@ -129,11 +135,8 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             MainGrid.ColumnDefinitions[2] = new ColumnDefinition(5, GridUnitType.Pixel);
             MainGrid.ColumnDefinitions[3] = new ColumnDefinition(2.5, GridUnitType.Star);
-            FileGrid.SelectedItems.Clear();
-            if (ctx.PreviewWindow != null)
-            {
-                ctx.PreviewWindow.Close();
-            }
+
+            EmbeddedPreview.SetRenderer();
         }
         else
         {
@@ -152,6 +155,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
         {
             ctx.Search(searchtext);
         }
+
         OnUpdateColumns();
     }
 

@@ -137,7 +137,7 @@
 							</StackPanel>
 						</ToggleButton>
 
-						<ToggleButton Name="PreviewWindow" FontWeight="Normal" ToolTip.Tip="Preview Window, Ctrl + W" HotKey="Ctrl+W" Height="30" Width="35" Margin="0,-5,0,0" IsChecked="{Binding PreviewWindowOpen}" Click="OnTogglePreviewWindow">
+						<ToggleButton Name="PreviewWindow" FontWeight="Normal" ToolTip.Tip="Preview Window, Ctrl + W" HotKey="Ctrl+W" Height="30" Width="35" Margin="0,-5,0,0" IsChecked="{Binding PreviewWindowOpen}">
 							<ic:SymbolIcon Symbol="Window" FontSize="18"/>
 						</ToggleButton>
 
@@ -221,7 +221,7 @@
 									</MenuItem>
 								
 									<MenuItem Name="CopyMenu" Header="Clipboard" Icon="{icxt:SymbolIconExtension Symbol=Clipboard}">
-										<MenuItem Name="FilenameCopyMenu" Header="List" Command="{Binding CopyFilenameToClipboard}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=TextBulletListAdd}"/>
+										<MenuItem Name="FilenameCopyMenu" Header="Name" Command="{Binding CopyFilenameToClipboard}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=TextBulletListAdd}"/>
 										<MenuItem Name="FilepathCopyMenu" Header="Path" Command="{Binding CopyFilepathToClipboard}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=AppsList}"/>
 										<MenuItem Name="ListviewCopyMenu" Header="Table" Command="{Binding CopyListviewToClipboard}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=TableLightning}"/>
 									</MenuItem>
@@ -297,7 +297,7 @@
 					</Border>
 					
 					<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="5" Margin="5">
-						<TextBox Name="CollectionInput" Width="170" Height="30" Watermark="Add Group" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}"/>
+						<TextBox Name="CollectionInput" Width="170" Height="30" Watermark="Add Collection" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}"/>
 						<Button Width="35" Click="OnNewCollection">
 							<ic:SymbolIcon Symbol="Add" FontSize="18"/>
 						</Button>
@@ -318,7 +318,7 @@
 								</Style>
 							</DataGrid.Styles>
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding}" Header="Groups" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding}" Header="Collections" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
 							</DataGrid.Columns>
 						</DataGrid>						
 					</Border>
@@ -333,7 +333,7 @@
 								</Style>
 							</DataGrid.Styles>
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding Namn}" Header="Favorites" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding Namn}" Header="Content" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
 							</DataGrid.Columns>
 							<DataGrid.ContextMenu>
 								<ContextMenu>
