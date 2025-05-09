@@ -3,10 +3,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="180" d:DesignHeight="280"
-		MinWidth="210"
-		MinHeight="460"
-		MaxWidth="210"
-		MaxHeight="460"
+		MinWidth="300"
+		MinHeight="600"
+		MaxWidth="300"
+		MaxHeight="600"
 		xmlns:ic="using:FluentIcons.Avalonia"
         x:Class="Avalon.Dialog.xColorDia"
         Title="xColorDia"
@@ -25,14 +25,14 @@
 			
 			<Panel Grid.Row="0" IsHitTestVisible="False"/>
 
-			<StackPanel Grid.Row="1" Width="230" Height="460" Orientation="Vertical" Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Top">
+			<StackPanel Grid.Row="1" Width="300" Height="600" Orientation="Vertical" Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Top">
 				
 				<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10" Spacing="0">
 					<ic:SymbolIcon Symbol="ColorBackground" VerticalAlignment="Center" HorizontalAlignment="Center" IconVariant="Regular" FontSize="30"/>
 					<Label Content="Edit Theme Colors" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
 				</StackPanel>
 				
-				<Grid ColumnDefinitions="90,80" RowDefinitions="30,40,40,30,40,40,30,40,40,40" HorizontalAlignment="Center" VerticalAlignment="Center">
+				<Grid ColumnDefinitions="100,120" RowDefinitions="30,40,40,30,40,40,30,40,40,40,30,40,40" HorizontalAlignment="Center" VerticalAlignment="Center">
 
 					<Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" FontWeight="Bold" Content="Dark" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 					<Label Grid.Column="0" Grid.Row="1" Content="Background" VerticalAlignment="Center"/>
@@ -42,21 +42,28 @@
 					<Label Grid.Column="0" Grid.Row="4" Content="Background" VerticalAlignment="Center"/>
 					<Label Grid.Column="0" Grid.Row="5" Content="Accent" VerticalAlignment="Center"/>
 
-
 					<Label Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" FontWeight="Bold" Content="Borders" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 					<Label Grid.Column="0" Grid.Row="7" Content="Border" VerticalAlignment="Center"/>
 					<Label Grid.Column="0" Grid.Row="8" Content="Radius" VerticalAlignment="Center"/>
 
-					<ColorPicker Grid.Column="1" Grid.Row="1" Color="{Binding Storage.General.Color1}" HorizontalAlignment="Right" Name="BackgroundColorPickerDark"/>
-					<ColorPicker Grid.Column="1" Grid.Row="2" Color="{Binding Storage.General.Color2}" HorizontalAlignment="Right" Name="AccentColorPickerDark"/>
+					<Label Grid.Column="0" Grid.Row="9" Grid.ColumnSpan="2" FontWeight="Bold" Content="Fonts" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					<Label Grid.Column="0" Grid.Row="10" Content="Font" VerticalAlignment="Center"/>
+					<Label Grid.Column="0" Grid.Row="11" Content="Size" VerticalAlignment="Center"/>
 
-					<ColorPicker Grid.Column="1" Grid.Row="4" Color="{Binding Storage.General.Color3}" HorizontalAlignment="Right" Name="BackgroundColorPickerLight"/>
-					<ColorPicker Grid.Column="1" Grid.Row="5" Color="{Binding Storage.General.Color4}" HorizontalAlignment="Right" Name="AccentColorPickerLight"/>
 
-					<ToggleSwitch Grid.Column="1" Grid.Row="7" IsChecked="{Binding Storage.General.BorderVal}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-					<ToggleSwitch Grid.Column="1" Grid.Row="8" IsChecked="{Binding Storage.General.CornerRadiusVal}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					<ColorPicker Grid.Column="1" Grid.Row="1" Color="{Binding Storage.General.Color1}" Width="110" HorizontalAlignment="Left" Name="BackgroundColorPickerDark"/>
+					<ColorPicker Grid.Column="1" Grid.Row="2" Color="{Binding Storage.General.Color2}" Width="110" HorizontalAlignment="Left" Name="AccentColorPickerDark"/>
 
-					<Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="10" Width="80" Content="Reset" Click="ResetThemeColors" HorizontalAlignment="Center" BorderBrush="{DynamicResource TextControlBorderBrush}"/>
+					<ColorPicker Grid.Column="1" Grid.Row="4" Color="{Binding Storage.General.Color3}" Width="110" HorizontalAlignment="Left" Name="BackgroundColorPickerLight"/>
+					<ColorPicker Grid.Column="1" Grid.Row="5" Color="{Binding Storage.General.Color4}" Width="110" HorizontalAlignment="Left" Name="AccentColorPickerLight"/>
+
+					<ToggleSwitch Grid.Column="1" Grid.Row="7" IsChecked="{Binding Storage.General.BorderVal}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<ToggleSwitch Grid.Column="1" Grid.Row="8" IsChecked="{Binding Storage.General.CornerRadiusVal}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+					<ComboBox Name="FontCombo" Grid.Column="1" Grid.Row="10" Width="110" DataContext="{Binding Storage.General}" ItemsSource="{Binding AvailableFonts}" SelectedValue="{Binding SelectedFontString}"/>
+					<NumericUpDown Grid.Column="1" Grid.Row="11" Minimum="14" Maximum="30" Value="{Binding Storage.General.FontSize}" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+					<Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="12" Width="80" Content="Reset" Click="ResetThemeColors" HorizontalAlignment="Center" BorderBrush="{DynamicResource TextControlBorderBrush}"/>
 					
 
 				</Grid>

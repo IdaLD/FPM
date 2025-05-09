@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using Avalonia.Media;
+using Org.BouncyCastle.Asn1.BC;
 
 namespace Avalon.Model
 {
@@ -75,11 +76,67 @@ namespace Avalon.Model
             set { border = value; RaisePropertyChanged("Border"); }
         }
 
+        private int fontSize = 16;
+        public int FontSize
+        {
+            get { return fontSize; }
+            set { fontSize = value; RaisePropertyChanged("FontSize"); RaisePropertyChanged("RowHeight"); GetSystemFonts(); }
+        }
+        public int RowHeight
+        {
+            get { return FontSize + 2; }
+        }
+
+        private ObservableCollection<string> availableFonts = new ObservableCollection<string> () {};
+        public ObservableCollection<string> AvailableFonts
+        {
+            get { return availableFonts; }
+            set { availableFonts = value; RaisePropertyChanged("AvailableFonts"); }
+        }
+
+
+        private string selectedFontString;
+        public string SelectedFontString
+        {
+            get { return selectedFontString; }
+            set { selectedFontString = value; RaisePropertyChanged("SelectedFontString"); SelectedFont = new FontFamily(SelectedFontString); }
+        }
+
+
+        private FontFamily selectedFont = new FontFamily("Ubuntu");
+        public FontFamily SelectedFont
+        {
+            get { return selectedFont; }
+            set { selectedFont = value; RaisePropertyChanged("SelectedFont"); }
+        }
+
+
+
         private ObservableCollection<string> collections = new ObservableCollection<string>();
         public ObservableCollection<string> Collections
         {
             get { return collections; }
             set { collections = value; RaisePropertyChanged("Collections"); }
+        }
+
+        private bool embeddedPreviewerOpen = false;
+        public bool EmbeddedPreviewerOpen
+        {
+            get { return embeddedPreviewerOpen; }
+            set { embeddedPreviewerOpen = value; RaisePropertyChanged("EmbeddedPreviewerOpen"); }
+        }
+
+
+        private void GetSystemFonts()
+        {
+            AvailableFonts.Clear();
+
+            foreach (FontFamily fontFamily in FontManager.Current.SystemFonts)
+            {
+                AvailableFonts.Add(fontFamily.Name);
+                Debug.WriteLine(fontFamily.FamilyNames);
+            }
+
         }
 
 

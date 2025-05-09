@@ -4,10 +4,11 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using System.ComponentModel;
 
 namespace Avalon.Dialog;
 
-public partial class xColorDia : Window
+public partial class xColorDia : Window, INotifyPropertyChanged
 {
     public xColorDia()
     {

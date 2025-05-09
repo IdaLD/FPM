@@ -166,7 +166,7 @@
 
 					<Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" RowDefinitions="*,Auto">
 					
-						<DataGrid Name="FileGrid" Grid.Row="0" Margin="5" Padding="0" ItemsSource="{Binding FilteredFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible"
+						<DataGrid Name="FileGrid" Grid.Row="0" Margin="5" Padding="0" ItemsSource="{Binding FilteredFiles, Mode=OneWay}" SelectionMode="Extended" RowHeight="{Binding Storage.General.RowHeight}" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible" FontFamily="{Binding Storage.General.SelectedFont}" FontSize="{Binding Storage.General.FontSize}"
 								  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" CornerRadius="{Binding Storage.General.CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="True" CanUserResizeColumns="True">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
@@ -175,26 +175,26 @@
 							</DataGrid.Styles>
 						
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding NameWithAttributes}"				Header="Namn"           Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_1}"  FontFamily="UbuntuMono"/>
-								<DataGridTextColumn Binding="{Binding FileStatus, Mode=OneWay}"			Header="FileStatus"		Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_2}"  FontFamily="Ubuntu"/>
-								<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_3}"  FontFamily="Ubuntu"/>
-								<DataGridTextColumn Binding="{Binding Uppdrag, Mode=OneWay}"			Header="Uppdrag"		Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_4}"  FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding NameWithAttributes}"				Header="Namn"           Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_1}"/>
+								<DataGridTextColumn Binding="{Binding FileStatus, Mode=OneWay}"			Header="FileStatus"		Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_2}"/>
+								<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_3}"/>
+								<DataGridTextColumn Binding="{Binding Uppdrag, Mode=OneWay}"			Header="Uppdrag"		Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_4}"/>
 							
-								<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_5}"  FontFamily="Ubuntu"/>
-								<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_6}"  FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_5}"/>
+								<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_6}"/>
 
-								<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_7}"  FontFamily="Ubuntu"/>
-								<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_8}"  FontFamily="Ubuntu"/>
-								<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_9}"  FontFamily="Ubuntu"/>
-								<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_10}" FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_7}"/>
+								<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_8}"/>
+								<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_9}"/>
+								<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_10}"/>
 						
-								<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_11}"  FontFamily="Ubuntu"/>
-								<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_12}"  FontFamily="Ubuntu"/>
-								<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_13}"  FontFamily="Ubuntu"/>
-								<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_14}"  FontFamily="Ubuntu"/>
-								<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_15}"  FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_11}"/>
+								<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_12}"/>
+								<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_13}"/>
+								<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_14}"/>
+								<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_15}"/>
 
-								<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_16}"  FontFamily="Ubuntu"/>
+								<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_16}"/>
 							</DataGrid.Columns>
 						
 							<DataGrid.ContextMenu>
