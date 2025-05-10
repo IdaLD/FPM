@@ -31,7 +31,7 @@
 			<Grid Name ="MainGrid" DragDrop.AllowDrop="True" ColumnDefinitions="Auto,*,0,Auto,Auto" RowDefinitions="35,33,*" Margin="5">
 				
 				<DockPanel Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Top" HorizontalAlignment="Left">
-					<Menu DockPanel.Dock="Top">
+					<Menu DockPanel.Dock="Top" FontSize="15" FontFamily="Default">
 						<MenuItem Header="File">
 							<MenuItem Header="Load" Click="OnLoadFile" Icon="{icxt:SymbolIconExtension Symbol=FolderOpen}"/>
 							<Separator/>
@@ -47,27 +47,27 @@
 
 					<StackPanel Grid.Row="0" Grid.ColumnSpan="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 						<ic:SymbolIcon Symbol="Status" IconVariant="Regular" IsHitTestVisible="False" Width="25" FontSize="14" Opacity="0.7"/>
-						<TextBlock Text="{Binding PreviewVM.StatusMessage}" VerticalAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Opacity="0.7" Padding="1,0,2,0"/>
+						<TextBlock Text="{Binding PreviewVM.StatusMessage}" VerticalAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" FontSize="14" Opacity="0.7" Padding="1,0,2,0"/>
 					</StackPanel>
 				
 					<StackPanel Grid.Row="0" Grid.ColumnSpan="5" Orientation="Horizontal" Margin="60,2,0,0">
 						<ProgressBar Name="ProgressBar" Width="200" VerticalAlignment="Center" Value="{Binding PreviewVM.Progress}"/>
-						<Label Name="ProgressStatus" Width="200" Height="40" VerticalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" Opacity="0.7" Padding="10"/>
+						<Label Name="ProgressStatus" Width="200" Height="40" VerticalContentAlignment="Center" IsHitTestVisible="False" FontStyle="Italic" FontSize="14" Opacity="0.7" Padding="10"/>
 					</StackPanel>
 
 				<StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical">
-					<StackPanel Margin="8 -1 0 0" Orientation="Horizontal" Spacing="3">
-						<ic:SymbolIcon Symbol="Folder" IconVariant="Filled" Width="25" FontSize="14" Opacity="0.7"/>
-						<TextBlock Text="{Binding CurrentProject.Namn}" FontStyle="Italic" Opacity="0.7" Padding="1,0,1,0"/>
-						<TextBlock Text=" | Filtered: " FontStyle="Italic" Opacity="0.7" Padding="1,0,1,0"/>
-						<TextBlock Text="{Binding NrFilteredFiles}" FontStyle="Italic" Opacity="0.7" Padding="1,0,1,0"/>
-						<TextBlock Text=" | Selected: " FontStyle="Italic" Opacity="0.7" Padding="1,0,1,0"/>
-						<TextBlock Text="{Binding NrSelectedFiles}" FontStyle="Italic" Opacity="0.7" Padding="1,0,1,0"/>
+					<StackPanel Margin="8 -2 0 0" Orientation="Horizontal" Spacing="3">
+						<ic:SymbolIcon Symbol="Folder" IconVariant="Filled" Width="25" FontSize="13" Opacity="0.7"/>
+						<TextBlock Text="{Binding CurrentProject.Namn}" FontStyle="Italic" FontSize="14" Opacity="0.7" Padding="1,0,1,0"/>
+						<TextBlock Text=" | Filtered: " FontStyle="Italic" Opacity="0.7" FontSize="14" Padding="1,0,1,0"/>
+						<TextBlock Text="{Binding NrFilteredFiles}" FontStyle="Italic" FontSize="14" Opacity="0.7" Padding="1,0,1,0"/>
+						<TextBlock Text=" | Selected: " FontStyle="Italic" Opacity="0.7" FontSize="14" Padding="1,0,1,0"/>
+						<TextBlock Text="{Binding NrSelectedFiles}" FontStyle="Italic" FontSize="14" Opacity="0.7" Padding="1,0,1,0"/>
 
 					</StackPanel>
 					<StackPanel Margin="8 0 0 0" Orientation="Horizontal">
-						<ic:SymbolIcon Symbol="Document" IconVariant="Filled" Width="25" FontSize="14" Opacity="0.7"/>
-						<TextBlock Text="{Binding CurrentFile.Namn}" FontStyle="Italic" Opacity="0.7" Padding="1,0,1,0"/>
+						<ic:SymbolIcon Symbol="Document" IconVariant="Filled" Width="25" FontSize="13" Opacity="0.7"/>
+						<TextBlock Text="{Binding CurrentFile.Namn}" FontStyle="Italic" FontSize="14" Opacity="0.7" Padding="1,0,1,0"/>
 					</StackPanel>
 				</StackPanel>
 				
@@ -78,7 +78,7 @@
 						<Button Name="Columns" Width="140" Click="Border_PointerPressed" BorderBrush="{DynamicResource TextControlBorderBrush}">
 							<Grid ColumnDefinitions="30,*,30" FlowDirection="LeftToRight" Width="140">
 								<ic:SymbolIcon Grid.Column="0" Symbol="Database" IconVariant="Regular" FontSize="20"/>
-								<Label Grid.Column="1" Content="Metadata" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+								<Label Grid.Column="1" Content="Metadata" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 								<ic:SymbolIcon Grid.Column="2" Symbol="CaretDown" IconVariant="Regular" FontSize="20"/>
 							</Grid>
 							<Button.Flyout>
@@ -166,8 +166,10 @@
 
 					<Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" RowDefinitions="*,Auto">
 					
-						<DataGrid Name="FileGrid" Grid.Row="0" Margin="5" Padding="0" ItemsSource="{Binding FilteredFiles, Mode=OneWay}" SelectionMode="Extended" RowHeight="{Binding Storage.General.RowHeight}" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible" FontFamily="{Binding Storage.General.SelectedFont}" FontSize="{Binding Storage.General.FontSize}"
-								  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" CornerRadius="{Binding Storage.General.CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="True" CanUserResizeColumns="True">
+						<DataGrid Name="FileGrid" Grid.Row="0" Margin="5" Padding="0" ItemsSource="{Binding FilteredFiles, Mode=OneWay}" SelectionMode="Extended" HorizontalScrollBarVisibility="Disabled" 
+								  VerticalScrollBarVisibility="Visible" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" CornerRadius="{Binding Storage.General.CornerRadius}" 
+								  BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="True" 
+								  CanUserResizeColumns="True">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
 									<Setter Property="IsVisible" Value="false" />
@@ -175,26 +177,26 @@
 							</DataGrid.Styles>
 						
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding NameWithAttributes}"				Header="Namn"           Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_1}"/>
-								<DataGridTextColumn Binding="{Binding FileStatus, Mode=OneWay}"			Header="FileStatus"		Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_2}"/>
-								<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_3}"/>
-								<DataGridTextColumn Binding="{Binding Uppdrag, Mode=OneWay}"			Header="Uppdrag"		Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_4}"/>
+								<DataGridTextColumn Binding="{Binding NameWithAttributes}"				Header="Namn"           Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_1}" FontSize="{Binding Storage.General.FontSize}"/>
+								<DataGridTextColumn Binding="{Binding FileStatus, Mode=OneWay}"			Header="FileStatus"		Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_2}" FontSize="{Binding Storage.General.FontSize}"/>
+								<DataGridTextColumn Binding="{Binding Filtyp, Mode=OneWay}"				Header="Filtyp"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_3}" FontSize="{Binding Storage.General.FontSize}"/>
+								<DataGridTextColumn Binding="{Binding Uppdrag, Mode=OneWay}"			Header="Uppdrag"		Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_4}" FontSize="{Binding Storage.General.FontSize}"/>
 							
-								<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_5}"/>
-								<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_6}"/>
+								<DataGridTextColumn Binding="{Binding Tagg, Mode=OneWay}"				Header="Tagg"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_5}" FontSize="{Binding Storage.General.FontSize}"/>
+								<DataGridTextColumn Binding="{Binding Färg, Mode=OneWay}"				Header="Färg"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_6}" FontSize="{Binding Storage.General.FontSize}"/>
 
-								<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_7}"/>
-								<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_8}"/>
-								<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_9}"/>
-								<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_10}"/>
+								<DataGridTextColumn Binding="{Binding Handling, Mode=OneWay}"			Header="Handling"	   	Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_7}" FontSize="{Binding Storage.General.FontSize}"/>
+								<DataGridTextColumn Binding="{Binding Status, Mode=OneWay}"				Header="Status"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_8}" FontSize="{Binding Storage.General.FontSize}"/>
+								<DataGridTextColumn Binding="{Binding Datum, Mode=OneWay}"				Header="Datum"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_9}" FontSize="{Binding Storage.General.FontSize}"/>
+								<DataGridTextColumn Binding="{Binding Ritningstyp, Mode=OneWay}"		Header="Ritningstyp"	Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_10}" FontSize="{Binding Storage.General.FontSize}"/>
 						
-								<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_11}"/>
-								<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_12}"/>
-								<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_13}"/>
-								<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_14}"/>
-								<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_15}"/>
+								<DataGridTextColumn Binding="{Binding Beskrivning1, Mode=OneWay}"		Header="Beskrivning 1"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_11}" FontSize="{Binding Storage.General.FontSize}"/>
+								<DataGridTextColumn Binding="{Binding Beskrivning2, Mode=OneWay}"		Header="Beskrivning 2"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_12}" FontSize="{Binding Storage.General.FontSize}"/>
+								<DataGridTextColumn Binding="{Binding Beskrivning3, Mode=OneWay}"		Header="Beskrivning 3"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_13}" FontSize="{Binding Storage.General.FontSize}"/>
+								<DataGridTextColumn Binding="{Binding Beskrivning4, Mode=OneWay}"		Header="Beskrivning 4"  Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_14}" FontSize="{Binding Storage.General.FontSize}"/>
+								<DataGridTextColumn Binding="{Binding Revidering, Mode=OneWay}"			Header="Revidering"		Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_15}" FontSize="{Binding Storage.General.FontSize}"/>
 
-								<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_16}"/>
+								<DataGridTextColumn Binding="{Binding Sökväg, Mode=OneWay}"				Header="Sökväg"			Width="Auto" MinWidth="120" IsVisible="{Binding CurrentProject.Meta_16}" FontSize="{Binding Storage.General.FontSize}"/>
 							</DataGrid.Columns>
 						
 							<DataGrid.ContextMenu>
@@ -266,8 +268,9 @@
 
 						<Grid Grid.Row="1" IsVisible="{Binding AttachedView}" MinHeight="200" MaxHeight="600">
 							<Border Margin="5">
-								<DataGrid Name="AppendixGrid" Padding="0" ItemsSource="{Binding CurrentFile.AppendedFiles, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
-											AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}" CornerRadius="{Binding Storage.General.CornerRadius}">
+								<DataGrid Name="AppendixGrid" Padding="0" ItemsSource="{Binding CurrentFile.AppendedFiles, Mode=OneWay}" SelectionMode="Extended"
+											AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" BorderBrush="{DynamicResource TextControlBorderBrush}" 
+										  BorderThickness="{Binding Storage.General.Border}" CornerRadius="{Binding Storage.General.CornerRadius}">
 									<DataGrid.Styles>
 										<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
 											<Setter Property="IsVisible" Value="false"/>
@@ -275,7 +278,7 @@
 									</DataGrid.Styles>
 
 									<DataGrid.Columns>
-										<DataGridTextColumn Binding="{Binding NameWithAttributes}" Header="Attached Files" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+										<DataGridTextColumn Binding="{Binding NameWithAttributes}" Header="Attached Files" Width="*" MinWidth="120" FontSize="{Binding Storage.General.FontSize}"/>
 									</DataGrid.Columns>
 									<DataGrid.ContextMenu>
 										<ContextMenu>
@@ -310,7 +313,7 @@
 					</StackPanel>
 
 					<Border Grid.Row="2" Margin="5">
-						<DataGrid Name="Collections" Padding="0" ItemsSource="{Binding Storage.General.Collections}" SelectedItem="{Binding CurrentCollection}" RowHeight="22" SelectionMode="Extended"
+						<DataGrid Name="Collections" Padding="0" ItemsSource="{Binding Storage.General.Collections}" SelectedItem="{Binding CurrentCollection}" SelectionMode="Extended"
 								AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding Storage.General.CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
@@ -318,14 +321,14 @@
 								</Style>
 							</DataGrid.Styles>
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding}" Header="Collections" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding}" Header="Collections" Width="*" MinWidth="120" FontSize="{Binding Storage.General.FontSize}"/>
 							</DataGrid.Columns>
 						</DataGrid>						
 					</Border>
 
 					
 					<Border Grid.Row="3" Margin="5">
-						<DataGrid Name="CollectionContent" Padding="0" ItemsSource="{Binding CollectionContent, Mode=OneWay}" RowHeight="22" SelectionMode="Extended"
+						<DataGrid Name="CollectionContent" Padding="0" ItemsSource="{Binding CollectionContent, Mode=OneWay}" SelectionMode="Extended"
 									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding Storage.General.CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
@@ -333,7 +336,7 @@
 								</Style>
 							</DataGrid.Styles>
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding Namn}" Header="Content" Width="*" MinWidth="120" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding Namn}" Header="Content" Width="*" MinWidth="120" FontSize="{Binding Storage.General.FontSize}"/>
 							</DataGrid.Columns>
 							<DataGrid.ContextMenu>
 								<ContextMenu>
@@ -359,7 +362,7 @@
 					</Grid>
 
 					<Border Grid.Row="5" Margin="5">
-						<DataGrid Name="BookmarkGrid" Padding="0" ItemsSource="{Binding PreviewVM.CurrentFile.FavPages, Mode=OneWay}" RowHeight="22" SelectionMode="Single"
+						<DataGrid Name="BookmarkGrid" Padding="0" ItemsSource="{Binding PreviewVM.CurrentFile.FavPages, Mode=OneWay}" SelectionMode="Single"
 									AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}" CornerRadius="{Binding Storage.General.CornerRadius}">
 							<DataGrid.Styles>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
@@ -368,8 +371,8 @@
 							</DataGrid.Styles>
 
 							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding PageNr, Converter={StaticResource AddOneConverter}}" Header="Page" Width="85" FontFamily="UbuntuMono"/>
-								<DataGridTextColumn Binding="{Binding PageName}" Header="Bookmark" Width="*" FontFamily="UbuntuMono"/>
+								<DataGridTextColumn Binding="{Binding PageNr, Converter={StaticResource AddOneConverter}}" Header="Page" Width="85" FontSize="{Binding Storage.General.FontSize}"/>
+								<DataGridTextColumn Binding="{Binding PageName}" Header="Bookmark" Width="*" FontSize="{Binding Storage.General.FontSize}"/>
 							</DataGrid.Columns>
 
 						</DataGrid>

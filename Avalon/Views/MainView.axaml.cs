@@ -76,11 +76,13 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void InitStartup(object sender, RoutedEventArgs e)
     {
         GetDatacontext();
+        UpdateFont();
         ctx.PreviewEmbeddedOpen = false;
 
         try
         {
             ctx.LoadFileAuto();
+            UpdateFont();
 
         }
         catch
@@ -107,7 +109,19 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         if (e.PropertyName == "PreviewEmbeddedOpen") { UpdateMainGrid(); }
         if (e.PropertyName == "PreviewWindowOpen") { OnTogglePreviewWindow(); }
+        if (e.PropertyName == "FontChanged") { UpdateFont(); }
 
+    }
+
+    private void UpdateFont()
+    {
+        var window = Window.GetTopLevel(this);
+
+        window.FontFamily = new FontFamily(ctx.Storage.General.Font);
+        window.FontSize = ctx.Storage.General.FontSize;
+
+        //FileGrid.FontFamily = new FontFamily(ctx.Storage.General.Font);
+        //FileGrid.FontSize = ctx.Storage.General.FontSize;
     }
 
     public void OnTogglePreviewWindow()
@@ -637,7 +651,11 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     private void OnAddToCollection(object sender, RoutedEventArgs e)
     {
         MenuItem source = e.Source as MenuItem;
-        ctx.AddFileToCollection(source.Header.ToString());
+        Debug.WriteLine(source.Header.ToString());
+        if (source.Header.ToString()!= "Collection")
+        {
+            ctx.AddFileToCollection(source.Header.ToString());
+        }
     }
 
 
@@ -679,6 +697,7 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         await ctx.LoadFile(this);
         SetupTreeview(null, null);
+        UpdateFont();
     }
 
     private async void OnSaveFile(object sender, RoutedEventArgs e)

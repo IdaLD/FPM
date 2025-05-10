@@ -171,27 +171,6 @@ namespace Avalon.Model
             Meta_16 = MetaCheckDefault[15];
         }
 
-        public void AddFiles(IList<FileData> files)
-        {
-            foreach(FileData file in files)
-            {
-                if (!StoredFiles.Contains(file))
-                {
-                    StoredFiles.Add(file);
-                }
-            }
-            SetFiletypeList();
-        }
-
-        public void AddFile(FileData file)
-        {
-            if (!StoredFiles.Contains(file))
-            {
-                StoredFiles.Add(file);
-            }
-            SetFiletypeList();
-        }
-
         public void Newfile(string filepath, string type="New")
         {
             if (!StoredFiles.Any(x => x.Sökväg == filepath))

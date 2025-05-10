@@ -80,63 +80,21 @@ namespace Avalon.Model
         public int FontSize
         {
             get { return fontSize; }
-            set { fontSize = value; RaisePropertyChanged("FontSize"); RaisePropertyChanged("RowHeight"); GetSystemFonts(); }
+            set { fontSize = value; RaisePropertyChanged("FontSize"); RaisePropertyChanged("RowHeight");}
         }
-        public int RowHeight
+
+        private string font = "Default";
+        public string Font
         {
-            get { return FontSize + 2; }
+            get { return font; }
+            set { font = value; RaisePropertyChanged("Font"); }
         }
-
-        private ObservableCollection<string> availableFonts = new ObservableCollection<string> () {};
-        public ObservableCollection<string> AvailableFonts
-        {
-            get { return availableFonts; }
-            set { availableFonts = value; RaisePropertyChanged("AvailableFonts"); }
-        }
-
-
-        private string selectedFontString;
-        public string SelectedFontString
-        {
-            get { return selectedFontString; }
-            set { selectedFontString = value; RaisePropertyChanged("SelectedFontString"); SelectedFont = new FontFamily(SelectedFontString); }
-        }
-
-
-        private FontFamily selectedFont = new FontFamily("Ubuntu");
-        public FontFamily SelectedFont
-        {
-            get { return selectedFont; }
-            set { selectedFont = value; RaisePropertyChanged("SelectedFont"); }
-        }
-
-
 
         private ObservableCollection<string> collections = new ObservableCollection<string>();
         public ObservableCollection<string> Collections
         {
             get { return collections; }
             set { collections = value; RaisePropertyChanged("Collections"); }
-        }
-
-        private bool embeddedPreviewerOpen = false;
-        public bool EmbeddedPreviewerOpen
-        {
-            get { return embeddedPreviewerOpen; }
-            set { embeddedPreviewerOpen = value; RaisePropertyChanged("EmbeddedPreviewerOpen"); }
-        }
-
-
-        private void GetSystemFonts()
-        {
-            AvailableFonts.Clear();
-
-            foreach (FontFamily fontFamily in FontManager.Current.SystemFonts)
-            {
-                AvailableFonts.Add(fontFamily.Name);
-                Debug.WriteLine(fontFamily.FamilyNames);
-            }
-
         }
 
 

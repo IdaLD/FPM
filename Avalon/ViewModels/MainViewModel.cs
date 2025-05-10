@@ -251,9 +251,17 @@ namespace Avalon.ViewModels
                 DataContext = this
             };
 
+
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.FontCombo.SelectionChanged += SignalFontChanged;
+            window.FontSizeCombo.SelectionChanged += SignalFontChanged;
             window.Focusable = true;
             window.ShowDialog(mainWindow);
+        }
+
+        private void SignalFontChanged(object sender, SelectionChangedEventArgs e)
+        {
+            OnPropertyChanged("FontChanged");
         }
 
         public void OpenMetaEditDia(Window mainWindow)
