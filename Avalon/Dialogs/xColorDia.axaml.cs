@@ -30,8 +30,8 @@ public partial class xColorDia : Window, INotifyPropertyChanged
         BackgroundColorPickerLight.Color = Color.Parse("#dfe6e9");
         AccentColorPickerLight.Color = Color.Parse("#999999");
 
-        FontCombo.SelectedValue = "Default";
-        FontSizeCombo.SelectedValue = 16;
+        FontCombo.SelectedValue = "Ubuntu";
+        FontSizeCombo.SelectedValue = 15;
 
         this.Close();
     }
