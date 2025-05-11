@@ -26,14 +26,17 @@
 		<converter:AddOneConverter x:Key="AddOneConverter" />
 		<converter:AddPageConverter x:Key="AddPageConverter" />
 
+		<FontFamily x:Key="Barlow">avares://FPM/Assets/Fonts#Barlow</FontFamily>
 		<FontFamily x:Key="Fira Sans">avares://FPM/Assets/Fonts#Fira Sans</FontFamily>
 		<FontFamily x:Key="IBM Plex Sans">avares://FPM/Assets/Fonts#IBM Plex Sans</FontFamily>
 		<FontFamily x:Key="Jost">avares://FPM/Assets/Fonts#Jost</FontFamily>
 		<FontFamily x:Key="Lato">avares://FPM/Assets/Fonts#Lato</FontFamily>
 		<FontFamily x:Key="Lexend Deca">avares://FPM/Assets/Fonts#Lexend Deca</FontFamily>
+		<FontFamily x:Key="Montserrat">avares://FPM/Assets/Fonts#Montserrat</FontFamily>
 		<FontFamily x:Key="Nunito">avares://FPM/Assets/Fonts#Nunito</FontFamily>
 		<FontFamily x:Key="Open Sans">avares://FPM/Assets/Fonts#Open Sans</FontFamily>
 		<FontFamily x:Key="Quicksand">avares://FPM/Assets/Fonts#Quicksand</FontFamily>
+		<FontFamily x:Key="Raleway">avares://FPM/Assets/Fonts#Raleway</FontFamily>
 		<FontFamily x:Key="Recursive">avares://FPM/Assets/Fonts#Recursive</FontFamily>
 		<FontFamily x:Key="Roboto">avares://FPM/Assets/Fonts#Roboto</FontFamily>
 		<FontFamily x:Key="Rosario">avares://FPM/Assets/Fonts#Rosario</FontFamily>
@@ -85,7 +88,7 @@
 					</StackPanel>
 					<StackPanel Margin="8 0 0 0" Orientation="Horizontal">
 						<ic:SymbolIcon Symbol="Document" IconVariant="Filled" Width="25" FontSize="13" Opacity="0.7"/>
-						<TextBlock Text="{Binding CurrentFile.Namn}" FontStyle="Italic" FontSize="14" Opacity="0.7" Padding="1,0,1,0"/>
+						<TextBlock Text="{Binding CurrentFile.Namn}" FontStyle="Italic" FontSize="14" Opacity="0.7" Padding="3,0,1,0"/>
 					</StackPanel>
 				</StackPanel>
 				
@@ -128,7 +131,7 @@
 
 				<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="5" HorizontalAlignment="Center" Margin="30 0 0 0">
 					<Grid ColumnDefinitions="*,30">
-						<TextBox Grid.Column="0" Watermark="Seach All Files" Name="SearchText" Width="160" Height="30" KeyDown="OnStartSearch" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}"/>
+						<TextBox Grid.Column="0" Watermark="Seach All Files" Padding="10,7,5,5"  Name="SearchText" Width="160" Height="30" KeyDown="OnStartSearch" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}"/>
 						<Button Grid.Column="2" Click="OnSearch" >
 							<ic:SymbolIcon Symbol="Search" IconVariant="Regular" FontSize="18"/>
 						</Button>

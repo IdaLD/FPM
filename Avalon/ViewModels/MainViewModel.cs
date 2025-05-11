@@ -239,6 +239,7 @@ namespace Avalon.ViewModels
             {
                 DataContext = this
             };
+            window.FontFamily = mainWindow.FontFamily;
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
             window.ShowDialog(mainWindow);
         }
@@ -253,6 +254,7 @@ namespace Avalon.ViewModels
 
 
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.FontFamily = mainWindow.FontFamily;
             window.FontCombo.SelectionChanged += SignalFontChanged;
             window.FontSizeCombo.SelectionChanged += SignalFontChanged;
             window.Focusable = true;
@@ -272,6 +274,7 @@ namespace Avalon.ViewModels
             };
 
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.FontFamily = mainWindow.FontFamily;
             window.Focusable = true;
             window.ShowDialog(mainWindow);
         }
@@ -284,6 +287,7 @@ namespace Avalon.ViewModels
             };
 
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.FontFamily = mainWindow.FontFamily;
             window.Focusable = true;
             window.ShowDialog(mainWindow);
         }
@@ -296,6 +300,7 @@ namespace Avalon.ViewModels
             };
 
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.FontFamily = mainWindow.FontFamily;
             window.ShowDialog(mainWindow);
             window.ProjectName.Focus();
         }
@@ -308,6 +313,7 @@ namespace Avalon.ViewModels
             };
 
             window.TagMenuInput.Text = CurrentFile.Tagg;
+            window.FontFamily = mainWindow.FontFamily;
             window.TagMenuInput.CaretIndex = window.TagMenuInput.Text.Length;
 
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
@@ -336,6 +342,7 @@ namespace Avalon.ViewModels
             };
 
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.FontFamily = mainWindow.FontFamily;
             window.Focusable = true;
 
             window.SetCurrentName(CurrentFile.Namn);
@@ -356,6 +363,7 @@ namespace Avalon.ViewModels
             };
 
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.FontFamily = mainWindow.FontFamily;
             window.Focusable = true;
             window.SetMessage("Only available for files stored on C:\\");
 
@@ -371,6 +379,7 @@ namespace Avalon.ViewModels
             };
 
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.FontFamily = mainWindow.FontFamily;
             window.Focusable = true;
             await window.ShowDialog(mainWindow);
         }
@@ -383,6 +392,7 @@ namespace Avalon.ViewModels
             };
 
             window.RequestedThemeVariant = mainWindow.ActualThemeVariant;
+            window.FontFamily = mainWindow.FontFamily;
             window.ShowDialog(mainWindow);
         }
 
