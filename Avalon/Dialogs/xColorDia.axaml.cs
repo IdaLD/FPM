@@ -4,8 +4,10 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Avalon.Dialog;
@@ -22,18 +24,27 @@ public partial class xColorDia : Window, INotifyPropertyChanged
         KeyDown += CloseKey;
     }
 
-    public void ResetThemeColors(object sender, RoutedEventArgs e)
+    public void OnClose(object sender, RoutedEventArgs e)
+    {
+        this.Close();
+    }
+
+    public void ResetDark(object sender, RoutedEventArgs e)
     {
         BackgroundColorPickerDark.Color = Color.Parse("#333333");
         AccentColorPickerDark.Color = Color.Parse("#444444");
+    }
 
+    public void ResetLight(object sender, RoutedEventArgs e)
+    {
         BackgroundColorPickerLight.Color = Color.Parse("#dfe6e9");
         AccentColorPickerLight.Color = Color.Parse("#999999");
+    }
 
-        FontCombo.SelectedValue = "Ubuntu";
+    public void ResetFonts(object sender, RoutedEventArgs e)
+    {
+        FontCombo.SelectedItem = "Arial";
         FontSizeCombo.SelectedValue = 15;
-
-        this.Close();
     }
 
     private void CloseKey(object sender, KeyEventArgs e)

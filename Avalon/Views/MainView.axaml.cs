@@ -119,9 +119,6 @@ public partial class MainView : UserControl, INotifyPropertyChanged
 
         window.FontFamily = new FontFamily(ctx.Storage.General.Font);
         window.FontSize = ctx.Storage.General.FontSize;
-
-        //FileGrid.FontFamily = new FontFamily(ctx.Storage.General.Font);
-        //FileGrid.FontSize = ctx.Storage.General.FontSize;
     }
 
     public void OnTogglePreviewWindow()

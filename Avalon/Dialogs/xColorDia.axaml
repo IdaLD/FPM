@@ -34,11 +34,23 @@
 				
 				<Grid ColumnDefinitions="100,120" RowDefinitions="30,40,40,30,40,40,30,40,40,40,40,40,50" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-					<Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" FontWeight="Bold" Content="Dark" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Label FontWeight="Bold" Content="Dark"/>
+						<Button Grid.Column="2" Click="ResetDark" BorderBrush="Transparent">
+							<ic:SymbolIcon Symbol="ArrowReset" IconVariant="Regular" FontSize="18"/>
+						</Button>
+					</StackPanel>
+					
 					<Label Grid.Column="0" Grid.Row="1" Content="Background" VerticalAlignment="Center"/>
 					<Label Grid.Column="0" Grid.Row="2" Content="Accent" VerticalAlignment="Center"/>
 
-					<Label Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" FontWeight="Bold" Content="Light" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Label FontWeight="Bold" Content="Light"/>
+						<Button Grid.Column="2" Click="ResetLight" BorderBrush="Transparent">
+							<ic:SymbolIcon Symbol="ArrowReset" IconVariant="Regular" FontSize="18"/>
+						</Button>
+					</StackPanel>
+					
 					<Label Grid.Column="0" Grid.Row="4" Content="Background" VerticalAlignment="Center"/>
 					<Label Grid.Column="0" Grid.Row="5" Content="Accent" VerticalAlignment="Center"/>
 
@@ -46,7 +58,13 @@
 					<Label Grid.Column="0" Grid.Row="7" Content="Border" VerticalAlignment="Center"/>
 					<Label Grid.Column="0" Grid.Row="8" Content="Radius" VerticalAlignment="Center"/>
 
-					<Label Grid.Column="0" Grid.Row="9" Grid.ColumnSpan="2" FontWeight="Bold" Content="Fonts" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Label FontWeight="Bold" Content="Fonts"/>
+						<Button Grid.Column="2" Click="ResetFonts" BorderBrush="Transparent">
+							<ic:SymbolIcon Symbol="ArrowReset" IconVariant="Regular" FontSize="18"/>
+						</Button>
+					</StackPanel>
+					
 					<Label Grid.Column="0" Grid.Row="10" Content="Font" VerticalAlignment="Center"/>
 					<Label Grid.Column="0" Grid.Row="11" Content="Size" VerticalAlignment="Center"/>
 
@@ -63,7 +81,7 @@
 					<ComboBox Name="FontCombo" Grid.Column="1" Grid.Row="10" Width="110" DataContext="{Binding Storage.General}" SelectedValue="{Binding Font}" VerticalAlignment="Center"/>
 					<ComboBox Name="FontSizeCombo" Grid.Column="1" Grid.Row="11" Width="110" DataContext="{Binding Storage.General}" SelectedValue="{Binding FontSize}" VerticalAlignment="Center"/>
 
-					<Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="12" Width="80" Content="Reset" Click="ResetThemeColors" HorizontalAlignment="Center" BorderBrush="{DynamicResource TextControlBorderBrush}"/>
+					<Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="12" Width="80" Content="Close" Click="OnClose" HorizontalAlignment="Center" BorderBrush="{DynamicResource TextControlBorderBrush}"/>
 					
 
 				</Grid>
