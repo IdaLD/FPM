@@ -36,7 +36,7 @@
 
 					<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
 						<Label FontWeight="Bold" Content="Dark"/>
-						<Button Grid.Column="2" Click="ResetDark" BorderBrush="Transparent">
+						<Button Grid.Column="2" Click="ResetDark" VerticalContentAlignment="Center" BorderBrush="Transparent">
 							<ic:SymbolIcon Symbol="ArrowReset" IconVariant="Regular" FontSize="18"/>
 						</Button>
 					</StackPanel>

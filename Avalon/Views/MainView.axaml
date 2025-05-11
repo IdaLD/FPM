@@ -25,6 +25,24 @@
 		<converter:ShortenStringConverter x:Key="ShortenStringConverter" />
 		<converter:AddOneConverter x:Key="AddOneConverter" />
 		<converter:AddPageConverter x:Key="AddPageConverter" />
+
+		<FontFamily x:Key="Fira Sans">avares://FPM/Assets/Fonts#Fira Sans</FontFamily>
+		<FontFamily x:Key="IBM Plex Sans">avares://FPM/Assets/Fonts#IBM Plex Sans</FontFamily>
+		<FontFamily x:Key="Jost">avares://FPM/Assets/Fonts#Jost</FontFamily>
+		<FontFamily x:Key="Lato">avares://FPM/Assets/Fonts#Lato</FontFamily>
+		<FontFamily x:Key="Lexend Deca">avares://FPM/Assets/Fonts#Lexend Deca</FontFamily>
+		<FontFamily x:Key="Nunito">avares://FPM/Assets/Fonts#Nunito</FontFamily>
+		<FontFamily x:Key="Open Sans">avares://FPM/Assets/Fonts#Open Sans</FontFamily>
+		<FontFamily x:Key="Quicksand">avares://FPM/Assets/Fonts#Quicksand</FontFamily>
+		<FontFamily x:Key="Recursive">avares://FPM/Assets/Fonts#Recursive</FontFamily>
+		<FontFamily x:Key="Roboto">avares://FPM/Assets/Fonts#Roboto</FontFamily>
+		<FontFamily x:Key="Rosario">avares://FPM/Assets/Fonts#Rosario</FontFamily>
+		<FontFamily x:Key="Share Tech">avares://FPM/Assets/Fonts#Share Tech</FontFamily>
+		<FontFamily x:Key="Source Code Pro">avares://FPM/Assets/Fonts#Source Code Pro</FontFamily>
+		<FontFamily x:Key="Ubuntu">avares://FPM/Assets/Fonts#Ubuntu</FontFamily>
+		<FontFamily x:Key="Urbanist">avares://FPM/Assets/Fonts#Urbanist</FontFamily>
+		<FontFamily x:Key="Work Sans">avares://FPM/Assets/Fonts#Work Sans</FontFamily>
+
 	</UserControl.Resources>
 
 	

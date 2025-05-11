@@ -18,7 +18,10 @@ public partial class xColorDia : Window, INotifyPropertyChanged
     {
         InitializeComponent();
 
-        FontCombo.ItemsSource = FontManager.Current.SystemFonts.Select(x => x.Name).ToList();
+        //FontCombo.ItemsSource = FontManager.Current.SystemFonts.Select(x => x.Name).ToList();
+
+        FontCombo.ItemsSource = new List<string>() {"Fira Sans", "IBM Plex Sans", "Jost", "Lato", "Lexend Deca", "Nunito", "Open Sans", "Quicksand", "Recursive", "Roboto", "Rosario", "Share Tech", "Source Code Pro", "Ubuntu", "Urbanist", "Work Sans"};
+
         FontSizeCombo.ItemsSource = new List<int>() { 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 };
 
         KeyDown += CloseKey;
@@ -43,7 +46,7 @@ public partial class xColorDia : Window, INotifyPropertyChanged
 
     public void ResetFonts(object sender, RoutedEventArgs e)
     {
-        FontCombo.SelectedItem = "Arial";
+        FontCombo.SelectedItem = "Roboto";
         FontSizeCombo.SelectedValue = 15;
     }
 

@@ -17,6 +17,8 @@ using Org.BouncyCastle.Asn1.BC;
 using System.Diagnostics;
 using iText.Kernel.Pdf.Xobject;
 using MuPDFCore.MuPDFRenderer;
+using Avalonia.Media.Fonts;
+using Avalonia;
 
 
 namespace Avalon.Views;
@@ -117,7 +119,10 @@ public partial class MainView : UserControl, INotifyPropertyChanged
     {
         var window = Window.GetTopLevel(this);
 
-        window.FontFamily = new FontFamily(ctx.Storage.General.Font);
+        //window.FontFamily = new FontFamily(ctx.Storage.General.Font);
+        //FontFamilyLoader.LoadFontAssets(new Uri("avares://Avalon/Assets/Fonts#Roboto"));
+
+        window.FontFamily = (FontFamily)this.Resources[ctx.Storage.General.Font];
         window.FontSize = ctx.Storage.General.FontSize;
     }
 
