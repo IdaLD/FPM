@@ -4,6 +4,9 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Org.BouncyCastle.Asn1.BC;
+using Org.BouncyCastle.Asn1.Cmp;
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Avalon.Views;
@@ -30,8 +33,16 @@ public partial class PreView : UserControl
         ctx = (MainViewModel)this.DataContext;
         pwr = ctx.PreviewVM;
 
+        pwr.PropertyChanged += OnBindingPwr;
+
         SetRenderer();
     }
+
+    public void OnBindingPwr(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == "SearchMode") { SetSearchFocus(); }
+    }
+
 
     public void SetRenderer()
     {
@@ -45,6 +56,12 @@ public partial class PreView : UserControl
     {
         string text = SearchRegex.Text;
         pwr.Search(text);
+    }
+
+    private void SetSearchFocus()
+    {
+        SearchRegex.Clear();
+        SearchRegex.Focus();
     }
 
     private void OnClearSearch(object sender, RoutedEventArgs e)
