@@ -140,13 +140,13 @@
 				
 					<StackPanel Orientation="Horizontal" Spacing="2" Height="35" HorizontalAlignment="Right" Grid.Row="0" Grid.ColumnSpan="5" Margin="0 0 155 0">
 
-						<ToggleButton Name="TreeStatus" ToolTip.Tip="Treeview: Ctrl + T" HotKey="Ctrl+T" FontWeight="Normal" Margin="0,-5,0,0" Click="SetupTreeview" IsChecked="{Binding TreeViewOpen}" >
+						<ToggleButton Name="TreeStatus" ToolTip.Tip="Treeview: Ctrl + Q" HotKey="Ctrl+Q" FontWeight="Normal" Margin="0,-5,0,0" Click="SetupTreeview" IsChecked="{Binding TreeViewOpen}" >
 							<StackPanel>
 								<ic:SymbolIcon Name="Treeview" Symbol="PanelLeft" IconVariant="Regular" FontSize="18"/>
 							</StackPanel>
 						</ToggleButton>
 						
-						<ToggleButton Name="TrayStatus" ToolTip.Tip="Tray: Ctrl + R" HotKey="Ctrl+R" FontWeight="Normal" Margin="0,-5,0,0" IsChecked="{Binding TrayViewOpen}">
+						<ToggleButton Name="TrayStatus" ToolTip.Tip="Tray: Ctrl + E" HotKey="Ctrl+E" FontWeight="Normal" Margin="0,-5,0,0" IsChecked="{Binding TrayViewOpen}">
 							<StackPanel>
 								<ic:SymbolIcon Name="Tray" Symbol="PanelRight" IconVariant="Regular" FontSize="18"/>
 							</StackPanel>
@@ -156,6 +156,10 @@
 							<StackPanel>
 								<ic:SymbolIcon Name="Attached" Symbol="Attach" IconVariant="Regular" FontSize="18"/>
 							</StackPanel>
+						</ToggleButton>
+						
+						<ToggleButton Name="ThumbnailToggle" FontWeight="Normal" ToolTip.Tip="Display Thumbnails, Ctrl + T" HotKey="Ctrl+T" Height="30" Width="35" Margin="0,-5,0,0" IsChecked="{Binding ShowThumbnails}">
+							<ic:SymbolIcon Symbol="Image" FontSize="18"/>
 						</ToggleButton>
 
 						<ToggleButton Name="PreviewWindow" FontWeight="Normal" ToolTip.Tip="Preview Window, Ctrl + W" HotKey="Ctrl+W" Height="30" Width="35" Margin="0,-5,0,0" IsChecked="{Binding PreviewWindowOpen}">
@@ -190,11 +194,32 @@
 						<DataGrid Name="FileGrid" Grid.Row="0" Margin="5" Padding="0" ItemsSource="{Binding FilteredFiles, Mode=OneWay}" SelectionMode="Extended" HorizontalScrollBarVisibility="Disabled" 
 								  VerticalScrollBarVisibility="Visible" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" CornerRadius="{Binding Storage.General.CornerRadius}" 
 								  BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}" LoadingRow="DataGrid_OnLoadingRow" CanUserReorderColumns="True" 
-								  CanUserResizeColumns="True">
-							<DataGrid.Styles>
+								  CanUserResizeColumns="True" ToolTip.ServiceEnabled="{Binding ShowThumbnails}">
+							
+								<DataGrid.Styles>
+									
+								<Style Selector="ToolTip">
+									<Setter Property="Template">
+										<Setter.Value>
+											<ControlTemplate>
+												<Panel Background="White">
+													<Image Source="{Binding (model:FileData).Thumbnail}"/>
+												</Panel>
+											</ControlTemplate>
+										</Setter.Value>
+									</Setter>
+									<Setter Property="MaxWidth" Value="700"/>
+									<Setter Property="MaxHeight" Value="700"/>
+								</Style>							
+								
+								<Style Selector="DataGridRow">
+									<Setter Property="ToolTip.Tip" Value="{Binding (model:FileData).Namn}"/>
+								</Style>
+									
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
 									<Setter Property="IsVisible" Value="false" />
 								</Style>
+								
 							</DataGrid.Styles>
 						
 							<DataGrid.Columns>
@@ -238,6 +263,11 @@
 										<MenuItem Name="FetchMetadata" Header="Fetch All" Click="OnFetchFullMeta" Icon="{icxt:SymbolIconExtension Symbol=DatabaseLink}"/>
 										<MenuItem Name="EditMetadata" Header="Edit" Command="{Binding OpenMetaEditDia}" CommandParameter="{Binding $parent[Window]}" Icon="{icxt:SymbolIconExtension Symbol=Edit}"/>
 										<MenuItem Name="ClearMetaMenu" Header="Clear" Command="{Binding ClearMeta}" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
+									</MenuItem>
+									
+									<MenuItem Name="ThumbnailMenu" Header="Thumbnail" Icon="{icxt:SymbolIconExtension Symbol=Image}">
+										<MenuItem Name="GetThumbnails" Header="Fetch" Command="{Binding GetThumbnails}" Icon="{icxt:SymbolIconExtension Symbol=ArrowDownload}"/>
+										<MenuItem Name="ClearThumbnails" Header="Clear" Command="{Binding ClearThumbnails}" Icon="{icxt:SymbolIconExtension Symbol=Delete}"/>
 									</MenuItem>
 								
 									<MenuItem Name="AddToCollection" Header="Collection" ItemsSource="{Binding Storage.General.Collections}" Icon="{icxt:SymbolIconExtension Symbol=Collections}" Click="OnAddToCollection">
@@ -293,6 +323,7 @@
 											AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" LoadingRow="DataGrid_OnLoadingRow" BorderBrush="{DynamicResource TextControlBorderBrush}" 
 										  BorderThickness="{Binding Storage.General.Border}" CornerRadius="{Binding Storage.General.CornerRadius}">
 									<DataGrid.Styles>
+										
 										<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
 											<Setter Property="IsVisible" Value="false"/>
 										</Style>
@@ -353,6 +384,24 @@
 						<DataGrid Name="CollectionContent" Padding="0" ItemsSource="{Binding CollectionContent, Mode=OneWay}" SelectionMode="Single" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" 
 								  LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding Storage.General.CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}">
 							<DataGrid.Styles>
+								
+								<Style Selector="ToolTip">
+									<Setter Property="Template">
+										<Setter.Value>
+											<ControlTemplate>
+												<Panel Background="White">
+													<Image Source="{Binding (model:FileData).Thumbnail}"/>
+												</Panel>
+											</ControlTemplate>
+										</Setter.Value>
+									</Setter>
+									<Setter Property="MaxWidth" Value="700"/>
+									<Setter Property="MaxHeight" Value="700"/>
+								</Style>								
+								
+								<Style Selector="DataGridRow">
+									<Setter Property="ToolTip.Tip" Value="{Binding (model:FileData).Namn}"/>
+								</Style>
 								<Style Selector="DataGridCell:current /template/ Grid#FocusVisual">
 									<Setter Property="IsVisible" Value="false" />
 								</Style>

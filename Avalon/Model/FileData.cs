@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Avalonia.Media.Imaging;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace Avalon.Model
 {
@@ -218,6 +220,11 @@ namespace Avalon.Model
                     nameWithAttributes = nameWithAttributes + " 📝";
                 }
 
+                if (HasThumbnail)
+                {
+                    nameWithAttributes = nameWithAttributes + " ؞";
+                }
+
                 return nameWithAttributes;
             }
         }
@@ -259,6 +266,54 @@ namespace Avalon.Model
             set { partOfCollections = value; RaisePropertyChanged("PartOfCollections"); }
         }
 
+
+        private string thumbnailSource = string.Empty;
+        public string ThumbnailSource
+        {
+            get { return thumbnailSource; }
+            set { thumbnailSource = value; RaisePropertyChanged("ThumbnailSource"); RaisePropertyChanged("NameWithAttributes"); }
+        }
+
+        public bool HasThumbnail
+        {
+            get
+            {
+                if (ThumbnailSource.Length > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        public Avalonia.Media.Imaging.Bitmap Thumbnail
+        {
+            get
+            {
+                if (HasThumbnail)
+                { 
+                    Avalonia.Media.Imaging.Bitmap bitmap = new Avalonia.Media.Imaging.Bitmap(thumbnailSource);
+
+                    return bitmap;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public void RemoveThumbnail()
+        {
+            if (thumbnailSource != string.Empty)
+            {
+                System.IO.File.Delete(thumbnailSource);
+                ThumbnailSource = string.Empty;
+            }
+        }
 
         private void RaisePropertyChanged(string propName)
         {

@@ -22,6 +22,7 @@ using Org.BouncyCastle.Asn1.BC;
 using System.Drawing.Printing;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Crypto.Signers;
+using MuPDFCore;
 
 
 namespace Avalon.ViewModels
@@ -215,6 +216,13 @@ namespace Avalon.ViewModels
         {
             get { return trayViewOpen; }
             set { trayViewOpen = value; OnPropertyChanged("TrayViewOpen"); }
+        }
+
+        private bool showThumbnails = false;
+        public bool ShowThumbnails
+        {
+            get { return showThumbnails; }
+            set { showThumbnails = value; OnPropertyChanged("ShowThumbnails"); }
         }
 
         public void ResetPreviewer()
@@ -411,6 +419,30 @@ namespace Avalon.ViewModels
             if(FavPage != null)
             {
                 PreviewVM.RequestPage1 = FavPage.PageNr;
+            }
+        }
+
+        public void GetThumbnails()
+        {
+            foreach (FileData file in CurrentFiles)
+            {
+                file.RemoveThumbnail();
+
+                byte[] bytes = File.ReadAllBytes(file.Sökväg);
+
+                MuPDFDocument fileDocument = new MuPDFDocument(new MuPDFContext(), bytes, InputFileTypes.PDF);
+                file.ThumbnailSource = "C:\\FIlePathManager\\Thumbnails\\" + file.Namn + ".jpeg";
+                fileDocument.SaveImageAsJPEG(0, 1, file.ThumbnailSource, 40);
+
+                fileDocument.Dispose();
+            }
+        }
+
+        public void ClearThumbnails()
+        {
+            foreach (FileData file in CurrentFiles)
+            {
+                file.RemoveThumbnail();
             }
         }
 

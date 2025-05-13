@@ -318,6 +318,12 @@ namespace Avalon.ViewModels
 
                 CurrentPage1 = RequestPage1;
                 Rotation = 0;
+
+                //if (!RequestFile.HasThumbnail)
+                //{
+                //    RequestFile.ThumbnailSource = "C:\\FIlePathManager\\Thumbnails\\" + RequestFile.Namn + ".jpeg";
+                //    PreviewFile.SaveImageAsJPEG(0, 1, RequestFile.ThumbnailSource, 40);
+                //}
                
                 FileWorkerBusy = false;
                 FileAvailable = true;
