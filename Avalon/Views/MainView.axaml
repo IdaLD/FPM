@@ -208,8 +208,8 @@
 											</ControlTemplate>
 										</Setter.Value>
 									</Setter>
-									<Setter Property="MaxWidth" Value="700"/>
-									<Setter Property="MaxHeight" Value="700"/>
+									<Setter Property="MaxWidth" Value="500"/>
+									<Setter Property="MaxHeight" Value="500"/>
 								</Style>							
 								
 								<Style Selector="DataGridRow">
@@ -382,7 +382,8 @@
 					
 					<Border Grid.Row="3" Margin="5">
 						<DataGrid Name="CollectionContent" Padding="0" ItemsSource="{Binding CollectionContent, Mode=OneWay}" SelectionMode="Single" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="None" 
-								  LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding Storage.General.CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}">
+								  LoadingRow="DataGrid_OnLoadingRow" CornerRadius="{Binding Storage.General.CornerRadius}" BorderBrush="{DynamicResource TextControlBorderBrush}" BorderThickness="{Binding Storage.General.Border}"
+								  ToolTip.ServiceEnabled="{Binding ShowThumbnails}">
 							<DataGrid.Styles>
 								
 								<Style Selector="ToolTip">
@@ -395,8 +396,8 @@
 											</ControlTemplate>
 										</Setter.Value>
 									</Setter>
-									<Setter Property="MaxWidth" Value="700"/>
-									<Setter Property="MaxHeight" Value="700"/>
+									<Setter Property="MaxWidth" Value="500"/>
+									<Setter Property="MaxHeight" Value="500"/>
 								</Style>								
 								
 								<Style Selector="DataGridRow">
